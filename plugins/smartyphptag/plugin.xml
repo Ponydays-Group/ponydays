@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+  <name>
+    <lang name="default">Smarty {PHP} tag</lang>
+  </name>
+  <author>
+    <lang name="default">PSNet</lang>
+  </author>
+  <homepage>http://psnet.lookformp3.net</homepage>
+  <version>1.0.1</version>
+  <requires>
+    <livestreet>1.0</livestreet>
+    <plugins></plugins>
+  </requires>
+  <description>
+    <lang name="default">Execute PHP code in the templates (for Smarty3).</lang>
+    <lang name="russian">Выполнение PHP кода в шаблонах (для Smarty3).</lang>
+    <lang name="ukrainian">Виконання PHP коду у шаблонах (для Smarty3).</lang>
+  </description>
+</plugin>

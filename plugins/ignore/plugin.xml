@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+	<name>
+		<lang name="default">Ignore users</lang>
+	</name>
+	<author>
+		<lang name="default">Verdet</lang>
+	</author>
+	<version>0.0.3</version>
+	<requires>
+		<livestreet>1.0</livestreet>
+		<plugins>
+		</plugins>
+	</requires>
+	<description>
+		<lang name="default">Allow user ignore other users</lang>
+	</description>
+</plugin>

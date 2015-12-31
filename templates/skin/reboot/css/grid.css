@@ -1,0 +1,41 @@
+/* --------------------------------------------
+	СЕТКА
+-------------------------------------------- */
+
+#container	{ min-width: 0; padding-left: 50px; }
+#header 	{ padding: 50px 0; position: relative; }
+#nav 		{ overflow: hidden; }
+#wrapper {
+	background: url('../images/points.png');
+	border-bottom: 1px solid #eee;
+	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+	-webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+	margin: 0 auto;
+	max-width: 1280px;
+	overflow: hidden;
+	padding: 30px;
+	min-width: 800px;
+}
+#content {
+	margin-right: 350px;
+}
+#sidebar	{ float: right; width: 335px; }
+
+#footer {
+	box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+	-webkit-box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+	color: #777;
+	margin: 70px auto 0;
+	max-width: 1280px;
+	overflow: hidden;
+	padding: 20px 30px 50px;
+	background: #eeeeee url('../images/points.png');
+}
+
+
+#content.content-full-width { width: 100%; margin-right: 0; }
+
+#content.content-right 		{ margin-right: 0; float: none; margin-left: 311px; width: auto; }
+#sidebar.sidebar-left 		{ float: left; width: 250px; padding-right: 30px; border-right: 1px solid #eee; margin-right: 30px; }
+
+

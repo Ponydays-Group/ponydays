@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin>
+	<name>
+		<lang name="default">Публикация топиков в группы</lang>
+	</name>
+	<author>
+		<lang name="default">author</lang>
+		<lang name="russian">Prokopov Nikolai</lang>
+	</author>
+	<homepage>http://no-be.ru</homepage>
+	<settings>{postingingroups}admin/</settings>
+	<version>1.2.2</version>
+	<requires>
+		<livestreet>1.x</livestreet>
+		<plugins>
+		</plugins>
+	</requires>
+	<description>
+		<lang name="default">Публикация топиков в группы</lang>
+		<lang name="russian">Публикация топиков в группы</lang>
+	</description>
+</plugin>

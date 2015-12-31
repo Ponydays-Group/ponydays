@@ -1,0 +1,60 @@
+/* -------------------------------------------------------------------
+	
+	КНОПКИ
+	
+	
+	Примеры использования:
+	
+	<button class="button">Preview</button>
+	<a href="#" class="button">Preview</a>
+	
+	<button class="button button-primary">Save</button>
+	
+------------------------------------------------------------------- */
+
+.button {
+	display: inline-block;
+	
+	padding: 7px 15px;
+	text-align: center;
+	
+	border: none;
+	border-radius: 2px;
+	
+	font-size: 15px;
+	line-height: 16px;
+	
+	color: #fff;
+	
+	background: #767EB8;
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#666666', endColorstr='#555555',GradientType=0 );
+
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
+
+	cursor: pointer;
+	
+	*margin-right: 5px;
+}
+.button:hover { text-decoration: none; color: #fff; background: #767EB8; }
+.button:active { 
+	-moz-box-shadow: 	0 0 7px rgba(0, 0, 0, .5) inset; 
+	-webkit-box-shadow: 0 0 7px rgba(0, 0, 0, .5) inset; 
+	box-shadow: 		0 0 7px rgba(0, 0, 0, .5) inset; 
+}
+.button.fl-r { *margin-right: 0; }
+
+
+/* Button Primary */
+.button.button-primary 			{ 
+	background: #3122AF;
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#43bb34', endColorstr='#3aa62c',GradientType=0 );
+}
+.button.button-primary:hover 	{ background: #3122AF; }
+.button.button-primary.active { 
+	-moz-box-shadow: 	0 0 7px rgba(0, 0, 0, .5) inset; 
+	-webkit-box-shadow: 0 0 7px rgba(0, 0, 0, .5) inset; 
+	box-shadow: 		0 0 7px rgba(0, 0, 0, .5) inset; 
+}
+
+/* Button Icon (Without text) */
+.button.button-icon 			{ padding: 7px 10px; }

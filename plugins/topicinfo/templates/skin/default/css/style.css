@@ -1,0 +1,116 @@
+/*
+  Topicinfo plugin
+  (P) PSNet, 2008 - 2012
+  http://psnet.lookformp3.net/
+  http://livestreet.ru/profile/PSNet/
+  http://livestreetcms.com/profile/PSNet/
+*/
+.topicinfo_content {
+	padding: 10px;
+}
+div.block.Topicinfo {
+    clear: both;
+    overflow: hidden;
+}
+
+div.block.Topicinfo div.AvatarHolder {
+    float: left;
+    margin-bottom: 10px;
+    margin-right: 10px;
+    overflow: hidden;
+    text-align: center;
+    position: relative;
+}
+
+div.block.Topicinfo div.AvatarHolder a.avatar {
+    display: block;
+    text-decoration: none;
+}
+
+div.block.Topicinfo div.AvatarHolder a.user,
+div.block.Topicinfo div.AvatarHolder div.Status {
+    background: #EEE;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 2px 2px 2px 2px;
+    padding: 0 5px 1px;
+    position: absolute;
+    text-decoration: none;
+}
+
+div.block.Topicinfo div.AvatarHolder a.user {
+    border-radius: 0 0 0 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+div.block.Topicinfo div.AvatarHolder div.Status {
+    border-radius: 4px 4px 4px 4px;
+    cursor: default;
+    height: 6px;
+    padding: 0;
+    right: 3px;
+    top: 3px;
+    width: 6px;
+}
+
+div.block.Topicinfo div.AvatarHolder div.Status.online {
+    background: rgba(38, 232, 36, 0.7);
+}
+
+div.block.Topicinfo div.AvatarHolder div.Status.offline {
+    background: rgba(231, 231, 231, 0.7);
+}
+
+div.block.Topicinfo div.AvatarHolder a img {
+    border-radius: 3px 3px 3px 3px;
+    display: block;
+}
+
+div.block.Topicinfo div.MoreInfo {
+    overflow: hidden;
+}
+
+div.block.Topicinfo div.MoreInfo ul {
+    margin-bottom: 10px;
+}
+
+div.block.Topicinfo div.MoreInfo div.OneDescription {
+    margin-bottom: 10px;
+}
+
+div.block.Topicinfo div.MoreInfo div.OneDescription p b.r {
+    color: #5FA459;
+}
+
+div.block.Topicinfo div.MoreInfo div.OneDescription p b.s {
+    color: #628FA5;
+}
+
+div.block.Topicinfo div.MoreInfo h2 {
+    font: 18px/20px Tahoma,Verdana,Helvetica;
+}
+
+div.block.Topicinfo div.TopicList {
+    clear: both;
+    overflow: hidden;
+}
+
+div.block.Topicinfo div.TopicList ul li {
+    padding: 1px 0 3px;
+}
+
+div.block.Topicinfo div.TopicList ul li img {
+    border-radius: 3px 3px 3px 3px;
+    display: block;
+    max-height: 150px;
+    max-width: 150px;
+}
+
+div.block.Topicinfo a.sponsor {
+    clear: both;
+    color: #BBB;
+    float: right;
+    font: 10px/12px Arial;
+    margin-top: 10px;
+}

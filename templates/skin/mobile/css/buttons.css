@@ -1,0 +1,42 @@
+/* -------------------------------------------------------------------
+	
+	КНОПКИ
+	
+	
+	Примеры использования:
+	
+	<button class="button">Preview</button>
+	<a href="#" class="button">Preview</a>
+	
+	<button class="button button-primary">Save</button>
+	
+------------------------------------------------------------------- */
+
+.button {
+	display: inline-block;
+	padding: 7px 13px;
+	margin: 0 5px 5px 0;
+	text-align: center;
+	border: 1px solid #d9e3ec;
+	font: 600 14px/16px 'Open Sans', Arial;
+	color: #333;
+	background: #f6f8fa;
+	cursor: pointer;
+	text-decoration: none;
+}
+.button:hover { text-decoration: none; background: #eee; }
+.button:active { 
+	-webkit-box-shadow: 0 0 7px rgba(0, 0, 0, .5) inset; 
+	   -moz-box-shadow: 0 0 7px rgba(0, 0, 0, .5) inset; 
+	        box-shadow: 0 0 7px rgba(0, 0, 0, .5) inset; 
+}
+.button.fl-r { *margin-right: 0; }
+
+
+/* Button Primary */
+.button.button-primary        { background: #e8eaf6; color: #5055b2; border-color: #d9ddf5; }
+.button.button-primary:hover  { background: #d9ddf5; color: #5055b2; border-color: #e8eaf6; }
+.button.button-primary.active { background: #5c6bc0; }
+
+/* Button Icon (Without text) */
+.button.button-icon 			{ padding: 7px 10px; }

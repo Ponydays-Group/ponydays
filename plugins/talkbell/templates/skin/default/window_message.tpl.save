@@ -1,0 +1,41 @@
+<script type="text/javascript" src="{$sTWPTalkbell}/js/soundmanager2.js"></script>
+{literal}
+<script language="JavaScript" type="text/javascript">
+
+function doMany() {
+    ls.ajax(aRouter['talkbell'], {security_ls_key:LIVESTREET_SECURITY_KEY}, function (result) {
+        if (result.bStateError) {
+            ls.msg.error(null, result.sMsg);
+        } else {
+            if (!result.bStError) {
+                someSound();
+		console.log("message");
+                if (result.bSc) {
+                    var aSc = result.aHtmlSc;
+                    for (var i = 0; i < aSc.length; i++) {
+                        ls.msg.notice('', aSc[i]);
+                    }
+                }
+                if (result.bSt) {
+                    var aSt = result.aHtmlSt;
+                    for (var i = 0; i < aSt.length; i++) {
+                        ls.msg.notice('', aSt[i]);
+                    }
+                }
+            }
+        }
+    });
+    console.log("DoMany");
+    return false;
+}
+
+while (True) {
+    setTimeout(doMany(), 1000);
+}
+
+function someSound() {
+    console.log("SomeSound");
+}
+
+</script>
+{/literal}

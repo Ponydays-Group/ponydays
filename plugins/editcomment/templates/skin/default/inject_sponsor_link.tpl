@@ -1,0 +1,1 @@
+<div class="editcomment_sponsor_link">Занимаетесь литературой или любите читать? "<a href="http://writercenter.ru" title="Мастерская писателей" target="_blank">Мастерская писателей</a>" поможет вам!</div>

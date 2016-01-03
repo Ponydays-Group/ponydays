@@ -380,6 +380,7 @@ textarea {
 button,
 input {
 	line-height: normal; /* 1 */
+	margin: 5px;
 }
 
 /*
@@ -1850,7 +1851,7 @@ dl.form-item dd { float: left; width: 300px; }
 
 
 /* Info Block */
-.comment .comment-info { padding: 0 70px 7px 0; line-height: 12px; position: relative; top: -2px; overflow: hidden; zoom: 1; }
+.comment .comment-info { padding: 0 5px 7px 0; line-height: 12px; position: relative; top: -2px; overflow: hidden; zoom: 1; }
 .comment .comment-info li { float: left; height: 18px; padding-top: 3px; margin-right: 10px; }
 .comment .comment-info li a { text-decoration: none; }
 .comment .comment-info li.comment-author a { font-weight: bold; }

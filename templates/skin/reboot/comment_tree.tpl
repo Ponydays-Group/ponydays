@@ -15,7 +15,10 @@
 			<label for="comment_subscribe">{$aLang.comment_subscribe}</label>
 
 			<input {if $oSubscribeComment and $oSubscribeComment->getStatus()}checked="checked"{/if} type="checkbox" id="comment_subscribe" class="input-checkbox" onchange="ls.subscribe.toggle('{$sTargetType}_new_comment','{$iTargetId}','',this.checked);">
+
 		{/if}
+			<br><label for="autoload">Автообновление</label>
+			<input id="autoload" type="checkbox"></input>
 	
 		<a name="comments"></a>
 	</header>

@@ -1,5 +1,7 @@
 var ls = ls || {};
 
+ls.jdebug = false;
+
 /**
 * Обработка комментариев
 */
@@ -29,7 +31,8 @@ ls.comments = (function ($) {
 			comment_goto_child: 'goto-comment-child'
 		},
 		wysiwyg: null,
-		folding: true
+		folding: true,
+        pageTitle: false // for comment count: original title here
 	};
 
 	this.iCurrentShowFormComment=0;
@@ -109,6 +112,9 @@ ls.comments = (function ($) {
 
 	// Подгружает новые комментарии
 	this.load = function(idTarget, typeTarget, selfIdComment, bNotFlushNew) {	
+        //if (this.options.loadMutex) return;
+        //this.options.loadMutex = true;
+
 		var idCommentLast = $("#comment_last_id").val();
 		if(this.aCommentNew != []){
 			this.aCommentOld = this.aCommentNew;
@@ -122,7 +128,7 @@ ls.comments = (function ($) {
 		}
 
 		objImg = $('#update-comments');
-		objImg.addClass('fa-spin');
+		objImg.addClass('fa-pulse');
 
 		var params = { idCommentLast: idCommentLast, idTarget: idTarget, typeTarget: typeTarget };
 		if (selfIdComment) { 
@@ -133,7 +139,7 @@ ls.comments = (function ($) {
 		}
 
 		ls.ajax(this.options.type[typeTarget].url_response, params, function(result) {
-			objImg.removeClass('fa-spin');
+			objImg.removeClass('fa-pulse');
 
 			if (!result) { ls.msg.error('Error','Please try again later'); }
 			if (result.bStateError) {
@@ -164,10 +170,12 @@ ls.comments = (function ($) {
 				}
 
 				$.each(aCmt, function(index, item) { 
-					if (!(selfIdComment && selfIdComment==item.id)) {
-						this.aCommentNew.push(item.id);
-					}
-					this.inject(item.idParent, item.id, item.html); 
+					if (!document.getElementById('comment_id_' + item.id)) {
+                        if (!(selfIdComment && selfIdComment==item.id)) {
+						    this.aCommentNew.push(item.id);
+    					}
+    					this.inject(item.idParent, item.id, item.html); 
+                    }
 				}.bind(this));
 
 				if (selfIdComment && $('#comment_id_'+selfIdComment).length) { 
@@ -258,10 +266,16 @@ ls.comments = (function ($) {
 
 	// Устанавливает число новых комментариев
 	this.setCountNewComment = function(count) {
+        // TODO that will work good only if there are no any other title modificators!
+        if (! this.options.pageTitle) this.options.pageTitle = document.title;
 		if (count > 0) {
 			$('#new_comments_counter').show().text(count);
+            if (document.getElementById('autoload').checked) {
+                document.title = '(' + count + ') ' + this.options.pageTitle;
+            }
 		} else {
 			$('#new_comments_counter').text(0).hide();
+            document.title = this.options.pageTitle;
 		}
 	};
 

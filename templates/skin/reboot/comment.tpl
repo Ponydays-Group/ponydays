@@ -18,12 +18,12 @@
 		<a name="comment{$oComment->getId()}"></a>
 		<div class="folding fa fa-minus-square" id="folding"></div>
 
-		<a href="{$oUser->getUserWebPath()}"><img src="{$oUser->getProfileAvatarPath(48)}" alt="avatar" class="comment-avatar" /></a>
+		<a target="_blank" href="{$oUser->getUserWebPath()}"><img src="{$oUser->getProfileAvatarPath(48)}" alt="avatar" class="comment-avatar" /></a>
 
 
 		<ul class="comment-info">
 			<li class="comment-author">
-				<a href="{$oUser->getUserWebPath()}">{$oUser->getLogin()}</a>
+				<a target="_blank" href="{$oUser->getUserWebPath()}">{$oUser->getLogin()}</a>
 			</li>
 			<li class="comment-date">
 				<a href="{if $oConfig->GetValue('module.comment.nested_per_page')}{router page='comments'}{else}#comment{/if}{$oComment->getId()}" class="link-dotted" title="{$aLang.comment_url_notice}">

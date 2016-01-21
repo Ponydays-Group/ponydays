@@ -126,7 +126,7 @@ class ActionBlog extends Action {
 
 		$this->AddEvent('add','EventAddBlog');
 		$this->AddEvent('edit','EventEditBlog');
-		$this->AddEvent('delete','EventDeleteBlog');
+		//$this->AddEvent('delete','EventDeleteBlog');
 		$this->AddEventPreg('/^admin$/i','/^\d+$/i','/^(page([1-9]\d{0,5}))?$/i','EventAdminBlog');
 		$this->AddEvent('invite','EventInviteBlog');
 
@@ -1004,7 +1004,7 @@ class ActionBlog extends Action {
 		 * Проверяем текст комментария
 		 */
 		$sText=$this->Text_Parser(getRequestStr('comment_text'));
-		if (!func_check($sText,'text',2,100000)) {
+		if (!func_check($sText,'text',2,Config::Get('module.comment.max_length'))) {
 			$this->Message_AddErrorSingle($this->Lang_Get('topic_comment_add_text_error'),$this->Lang_Get('error'));
 			return;
 		}
@@ -1108,7 +1108,8 @@ class ActionBlog extends Action {
 			/**
 			 * Добавляем событие в ленту
 			 */
-			$this->Stream_write($oCommentNew->getUserId(), 'add_comment', $oCommentNew->getId(), $oTopic->getPublish() && $oTopic->getBlog()->getType()!='close');
+			if ($oCommentNew)
+			$this->Stream_write($oCommentNew->getUserId(), 'add_comment', $oCommentNew->getId(), $oTopic->getPublish() && !in_array($oTopic->getBlog()->getType(), array('close', 'invite')));
 		} else {
 			$this->Message_AddErrorSingle($this->Lang_Get('system_error'),$this->Lang_Get('error'));
 		}
@@ -1713,7 +1714,7 @@ class ActionBlog extends Action {
 		 * Получаем текущий статус пользователя в блоге
 		 */
 		$oBlogUser=$this->Blog_GetBlogUserByBlogIdAndUserId($oBlog->getId(),$this->oUserCurrent->getId());
-		if (!$oBlogUser || ($oBlogUser->getUserRole()<ModuleBlog::BLOG_USER_ROLE_GUEST && $oBlog->getType()=='close')) {
+		if (!$oBlogUser || ($oBlogUser->getUserRole()<ModuleBlog::BLOG_USER_ROLE_GUEST || $this->oUserCurrent->getIsAdministrator() && $oBlog->getType()=='close')) {
 			if ($oBlog->getOwnerId()!=$this->oUserCurrent->getId()) {
 				/**
 				 * Присоединяем юзера к блогу

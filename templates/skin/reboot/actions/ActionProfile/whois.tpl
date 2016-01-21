@@ -32,8 +32,10 @@
 				<td>
 					{if $oUserProfile->getProfileSex()=='man'}
 						{$aLang.profile_sex_man}
-					{else}
+					{elseif $oUserProfile->getProfileSex()=='woman'}
 						{$aLang.profile_sex_woman}
+					{else}
+					     другой
 					{/if}
 				</td>
 			</tr>

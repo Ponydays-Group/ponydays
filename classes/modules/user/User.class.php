@@ -411,7 +411,6 @@ class ModuleUser extends Module {
 			/**
 			 * Создаем персональный блог
 			 */
-			$this->Blog_CreatePersonalBlog($oUser);
 			foreach (Config::Get('autosubscribe') as $BlogForSuscribe) {
 				$this->Userfeed_subscribeUser($oUser->getId(), ModuleUserfeed::SUBSCRIBE_TYPE_BLOG, $BlogForSuscribe);
 			}
@@ -681,9 +680,12 @@ class ModuleUser extends Module {
 	public function GetStatUsers() {
 		if (false === ($aStat = $this->Cache_Get("user_stats"))) {
 			$aStat['count_all']=$this->oMapper->GetCountUsers();
-			$sDate=date("Y-m-d H:i:s",time()-Config::Get('module.user.time_active'));
-			$aStat['count_active']=$this->oMapper->GetCountUsersActive($sDate);
-			$aStat['count_inactive']=$aStat['count_all']-$aStat['count_active'];
+			$sDateWeek=date("Y-m-d H:i:s",time()-60*60*24*7);
+			$sDateDay=date("Y-m-d H:i:s",time()-60*60*24);
+			$sDateHour=date("Y-m-d H:i:s",time()-60*60);
+			$aStat['count_active_week']=$this->oMapper->GetCountUsersActive($sDateWeek);
+			$aStat['count_active_day']=$this->oMapper->GetCountUsersActive($sDateDay);
+			$aStat['count_active_hour']=$this->oMapper->GetCountUsersActive($sDateHour);
 			$aSex=$this->oMapper->GetCountUsersSex();
 			$aStat['count_sex_man']=(isset($aSex['man']) ? $aSex['man']['count'] : 0);
 			$aStat['count_sex_woman']=(isset($aSex['woman']) ? $aSex['woman']['count'] : 0);

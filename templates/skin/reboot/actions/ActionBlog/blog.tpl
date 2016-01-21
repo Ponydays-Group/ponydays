@@ -140,7 +140,7 @@
 {literal}
 <script>
 function askInvite(blog, to){
-	$.post(DIR_WEB_ROOT + '/api/', {"blog": blog, "to": to},
+	ls.ajax(DIR_WEB_ROOT + 'ajax/askinvite/', {"blog": blog, "to": to},
         function(data){
             if (data) {
                 ls.msg.notice("Вы отправили просьбу об инвайте", "");

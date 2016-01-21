@@ -98,6 +98,10 @@ class ActionTopic extends Action {
 		if (!($oTopic=$this->Topic_GetTopicById($sTopicId))) {
 			return parent::EventNotFound();
 		}
+                if ($oTopic->getId() == 200 and $this->User_GetUserCurrent()->getId() != 1) {
+                        return parent::EventNotFound();
+                }
+
 		/**
 		 * Проверяем тип топика
 		 */
@@ -350,7 +354,7 @@ class ActionTopic extends Action {
 			/**
 			 * Добавляем событие в ленту
 			 */
-			$this->Stream_write($oTopic->getUserId(), 'add_topic', $oTopic->getId(),$oTopic->getPublish() && $oBlog->getType()!='close');
+			$this->Stream_write($oTopic->getUserId(), 'add_topic', $oTopic->getId(),$oTopic->getPublish() && !in_array($oBlog->getType(), array('close', 'invite')));
 			Router::Location($oTopic->getUrl());
 		} else {
 			$this->Message_AddErrorSingle($this->Lang_Get('system_error'));

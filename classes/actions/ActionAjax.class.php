@@ -78,6 +78,7 @@ class ActionAjax extends Action {
 		$this->AddEventPreg('/^geo/i','/^get/','/^cities/','EventGeoGetCities');
 
 		$this->AddEventPreg('/^infobox/i','/^info/','/^blog/','EventInfoboxInfoBlog');
+		$this->AddEventPreg('/^askinvite/','EventInviteUser');
 	}
 
 
@@ -369,6 +370,7 @@ class ActionAjax extends Action {
 		/**
 		 * Пользователь авторизован?
 		 */
+
 		if (!$this->oUserCurrent) {
 			$this->Message_AddErrorSingle($this->Lang_Get('need_authorization'),$this->Lang_Get('error'));
 			return;
@@ -387,6 +389,7 @@ class ActionAjax extends Action {
 			$this->Message_AddErrorSingle($this->Lang_Get('blog_vote_error_self'),$this->Lang_Get('attention'));
 			return;
 		}
+		$iValue=getRequestStr('value',null,'blog');
         $iValueOld = $iValue;
 		if ($oBlogVote=$this->Vote_GetVote($oBlog->getId(),'blog',$this->oUserCurrent->getId())) {
 			if ($iValue == $oBlogVote->getDirection()){
@@ -399,6 +402,7 @@ class ActionAjax extends Action {
 		/**
 		 * Имеет право на голосование?
 		 */
+
 		switch($this->ACL_CanVoteBlog($this->oUserCurrent,$oBlog)) {
 			case ModuleACL::CAN_VOTE_BLOG_TRUE:
 				$iValue=getRequestStr('value',null,'post');
@@ -1234,6 +1238,13 @@ class ActionAjax extends Action {
 		$this->Message_AddNoticeSingle($sMsg,$this->Lang_Get('attention'));
 		$this->Viewer_AssignAjax('bState',$bState);
 		$this->Viewer_AssignAjax('sTextToggle',$sTextToggle);
+	}
+
+	protected function EventInviteUser() {
+	    $a = $_POST["to"];
+	    $oUserCurrent = $this->ModuleUser_GetUserCurrent();
+	    $oBlog = $this->ModuleBlog_GetBlogById($_POST["blog"]);
+        $this->ModuleTalk_SendTalk("Просьба об инвайте", "Пользователь <a href='" . "/profile/" . $oUserCurrent->getLogin() . "/' class='user'>" . "<i class='icon-user'></i>" . $oUserCurrent->getLogin() . "</a> просит пригласить его в блог <a href='" . $oBlog->getUrlFull() . "'>" . $oBlog->getTitle() . "</a>.", $oUserCurrent->getId(), $a);
 	}
 }
 ?>

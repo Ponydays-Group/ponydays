@@ -134,7 +134,7 @@ class PluginEditcomment_ActionAjax extends PluginEditcomment_Inherit_ActionAjax
         
         $sText=$this->Text_Parser(getRequest('comment_text'));
         
-        if (mb_strlen($sText, 'utf-8') > Config::Get('plugin.editcomment.max_comment_length'))
+        if (mb_strlen($sText, 'utf-8') > Config::Get('module.comment.max_length'))
         {
             $this->Message_AddErrorSingle($this->Lang_Get('plugin.editcomment.err_max_comment_length', array('maxlength'=>Config::Get('plugin.editcomment.max_comment_length'))));
             return;

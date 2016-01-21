@@ -1,5 +1,8 @@
 .edited_comment
 {
+    color: green;
+    display: block;
+    width: 100%;
     text-align: right;
     font-size: 80%;
 }

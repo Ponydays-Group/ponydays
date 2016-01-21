@@ -470,7 +470,7 @@ class ActionTalk extends Action {
 		/**
 		 * Проверяем есть ли содержание топика
 		 */
-		if (!func_check(getRequestStr('talk_text'),'text',2,3000)) {
+		if (!func_check(getRequestStr('talk_text'),'text',2,Config::Get('module.comment.max_length'))) {
 			$this->Message_AddError($this->Lang_Get('talk_create_text_error'),$this->Lang_Get('error'));
 			$bOk=false;
 		}
@@ -630,7 +630,7 @@ class ActionTalk extends Action {
 		 * Проверяем текст комментария
 		 */
 		$sText=$this->Text_Parser(getRequestStr('comment_text'));
-		if (!func_check($sText,'text',2,3000)) {
+		if (!func_check($sText,'text',2,Config::Get('module.comment.max_length'))) {
 			$this->Message_AddErrorSingle($this->Lang_Get('talk_comment_add_text_error'),$this->Lang_Get('error'));
 			return;
 		}

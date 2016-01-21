@@ -1,6 +1,18 @@
 /**
  * Created by lunavod on 16.10.15.
  */
+function spoiler(b){
+    if(b.style.display != "block") {
+        jQuery(b).show(300);
+        b.style.display = "block";
+        b.parentElement.getElementsByClassName("spoiler-title")[0].className = "spoiler-title spoiler-open";
+    } else {
+        jQuery(b).hide(300);
+        b.parentElement.getElementsByClassName("spoiler-title")[0].className = "spoiler-title spoiler-close";
+
+    }
+}
+
 function spoiler_click(event){
     var event = event || window.event;
     if(event.button!=0)return;
@@ -15,15 +27,7 @@ function spoiler_click(event){
     if(!parent || parent.lastElementChild == target)return true;
     var b = parent.querySelector(".spoiler-body");
     if(!b) return;
-    if(b.style.display != "block") {
-        jQuery(b).show(300);
-        b.style.display = "block";
-        b.parentElement.getElementsByClassName("spoiler-title")[0].className = "spoiler-title spoiler-open";
-    } else {
-        jQuery(b).hide(300);
-        b.parentElement.getElementsByClassName("spoiler-title")[0].className = "spoiler-title spoiler-close";
-
-    }
+    spoiler(b);
     event.preventDefault ? event.preventDefault() : (event.returnValue=false);
     return false;
 }

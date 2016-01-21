@@ -1,6 +1,27 @@
 			{hook run='content_end'}
 		</div> <!-- /content -->
 	</div> <!-- /wrapper -->
+<script>
+{literal}
+function NewOldBunker(){
+	date = new Date();
+        date.setDate(date.getDate() + 100);
+        if(getCookie("UseOld") == "1") {
+                document.cookie = "UseOld=0; path=/; expires=" + date.toUTCString();
+                location.reload();
+        } else {
+                if(getCookie("UseOld") == "0") {
+                        document.cookie = "UseOld=1; path=/; expires=" + date.toUTCString();
+                        location.reload();
+                } else {
+                        document.cookie = "UseOld=1; path=/; expires=" + date.toUTCString();
+                        location.reload();
+                }
+	}
+}
+</script>
+<!-- Yandex.Metrika counter --> <script type="text/javascript"> (function (d, w, c) { (w[c] = w[c] || []).push(function() { try { w.yaCounter34742160 = new Ya.Metrika({ id:34742160, clickmap:true, trackLinks:true, accurateTrackBounce:true }); } catch(e) { } }); var n = d.getElementsByTagName("script")[0], s = d.createElement("script"), f = function () { n.parentNode.insertBefore(s, n); }; s.type = "text/javascript"; s.async = true; s.src = "https://mc.yandex.ru/metrika/watch.js"; if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); } })(document, window, "yandex_metrika_callbacks"); </script> <noscript><div><img src="https://mc.yandex.ru/watch/34742160" style="position:absolute; left:-9999px;" alt="" /></div></noscript> <!-- /Yandex.Metrika counter -->
+{/literal}
 
 
 	<footer id="footer">
@@ -9,7 +30,9 @@
 			<div style="height: 80px; margin: 10px auto 0px; width: 80px;">
 				<img src="{cfg name="path.static.skin"}/images/dark-to-day.png" onclick="bunkerStyle()" title="Светлый режим/темный режим" class="switch-theme" />
 			</div>
+		
                 <p style="margin: 10px; font-size: 12pt;"><a href="/?force-mobile=on">Мобильная версия</a></p>
+		<span style="cursor: pointer;" onclick="NewOldBunker()"><a>Что-то старое, что-то новое... Что-то синее.</a></span>
 		</div>
 		{hook run='body_end'}
 	</footer>
@@ -48,13 +71,14 @@ for(idx=0;idx<allNew.length;idx++){
 var despoil = function() {
 	var allBody = document.querySelectorAll('.spoiler-body');
 	idx=0
-	for(idx=0;idx<allBody.length;idx++){	
-		allBody[idx].style.display="inline" 
-	}
 	var allNew = document.querySelectorAll('.spoiler-title');
 	idx=0
 	for(idx=0;idx<allNew.length;idx++){	
 		allNew[idx].className="spoiler-title spoiler-open" 
+                b = allNew[idx].parentNode.querySelector(".spoiler-body");
+                jQuery(b).show(300);
+                b.style.display = "block";
+
 	}
 	var el = document.getElementById("spoil");
     el.innerHTML = 'Закрыть спойлеры<i class="fa fa-eye-slash">';
@@ -65,13 +89,13 @@ var despoil = function() {
 var spoil = function() {
 	var allBody = document.querySelectorAll('.spoiler-body');
 	idx=0
-	for(idx=0;idx<allBody.length;idx++){	
-		allBody[idx].style.display="none" 
-	}
 	var allNew = document.querySelectorAll('.spoiler-title');
 	idx=0
 	for(idx=0;idx<allNew.length;idx++){	
 		allNew[idx].className="spoiler-title spoiler-close" 
+                b = allNew[idx].parentNode.querySelector(".spoiler-body");
+                jQuery(b).hide(300);
+
 	}
 	var el = document.getElementById("spoil");
     el.innerHTML = 'Открыть спойлеры<i class="fa fa-eye-slash">';

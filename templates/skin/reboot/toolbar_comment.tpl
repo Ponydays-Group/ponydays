@@ -7,5 +7,13 @@
 		<input type="hidden" id="comment_last_id" value="{$params.iMaxIdComment}" />
 		<input type="hidden" id="comment_use_paging" value="{if $aPagingCmt and $aPagingCmt.iCountPage>1}1{/if}" />
 	</section>
+<script>
+function autoload(){
+    if (document.getElementById('autoload').checked){
+        ls.comments.load({$params.iTargetId}, '{$params.sTargetType}', null, true);
+    }
+}
+console.log(setInterval(autoload, 10000));
+</script>
 {/if}
 	

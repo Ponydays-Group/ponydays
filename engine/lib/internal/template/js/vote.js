@@ -70,9 +70,11 @@ ls.vote = (function ($) {
 
 			if (value > 0) {
 				divVoting.addClass(this.options.classes.plus);
+				divVoting.removeClass(this.options.classes.minus);
 			}
 			if (value < 0) {
 				divVoting.addClass(this.options.classes.minus);
+				divVoting.removeClass(this.options.classes.plus);
 			}
 			if (value == 0) {
 				divVoting.addClass(this.options.classes.voted_zero);

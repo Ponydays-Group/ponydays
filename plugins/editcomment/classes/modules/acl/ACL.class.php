@@ -54,6 +54,9 @@ class PluginEditcomment_ModuleACL extends PluginEditcomment_Inherit_ModuleACL
                     if ($oBlog->getIsModerator() or $oBlog->getIsAdministrator())
                         return true;
                 }
+                if ($oComment->getTarget()->getBlog()->getOwnerId() == $oUser->getId()){
+                    return true;
+                }
             }
         }
 

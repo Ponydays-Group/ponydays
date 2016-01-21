@@ -85,7 +85,6 @@ jQuery(document).ready(function($){
 	// Тул-бар топиков
 	ls.toolbar.topic.init();
 	// Кнопка "UP"
-	ls.toolbar.up.init();
 
 	
 	// Всплывающие сообщения

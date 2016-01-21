@@ -58,14 +58,6 @@
         </a>
     </li>
     </ul>
-    <ul class="userbar_info">
-    <li title="{$aLang.exit}">
-        <a href="{router page='login'}exit/?security_ls_key={$LIVESTREET_SECURITY_KEY}">
-            {$aLang.exit}
-            <i class="fa fa-times-circle-o"></i>
-        </a>
-    </li>
-    </ul>
     {else}
     {hook run='userbar_item'}
     <li>
@@ -94,7 +86,16 @@
     </ul>
     {/if}
     </ul>
+
     <ul class="userbar_info">
+        {if $oUserCurrent}
+    <li title="Выход">
+        <a href="{router page='login'}exit/?security_ls_key={$LIVESTREET_SECURITY_KEY}">
+            {$aLang.exit}
+            <i class="fa fa-times-circle-o"></i>
+        </a>
+    </li>
+{/if}
     <li title="О версии {Config::Get('site_version')}">
         <a href="/page/about">
             О версии {Config::Get('site_version')}
@@ -102,19 +103,11 @@
         </a>
     </li>
     <li title="Сообщить об ошибке">
-        <a href="http://bug.lunavod.ru/">
+        <a target="_blank" href="http://bitbucket.org/lunavod/bunker_stable/issues/">
             Сообщить об ошибке
             <i class="fa fa-exclamation-circle"></i>
         </a>
     </li>
-{if $oUserCurrent}
-    <li>
-        <a href="{router page='login'}exit/?security_ls_key={$LIVESTREET_SECURITY_KEY}">
-            {$aLang.exit}
-            <i class="fa fa-times-circle-o"></i>
-        </a>
-    </li>
-{/if}
     </ul>
 </div>
 </nav>

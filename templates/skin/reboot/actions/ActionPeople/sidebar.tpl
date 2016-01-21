@@ -8,8 +8,13 @@
 	<div class="block-content">
 		<ul>
 			<li>{$aLang.user_stats_all}: <strong>{$aStat.count_all}</strong></li>
-			<li>{$aLang.user_stats_active}: <strong>{$aStat.count_active}</strong></li>
-			<li>{$aLang.user_stats_noactive}: <strong>{$aStat.count_inactive}</strong></li>
+			<li>{$aLang.user_stats_active}: 
+				<ul class="people-active">
+					<li>За неделю: <strong>{$aStat.count_active_week}</strong></li>
+					<li>За день: <strong>{$aStat.count_active_day}</strong></li>
+					<li>За час: <strong>{$aStat.count_active_hour}</strong></li>
+				</ul>
+			</li>
 		</ul>
 		
 		<br />

@@ -33,6 +33,7 @@ window.addEventListener("DOMContentLoaded", function(){
     document.body.addEventListener("click", spoiler_click);
 });
 </script>
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.css">
 
 <link href="/waves.min.css" type="text/css" rel="stylesheet" />
 <script src="/waves.min.js" type="text/javascript"></script>

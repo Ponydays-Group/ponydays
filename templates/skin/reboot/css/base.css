@@ -169,10 +169,7 @@ h2.header-table { margin-bottom: 0; border-bottom: 1px solid #eee; padding-botto
 }
 .spoiler-body {
 	display: none; 
-	padding: 15px;
-	background-color: rgba(233, 234, 244, 0.32);
-	border: 1px solid rgba(92, 107, 192, 0.32);
-	border-radius: 0 0 5px 5px;
+	padding: 10px;
 	margin: 0px 0px 10px 3px;
 }
 
@@ -197,4 +194,8 @@ h2.header-table { margin-bottom: 0; border-bottom: 1px solid #eee; padding-botto
 }
 .switch-theme:hover {
 	transform: rotate(180deg);
+}
+
+.comment .comment-avatar {
+    border-radius: 0px;
 }

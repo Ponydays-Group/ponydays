@@ -62,7 +62,7 @@
         {$sNoticeNotAllow}
 {else}
         {if $oUserCurrent}
-                {*{include file='editor.tpl' sImgToLoad='form_comment_text' sSettingsTinymce='ls.settings.getTinymceComment()' sSettingsMarkitup='ls.settings.getMarkitupComment()'}*}
+                {include file='editor.tpl' sImgToLoad='form_comment_text' sSettingsTinymce='ls.settings.getTinymceComment()' sSettingsMarkitup='ls.settings.getMarkitupComment()'}
 
                 <h4 class="reply-header" id="comment_id_0">
                         <a href="#" class="button" onclick="ls.comments.toggleCommentForm(0); return false;">{$sNoticeCommentAdd}</a>
@@ -87,6 +87,9 @@
                                 <input type="hidden" name="cmt_target_id" value="{$iTargetId}" />
                         </form>
                 </div>
+<script>
+$('.markitup-editor').markItUp(ls.settings.getMarkitupComment())
+</script>
         {else}
                 {$aLang.comment_unregistered}
         {/if}

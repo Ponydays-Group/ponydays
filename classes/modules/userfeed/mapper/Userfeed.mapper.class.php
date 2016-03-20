@@ -102,7 +102,7 @@ class ModuleUserfeed_MapperUserfeed extends Mapper {
 								{ OR (t.user_id IN (?a) AND b.blog_type='personal') }
 							)
  								
-                            ORDER BY t.topic_id DESC	
+                            ORDER BY t.topic_date_add DESC	
                             { LIMIT 0, ?d }";
 
 

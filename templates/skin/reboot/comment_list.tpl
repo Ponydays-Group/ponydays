@@ -21,7 +21,7 @@
 				<li class="comment-author"><a href="{$oUser->getUserWebPath()}">{$oUser->getLogin()}</a></li>
 				<li class="comment-date">
 					<a href="{if $oConfig->GetValue('module.comment.nested_per_page')}{router page='comments'}{else}{$oTopic->getUrl()}#comment{/if}{$oComment->getId()}" class="link-dotted" title="{$aLang.comment_url_notice}">
-						<span title="{date_format date=$oComment->getDate() hours_back="12" minutes_back="60" now="60" day="day H:i" format="j F Y, H:i"}">{date_format date=$oTopic->getDateAdd() format="j F Y, H:i"}</span>
+						<span title="{date_format date=$oComment->getDate() hours_back="12" minutes_back="60" now="60" day="day H:i" format="j F Y, H:i"}">{date_format date=$oComment->getDate() format="j F Y, H:i"}</span>
 					</a>
 				</li>
 				{if $oUserCurrent and !$bNoCommentFavourites}

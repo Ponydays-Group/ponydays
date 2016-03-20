@@ -731,7 +731,7 @@ class ModuleBlog extends Module {
 				/**
 				 * Получаем закрытые блоги, где пользователь является автором
 				 */
-				$aOwnerBlogs=$this->GetBlogsByFilter(array('type'=>'close','user_owner_id'=>$oUser->getId()),array(),1,100,array());
+				$aOwnerBlogs=$this->GetBlogsByFilter(array('type'=>array('close', 'invite'),'user_owner_id'=>$oUser->getId()),array(),1,100,array());
 				$aOwnerBlogs=array_keys($aOwnerBlogs['collection']);
 				$aCloseBlogs=array_diff($aCloseBlogs,$aOpenBlogs,$aOwnerBlogs);
 			}

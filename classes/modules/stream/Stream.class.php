@@ -156,19 +156,13 @@ class ModuleStream extends Module {
 	 * @return bool
 	 */
 	public function Write($iUserId, $sEventType, $iTargetId, $iPublish=1) {
-		$iPublish=(int)$iPublish;
+		/*$iPublish=(int)$iPublish;
 		if (!$this->IsAllowEventType($sEventType)) {
 			return false;
 		}
 		$aParams=$this->aEventTypes[$sEventType];
 		if (isset($aParams['unique']) and $aParams['unique']) {
-			/**
-			 * Проверяем на уникальность
-			 */
 			if ($oEvent=$this->GetEventByTarget($sEventType, $iTargetId)) {
-				/**
-				 * Событие уже было
-				 */
 				if ($oEvent->getPublish()!=$iPublish) {
 					$oEvent->setPublish($iPublish);
 					$this->UpdateEvent($oEvent);
@@ -177,13 +171,7 @@ class ModuleStream extends Module {
 			}
 		}
 		if (isset($aParams['unique_user']) and $aParams['unique_user']) {
-			/**
-			 * Проверяем на уникальность для конкретного пользователя
-			 */
 			if ($oEvent=$this->GetEventByTarget($sEventType, $iTargetId, $iUserId)) {
-				/**
-				 * Событие уже было
-				 */
 				if ($oEvent->getPublish()!=$iPublish) {
 					$oEvent->setPublish($iPublish);
 					$this->UpdateEvent($oEvent);
@@ -193,9 +181,6 @@ class ModuleStream extends Module {
 		}
 
 		if ($iPublish) {
-			/**
-			 * Создаем новое событие
-			 */
 			$oEvent=Engine::GetEntity('Stream_Event');
 			$oEvent->setEventType($sEventType);
 			$oEvent->setUserId($iUserId);
@@ -204,6 +189,7 @@ class ModuleStream extends Module {
 			$oEvent->setPublish($iPublish);
 			$this->AddEvent($oEvent);
 		}
+		*/
 		return true;
 	}
 	/**

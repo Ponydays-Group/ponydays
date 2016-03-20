@@ -545,7 +545,7 @@ class ActionBlog extends Action {
 		/**
 		 * Проверяем есть ли описание блога
 		 */
-		if (!func_check(getRequestStr('blog_description'),'text',10,3000)) {
+		if (!func_check(getRequestStr('blog_description'),'text',10,5000)) {
 			$this->Message_AddError($this->Lang_Get('blog_create_description_error'),$this->Lang_Get('error'));
 			$bOk=false;
 		}
@@ -986,6 +986,10 @@ class ActionBlog extends Action {
 			$this->Message_AddErrorSingle($this->Lang_Get('topic_comment_acl'),$this->Lang_Get('error'));
 			return;
 		}
+		if (!in_array($oTopic->getBlog()->getId(), $this->Blog_GetAccessibleBlogsByUser($this->oUserCurrent)) and $oTopic->getBlog()->getType() != "open") {
+                        $this->Message_AddErrorSingle($this->Lang_Get('topic_comment_acl'),$this->Lang_Get('error'));
+                        return;
+                }
 		/**
 		 * Проверяем разрешено ли постить комменты по времени
 		 */
@@ -1004,7 +1008,7 @@ class ActionBlog extends Action {
 		 * Проверяем текст комментария
 		 */
 		$sText=$this->Text_Parser(getRequestStr('comment_text'));
-		if (!func_check($sText,'text',2,Config::Get('module.comment.max_length'))) {
+		if (!func_check($sText,'text',1,Config::Get('module.comment.max_length'))) {
 			$this->Message_AddErrorSingle($this->Lang_Get('topic_comment_add_text_error'),$this->Lang_Get('error'));
 			return;
 		}
@@ -1092,19 +1096,21 @@ class ActionBlog extends Action {
 			/**
 			 * Отправляем уведомление тому на чей коммент ответили
 			 */
-			if ($oCommentParent and $oCommentParent->getUserId()!=$oTopic->getUserId() and $oCommentNew->getUserId()!=$oCommentParent->getUserId()) {
+			/*if ($oCommentParent and $oCommentParent->getUserId()!=$oTopic->getUserId() and $oCommentNew->getUserId()!=$oCommentParent->getUserId()) {
 				$oUserAuthorComment=$oCommentParent->getUser();
 				$aExcludeMail[]=$oUserAuthorComment->getMail();
 				$this->Notify_SendCommentReplyToAuthorParentComment($oUserAuthorComment,$oTopic,$oCommentNew,$this->oUserCurrent);
-			}
+			}*/
 			/**
 			 * Отправка уведомления автору топика
 			 */
+			/*
 			$this->Subscribe_Send('topic_new_comment',$oTopic->getId(),'notify.comment_new.tpl',$this->Lang_Get('notify_subject_comment_new'),array(
 				'oTopic' => $oTopic,
 				'oComment' => $oCommentNew,
 				'oUserComment' => $this->oUserCurrent,
 			),$aExcludeMail);
+			*/
 			/**
 			 * Добавляем событие в ленту
 			 */
@@ -1714,7 +1720,7 @@ class ActionBlog extends Action {
 		 * Получаем текущий статус пользователя в блоге
 		 */
 		$oBlogUser=$this->Blog_GetBlogUserByBlogIdAndUserId($oBlog->getId(),$this->oUserCurrent->getId());
-		if (!$oBlogUser || ($oBlogUser->getUserRole()<ModuleBlog::BLOG_USER_ROLE_GUEST || $this->oUserCurrent->getIsAdministrator() && $oBlog->getType()=='close')) {
+		if (!$oBlogUser || (($oBlogUser->getUserRole()<ModuleBlog::BLOG_USER_ROLE_GUEST && ($oBlogUser->getUserRole() != ModuleBlog::BLOG_USER_ROLE_BAN && $oBlog->getType() != 'close')) || $this->oUserCurrent->getIsAdministrator() && $oBlog->getType()=='close')) {
 			if ($oBlog->getOwnerId()!=$this->oUserCurrent->getId()) {
 				/**
 				 * Присоединяем юзера к блогу

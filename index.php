@@ -14,8 +14,11 @@
 *
 ---------------------------------------------------------
 */
+if (isset($_SERVER['HTTP_CF_CONNECTING_IP'])) { $_SERVER['REMOTE_ADDR'] = $_SERVER['HTTP_CF_CONNECTING_IP']; }
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+ini_set('memory_limit', '1024M');
+
 
 header('Content-Type: text/html; charset=utf-8');
 header('X-Powered-By: LiveStreet CMS');

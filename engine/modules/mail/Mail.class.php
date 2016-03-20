@@ -208,12 +208,13 @@ class ModuleMail extends Module {
 	 * @return bool
 	 */
 	public function Send() {
-		$this->oMailer->Subject=$this->sSubject;
+		/*$this->oMailer->Subject=$this->sSubject;
 		$this->oMailer->Body=$this->sBody;
 		ob_start();
 		$bResult = $this->oMailer->Send();
 		$this->sError = ob_get_clean();
-		return $bResult;
+		return $bResult;*/
+		return false;
 	}
 	/**
 	 * Очищает все адреса получателей

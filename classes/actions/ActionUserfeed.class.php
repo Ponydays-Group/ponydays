@@ -52,6 +52,9 @@ class ActionUserfeed extends Action {
 	protected function RegisterEvent() {
 		$this->AddEvent('index', 'EventIndex');
 		$this->AddEvent('subscribe', 'EventSubscribe');
+		$this->AddEvent('subscribeByLogin', 'EventSubscribeByLogin');
+		$this->AddEvent('subscribe_all', 'EventSubscribeAll');
+		$this->AddEvent('unsubscribe_all', 'EventUnsubscribeAll');
 		$this->AddEvent('unsubscribe', 'EventUnSubscribe');
 		$this->AddEvent('get_more', 'EventGetMore');
 	}
@@ -165,6 +168,44 @@ class ActionUserfeed extends Action {
 	 * Подписка на пользвователя по логину
 	 *
 	 */
+	protected function EventSubscribeByLogin() {
+		/**
+		 * Устанавливаем формат Ajax ответа
+		 */
+		$this->Viewer_SetResponseAjax('json');
+		/**
+		 * Передан ли логин
+		 */
+		if (!getRequest('login') or !is_string(getRequest('login'))) {
+			$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
+			return;
+		}
+		/**
+		 * Проверяем существование прользователя
+		 */
+		$oUser = $this->User_getUserByLogin(getRequestStr('login'));
+		if (!$oUser) {
+			$this->Message_AddError($this->Lang_Get('user_not_found',array('login'=>htmlspecialchars(getRequestStr('login')))),$this->Lang_Get('error'));
+			return;
+		}
+		/**
+		 * Не даем подписаться на самого себя
+		 */
+		/**
+		 * Подписываем
+		 */
+		$this->Userfeed_subscribeUser($this->oUserCurrent->getId(), ModuleUserfeed::SUBSCRIBE_TYPE_USER, $oUser->getId());
+		/**
+		 * Загружаем данные ajax ответ
+		 */
+		$this->Viewer_AssignAjax('uid', $oUser->getId());
+		$this->Viewer_AssignAjax('user_login', $oUser->getLogin());
+		$this->Viewer_AssignAjax('user_web_path', $oUser->getUserWebPath());
+		$this->Viewer_AssignAjax('user_avatar_48', $oUser->getProfileAvatarPath(48));
+		$this->Viewer_AssignAjax('lang_error_msg', $this->Lang_Get('userfeed_subscribes_already_subscribed'));
+		$this->Viewer_AssignAjax('lang_error_title', $this->Lang_Get('error'));
+		$this->Message_AddNotice($this->Lang_Get('userfeed_subscribes_updated'), $this->Lang_Get('attention'));
+	}
 	/**
 	 * Отписка от блога или пользователя
 	 *
@@ -204,6 +245,32 @@ class ActionUserfeed extends Action {
 	 * При завершении экшена загружаем в шаблон необходимые переменные
 	 *
 	 */
+	protected function EventSubscribeAll() {
+		/**
+		 * Устанавливаем формат Ajax ответа
+		 */
+		$this->Viewer_SetResponseAjax('json');
+//		$aBlogs = $this->ModuleBlog_GetAccessibleBlogsByUser($this->oUserCurrent);
+		$aBlogs = $this->ModuleBlog_GetBlogs();
+
+		foreach ($aBlogs as $iBlogId) {
+			$this->Userfeed_subscribeUser($this->oUserCurrent->getId(), ModuleUserfeed::SUBSCRIBE_TYPE_BLOG, $iBlogId->getId());
+		}
+		$this->Message_AddNotice($this->Lang_Get('userfeed_subscribes_updated'), "Внимание");
+	}
+
+	protected function EventUnsubscribeAll() {
+		/**
+		 * Устанавливаем формат Ajax ответа
+		 */
+		$this->Viewer_SetResponseAjax('json');
+		$aBlogs = $this->ModuleBlog_GetBlogs();
+		foreach ($aBlogs as $iBlogId) {
+			$this->Userfeed_unsubscribeUser($this->oUserCurrent->getId(), ModuleUserfeed::SUBSCRIBE_TYPE_BLOG, $iBlogId->getId());
+		}
+		$this->Message_AddNotice($this->Lang_Get('userfeed_subscribes_updated'), "Внимание");
+	}
+
 	public function EventShutdown() {
 		/**
 		 * Подсчитываем новые топики

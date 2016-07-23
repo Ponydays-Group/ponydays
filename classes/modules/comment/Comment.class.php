@@ -316,13 +316,13 @@ class ModuleComment extends Module {
 		/**
 		 * Исключаем из выборки идентификаторы закрытых блогов
 		 */
-		$aCloseBlogs = ($this->oUserCurrent && $sId==$this->oUserCurrent->getId())
+		/*$aCloseBlogs = ($this->oUserCurrent && $sId==$this->oUserCurrent->getId())
 			? array()
-			: $this->Blog_GetInaccessibleBlogsByUser();
-		$s=serialize($aCloseBlogs);
+			: $this->Blog_GetInaccessibleBlogsByUser();*/
+		$s=serialize(array());
 
 		if (false === ($data = $this->Cache_Get("comment_count_user_{$sId}_{$sTargetType}_{$s}"))) {
-			$data = $this->oMapper->GetCountCommentsByUserId($sId,$sTargetType,array(),$aCloseBlogs);
+			$data = $this->oMapper->GetCountCommentsByUserId($sId,$sTargetType,array(),array());
 			$this->Cache_Set($data, "comment_count_user_{$sId}_{$sTargetType}", array("comment_new_user_{$sId}_{$sTargetType}","comment_update_status_{$sTargetType}"), 60*60*24*2);
 		}
 		return $data;
@@ -475,6 +475,8 @@ class ModuleComment extends Module {
 			$sId=$this->oMapper->AddCommentTree($oComment);
 			$this->Cache_Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG,array("comment_update"));
 		} else {
+			$sHost = preg_replace('/(http:\/\/|https:\/\/|\/\/)/', '', iconv_substr(Config::Get('path.root.web'), 0, -1));
+			$oComment->setText(preg_replace('/href="(http|https):\/\/'.$sHost.'(\/)/', 'href="/', $oComment->getText()));
 			$sId=$this->oMapper->AddComment($oComment);
 		}
 		if ($sId) {
@@ -485,8 +487,17 @@ class ModuleComment extends Module {
 			$this->Cache_Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG,array("comment_new_{$oComment->getTargetType()}","comment_new_user_{$oComment->getUserId()}_{$oComment->getTargetType()}","comment_new_{$oComment->getTargetType()}_{$oComment->getTargetId()}"));
 			$oComment->setId($sId);
 			$oTarget = $this->Topic_GetTopicById($oComment->getTargetId());
-			if (strstr($oComment->getText(), "@moderator") and $oTarget->getBlog()->getType() == "open") {
-				$this->Talk_SendTalk("Вызов модератора в пост " . $oTarget->getTitle(), "Я прошу модераторов посмотреть пост <a href='" . $oTarget->getUrl() . "'>" . $oTarget->getTitle() . "</a> и комментарии к нему на соответствие правилам.", $oComment->getUserId(), Config::Get("moderator"));
+			if (strstr($oComment->getText(), "@moderator")) {
+				if ($oTarget->getBlog()->getType() == "open") {
+					$this->Talk_SendTalk("Вызов модератора в пост " . $oTarget->getTitle(), "Я <a target='_blank' href='".$oTarget->getUrl()."#comment".$sId."'>прошу</a> модераторов посмотреть пост <a href='" . $oTarget->getUrl() . "'>" . $oTarget->getTitle() . "</a> и комментарии к нему на соответствие правилам.", $oComment->getUserId(), Config::Get("moderator"));
+				} else {
+					$aModersCollection = $this->ModuleBlog_GetBlogUsersByBlogId($oTarget->getBlog()->getId(),ModuleBlog::BLOG_USER_ROLE_MODERATOR)['collection'];
+					$aModers = array();
+					foreach ($aModersCollection as $oBlogUser) {
+						$aModers[] = $oBlogUser->getUserId();
+					}
+					$this->Talk_SendTalk("Вызов модератора в пост " . $oTarget->getTitle(), "Я <a target='_blank' href='".$oTarget->getUrl()."#comment".$sId."'>прошу</a> модераторов посмотреть пост <a href='" . $oTarget->getUrl() . "'>" . $oTarget->getTitle() . "</a> и комментарии к нему на соответствие правилам.", $oComment->getUserId(), $aModers);//$aModers);
+				}
 			}
 			return $oComment;
 		}

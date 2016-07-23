@@ -26,6 +26,17 @@ class BlockUserfeedUsers extends Block {
 	 * Запуск обработки
 	 */
 	public function Exec() {
+		/**
+		 * Получаем необходимые переменные и прогружаем в шаблон
+		 */
+		if ($oUserCurrent = $this->User_getUserCurrent()) {
+			/**
+			 * Получаем необходимые переменные и прогружаем в шаблон
+			 */
+			$aUserSubscribes = $this->Userfeed_getUserSubscribes($oUserCurrent->getId());
+			$aFriends = $this->User_getUsersFriend($oUserCurrent->getId());
+			$this->Viewer_Assign('aUserfeedSubscribedUsers', $aUserSubscribes['users']);
+			$this->Viewer_Assign('aUserfeedFriends', $aFriends['collection']);
 		}
 	}
 }

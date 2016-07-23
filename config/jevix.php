@@ -64,7 +64,7 @@ return array(
 			),
 			array(
 				'iframe',
-				array('width' => '#int', 'height' => '#int', 'src' => array('#domain'=>array('youtube.com','rutube.ru','vimeo.com')))
+				array('width' => '#int', 'height' => '#int', 'src' => array('#domain'=>array('music.yandex.ru', 'music.yandex.kz', 'youtube.com','rutube.ru','vimeo.com', 'soundcloud.com')))
 			),
 			array(
 				'ls',

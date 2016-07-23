@@ -434,11 +434,15 @@ class ModuleACL extends Module {
 	 * @param  ModuleUser_EntityUser $oUser	Пользователь
 	 * @return bool
 	 */
-	public function CanDeleteComment($oUser) {
+	public function CanDeleteComment($oUser, $oComment) {
 		if ($oUser->isGlobalModerator()) {
-			return true;
+			if ($oComment->getTargetType() != 'talk') {
+				if ($oComment->getTarget()->getBlog()->getType() != 'open'){
+					return false;
+				}
+			}
 		}
-		if (!$oUser || !$oUser->isAdministrator()) {
+		if (!$oUser || !$oUser->isAdministrator() and !$oUser->isGlobalModerator()) {
 			return false;
 		}
 		return true;

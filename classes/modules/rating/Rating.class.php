@@ -51,7 +51,7 @@ class ModuleRating extends Module {
 		 * Сохраняем силу
 		 */
 		$oUserComment=$this->User_GetUserById($oComment->getUserId());
-		$iSkillNew=$oUserComment->getSkill()+$iValue/10;
+		$iSkillNew=$oUserComment->getSkill()+$iValue/100;
 		$oUserComment->setSkill($iSkillNew);
 		$this->User_Update($oUserComment);
 		return $iValue;
@@ -99,9 +99,9 @@ class ModuleRating extends Module {
 		$oUserTarget->setRating($iRatingNew);
 		if (!$voted){
 		    if ($iValue>0){
-		        $oUserTarget->setSkill($oUserTarget->getSkill()+10.0);
+		        $oUserTarget->setSkill($oUserTarget->getSkill()+5.0);
 		    } else {
-			    $oUserTarget->setSkill($oUserTarget->getSkill()-10.0);
+			    $oUserTarget->setSkill($oUserTarget->getSkill()-5.0);
 		    }
 	    }
 		$this->User_Update($oUserTarget);

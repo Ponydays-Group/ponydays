@@ -84,6 +84,7 @@ class ActionTalk extends Action {
 		$this->AddEvent('ajaxdeletetalkuser', 'AjaxDeleteTalkUser');
 		$this->AddEvent('ajaxaddtalkuser', 'AjaxAddTalkUser');
 		$this->AddEvent('ajaxnewmessages', 'AjaxNewMessages');
+		$this->AddEvent('ajaxmarkasread', 'EventMarkAsRead');
 	}
 
 
@@ -95,6 +96,23 @@ class ActionTalk extends Action {
 	/**
 	 * Удаление письма
 	 */
+	protected function EventMarkAsRead() {
+		$this->Viewer_SetResponseAjax('json');
+		$this->oUserCurrent = $this->User_GetUserCurrent();
+		$iTargetId = getRequest('target');
+		if (!($oTalk = $this->Talk_GetTalkById($iTargetId))) {
+			$this->Message_AddErrorSingle('System error', $this->Lang_Get('attention'));
+			return;
+		}
+		if (!($oTalkUser=$this->Talk_GetTalkUser($oTalk->getId(),$this->oUserCurrent->getId()))) {
+                        return;
+                }
+                $oTalkUser->setDateLast(date("Y-m-d H:i:s"));
+                $oTalkUser->setCommentCountNew(0);
+                if ($this->Talk_UpdateTalkUser($oTalkUser)) {
+			$this->Message_AddNoticeSingle("Сообщение помечено как прочитанное", "Успешно");
+		}
+	}
 	protected function EventDelete() {
 		$this->Security_ValidateSendForm();
 		/**

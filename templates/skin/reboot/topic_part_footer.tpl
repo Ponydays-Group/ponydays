@@ -54,12 +54,8 @@
 				{if $oVote || ($oUserCurrent && $oTopic->getUserId() == $oUserCurrent->getId()) || strtotime($oTopic->getDateAdd()) < $smarty.now-$oConfig->GetValue('acl.vote.topic.limit_time')}
 					{assign var="bVoteInfoShow" value=true}
 				{/if}
-				{if $oUserCurrent}
-					{if $oUserCurrent->getId() != $oUser->getId()}
 				<div class="vote-up" onclick="return ls.vote.vote({$oTopic->getId()},this,1,'topic');"><i class="fa fa-chevron-up"></i></div>
 				<div class="vote-down" onclick="return ls.vote.vote({$oTopic->getId()},this,-1,'topic');"><i class="fa fa-chevron-down"></i></div>
-					{/if}
-				{/if}
 				{if $bVoteInfoShow}
 					<div id="vote-info-topic-{$oTopic->getId()}" style="display: none;">
 						+ {$oTopic->getCountVoteUp()}<br/>

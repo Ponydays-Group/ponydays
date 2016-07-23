@@ -21,7 +21,7 @@
 
 {assign var="aUserFieldValues" value=$oUserProfile->getUserFieldValues(true,array(''))}
 
-{if $oUserProfile->getProfileSex()!='other' || $oUserProfile->getProfileBirthday() || $oGeoTarget || $oUserProfile->getProfileAbout() || count($aUserFieldValues)}
+{if ($oUserProfile->getProfileSex() and $oUserProfile->getProfileSex()!='other') || $oUserProfile->getProfileBirthday() || $oGeoTarget || $oUserProfile->getProfileAbout() || count($aUserFieldValues)}
 	<h2 class="header-table">{$aLang.profile_privat}</h2>
 	
 	
@@ -32,10 +32,8 @@
 				<td>
 					{if $oUserProfile->getProfileSex()=='man'}
 						{$aLang.profile_sex_man}
-					{elseif $oUserProfile->getProfileSex()=='woman'}
-						{$aLang.profile_sex_woman}
 					{else}
-					     другой
+						{$aLang.profile_sex_woman}
 					{/if}
 				</td>
 			</tr>

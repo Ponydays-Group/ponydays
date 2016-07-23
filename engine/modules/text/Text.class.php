@@ -154,11 +154,7 @@ $sText = preg_replace(
 		}
 		$sResult=$this->FlashParamParser($sText);
 		$sResult=preg_replace('/<iframe src=\"http:\/\/vk\.com\/(.*)\"(.*)\"><\/iframe>/Ui','<video>http://vk.com/$1</video>',$sResult);
-                if ($this->User_GetUserCurrent()){
-		if( !$this->User_GetUserCurrent()->isAdministrator() ) {
-                    $sResult=$this->JevixParser($sResult);
-                }
-		}
+                $sResult=$this->JevixParser($sResult);
 		$sResult=$this->VideoParser($sResult);
 		$sResult=$this->CodeSourceParser($sResult);
 		return $sResult;

@@ -651,6 +651,7 @@ class ModuleTopic extends Module {
 		if($this->oUserCurrent && $bAddAccessible) {
 			$aOpenBlogs = $this->Blog_GetAccessibleBlogsByUser($this->oUserCurrent);
 			if(count($aOpenBlogs)) $aFilter['blog_type']['close'] = $aOpenBlogs;
+			if(count($aOpenBlogs)) $aFilter['blog_type']['invite'] = $aOpenBlogs;
 		}
 		return $this->GetTopicsByFilter($aFilter,$iPage,$iPerPage);
 	}

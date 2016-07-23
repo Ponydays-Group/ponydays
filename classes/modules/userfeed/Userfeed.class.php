@@ -76,7 +76,11 @@ class ModuleUserfeed extends Module {
 	public function read($iUserId, $iCount = null, $iFromId = null) {
 		if (!$iCount) $iCount = Config::Get('module.userfeed.count_default');
 		$aUserSubscribes = $this->oMapper->getUserSubscribes($iUserId);
-		$aTopicsIds = $this->oMapper->readFeed($aUserSubscribes, $iCount, $iFromId);
+		$aInaccessible = $this->ModuleBlog_GetInaccessibleBlogsByUser($this->ModuleUser_GetUserById($iUserId));
+		if ($this->User_GetUserById($iUserId)->isAdministrator()) {
+			$aInaccessible = array(0);
+		}
+		$aTopicsIds = $this->oMapper->readFeed($aUserSubscribes, $iCount, $iFromId, $aInaccessible);
 		return $this->Topic_getTopicsAdditionalData($aTopicsIds);
 	}
 	/**

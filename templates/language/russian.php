@@ -858,7 +858,7 @@ return array(
 	/**
 	 * Userfeed
 	 */
-	'userfeed_block_blogs_title' => 'Блоги',
+	'userfeed_block_blogs_title' => 'Фильтр блогов',
 	'userfeed_block_users_title' => 'Люди',
 	'userfeed_block_users_append' => 'Добавить',
 	'userfeed_block_users_friends' => 'Друзья',
@@ -866,7 +866,7 @@ return array(
 	'userfeed_subscribes_updated' => 'Настройки ленты сохранены',
 	'userfeed_get_more' => 'Получить ещё топики',
 	'userfeed_title' => 'Избранные блоги',
-	'userfeed_settings_note_follow_blogs' => 'Выберите блоги которые вы хотели бы читать',
+	'userfeed_settings_note_follow_blogs' => 'Выберите блоги которые вы хотели бы убрать из ленты',
 	'userfeed_settings_note_follow_user' => 'Добавьте людей, топики которых вы хотели бы читать',
 	'userfeed_settings_note_follow_friend' => 'Выберите друзей, топики которых вы хотели бы читать',
 	'userfeed_no_subscribed_users' => 'Вы ещё не подписались на пользователей, чьи топики хотите видеть',

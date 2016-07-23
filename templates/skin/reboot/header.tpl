@@ -20,9 +20,8 @@
 	
 	<meta name="description" content="{$sHtmlDescription}">
 	<meta name="keywords" content="{$sHtmlKeywords}">
-	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.css">
-	<link rel="stylesheet" href="{cfg name="path.static.skin"}/css/menu.css">
-        <link href='https://fonts.googleapis.com/css?family=Roboto&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+ <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.css">
+ <link rel="stylesheet" href="{cfg name="path.static.skin"}/css/menu.css">
 	{$aHtmlHeadFiles.css}
 	<link href="{cfg name='path.static.skin'}/images/favicon.ico?v1" rel="shortcut icon" />
 	<link rel="search" type="application/opensearchdescription+xml" href="{router page='search'}opensearch/" title="{cfg name='view.name'}" />
@@ -67,8 +66,6 @@ function getCookie(name) {
 }	
 </script>
 	{$aHtmlHeadFiles.js}
-
-	
 	<script type="text/javascript">
 		var tinyMCE = false;
 		ls.lang.load({json var = $aLangJs});
@@ -93,16 +90,7 @@ function getCookie(name) {
 	{hook run='html_head_end'}
 	
 <style>
-.sticky {
-  position: fixed;
-  z-index: 101;
-}
-.stop {
-  position: relative;
-  z-index: 101;
-}
 {literal}
-/* #container{min-width: 1200px;} */
 @font-face {
  font-family:"Modernist One";
  src: url('/Modernist_One.ttf');
@@ -125,6 +113,9 @@ function getCookie(name) {
 	
 	{if $oUserCurrent->isAdministrator()}
 		{assign var=body_classes value=$body_classes|cat:' ls-user-role-admin'}
+	{/if}
+	{if $oUserCurrent->isGlobalModerator()}
+		{assign var=body_classes value=$body_classes|cat:' ls-user-role-moderator'}
 	{/if}
 {else}
 	{assign var=body_classes value=$body_classes|cat:' ls-user-role-guest'}

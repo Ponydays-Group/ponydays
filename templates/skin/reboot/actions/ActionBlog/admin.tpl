@@ -14,6 +14,7 @@
 					<th class="ta-c">{$aLang.blog_admin_users_administrator}</th>
 					<th class="ta-c">{$aLang.blog_admin_users_moderator}</th>
 					<th class="ta-c">{$aLang.blog_admin_users_reader}</th>
+					<th class="ta-c">Read only</th>
 					<th class="ta-c">{$aLang.blog_admin_users_bun}</th>
 				</tr>
 			</thead>
@@ -34,6 +35,7 @@
 							<td class="ta-c"><input type="radio" name="user_rank[{$oUser->getId()}]" value="administrator" {if $oBlogUser->getIsAdministrator()}checked{/if} /></td>
 							<td class="ta-c"><input type="radio" name="user_rank[{$oUser->getId()}]" value="moderator" {if $oBlogUser->getIsModerator()}checked{/if} /></td>
 							<td class="ta-c"><input type="radio" name="user_rank[{$oUser->getId()}]" value="reader" {if $oBlogUser->getUserRole()==$BLOG_USER_ROLE_USER}checked{/if} /></td>
+							<td class="ta-c"><input type="radio" name="user_rank[{$oUser->getId()}]" value="ro" {if $oBlogUser->getUserRole()==ModuleBlog::BLOG_USER_ROLE_RO}checked{/if} /></td>
 							<td class="ta-c"><input type="radio" name="user_rank[{$oUser->getId()}]" value="ban" {if $oBlogUser->getUserRole()==$BLOG_USER_ROLE_BAN}checked{/if} /></td>
 						{/if}
 					</tr>

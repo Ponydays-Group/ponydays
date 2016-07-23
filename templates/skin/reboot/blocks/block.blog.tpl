@@ -7,7 +7,7 @@
 		</header>
 
 		<div class="block-content">
-			<span id="blog_user_count_{$oBlog->getId()}">{$oBlog->getCountUser()}</span> {$oBlog->getCountUser()|declension:$aLang.reader_declension:'russian'}<br />
+			<a target="_blank" href="{{$oBlog->getUrlFull()}}users"><span id="blog_user_count_{$oBlog->getId()}">{$oBlog->getCountUser()}</span> {$oBlog->getCountUser()|declension:$aLang.reader_declension:'russian'}</a><br />
 			{$oBlog->getCountTopic()} {$oBlog->getCountTopic()|declension:$aLang.topic_declension:'russian'}
 			
 			<br />

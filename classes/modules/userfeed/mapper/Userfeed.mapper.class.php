@@ -85,34 +85,35 @@ class ModuleUserfeed_MapperUserfeed extends Mapper {
 	 * @param int $iFromId Получить записи, начиная с указанной
 	 * @return array
 	 */
-	public function readFeed($aUserSubscribes, $iCount, $iFromId) {
-		$sql = "
-							SELECT 		
-								t.topic_id										
-							FROM 
-								".Config::Get('db.table.topic')." as t,
-								".Config::Get('db.table.blog')." as b
-							WHERE 
-								t.topic_publish = 1 
-								AND t.blog_id=b.blog_id 
-								{ AND t.topic_id < ?d }
+        public function readFeed($aUserSubscribes, $iCount, $iFromId, $aInaccessible) {
+                $sql = "
+                                                        SELECT
+                                                                t.topic_id                                                          
+       $
+                                                        FROM
+                                                                ".Config::Get('db.table.topic')." as t,
+                                                                ".Config::Get('db.table.blog')." as b
+                                                        WHERE
+                                                                t.topic_publish = 1
+                                                                AND t.blog_id=b.blog_id
+                                                                { AND t.topic_id < ?d }
 
-							AND ( false 
-								{ OR t.blog_id IN (?a) } 
-								{ OR (t.user_id IN (?a) AND b.blog_type='personal') }
-							)
- 								
-                            ORDER BY t.topic_date_add DESC	
+                                                        AND ( false
+                                                                { OR t.blog_id NOT IN (?a) }
+                                                                { AND t.user_id NOT IN (?a) }
+                                                        )
+
+                            ORDER BY t.topic_date_add DESC
                             { LIMIT 0, ?d }";
 
 
-		$aTopics=$aTopics=$this->oDb->selectCol($sql,
-												$iFromId ? $iFromId : DBSIMPLE_SKIP,
-												count($aUserSubscribes['blogs']) ? $aUserSubscribes['blogs'] : DBSIMPLE_SKIP,
-												count($aUserSubscribes['users']) ? $aUserSubscribes['users'] : DBSIMPLE_SKIP,
-												$iCount ? $iCount : DBSIMPLE_SKIP
+                $aTopics=$aTopics=$this->oDb->selectCol($sql,
+			$iFromId ? $iFromId : DBSIMPLE_SKIP,
+			count($aUserSubscribes['blogs']) ? array_merge($aInaccessible, $aUserSubscribes['blogs']) : array_merge($aInaccessible, array(-1)),
+			count($aUserSubscribes['users']) ? $aUserSubscribes['users'] : array(-1),
+			$iCount ? $iCount : DBSIMPLE_SKIP
 		);
 
-		return $aTopics;
-	}
+                return $aTopics;
+        }
 }

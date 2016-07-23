@@ -6,7 +6,7 @@
 		
 		<div class="block-content">
                         <small class="note">{$aLang.userfeed_settings_note_follow_blogs}</small>
-                        <span class="subscribe"> <span onclick={foreach from=$aUserfeedBlogs item=oBlog}ls.userfeed.subscribe('blogs',{$oBlog->getId()});{/foreach}>Подписаться на все блоги</span> | <span onclick={foreach from=$aUserfeedBlogs item=oBlog}ls.userfeed.unsubscribe('blogs',{$oBlog->getId()});{/foreach}>Отписаться от всех блогов</span></span><br><br>
+                        <span class="subscribe"> <span onclick=ls.userfeed.subscribeAll();>Добавить в фильтр все блоги</span> | <span onclick=ls.userfeed.unsubscribeAll();>Очистить фильтр</span></span><br><br>
 			{if count($aUserfeedBlogs)}
 				<ul class="stream-settings-blogs">
 					{foreach from=$aUserfeedBlogs item=oBlog}

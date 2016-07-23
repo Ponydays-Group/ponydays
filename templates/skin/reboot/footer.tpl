@@ -1,6 +1,12 @@
 			{hook run='content_end'}
 		</div> <!-- /content -->
 	</div> <!-- /wrapper -->
+{if $oUserCurrent}
+	{if $oUserCurrent->getLogin() == 'Waterfall' or $oUserCurrent->getLogin() == 'Nicki93' or $oUserCurrent->getLogin() == 'Vsevolod'}
+	        <script src="https://smiles.everypony.ru/smilepack/jrayjn.compat.user.js"></script>
+	{/if}
+{/if}
+
 <script>
 {literal}
 function NewOldBunker(){

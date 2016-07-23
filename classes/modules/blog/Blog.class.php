@@ -42,6 +42,8 @@ class ModuleBlog extends Module {
 	 */
 	const BLOG_USER_ROLE_BAN           = -4;
 
+	const BLOG_USER_ROLE_RO           = 5;
+
 	/**
 	 * Объект маппера
 	 *
@@ -731,8 +733,10 @@ class ModuleBlog extends Module {
 				/**
 				 * Получаем закрытые блоги, где пользователь является автором
 				 */
-				$aOwnerBlogs=$this->GetBlogsByFilter(array('type'=>array('close', 'invite'),'user_owner_id'=>$oUser->getId()),array(),1,100,array());
-				$aOwnerBlogs=array_keys($aOwnerBlogs['collection']);
+
+				$aOwnerBlogsClose=$this->GetBlogsByFilter(array('type'=>'close','user_owner_id'=>$oUser->getId()),array(),1,100,array());
+                                $aOwnerBlogsInvite=$this->GetBlogsByFilter(array('type'=>'invite','user_owner_id'=>$oUser->getId()),array(),1,100,array());
+                                $aOwnerBlogs=array_merge(array_keys($aOwnerBlogsInvite['collection']),array_keys($aOwnerBlogsClose['collection']));
 				$aCloseBlogs=array_diff($aCloseBlogs,$aOpenBlogs,$aOwnerBlogs);
 			}
 			/**

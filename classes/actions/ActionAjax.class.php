@@ -1196,10 +1196,6 @@ class ActionAjax extends Action {
 		/**
 		 * Есть права на удаление комментария?
 		 */
-		if (!$this->ACL_CanDeleteComment($this->oUserCurrent)) {
-			$this->Message_AddErrorSingle($this->Lang_Get('not_access'),$this->Lang_Get('error'));
-			return;
-		}
 		/**
 		 * Комментарий существует?
 		 */
@@ -1208,6 +1204,12 @@ class ActionAjax extends Action {
 			$this->Message_AddErrorSingle($this->Lang_Get('system_error'),$this->Lang_Get('error'));
 			return;
 		}
+
+		if (!$this->ACL_CanDeleteComment($this->oUserCurrent, $oComment)) {
+			$this->Message_AddErrorSingle($this->Lang_Get('not_access'),$this->Lang_Get('error'));
+			return;
+		}
+
 		/**
 		 * Устанавливаем пометку о том, что комментарий удален
 		 */

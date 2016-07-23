@@ -280,6 +280,12 @@ class ActionTopic extends Action {
 			$this->Message_AddErrorSingle($this->Lang_Get('topic_create_blog_error_noallow'),$this->Lang_Get('error'));
 			return false;
 		}
+		if($oBlogUser=$this->Blog_GetBlogUserByBlogIdAndUserId($oBlog->getId(), $this->oUserCurrent->getId())){
+			if ($oBlogUser->getUserRole()==ModuleBlog::BLOG_USER_ROLE_RO) {
+				$this->Message_AddErrorSingle($this->Lang_Get('topic_create_blog_error_noallow'),$this->Lang_Get('error'));
+        	                return false;
+			}
+		}
 		/**
 		 * Проверяем разрешено ли постить топик по времени
 		 */

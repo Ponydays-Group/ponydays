@@ -16,11 +16,25 @@ ls.userfeed =( function ($) {
 		});
 	}
 	
+        this.subscribeAll = function () {
+                var url = aRouter['feed']+'subscribe_all/';
+                var params = {};
+
+                ls.hook.marker('subscribeBefore');
+                ls.ajax(url, params, function(data) {
+                        if (!data.bStateError) {
+                                ls.msg.notice(data.sMsgTitle,data.sMsg);
+                                ls.hook.run('ls_userfeed_subscribe_all_after',[data]);
+				location.reload();
+                        }
+                });
+        }
+
 	this.unsubscribe = function (sType, iId) {
 		var url = aRouter['feed']+'unsubscribe/';
 		var params = {'type':sType, 'id':iId};
 		
-		ls.hook.marker('unsubscribeBefore');
+		ls.hook.marker('unsubscribeAllBefore');
 		ls.ajax(url, params, function(data) { 
 			if (!data.bStateError) {
 				ls.msg.notice(data.sMsgTitle,data.sMsg);
@@ -29,6 +43,20 @@ ls.userfeed =( function ($) {
 		});
 	}
 	
+        this.unsubscribeAll = function () {
+                var url = aRouter['feed']+'unsubscribe_all/';
+                var params = {};
+
+                ls.hook.marker('unsubscribeAllBefore');
+                ls.ajax(url, params, function(data) {
+                        if (!data.bStateError) {
+                                ls.msg.notice(data.sMsgTitle,data.sMsg);
+                                ls.hook.run('ls_userfeed_unsubscribe_all_after',[data]);
+				location.reload();
+                        }
+                });
+        }
+
 	this.appendUser = function() {
 		var sLogin = $('#userfeed_users_complete').val();
 		if (!sLogin) return;

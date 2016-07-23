@@ -1,8 +1,8 @@
-{assign var="oUser" value=$oComment->getUser()}
+{assign var="oUser" value=$oComment->getUser()} <!-- i defined that in comment_tree. Do we still need that here? -->
 {assign var="oVote" value=$oComment->getVote()}
 {assign var="oId" value=$oComment->getTarget()}
 
-<section id="comment_id_{$oComment->getId()}" class="comment
+<section id="comment_id_{$oComment->getId()}" class="comment user-login-{$oUser->getLogin()} 
 														{if $oComment->isBad()}
 															comment-bad
 														{/if}
@@ -14,7 +14,7 @@
 															comment-new
 														{/if}
 														">
-	{if !$oComment->getDelete() or ($oUserCurrent and $oUserCurrent->isGlobalModerator()) or $bOneComment or ($oUserCurrent and $oUserCurrent->isAdministrator())}
+	{if !$oComment->getDelete() or ($oUserCurrent and $oUserCurrent->isGlobalModerator()) or ($oUserCurrent and $oUserCurrent->isAdministrator())}
 		<a name="comment{$oComment->getId()}"></a>
 		<div class="folding fa fa-minus-square" id="folding"></div>
 
@@ -45,6 +45,16 @@
 					<span class="favourite-count" id="fav_count_comment_{$oComment->getId()}">{if $oComment->getCountFavourite() > 0}{$oComment->getCountFavourite()}{/if}</span>
 				</li>
 			{/if}
+{if $oComment->getTargetType() != 'talk'}
+				{if !$oComment->getDelete() and $oUserCurrent and ($oUserCurrent->isAdministrator() or ($oUserCurrent->isGlobalModerator() and $oComment->getTarget()->getBlog()->getType()=="open"))}
+					<li><a href="#" class="comment-delete link-dotted" onclick="ls.comments.toggle(this,{$oComment->getId()}); return false;">{$aLang.comment_delete}</a></li>
+				{/if}
+
+				{if $oComment->getDelete() and $oUserCurrent and ($oUserCurrent->isAdministrator() or $oUserCurrent->isGlobalModerator())}
+					<li><a href="#" class="comment-repair link-dotted" onclick="ls.comments.toggle(this,{$oComment->getId()}); return false;">{$aLang.comment_repair}</a></li>
+				{/if}
+{/if}
+				{hook run='comment_action' comment=$oComment}
 		</ul>
 
 
@@ -62,16 +72,9 @@
 				{if !$oComment->getDelete() and !$bAllowNewComment}
 					<li><a href="#" onclick="ls.comments.toggleCommentForm({$oComment->getId()}); return false;" class="reply-link link-dotted">{$aLang.comment_answer}</a></li>
 				{/if}
+		{/if}
 {if $oComment->getTargetType() != 'talk'}
-				{if !$oComment->getDelete() and $oUserCurrent and ($oUserCurrent->isAdministrator() or ($oUserCurrent->isGlobalModerator() and $oComment->getTarget()->getBlog()->getType()=="open"))}
-					<li><a href="#" class="comment-delete link-dotted" onclick="ls.comments.toggle(this,{$oComment->getId()}); return false;">{$aLang.comment_delete}</a></li>
-				{/if}
 
-				{if $oComment->getDelete() and $oUserCurrent and ($oUserCurrent->isAdministrator() or $oUserCurrent->isGlobalModerator())}
-					<li><a href="#" class="comment-repair link-dotted" onclick="ls.comments.toggle(this,{$oComment->getId()}); return false;">{$aLang.comment_repair}</a></li>
-				{/if}
-{/if}
-				{hook run='comment_action' comment=$oComment}
 				{if $oComment->getTargetType() != 'talk'}
 				<li style="margin-right: 0px;" id="vote_area_comment_{$oComment->getId()}" class="comment-vote vote
 																		{if $oComment->getRating() > 0}
@@ -88,9 +91,9 @@
 																			{/if}
 																		{/if}">
 					
-					<div class="vote-up" onclick="return ls.vote.vote({$oComment->getId()},this,1,'comment');"><i class="fa fa-arrow-up"></i></div>
-					<span class="vote-count" id="vote_total_comment_{$oComment->getId()}">{if $oComment->getRating() > 0}+{/if}{$oComment->getRating()}</span>
 					<div class="vote-down" onclick="return ls.vote.vote({$oComment->getId()},this,-1,'comment');"><i class="fa fa-arrow-down"></i></div>
+					<span class="vote-count" id="vote_total_comment_{$oComment->getId()}">{if $oComment->getRating() > 0}+{/if}{$oComment->getRating()}</span>
+					<div class="vote-up" onclick="return ls.vote.vote({$oComment->getId()},this,1,'comment');"><i class="fa fa-arrow-up"></i></div>
 				</li>
 			{/if}
 			</ul>

@@ -4,7 +4,18 @@ var ls = ls || {};
 * Функционал личных сообщений
 */
 ls.talk = (function ($) {
-	
+	this.markAsRead = function(id) {
+		ls.ajax(DIR_WEB_ROOT + 'talk/ajaxmarkasread', 
+			{"target": id}, 
+			function(result) {
+				if (result.bStateError) {
+					ls.msg.error(null, result.sMsg);
+				} else {
+					ls.msg.notice(null, result.sMsg);
+				}
+			}
+		);
+	}
 	/**
 	* Добавляет пользователя к переписке
 	*/

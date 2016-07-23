@@ -77,10 +77,7 @@ class ActionIndex extends Action {
 	 */
 	protected function RegisterEvent() {
 		$this->AddEventPreg('/^(page([1-9]\d{0,5}))?$/i','EventIndex');
-		$this->AddEventPreg('/^new$/i','/^(page([1-9]\d{0,5}))?$/i','EventNewAll');
 		$this->AddEventPreg('/^newall$/i','/^(page([1-9]\d{0,5}))?$/i','EventNewAll');
-		$this->AddEventPreg('/^discussed$/i','/^(page([1-9]\d{0,5}))?$/i','EventNewAll');
-		$this->AddEventPreg('/^top$/i','/^(page([1-9]\d{0,5}))?$/i','EventNewAll');
 	}
 
 
@@ -235,7 +232,7 @@ class ActionIndex extends Action {
 		/**
 		 * Меню
 		 */
-		$this->sMenuSubItemSelect='new';
+		$this->sMenuSubItemSelect='newall';
 		/**
 		 * Передан ли номер страницы
 		 */
@@ -261,6 +258,7 @@ class ActionIndex extends Action {
 		/**
 		 * Устанавливаем шаблон вывода
 		 */
+		$this->Viewer_Assign('sMenuHeadItemSelect','newall');
 		$this->SetTemplateAction('index');
 	}
 	/**
@@ -268,18 +266,19 @@ class ActionIndex extends Action {
 	 *
 	 */
 	protected function EventIndex() {
+		$this->Viewer_Assign('sMenuHeadItemSelect','blog');
 		if ($this->User_getUserCurrent()){
 			return Router::Action('feed');
 		} else {
 			return Router::Action('index', 'newall');
 		}
+
 	}
 	/**
 	 * При завершении экшена загружаем переменные в шаблон
 	 *
 	 */
 	public function EventShutdown() {
-		$this->Viewer_Assign('sMenuHeadItemSelect',$this->sMenuHeadItemSelect);
 		$this->Viewer_Assign('sMenuItemSelect',$this->sMenuItemSelect);
 		$this->Viewer_Assign('sMenuSubItemSelect',$this->sMenuSubItemSelect);
 		$this->Viewer_Assign('iCountTopicsNew',$this->iCountTopicsNew);

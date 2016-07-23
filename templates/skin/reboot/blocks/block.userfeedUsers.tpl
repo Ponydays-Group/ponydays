@@ -48,29 +48,4 @@
 	</section>
 	
 	
-	{if count($aUserfeedFriends)}
-		<section class="block block-type-activity">
-			<header class="block-header">
-				<h3>{$aLang.userfeed_block_users_friends}</h3>
-			</header>
-			
-			<div class="block-content">
-				<small class="note">{$aLang.userfeed_settings_note_follow_friend}</small>
-				
-				<ul class="stream-settings-friends max-height-200">
-					{foreach from=$aUserfeedFriends item=oUser}
-						{assign var=iUserId value=$oUser->getId()}
-						
-						<li><input class="userfeedUserCheckbox input-checkbox"
-									type="checkbox"
-									id="usf_u_{$iUserId}"
-									{if isset($aUserfeedSubscribedUsers.$iUserId)} checked="checked"{/if}
-									onClick="if (jQuery(this).prop('checked')) { ls.userfeed.subscribe('users',{$iUserId}) } else { ls.userfeed.unsubscribe('users',{$iUserId}) } " />
-							<a href="{$oUser->getUserWebPath()}">{$oUser->getLogin()}</a>
-						</li>
-					{/foreach}
-				</ul>
-			</div>
-		</section>
-	{/if}
 {/if}

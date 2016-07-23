@@ -1283,7 +1283,7 @@ class ActionProfile extends Action {
 		$this->Viewer_Assign('oAceUserProfile', $this->PluginAceadminpanel_Admin_GetUserByLogin($this->oUserProfile->getLogin()));
 		$this->Viewer_Assign('oUserProfile',$this->oUserProfile);
 		$this->Viewer_Assign('iCountTopicUser',$iCountTopicUser);
-		$this->Viewer_Assign('iCountCommentUser',$iCountCommentUser);
+		$this->Viewer_Assign('iCountCommentUser', $iCountCommentUser);
 		$this->Viewer_Assign('iCountTopicFavourite',$iCountTopicFavourite);
 		$this->Viewer_Assign('iCountCommentFavourite',$iCountCommentFavourite);
 		$this->Viewer_Assign('iCountNoteUser',$iCountNoteUser);

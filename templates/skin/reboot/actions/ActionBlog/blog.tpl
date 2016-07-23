@@ -58,7 +58,11 @@
 		<ul class="actions">
 			<li><a href="{router page='rss'}blog/{$oBlog->getUrl()}/" class="rss">RSS</a></li>
 			{if $oUserCurrent and $oUserCurrent->getId()!=$oBlog->getOwnerId()}
-<li><a href="#" onclick="ls.blog.toggleJoin(this,{$oBlog->getId()}); return false;" class="link-dotted">{if $oBlog->getUserIsJoin()}{$aLang.blog_leave}{elseif $oBlog->getType()!="close"}{$aLang.blog_join}{/if}</a></li>
+			{if $oBlog->getType()!="close"}
+				<li><a href="#" onclick="ls.blog.toggleJoin(this,{$oBlog->getId()}); return false;" class="link-dotted">{if $oBlog->getUserIsJoin()}{$aLang.blog_leave}{else}{$aLang.blog_join}{/if}</a></li>
+			{else}
+				<li><a href="#" onclick="ls.blog.toggleJoin(this,{$oBlog->getId()}); return false;" class="link-dotted">{if $oBlog->getUserIsJoin()}{$aLang.blog_leave}{/if}</a></li>
+			{/if}
 			{/if}
 			{if $oUserCurrent and $oUserCurrent->getId()!=$oBlog->getOwnerId() and $oBlog->getType()=="close" and !$oBlog->getUserIsJoin()}
 			<li><a href="#" onclick="askInvite({$oBlog->getId()}, [{$oBlog->getOwnerId()}{foreach from=$aBlogAdministrators item=oBlogUser}{assign var="oUser" value=$oBlogUser->getUser()}, {$oUser->getId()}{/foreach}])">Попросить инвайт</a></li>
@@ -140,7 +144,7 @@
 {literal}
 <script>
 function askInvite(blog, to){
-	ls.ajax(DIR_WEB_ROOT + 'ajax/askinvite/', {"blog": blog, "to": to},
+	ls.ajax(DIR_WEB_ROOT + '/ajax/askinvite/', {"blog": blog, "to": to},
         function(data){
             if (data) {
                 ls.msg.notice("Вы отправили просьбу об инвайте", "");

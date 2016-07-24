@@ -995,5 +995,16 @@ class ModuleTopic_EntityTopic extends Entity {
 	public function setCountFavourite($data) {
 		$this->_aData['topic_count_favourite']=$data;
 	}
+	
+	public function isControlLocked() {
+		return $this->_getDataOne('topic_lock_control') != '0';
+	}
+	public function setLockControl($bState) {
+		$this->_aData['topic_lock_control'] = $bState ? '1' : '0';
+	}
+	// Обёртка для topic_part_header.tpl
+	public function testAllowLockControl($oUser) {
+		return $this->ACL_IsAllowLockTopicControl($this, $oUser);
+	}
 }
 ?>

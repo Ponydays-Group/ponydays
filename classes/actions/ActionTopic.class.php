@@ -373,12 +373,19 @@ class ActionTopic extends Action {
 	 * @param ModuleTopic_EntityTopic $oTopic
 	 * @return mixed
 	 */
+	protected function _assert($condition, $errorDescription, $errorTitle) {
+		if(!$condition) {
+			$this->Message_AddErrorSingle($this->Lang_Get($errorDescription),$this->Lang_Get($errorTitle));
+			return Router::Action('error');
+		}
+	}
 	protected function SubmitEdit($oTopic) {
 		$oTopic->_setValidateScenario('topic');
 		/**
 		 * Сохраняем старое значение идентификатора блога
 		 */
 		$sBlogIdOld = $oTopic->getBlogId();
+		$isAllowControlTopic = $this->ACL_IsAllowControlTopic($oTopic,$this->oUserCurrent);
 		/**
 		 * Заполняем поля для валидации
 		 */
@@ -397,6 +404,10 @@ class ActionTopic extends Action {
 		 * Определяем в какой блог делаем запись
 		 */
 		$iBlogId=$oTopic->getBlogId();
+		if ($iBlogId != $sBlogIdOld && !$isAllowControlTopic) {
+			$this->Message_AddErrorSingle($this->Lang_Get('not_access'),$this->Lang_Get('not_access'));
+			return Router::Action('error');
+		}
 		if ($iBlogId==0) {
 			$oBlog=$this->Blog_GetPersonalBlogByUserId($oTopic->getUserId());
 		} else {
@@ -444,6 +455,11 @@ class ActionTopic extends Action {
 				$bSendNotify=true;
 			}
 		} else {
+			// ! [текущая реализация] Если пост находится в черновиках — его можно опубликовать даже в случае установки topic_lock_control.
+			if (!$isAllowControlTopic) {
+				$this->Message_AddErrorSingle($this->Lang_Get('not_access'),$this->Lang_Get('not_access'));
+				return Router::Action('error');
+			}
 			$oTopic->setPublish(0);
 		}
 		/**
@@ -461,6 +477,11 @@ class ActionTopic extends Action {
 		 */
 		$oTopic->setForbidComment(0);
 		if (getRequest('topic_forbid_comment')) {
+			// ! [текущая реализация] Если комменты закрыты — их можно открыть даже в случае установки topic_lock_control.
+			if (!$isAllowControlTopic) {
+				$this->Message_AddErrorSingle($this->Lang_Get('not_access'),$this->Lang_Get('not_access'));
+				return Router::Action('error');
+			}
 			$oTopic->setForbidComment(1);
 		}
 		$this->Hook_Run('topic_edit_before', array('oTopic'=>$oTopic,'oBlog'=>$oBlog));

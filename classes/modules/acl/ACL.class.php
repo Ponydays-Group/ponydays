@@ -371,7 +371,7 @@ class ModuleACL extends Module {
 		/**
 		 * Разрешаем если это админ сайта или автор топика
 		 */
-		if ($oTopic->getUserId()==$oUser->getId() or $oUser->isAdministrator()) {
+		if (($oTopic->getUserId()==$oUser->getId() && !$oTopic->isControlLocked()) or $oUser->isAdministrator()) {
 			return true;
 		}
 		if ($oUser->isGlobalModerator() and $oTopic->getBlog()->getType() == "open" ) {
@@ -548,6 +548,23 @@ class ModuleACL extends Module {
 			return false;
 		}
 		return true;
+	}
+	public function IsAllowLockTopicControl($oTopic,$oUser) {
+		if(!$oUser) return false;
+		if(
+			$oUser->isAdministrator() ||
+			($oUser->isGlobalModerator() && $oTopic->getBlog()->getType() == 'open')
+		) return true;
+		$oBlog = $oTopic->getBlog();
+		if(
+			$oBlog->getUserIsAdministrator() ||
+			$oBlog->getUserIsModerator() ||
+			$oBlog->getOwnerId() == $oUser->getId()
+		) return true;
+		return false;
+	}
+	public function IsAllowControlTopic($oTopic,$oUser) {
+		return $this::IsAllowEditTopic($oTopic,$oUser) && !$oTopic->isControlLocked();
 	}
 }
 ?>

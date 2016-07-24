@@ -1034,5 +1034,17 @@ class ModuleTopic_MapperTopic extends Mapper {
 		}
 		return false;
 	}
+	public function UpdateControlLock(ModuleTopic_EntityTopic $oTopic) {
+		$sql = "UPDATE ".Config::Get('db.table.topic')." 
+			SET 
+				topic_lock_control = ?d 
+			WHERE
+				topic_id = ?d
+		";
+		if ($this->oDb->query($sql,$oTopic->isControlLocked()?'1':'0',$oTopic->getId())) {
+			return true;
+		}
+		return false;
+	}
 }
 ?>

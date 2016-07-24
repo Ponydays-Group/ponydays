@@ -564,7 +564,7 @@ class ModuleACL extends Module {
 		return false;
 	}
 	public function IsAllowControlTopic($oTopic,$oUser) {
-		return $this::IsAllowEditTopic($oTopic,$oUser) && !$oTopic->isControlLocked();
+		return ($this::IsAllowEditTopic($oTopic,$oUser) && !$oTopic->isControlLocked()) || $this::IsAllowLockTopicControl($oTopic,$oUser);
 	}
 }
 ?>

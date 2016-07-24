@@ -403,10 +403,12 @@ class ActionTopic extends Action {
 				$this->Message_AddErrorSingle($this->Lang_Get('not_access'),$this->Lang_Get('not_access'));
 				return Router::Action('error');
 			}
-			$oTopic->setLockControl(false);
-			if($oTopic->isControlLocked() && !$this->Topic_UpdateControlLock($oTopic)) {
-				$this->Message_AddErrorSingle($this->Lang_Get('system_error'),$this->Lang_Get('error'));
-				return;
+			if($oTopic->isControlLocked()) {
+				$oTopic->setLockControl(false);
+				if(!$this->Topic_UpdateControlLock($oTopic)) {
+					$this->Message_AddErrorSingle($this->Lang_Get('system_error'),$this->Lang_Get('error'));
+					return;
+				}
 			}
 		}
 		if ($iBlogId==0) {

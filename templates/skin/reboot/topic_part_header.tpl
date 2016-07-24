@@ -83,7 +83,7 @@
 				{/if}
 				
 				{if $oTopic->testAllowLockControl($oUserCurrent)}
-					<li><label title="{$aLang.topic_lock_control_title}" class="actions-topic_lock_control"><input type="checkbox" onclick="return !!this.checked || confirm('{$aLang.topic_lock_control_un}');" onchange="ls.topic.lockControl({$oTopic->getId()},this);" {if $oTopic->isControlLocked()}checked="checked"{/if} />&nbsp;{$aLang.topic_lock_control}</label></li>
+					<li><label title="{$aLang.topic_lock_control_title}" class="actions-topic_lock_control"><input type="checkbox" onclick="if(!!this.checked || confirm('{$aLang.topic_lock_control_un}')) return ls.topic.lockControl({$oTopic->getId()},this); else return false;" {if $oTopic->isControlLocked()}checked="checked"{/if} />&nbsp;{$aLang.topic_lock_control}</label></li>
 				{/if}
 			</ul>
 		</div>

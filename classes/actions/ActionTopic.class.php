@@ -373,12 +373,6 @@ class ActionTopic extends Action {
 	 * @param ModuleTopic_EntityTopic $oTopic
 	 * @return mixed
 	 */
-	protected function _assert($condition, $errorDescription, $errorTitle) {
-		if(!$condition) {
-			$this->Message_AddErrorSingle($this->Lang_Get($errorDescription),$this->Lang_Get($errorTitle));
-			return Router::Action('error');
-		}
-	}
 	protected function SubmitEdit($oTopic) {
 		$oTopic->_setValidateScenario('topic');
 		/**
@@ -404,9 +398,12 @@ class ActionTopic extends Action {
 		 * Определяем в какой блог делаем запись
 		 */
 		$iBlogId=$oTopic->getBlogId();
-		if ($iBlogId != $sBlogIdOld && !$isAllowControlTopic) {
-			$this->Message_AddErrorSingle($this->Lang_Get('not_access'),$this->Lang_Get('not_access'));
-			return Router::Action('error');
+		if ($iBlogId != $sBlogIdOld) {
+				if(!$isAllowControlTopic) {
+				$this->Message_AddErrorSingle($this->Lang_Get('not_access'),$this->Lang_Get('not_access'));
+				return Router::Action('error');
+			}
+			$oTopic->setLockControl(false);
 		}
 		if ($iBlogId==0) {
 			$oBlog=$this->Blog_GetPersonalBlogByUserId($oTopic->getUserId());

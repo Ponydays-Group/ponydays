@@ -399,11 +399,15 @@ class ActionTopic extends Action {
 		 */
 		$iBlogId=$oTopic->getBlogId();
 		if ($iBlogId != $sBlogIdOld) {
-				if(!$isAllowControlTopic) {
+			if(!$isAllowControlTopic) {
 				$this->Message_AddErrorSingle($this->Lang_Get('not_access'),$this->Lang_Get('not_access'));
 				return Router::Action('error');
 			}
 			$oTopic->setLockControl(false);
+			if(!$this->Topic_UpdateControlLock($oTopic)) {
+				$this->Message_AddErrorSingle($this->Lang_Get('system_error'),$this->Lang_Get('error'));
+				return;
+			}
 		}
 		if ($iBlogId==0) {
 			$oBlog=$this->Blog_GetPersonalBlogByUserId($oTopic->getUserId());

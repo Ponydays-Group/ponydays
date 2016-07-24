@@ -404,7 +404,7 @@ class ActionTopic extends Action {
 				return Router::Action('error');
 			}
 			$oTopic->setLockControl(false);
-			if(!$this->Topic_UpdateControlLock($oTopic)) {
+			if($oTopic->isControlLocked() && !$this->Topic_UpdateControlLock($oTopic)) {
 				$this->Message_AddErrorSingle($this->Lang_Get('system_error'),$this->Lang_Get('error'));
 				return;
 			}

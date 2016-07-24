@@ -1272,9 +1272,10 @@ class ActionAjax extends Action {
 			return;
 		}
 		$bLockState = getRequestStr('bState',null,'post') == '1';
+		$bStateOld = $oTopic->isControlLocked();
 		$oTopic->setLockControl($bLockState);
-		$sNotice = $bLockState ? 'topic_control_locked' : 'topic_control_unlocked';
-		if($this->Topic_UpdateControlLock($oTopic)) {
+		if($bStateOld==$bLockState || $this->Topic_UpdateControlLock($oTopic)) {
+			$sNotice = $bLockState ? 'topic_control_locked' : 'topic_control_unlocked';
 			$this->Message_AddNoticeSingle($this->Lang_Get($sNotice),$this->Lang_Get('attention'));
 			$this->Viewer_AssignAjax('bState',$oTopic->isControlLocked());
 		} else {

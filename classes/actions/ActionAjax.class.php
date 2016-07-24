@@ -79,6 +79,8 @@ class ActionAjax extends Action {
 
 		$this->AddEventPreg('/^infobox/i','/^info/','/^blog/','EventInfoboxInfoBlog');
 		$this->AddEventPreg('/^askinvite/','EventInviteUser');
+
+		$this->AddEvent('topic-lock-control','EventTopicLockControl');
 	}
 
 
@@ -1247,6 +1249,38 @@ class ActionAjax extends Action {
 	    $oUserCurrent = $this->ModuleUser_GetUserCurrent();
 	    $oBlog = $this->ModuleBlog_GetBlogById($_POST["blog"]);
         $this->ModuleTalk_SendTalk("Просьба об инвайте", "Пользователь <a href='" . "/profile/" . $oUserCurrent->getLogin() . "/' class='user'>" . "<i class='icon-user'></i>" . $oUserCurrent->getLogin() . "</a> просит пригласить его в блог <a href='" . $oBlog->getUrlFull() . "'>" . $oBlog->getTitle() . "</a>.", $oUserCurrent->getId(), $a);
+	}
+	protected function EventTopicLockControl() {
+		/**
+		 * Пользователь авторизован?
+		 */
+		if (!$this->oUserCurrent) {
+			$this->Message_AddErrorSingle($this->Lang_Get('need_authorization'),$this->Lang_Get('error'));
+			return;
+		}
+		/**
+		 * Топик существует?
+		 */
+		if (!($oTopic=$this->Topic_GetTopicById(getRequestStr('idTopic',null,'post')))) {
+			$this->Message_AddErrorSingle($this->Lang_Get('system_error'),$this->Lang_Get('error'));
+			return;
+		}
+		
+		$isAllowLockControlTopic = $this->ACL_IsAllowLockTopicControl($oTopic,$this->oUserCurrent);
+		if(!$isAllowLockControlTopic) {
+			$this->Message_AddErrorSingle($this->Lang_Get('not_access'),$this->Lang_Get('error'));
+			return;
+		}
+		$bLockState = getRequestStr('bState',null,'post') == '1';
+		$oTopic->setLockControl($bLockState);
+		$sNotice = $bLockState ? 'topic_control_locked' : 'topic_control_unlocked';
+		if($this->Topic_UpdateControlLock($oTopic)) {
+			$this->Message_AddNoticeSingle($this->Lang_Get($sNotice),$this->Lang_Get('attention'));
+			$this->Viewer_AssignAjax('bState',$oTopic->isControlLocked());
+		} else {
+			$this->Message_AddErrorSingle($this->Lang_Get('system_error'),$this->Lang_Get('error'));
+			return;
+		}
 	}
 }
 ?>

@@ -28,5 +28,28 @@ ls.topic = (function ($) {
 		return false;
 	};
 
+	this.onControlLocked = function(result) {
+		if (result.bStateError) {
+			this.checked = this.dataset.checkedOld == "1";
+			ls.msg.error(null, result.sMsg);
+		} else {
+			this.checked = result.bState;
+			ls.msg.notice(null, result.sMsg);
+		}
+		delete this.dataset.checkedOld;
+	};
+	this.lockControl = function(idTopic, obj) {
+		var state = obj.checked;
+		obj.dataset.checkedOld = state ? "0" : "1";
+		var params = {};
+		params['idTopic'] = idTopic;
+		params['bState'] = state ? "1" : "0";
+		
+		var url = aRouter['ajax']+'topic-lock-control';
+		ls.hook.marker('topicLockControlBefore');
+		ls.ajax(url, params, this.onControlLocked.bind(obj));
+		return false;
+	};
+
 	return this;
 }).call(ls.topic || {},jQuery);

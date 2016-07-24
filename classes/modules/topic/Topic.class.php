@@ -1876,5 +1876,14 @@ class ModuleTopic extends Module {
 	public function GetTopicItemsByArrayId($aTopocId) {
 		return $this->GetTopicsByArrayId($aTopocId);
 	}
+	public function UpdateControlLock(ModuleTopic_EntityTopic $oTopic) {
+		if ($this->oMapperTopic->UpdateControlLock($oTopic)) {
+			//чистим зависимые кеши			
+			$this->Cache_Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG,array('topic_update'));
+			$this->Cache_Delete("topic_{$oTopic->getId()}");
+			return true;
+		}
+		return false;
+	}
 }
 ?>

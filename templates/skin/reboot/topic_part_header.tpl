@@ -78,8 +78,12 @@
 					<li><a href="{cfg name='path.root.web'}/{$oTopic->getType()}/edit/{$oTopic->getId()}/" title="{$aLang.topic_edit}" class="actions-edit">{$aLang.topic_edit}</a></li>
 				{/if}
 				
-				{if $oUserCurrent and (($oUserCurrent->isGlobalModerator() and $oTopic->getBlog()->getType() == "open") or $oUserCurrent->isAdministrator() or $oBlog->getUserIsAdministrator() or $oBlog->getUserIsModerator() or $oTopic->getUserId() === $oUserCurrent->getId() or $oBlog->getOwnerId()==$oUserCurrent->getId())}
+				{if $oUserCurrent and (($oUserCurrent->isGlobalModerator() and $oTopic->getBlog()->getType() == "open") or $oUserCurrent->isAdministrator() or $oBlog->getUserIsAdministrator() or $oBlog->getUserIsModerator() or ($oTopic->getUserId() === $oUserCurrent->getId() and !$oTopic->isControlLocked()) or $oBlog->getOwnerId()==$oUserCurrent->getId())}
 					<li><a href="{router page='topic'}delete/{$oTopic->getId()}/?security_ls_key={$LIVESTREET_SECURITY_KEY}" title="{$aLang.topic_delete}" onclick="return confirm('{$aLang.topic_delete_confirm}');" class="actions-delete">{$aLang.topic_delete}</a></li>
+				{/if}
+				
+				{if $oTopic->testAllowLockControl($oUserCurrent)}
+					<li><label title="{$aLang.topic_lock_control_title}" class="actions-topic_lock_control"><input type="checkbox" onclick="return !!this.checked || confirm('{$aLang.topic_lock_control_un}');" onchange="ls.topic.lockControl({$oTopic->getId()},this);" {if $oTopic->isControlLocked()}checked="checked"{/if} />&nbsp;{$aLang.topic_lock_control}</label></li>
 				{/if}
 			</ul>
 		</div>

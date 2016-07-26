@@ -1,6 +1,7 @@
 {assign var="oBlog" value=$oTopic->getBlog()}
 {assign var="oUser" value=$oTopic->getUser()}
 {assign var="oVote" value=$oTopic->getVote()}
+{assign var="bAllowLockControl" value=$oTopic->testAllowLockControl($oUserCurrent)}
 
 
 <article class="topic topic-type-{$oTopic->getType()} js-topic">
@@ -82,10 +83,14 @@
 					<li><a href="{router page='topic'}delete/{$oTopic->getId()}/?security_ls_key={$LIVESTREET_SECURITY_KEY}" title="{$aLang.topic_delete}" onclick="return confirm('{$aLang.topic_delete_confirm}');" class="actions-delete">{$aLang.topic_delete}</a></li>
 				{/if}
 				
-				{if $oTopic->testAllowLockControl($oUserCurrent)}
+				{if $bAllowLockControl}
 					<li><label title="{$aLang.topic_lock_control_title}" class="actions-topic_lock_control"><input type="checkbox" onclick="if(!!this.checked || confirm('{$aLang.topic_lock_control_un}')) return ls.topic.lockControl({$oTopic->getId()},this); else return false;" {if $oTopic->isControlLocked()}checked="checked"{/if} />&nbsp;{$aLang.topic_lock_control}</label></li>
 				{/if}
 			</ul>
+			
+			{if !$bAllowLockControl and $oTopic->isControlLocked()}
+				<i class="fa fa-paperclip" title="{$aLang.topic_control_locked}"></i>
+			{/if}
 		</div>
 		<div class="voters">
 {foreach $aVotes as $vote}<span style="color:{if $vote == 1}green{elseif $vote == 0}gray{elseif $vote == -1}red{/if} ;">{$vote@key}</span> {/foreach}

@@ -48,7 +48,7 @@ ls.topic = (function ($) {
 		var url = aRouter['ajax']+'topic-lock-control';
 		ls.hook.marker('topicLockControlBefore');
 		ls.ajax(url, params, this.onControlLocked.bind(obj));
-		return false;
+		return true;
 	};
 
 	return this;

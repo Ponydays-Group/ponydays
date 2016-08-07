@@ -185,6 +185,19 @@ ls.comments = (function ($) {
 				this.aCommentNew = [];
 				this.calcNewComments();
 				ls.hook.run('ls_comments_load_after',[idTarget, typeTarget, selfIdComment, bNotFlushNew, result]);
+				
+				try {
+					var new_messages = document.getElementById("new_messages");
+					var pm_title = new_messages.dataset.title;
+					if(result.iUserCurrentCountTalkNew > 0) {
+						new_messages.classList.add("new-messages");
+						pm_title += " ("+result.iUserCurrentCountTalkNew.toString()+")";
+					} else {
+						new_messages.classList.remove("new-messages");
+					}
+					new_messages.childNodes[0].textContent = pm_title;
+					new_messages.parentNode.title = pm_title;
+				} catch(err) {throw err;}
 			}
 		}.bind(this));
 	};

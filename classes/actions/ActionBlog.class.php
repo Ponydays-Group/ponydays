@@ -1207,6 +1207,7 @@ class ActionBlog extends Action {
 
 		$this->Viewer_AssignAjax('iMaxIdComment',$iMaxIdComment);
 		$this->Viewer_AssignAjax('aComments',$aComments);
+		$this->Viewer_AssignAjax('iUserCurrentCountTalkNew',$this->Talk_GetCountTalkNew($this->oUserCurrent->getId()));
 	}
 	/**
 	 * Обработка ajax запроса на отправку

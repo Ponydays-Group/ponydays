@@ -26,9 +26,10 @@
         </a>
     </li>
     <li title="{$aLang.user_privat_messages}{if $iUserCurrentCountTalkNew} ({$iUserCurrentCountTalkNew}){/if}">
-        <a href="{router page='talk'}" {if $iUserCurrentCountTalkNew}class="new-messages"{/if} id="new_messages">
+        <a data-title="{$aLang.user_privat_messages}" href="{router page='talk'}" {if $iUserCurrentCountTalkNew}class="new-messages"{/if} id="new_messages">
             {$aLang.user_privat_messages}{if $iUserCurrentCountTalkNew} ({$iUserCurrentCountTalkNew}){/if}
-            <i class="fa fa-envelope{if !$iUserCurrentCountTalkNew}-o{/if}"></i>
+            <i class="fa fa-envelope-o"></i>
+            <i class="fa fa-envelope"></i>
         </a>
     </li>
     {hook run='athead'}

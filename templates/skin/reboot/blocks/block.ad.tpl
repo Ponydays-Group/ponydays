@@ -13,3 +13,31 @@ VK.Widgets.Group("vk_groups", {mode: 0, width: "auto", height: "200", color1: 'F
 </script>
 {/literal}
         </section>
+
+<section class="block block-type-blog">
+	<header class="block-header">
+		<h3>Дружественные сообщества</h3>
+	</header>
+	<div class='block-content'>
+		<div class='friend'>
+			<img src='https://bunker.lunavod.ru/templates/skin/reboot/images/avatar_blog_64x64.png' class='friend-logo'>
+			<a href="http://freepony.ru/" class='friend-title'>Freepony</a>
+			<span class='friend-desc'>Free Pony Forum</span>
+		</div>
+		<div class='friend'>
+                	<img src='https://static.lunavod.ru/img/3efec3a77e7d9383efb72b9efd6cab3d92f80e75.jpg' class='friend-logo'>
+	                <a href="https://vk.com/my_russian_pony" class='friend-title'>My Russian Pony</a>
+        	        <span class='friend-desc'>Печеньки :3</span>
+		</div>
+		<div class='friend'>
+                        <img src='https://static.lunavod.ru/img/21b827e3c8c7715af6b0b0ee8338874b9e618b63.jpg' class='friend-logo'>
+                        <a href="https://vk.com/mlp_fk" class='friend-title'>Friendship Keepers</a>
+                        <span class='friend-desc'>Мы рады приветствовать новых друзей!</span>
+                </div>
+		<div class='friend'>
+                        <img src='https://static.lunavod.ru/img/c19a72f958756b455b5c84284e951563a9206606.jpg' class='friend-logo'>
+                        <a href="https://vk.com/citadel_return" class='friend-title'>Citadel</a>
+                        <span class='friend-desc'>Добро пожаловать!</span>
+                </div>		
+        </div>
+</section>

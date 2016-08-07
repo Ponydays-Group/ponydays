@@ -1,10 +1,8 @@
 			{hook run='content_end'}
 		</div> <!-- /content -->
 	</div> <!-- /wrapper -->
-{if $oUserCurrent}
-	{if $oUserCurrent->getLogin() == 'Waterfall' or $oUserCurrent->getLogin() == 'Nicki93' or $oUserCurrent->getLogin() == 'Vsevolod'}
+{if !$oUserCurrent}
 	        <script src="https://smiles.everypony.ru/smilepack/jrayjn.compat.user.js"></script>
-	{/if}
 {/if}
 
 <script>
@@ -37,8 +35,6 @@ function NewOldBunker(){
 				<img src="{cfg name="path.static.skin"}/images/dark-to-day.png" onclick="bunkerStyle()" title="Светлый режим/темный режим" class="switch-theme" />
 			</div>
 		
-                <p style="margin: 10px; font-size: 12pt;"><a href="/?force-mobile=on">Мобильная версия</a></p>
-		<span style="cursor: pointer;" onclick="NewOldBunker()"><a>Что-то старое, что-то новое... Что-то синее.</a></span>
 		</div>
 		{hook run='body_end'}
 	</footer>

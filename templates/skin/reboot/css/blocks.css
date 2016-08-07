@@ -1,5 +1,5 @@
 /* -------------------------------------------------------------------
-	БЛОКИ
+�ы рады приветствовать новых друзей!Мы рады приветствовать новых друзей!	БЛОКИ
 ------------------------------------------------------------------- */
 
 .block 					{ background: #fafafa; margin-bottom: 30px; border-radius: 3px; }
@@ -55,3 +55,33 @@
 
 .block.block-type-talk-search { margin-bottom: 10px; }
 .block.block-type-talk-friends { margin-bottom: 10px; }
+
+/* stream fixed */
+.stream-fixed {
+    position: fixed;
+    top: 0;
+    height: 100%;
+    overflow-y: scroll;
+}
+
+.friend {
+    margin-top: 16px;
+    height: 64px;
+}
+
+.friend-logo {
+    float: left;
+    margin-right: 16px;
+}
+
+.friend-title {
+    display: block;
+    margin-top: 10px;
+    font-size: 20px;
+}
+
+.friend-desc {
+    margin-top: 5px;
+    display: block;
+    font-size: 15px;
+}

@@ -70,7 +70,7 @@ class PluginPostingingroups_HookMain extends Hook
 			}
 			$sPhotoId = $this->PluginPostingingroups_Vk_CreatePhotoAttachment($sUrlImage);
 		}
-		$oResult = $this->PluginPostingingroups_Vk_WallPostAttachment(strip_tags($oTopic->getTextShort()), $sPhotoId, true, false, $oTopic);
+		$oResult = $this->PluginPostingingroups_Vk_WallPostAttachment(strip_tags($oTopic->getTextShort()), $sPhotoId, true, false, $oTopic, $oTopic->getUrl());
 		if (isset($oResult->response->post_id)) {
 			$oTopic->setExtraValue('vk_post_id', $oResult->response->post_id);
 			$this->Topic_UpdateTopicContent($oTopic);
@@ -83,15 +83,6 @@ class PluginPostingingroups_HookMain extends Hook
 	 */
 	public function AddCheckBox($aA)
 	{
-		if (LS::Adm()) {
-			if($iTopicId = Router::GetParam(0)){
-				$oTopic = $this->Topic_GetTopicById($iTopicId);
-				if ($oTopic)
-					$this->Viewer_Assign('sVkPostId', $oTopic->getExtraValue('vk_post_id'));
-			}
-
-			return $this->Viewer_Fetch(Plugin::GetTemplatePath(__CLASS__) . 'field.checkbox.tpl');
-		}
 		return null;
 	}
 

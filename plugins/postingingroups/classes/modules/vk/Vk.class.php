@@ -48,16 +48,16 @@ class PluginPostingingroups_ModuleVk extends ModuleORM
 	 * @param string $sAttachments
 	 * @param $sMessage
 	 */
-	public function WallPostAttachment($sMessage, $sAttachments = '', $bFromGroup = true, $bSigned = true, $oTopic)
-	{	
+	public function WallPostAttachment($sMessage, $sAttachments = '', $bFromGroup = true, $bSigned = true, $oTopic, $sUrl)
+	{
 		$tags = '';
 		foreach ( $oTopic->getTagsArray() as $value ) {
- 			 $tags = $tags . '#' . $value . ' ';
+ 			 $tags = $tags . '#' . str_replace(' ', '_', $value) . ' ';
 		}
 		return $this->CallMethod('wall.post', array(
 			'owner_id' => -1 * $this->iGroupId,
 			'attachment' => $oTopic->getUrl() . strval($sAttachments),
-			'message' => $oTopic->getTitle() . PHP_EOL . PHP_EOL . $sMessage . PHP_EOL . PHP_EOL . $tags,
+			'message' => $oTopic->getTitle() . PHP_EOL . PHP_EOL . $sMessage . PHP_EOL . PHP_EOL . $tags . PHP_EOL . PHP_EOL . $sUrl,
 			'from_group' => $bFromGroup ? 1 : 0,
 			'signed' => $bSigned ? 1 : 0
 		));

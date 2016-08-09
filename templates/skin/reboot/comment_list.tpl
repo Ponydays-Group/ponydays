@@ -39,7 +39,7 @@
 																		{elseif $oComment->getRating() == 0 and $oComment->getCountVote() > 0 and $bVoteInfoEnabled}
 																			vote-count-mixed
 																		{/if}">
-					<span class="vote-count" id="vote_total_comment_{$oComment->getId()}">{$oComment->getRating()}</span>
+					<span class="vote-count" id="vote_total_comment_{$oComment->getId()}" {if $bVoteInfoEnabled}data-count="{$oComment->getCountVote()}" onclick="if(parseInt(this.dataset.count) > 0) ls.vote.getVotes({$oComment->getId()},'comment',this);"{/if}>{$oComment->getRating()}</span>
 				</li>
 			</ul>
 

@@ -81,6 +81,7 @@ class ActionAjax extends Action {
 		$this->AddEventPreg('/^askinvite/','EventInviteUser');
 
 		$this->AddEvent('topic-lock-control','EventTopicLockControl');
+		$this->AddEvent('get-object-votes','EventGetObjectVotes');
 	}
 
 
@@ -257,10 +258,12 @@ class ActionAjax extends Action {
 		$iVal=(float)$this->Rating_VoteComment($this->oUserCurrent,$oComment,$iValue);
 		$oTopicCommentVote->setValue($iVal);
 
-		$oComment->setCountVote($oComment->getCountVote()+1);
+		$iCountVote = $oComment->getCountVote()+1;
+		$oComment->setCountVote($iCountVote);
 		if ($this->Vote_AddVote($oTopicCommentVote) and $this->Comment_UpdateComment($oComment)) {
 			$this->Message_AddNoticeSingle($this->Lang_Get('comment_vote_ok'),$this->Lang_Get('attention'));
 			$this->Viewer_AssignAjax('iRating',$oComment->getRating());
+			$this->Viewer_AssignAjax('iCountVote',$iCountVote);
 			/**
 			 * Добавляем событие в ленту
 			 */
@@ -341,7 +344,8 @@ class ActionAjax extends Action {
 			$iVal=(float)$this->Rating_VoteTopic($this->oUserCurrent,$oTopic,$iValue);
 		}
 		$oTopicVote->setValue($iVal);
-		$oTopic->setCountVote($oTopic->getCountVote()+1);
+		$iCountVote = $oTopic->getCountVote()+1;
+		$oTopic->setCountVote($iCountVote);
 		if ($iValue==1) {
 			$oTopic->setCountVoteUp($oTopic->getCountVoteUp()+1);
 		} elseif ($iValue==-1) {
@@ -356,6 +360,7 @@ class ActionAjax extends Action {
 				$this->Message_AddNoticeSingle($this->Lang_Get('topic_vote_ok_abstain'),$this->Lang_Get('attention'));
 			}
 			$this->Viewer_AssignAjax('iRating',$oTopic->getRating());
+			$this->Viewer_AssignAjax('iCountVote',$iCountVote);
 			/**
 			 * Добавляем событие в ленту
 			 */
@@ -1283,5 +1288,64 @@ class ActionAjax extends Action {
 			return;
 		}
 	}
+	
+	protected function EventGetObjectVotes() {
+		$ne_enable_level = Config::Get('acl.vote_state.comment.ne_enable_level');
+		/**
+		 * Пользователь авторизован?
+		 */
+		if (!$this->oUserCurrent && $ne_enable_level < 8) {
+			$this->Message_AddErrorSingle($this->Lang_Get('need_authorization'),$this->Lang_Get('error'));
+			return;
+		}
+		
+		$targetId = (int) getRequestStr('targetId',null,'post');
+		$targetType = getRequestStr('targetType',null,'post');
+		switch($targetType) {
+			case 'comment':
+				$oTarget = $this->Comment_GetCommentById($targetId);
+				break;
+			default:
+				$this->Message_AddErrorSingle($this->Lang_Get('system_error'),$this->Lang_Get('error'));
+				return;
+		}
+		/**
+		 * Объект существует?
+		 */
+		if(!$oTarget) {
+			$this->Message_AddErrorSingle($this->Lang_Get('system_error'),$this->Lang_Get('error'));
+			return;
+		}
+		
+		if(!$this->ACL_CheckSimpleAccessLevel($ne_enable_level, $this->oUserCurrent, $oTarget, $targetType)) {
+			$this->Message_AddErrorSingle($this->Lang_Get('not_access'),$this->Lang_Get('error'));
+			return;
+		}
+		
+		$aVotes = $this->Vote_GetVoteById($targetId, $targetType);
+		$aResult = array();
+		foreach($aVotes as $oVote) {
+			$oUser = $this->User_GetUserById($oVote->getVoterId());
+			$bShowUser = $oUser && (strtotime($oVote->getDate()) > Config::Get('acl.vote_state.comment.oe_end') || $this->ACL_CheckSimpleAccessLevel(Config::Get('acl.vote_state.comment.oe_enable_level'), $this->oUserCurrent, $oTarget, $targetType));
+			$aResult[] = array(
+				'voterName' => $bShowUser ? $oUser->getLogin() : null,
+				'voterAvatar' => $bShowUser ? $oUser->getProfileAvatarPath() : null,
+				'value' => (float) $oVote->getDirection(),
+				'date' => (string) $oVote->getDate().'Z',
+			);
+		}
+		usort($aResult, '_gov_s_date_asc');
+		$this->Viewer_AssignAjax('aVotes',$aResult);
+	}
+}
+function _gov_s_date_asc($a, $b) {
+	$a_time = strtotime($a['date']);
+	$b_time = strtotime($b['date']);
+	if($a_time > $b_time) return 1;
+	if($a_time < $b_time) return -1;
+	return 0;
+}
+function _gov_s_date_desc($a, $b) {
+	return -_gov_s_date_asc($a, $b);
 }
 ?>

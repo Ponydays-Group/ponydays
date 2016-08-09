@@ -14,6 +14,7 @@ ls.vote = (function ($) {
 			minus:  	'voted-down',
 			positive:	'vote-count-positive',
 			negative:  	'vote-count-negative',
+			mixed:		'vote-count-mixed',
 			voted_zero: 'voted-zero',
 			zero: 	 	'vote-count-zero',
 			not_voted:  'not-voted'
@@ -88,9 +89,11 @@ ls.vote = (function ($) {
 			}
 
 			result.iRating = parseFloat(result.iRating);
+			result.iCountVote = parseInt(result.iCountVote);
 
 			divVoting.removeClass(this.options.classes.negative);
 			divVoting.removeClass(this.options.classes.positive);
+			divVoting.removeClass(this.options.classes.mixed);
 			divVoting.removeClass(this.options.classes.not_voted);
 			divVoting.removeClass(this.options.classes.zero);
 
@@ -100,10 +103,15 @@ ls.vote = (function ($) {
 			}else if (result.iRating < 0) {
 				divVoting.addClass(this.options.classes.negative);
 				divTotal.text(result.iRating);
+			}else if (result.iRating == 0 && result.iCountVote > 0) {
+				divVoting.addClass(this.options.classes.mixed);
+				divTotal.text(result.iRating);
 			}else if (result.iRating == 0) {
 				divVoting.addClass(this.options.classes.zero);
 				divTotal.text(0);
 			}
+			
+			if(result.iCountVote > 0) divTotal[0].dataset.count = result.iCountVote;
 
 			var method='onVote'+ls.tools.ucfirst(type);
 			if ($.type(this[method])=='function') {
@@ -119,6 +127,95 @@ ls.vote = (function ($) {
 
 	this.onVoteUser = function(idTarget, objVote, value, type, result) {
 		$('#user_skill_'+idTarget).text(result.iSkill);
+	}
+	
+	this.getVotes = function(targetId, targetType, el) {
+		var params = {};
+		params['targetId'] = targetId;
+		params['targetType'] = targetType;
+		var url = aRouter['ajax']+'get-object-votes';
+		ls.ajax(url, params, this.onGetVotes.bind({"orig":this,"control":el}));
+		el.dataset.queryState = "query";
+		return false;
+	}
+	
+	function __makeProfileLink(path, data) {
+		var el = document.createElement("a");
+		if(path != null && data.name != null) {
+			el.href = "/profile/"+path;
+			el.target = "_blank";
+			el.className = "ls-user has-avatar";
+			var avatar = document.createElement("img");
+			avatar.src = data.avatar;
+			el.appendChild(avatar);
+			el.appendChild(document.createTextNode(data.name));
+		} else {
+			el.href = "javascript://";
+			el.className = "ls-user undefined";
+			el.appendChild(document.createTextNode("???"));
+		}
+		return el;
+	}
+	
+	this.onGetVotes = function(result) {
+		if(result.bStateError) {
+			ls.msg.error(null, result.sMsg);
+		} else {
+			var vl = document.createElement("div");
+			vl.className = "vote-list";
+			for(var i=0; i<result.aVotes.length; i++) {
+				var vote = result.aVotes[i];
+				var line = document.createElement("div");
+				var profileLink = __makeProfileLink(vote.voterName, {
+					name: vote.voterName,
+					avatar: vote.voterAvatar
+				});
+				line.appendChild(profileLink);
+				
+				var time = document.createElement("time");
+				time.datetime = vote.date;
+				var date = new Date(Date.parse(vote.date));
+				var now = new Date();
+				time.appendChild(document.createTextNode((
+					date.getDate() != now.getDate() ||
+					date.getMonth() != now.getMonth() ||
+					date.getFullYear() != now.getFullYear()
+				) ? date.toLocaleString() : date.toLocaleTimeString()));
+				line.appendChild(time);
+				
+				var voteValue = document.createElement("span");
+				voteValue.dataset.value = vote.value == 0 ? "0" : (vote.value > 0 ? "+" : "−") + Math.abs(vote.value).toString();
+				voteValue.className = "vote";
+				line.appendChild(voteValue);
+				
+				vl.appendChild(line);
+			}
+			var vl_wrapper = document.createElement("div");
+			vl_wrapper.className = "vote-list-wrapper hidden";
+			vl_wrapper.appendChild(vl);
+			this.control.parentNode.insertBefore(vl_wrapper, this.control.parentNode.firstChild);
+			setTimeout(DOMTokenList.prototype.remove.bind(vl_wrapper.classList), 10, "hidden");
+			
+			var context = {
+				"target":vl_wrapper,
+				"eventTarget":window
+			};
+			context.callback = this.orig.onVotesListLeaved.bind(context);
+			context.eventTarget.addEventListener("click", context.callback);
+		}
+		delete this.control.dataset.queryState;
+	}
+	this.onVotesListLeaved = function(e) {
+		if(this.target != e.target && (
+			e.target.tagName != "A" &&
+			!document.getElementsByClassName("nav-userbar")[0].contains(e.target) &&
+			!this.target.contains(e.target)
+		)) {
+			this.target.classList.add("hidden");
+			//setTimeout(Element.prototype.remove.bind(this.target), 500);
+			setTimeout(Node.prototype.removeChild.bind(this.target.parentNode), 500, this.target);
+			this.eventTarget.removeEventListener(e.type, this.callback);
+		}
 	}
 
 	return this;

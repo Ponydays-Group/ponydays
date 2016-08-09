@@ -183,8 +183,10 @@
 .loader { background: #fafafa url(../images/loader.gif) 50% 50% no-repeat; }
 
 .user, .ls-user 	{ font-weight: bold; color: #333; }
-.ls-user:before 	{ content: ''; display: inline-block; width: 14px; height: 14px; margin-right: 3px; background: url(../images/icons.png) -168px 0 no-repeat; vertical-align: middle; }
+.ls-user:not(.has-avatar):before 	{ content: ''; display: inline-block; width: 14px; height: 14px; margin-right: 3px; background: url(../images/icons.png) -168px 0 no-repeat; vertical-align: middle; }
+.ls-user.has-avatar img 	{ width: 14px; height: 14px; margin-right: 3px; vertical-align: text-bottom; }
 .user.inactive 		{ color: #aaa; }
+.ls-user.undefined 		{ pointer-events: none; font-weight: normal; font-style: italic; }
 
 .js-block-blogs-content .item-list li {
 	min-height: 51px;
@@ -208,4 +210,59 @@
 
 .people-active li{
 	margin-left: 20px;
+}
+
+
+
+.vote-list-wrapper {
+	display: inline-block;
+	position:absolute;
+	padding: 10px;
+	background-color: #AFC7E2;
+	border-radius: 5px;
+	z-index: 1;
+	right: -10px;
+	bottom: 24px;
+	transition-duration: 0.5s;
+	transition-property: opacity,filter;
+	opacity: 1;
+	filter: alpha(opacity=100);
+}
+.vote-list-wrapper.hidden {
+	opacity: 0;
+	filter: alpha(opacity=0);
+}
+.vote-list { display: table; }
+.vote-list>div { display: table-row; }
+.vote-list>div>* { display: table-cell; }
+.vote-list>div>*:not(:last-child) { padding-right: 10px; }
+.vote-list>div:not(:last-child)>* { padding-bottom: 0.3em; }
+
+.vote-list time,
+.vote-list .vote {
+	text-align: right;
+}
+.vote-list time>.fa {
+	float: left;
+	margin-right: 3px;
+	padding-top: 1.5pt;
+}
+.vote-list .vote::before { content: attr(data-value); font-weight: bolder; }
+.vote-list .vote[data-value="0"]::before { color: black; }
+.vote-list .vote[data-value^="+"]::before { color: #390; }
+.vote-list .vote[data-value^="−"]::before { color: #f00; }
+
+.voteInfo-enable .vote.vote-count-mixed .vote-count {
+	color: black;
+}
+.voteInfo-enable .comment-vote.vote { cursor: default; }
+.voteInfo-enable .comment-vote.vote.vote-count-positive .vote-count:not([data-query-state="query"]),
+.voteInfo-enable .comment-vote.vote.vote-count-negative .vote-count:not([data-query-state="query"]),
+.voteInfo-enable .comment-vote.vote.vote-count-mixed .vote-count:not([data-query-state="query"]) {
+	cursor: help;
+}
+.voteInfo-enable .comment-vote.vote.vote-count-positive .vote-count[data-query-state="query"],
+.voteInfo-enable .comment-vote.vote.vote-count-negative .vote-count[data-query-state="query"],
+.voteInfo-enable .comment-vote.vote.vote-count-mixed .vote-count[data-query-state="query"] {
+	cursor: progress;
 }

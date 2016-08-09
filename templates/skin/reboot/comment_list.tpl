@@ -3,6 +3,7 @@
 		{assign var="oUser" value=$oComment->getUser()}
 		{assign var="oTopic" value=$oComment->getTarget()}
 		{assign var="oBlog" value=$oTopic->getBlog()}
+		{assign var="bVoteInfoEnabled" value=$LS->ACL_CheckSimpleAccessLevel(Config::Get('acl.vote_state.comment.ne_enable_level'), $oUserCurrent, $oComment, 'comment')}
 
 
 
@@ -17,7 +18,7 @@
 			<a href="{$oUser->getUserWebPath()}"><img src="{$oUser->getProfileAvatarPath(48)}" alt="avatar" class="comment-avatar" /></a>
 
 
-			<ul class="comment-info clearfix">
+			<ul class="comment-info clearfix {if $bVoteInfoEnabled}voteInfo-enable{/if}">
 				<li class="comment-author"><a href="{$oUser->getUserWebPath()}">{$oUser->getLogin()}</a></li>
 				<li class="comment-date">
 					<a href="{if $oConfig->GetValue('module.comment.nested_per_page')}{router page='comments'}{else}{$oTopic->getUrl()}#comment{/if}{$oComment->getId()}" class="link-dotted" title="{$aLang.comment_url_notice}">
@@ -35,6 +36,8 @@
 																			vote-count-positive
 																		{elseif $oComment->getRating() < 0}
 																			vote-count-negative
+																		{elseif $oComment->getRating() == 0 and $oComment->getCountVote() > 0 and $bVoteInfoEnabled}
+																			vote-count-mixed
 																		{/if}">
 					<span class="vote-count" id="vote_total_comment_{$oComment->getId()}">{$oComment->getRating()}</span>
 				</li>

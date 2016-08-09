@@ -605,3 +605,4 @@ $config['acl']['vote_state']['comment']['ne_enable_level'] = 1;
 
 return $config;
 ?>
+v

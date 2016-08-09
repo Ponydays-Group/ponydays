@@ -161,10 +161,10 @@ ls.vote = (function ($) {
 		if(result.bStateError) {
 			ls.msg.error(null, result.sMsg);
 		} else {
-			var vl = document.createElement("div");
-			vl.className = "vote-list";
 			var voteSum = 0;
 			if(result.aVotes.length > 0) {
+				var vl = document.createElement("div");
+				vl.className = "vote-list";
 				for(var i=0; i<result.aVotes.length; i++) {
 					var vote = result.aVotes[i];
 					voteSum += vote.value;

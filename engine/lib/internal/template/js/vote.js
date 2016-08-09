@@ -163,46 +163,65 @@ ls.vote = (function ($) {
 		} else {
 			var vl = document.createElement("div");
 			vl.className = "vote-list";
-			for(var i=0; i<result.aVotes.length; i++) {
-				var vote = result.aVotes[i];
-				var line = document.createElement("div");
-				var profileLink = __makeProfileLink(vote.voterName, {
-					name: vote.voterName,
-					avatar: vote.voterAvatar
-				});
-				line.appendChild(profileLink);
+			var voteSum = 0;
+			if(result.aVotes.length > 0) {
+				for(var i=0; i<result.aVotes.length; i++) {
+					var vote = result.aVotes[i];
+					voteSum += vote.value;
+					var line = document.createElement("div");
+					var profileLink = __makeProfileLink(vote.voterName, {
+						name: vote.voterName,
+						avatar: vote.voterAvatar
+					});
+					line.appendChild(profileLink);
+					
+					var time = document.createElement("time");
+					time.datetime = vote.date;
+					var date = new Date(Date.parse(vote.date));
+					var now = new Date();
+					time.appendChild(document.createTextNode((
+						date.getDate() != now.getDate() ||
+						date.getMonth() != now.getMonth() ||
+						date.getFullYear() != now.getFullYear()
+					) ? date.toLocaleString() : date.toLocaleTimeString()));
+					line.appendChild(time);
+					
+					var voteValue = document.createElement("span");
+					voteValue.dataset.value = vote.value == 0 ? "0" : (vote.value > 0 ? "+" : "−") + Math.abs(vote.value).toString();
+					voteValue.className = "vote";
+					line.appendChild(voteValue);
+					
+					vl.appendChild(line);
+				}
+				var vl_wrapper = document.createElement("div");
+				vl_wrapper.className = "vote-list-wrapper hidden";
+				vl_wrapper.appendChild(vl);
+				if(this.control.parentNode.parentNode.classList.contains("comment-actions")) this.control.parentNode.insertBefore(vl_wrapper, this.control.parentNode.firstChild);
+				else this.control.parentNode.parentNode.parentNode.insertBefore(vl_wrapper, this.control.parentNode.parentNode.nextSibling);
+				setTimeout(DOMTokenList.prototype.remove.bind(vl_wrapper.classList), 10, "hidden");
 				
-				var time = document.createElement("time");
-				time.datetime = vote.date;
-				var date = new Date(Date.parse(vote.date));
-				var now = new Date();
-				time.appendChild(document.createTextNode((
-					date.getDate() != now.getDate() ||
-					date.getMonth() != now.getMonth() ||
-					date.getFullYear() != now.getFullYear()
-				) ? date.toLocaleString() : date.toLocaleTimeString()));
-				line.appendChild(time);
-				
-				var voteValue = document.createElement("span");
-				voteValue.dataset.value = vote.value == 0 ? "0" : (vote.value > 0 ? "+" : "−") + Math.abs(vote.value).toString();
-				voteValue.className = "vote";
-				line.appendChild(voteValue);
-				
-				vl.appendChild(line);
+				var context = {
+					"target":vl_wrapper,
+					"eventTarget":window
+				};
+				context.callback = this.orig.onVotesListLeaved.bind(context);
+				context.eventTarget.addEventListener("click", context.callback);
 			}
-			var vl_wrapper = document.createElement("div");
-			vl_wrapper.className = "vote-list-wrapper hidden";
-			vl_wrapper.appendChild(vl);
-			if(this.control.parentNode.parentNode.classList.contains("comment-actions")) this.control.parentNode.insertBefore(vl_wrapper, this.control.parentNode.firstChild);
-			else this.control.parentNode.parentNode.parentNode.insertBefore(vl_wrapper, this.control.parentNode.parentNode.nextSibling);
-			setTimeout(DOMTokenList.prototype.remove.bind(vl_wrapper.classList), 10, "hidden");
 			
-			var context = {
-				"target":vl_wrapper,
-				"eventTarget":window
-			};
-			context.callback = this.orig.onVotesListLeaved.bind(context);
-			context.eventTarget.addEventListener("click", context.callback);
+			if(parseInt(this.control.dataset.count) != result.aVotes.length) {
+				this.control.parentNode.classList.remove(this.orig.options.classes.negative);
+				this.control.parentNode.classList.remove(this.orig.options.classes.positive);
+				this.control.parentNode.classList.remove(this.orig.options.classes.mixed);
+				if(voteSum > 0) {
+					this.control.textContent = "+" + voteSum.toString();
+					this.control.parentNode.classList.add(this.orig.options.classes.positive);
+				} else {
+					this.control.textContent = voteSum.toString();
+					if(voteSum < 0) this.control.parentNode.classList.add(this.orig.options.classes.negative);
+					else this.control.parentNode.classList.add(this.orig.options.classes.mixed);
+				}
+				this.control.dataset.count = result.aVotes.length.toString();
+			}
 		}
 		delete this.control.dataset.queryState;
 	}

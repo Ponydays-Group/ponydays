@@ -255,14 +255,11 @@
 .voteInfo-enable .vote.vote-count-mixed .vote-count {
 	color: black;
 }
-.voteInfo-enable .comment-vote.vote { cursor: default; }
-.voteInfo-enable .comment-vote.vote.vote-count-positive .vote-count:not([data-query-state="query"]),
-.voteInfo-enable .comment-vote.vote.vote-count-negative .vote-count:not([data-query-state="query"]),
-.voteInfo-enable .comment-vote.vote.vote-count-mixed .vote-count:not([data-query-state="query"]) {
+.voteInfo-enable .comment-vote.vote,
+.voteInfo-enable .vote-count[data-count="0"] { cursor: default; }
+.voteInfo-enable .vote-count[data-count]:not([data-count="0"]):not([data-query-state="query"]) {
 	cursor: help;
 }
-.voteInfo-enable .comment-vote.vote.vote-count-positive .vote-count[data-query-state="query"],
-.voteInfo-enable .comment-vote.vote.vote-count-negative .vote-count[data-query-state="query"],
-.voteInfo-enable .comment-vote.vote.vote-count-mixed .vote-count[data-query-state="query"] {
+.voteInfo-enable .vote-count[data-count]:not([data-count="0"])[data-query-state="query"] {
 	cursor: progress;
 }

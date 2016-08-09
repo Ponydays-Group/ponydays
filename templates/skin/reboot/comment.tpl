@@ -1,6 +1,9 @@
 {assign var="oUser" value=$oComment->getUser()} <!-- i defined that in comment_tree. Do we still need that here? -->
 {assign var="oVote" value=$oComment->getVote()}
 {assign var="oId" value=$oComment->getTarget()}
+{if !$bVoteInfoEnabled}
+{assign var="bVoteInfoEnabled" value=$LS->ACL_CheckSimpleAccessLevel(Config::Get('acl.vote_state.comment.ne_enable_level'), $oUserCurrent, $oComment, 'comment')}
+{/if}
 
 <section id="comment_id_{$oComment->getId()}" class="comment user-login-{$oUser->getLogin()} 
 														{if $oComment->isBad()}
@@ -67,8 +70,8 @@
 		</div>
 
 
-		<ul class="comment-actions {if $bVoteInfoEnabled}voteInfo-enable{/if}">
 		{if $oUserCurrent}
+			<ul class="comment-actions {if $bVoteInfoEnabled}voteInfo-enable{/if}">
 				{if !$oComment->getDelete() and !$bAllowNewComment}
 					<li><a href="#" onclick="ls.comments.toggleCommentForm({$oComment->getId()}); return false;" class="reply-link link-dotted">{$aLang.comment_answer}</a></li>
 				{/if}

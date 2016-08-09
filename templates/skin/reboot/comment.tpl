@@ -67,8 +67,8 @@
 		</div>
 
 
+		<ul class="comment-actions {if $bVoteInfoEnabled}voteInfo-enable{/if}">
 		{if $oUserCurrent}
-			<ul class="comment-actions">
 				{if !$oComment->getDelete() and !$bAllowNewComment}
 					<li><a href="#" onclick="ls.comments.toggleCommentForm({$oComment->getId()}); return false;" class="reply-link link-dotted">{$aLang.comment_answer}</a></li>
 				{/if}
@@ -81,6 +81,8 @@
 																			vote-count-positive
 																		{elseif $oComment->getRating() < 0}
 																			vote-count-negative
+																		{elseif $oComment->getRating() == 0 and $oComment->getCountVote() > 0 and $bVoteInfoEnabled}
+																			vote-count-mixed
 																		{/if}
 																		{if $oVote}
 																			voted
@@ -92,7 +94,7 @@
 																		{/if}">
 					
 					<div class="vote-down" onclick="return ls.vote.vote({$oComment->getId()},this,-1,'comment');"><i class="fa fa-arrow-down"></i></div>
-					<span class="vote-count" id="vote_total_comment_{$oComment->getId()}">{if $oComment->getRating() > 0}+{/if}{$oComment->getRating()}</span>
+					<span class="vote-count" id="vote_total_comment_{$oComment->getId()}" {if $bVoteInfoEnabled}data-count="{$oComment->getCountVote()}" onclick="if(parseInt(this.dataset.count) > 0) ls.vote.getVotes({$oComment->getId()},'comment',this);"{/if}>{if $oComment->getRating() > 0}+{/if}{$oComment->getRating()}</span>
 					<div class="vote-up" onclick="return ls.vote.vote({$oComment->getId()},this,1,'comment');"><i class="fa fa-arrow-up"></i></div>
 				</li>
 			{/if}

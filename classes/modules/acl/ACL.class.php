@@ -566,5 +566,60 @@ class ModuleACL extends Module {
 	public function IsAllowControlTopic($oTopic,$oUser) {
 		return ($this::IsAllowEditTopic($oTopic,$oUser) && !$oTopic->isControlLocked()) || $this::IsAllowLockTopicControl($oTopic,$oUser);
 	}
+	public function CheckSimpleAccessLevel($req, $oUser, $oTarget, $sTargetType) {
+		if($req == 8) return true;
+		if($req == 0) return false;
+		if(!$oUser && $req < 8) return false;
+		if($req == 7) return true;
+		if($req >= 1) {
+			if($oUser->isAdministrator()) return true;
+			if($req >= 2) {
+				if($sTargetType === 'comment') {
+					if($oTarget->getTargetType() === 'topic') {
+						$oTopic = $oTarget->getTarget();
+					} else if($oTarget->getTargetType() === 'talk') {
+						$oTalk = $oTarget->getTarget();
+					}
+				} else if($sTargetType === 'topic') {
+					$oTopic = $oTarget;
+				} else if($sTargetType === 'talk') {
+					$oTalk = $oTarget;
+				} else if($sTargetType === 'blog') {
+					$oBlog = $oTarget;
+				} else if($sTargetType === 'user') {
+					$oTargetUser = $oTarget;
+				}
+				if(isset($oTopic) || isset($oBlog)) {
+					if(!isset($oBlog) && $oTopic) $oBlog = $oTopic->getBlog();
+					if($oUser->isGlobalModerator() && $oBlog->getType() == 'open') return true;
+					if($req >= 3 && ($oBlog->getUserIsAdministrator() || $oBlog->getOwnerId() == $oUser->getId())) return true;
+					if($req >= 4 && $oBlog->getUserIsModerator()) return true;
+					if($req >= 5) {
+						if(in_array($oBlog->getId(), $this->ModuleBlog_GetAccessibleBlogsByUser($oUser)) ||
+							(
+								$oBlog->getType() === 'open' && (
+									!($oBlogUser = $this->Blog_GetBlogUserByBlogIdAndUserId($oBlog->getId(),$oUser->getId())) ||
+									$oBlogUser->getUserRole() != ModuleBlog::BLOG_USER_ROLE_BAN
+								)
+							)
+						) {
+							if($req == 6) return true;
+							if($req == 5 && $oTarget->getUserId() == $oUser->getId()) return true;
+						}
+					}
+				}
+				if(isset($oTalk)) {
+					if($req >= 5 && $this->ModuleTalk_GetTalkUser($oTalk->getId(),$oUser->getId())) {
+						if($req == 6) return true;
+						if($req == 5 && $oTarget->getUserId() == $oUser->getId()) return true;
+					}
+				}
+				if(isset($oTargetUser)) {
+					// ...
+				}
+			}
+		}
+		return false;
+	}
 }
 ?>

@@ -11,7 +11,7 @@
 
 	{/if}{/if}
 	<script async src="{cfg name="path.static.skin"}/js/spoiler.js"></script>
-	<!--script src="{cfg name="path.static.skin"}/js/scroll.js"></script-->
+
 	{hook run='html_head_begin'}
 	
 	<meta charset="utf-8">

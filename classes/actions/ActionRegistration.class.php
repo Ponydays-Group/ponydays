@@ -213,7 +213,8 @@ class ActionRegistration extends Action {
 					 */
 					$sUrl=Config::Get('module.user.redirect_after_registration');
 					if (getRequestStr('return-path')) {
-						$sUrl=getRequestStr('return-path');
+//						$sUrl=getRequestStr('return-path');
+						$sUrl='https://bunker.lunavod.ru/blog/main/1721';
 					}
 					$this->Viewer_AssignAjax('sUrlRedirect',$sUrl ? $sUrl : Config::Get('path.root.web'));
 					$this->Message_AddNoticeSingle($this->Lang_Get('registration_ok'));

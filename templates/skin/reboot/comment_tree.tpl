@@ -28,6 +28,7 @@
 	{foreach from=$aComments item=oComment name=rublist}
 		{assign var="cmtlevel" value=$oComment->getLevel()}
         {assign var="oUser" value=$oComment->getUser()}
+		{assign var="bVoteInfoEnabled" value=$LS->ACL_CheckSimpleAccessLevel(Config::Get('acl.vote_state.comment.ne_enable_level'), $oUserCurrent, $oComment, 'comment')}
 		
 		{if $cmtlevel>$oConfig->GetValue('module.comment.max_tree')}
 			{assign var="cmtlevel" value=$oConfig->GetValue('module.comment.max_tree')}

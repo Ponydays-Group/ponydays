@@ -114,5 +114,7 @@ var panel = function(){
 	}
 }
 </script>
+<!-- right sidebar -->
+	<script src="{cfg name="path.static.skin"}/js/scroll.js"></script>
 </body>
 </html>

@@ -2,9 +2,10 @@
 {assign var="oUser" value=$oTopic->getUser()}
 {assign var="oVote" value=$oTopic->getVote()}
 {assign var="bAllowLockControl" value=$oTopic->testAllowLockControl($oUserCurrent)}
+{assign var="bVoteInfoEnabled" value=$LS->ACL_CheckSimpleAccessLevel(Config::Get('acl.vote_state.comment.ne_enable_level'), $oUserCurrent, $oTopic, 'topic')}
 
 
-<article class="topic topic-type-{$oTopic->getType()} js-topic">
+<article class="topic topic-type-{$oTopic->getType()} js-topic {if $bVoteInfoEnabled}voteInfo-enable{/if}">
 <div class="smile" style="background-image: url('https://static.lunavod.ru/smiles/{include file="smiles.php"}')"></div>
 	<header class="topic-header">
 		<h1 class="topic-title word-wrap">
@@ -32,12 +33,14 @@
 		
 		
 		<div class="topic-info">
-			<div style="display: inline; padding-right: 15px;" id="vote_area_topic_{$oTopic->getId()}" class="stickyDa vote 
+			<div style="display: inline; padding-right: 15px;" id="vote_area_topic_{$oTopic->getId()}" class="stickyDa vote topic-vote 
 																{if $oVote || ($oUserCurrent && $oTopic->getUserId() == $oUserCurrent->getId()) || strtotime($oTopic->getDateAdd()) < $smarty.now-$oConfig->GetValue('acl.vote.topic.limit_time')}
 																	{if $oTopic->getRating() > 0}
 																		vote-count-positive
 																	{elseif $oTopic->getRating() < 0}
 																		vote-count-negative
+																	{elseif $oTopic->getRating() == 0 and $oTopic->getCountVote() > 0 and $bVoteInfoEnabled}
+																		vote-count-mixed
 																	{/if}
 																{/if}
 																

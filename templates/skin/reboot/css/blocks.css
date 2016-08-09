@@ -59,9 +59,13 @@
 /* stream fixed */
 .stream-fixed {
     position: fixed;
-    top: 0;
-    height: 100%;
-    overflow-y: scroll;
+    top: 10px;
+    /*bottom: 10px;*/
+    max-height: 97%;
+    margin-bottom: 0;
+    /*right: 10px;*/
+    width: 350px;
+    overflow-y: auto;
 }
 
 .friend {

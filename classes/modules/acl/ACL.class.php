@@ -371,10 +371,10 @@ class ModuleACL extends Module {
 		/**
 		 * Разрешаем если это админ сайта или автор топика
 		 */
-		if (($oTopic->getUserId()==$oUser->getId() && !$oTopic->isControlLocked()) or $oUser->isAdministrator()) {
+		if (($oTopic->getUserId()==$oUser->getId() && !$oTopic->isControlLocked()) or $oUser->getIsAdministrator()) {
 			return true;
 		}
-		if ($oUser->isGlobalModerator() and $oTopic->getBlog()->getType() == "open" ) {
+		if ($oUser->isGlobalModerator() and $oTopic->getBlog()->getType() == "open" ) 
                         return true;
                 }
 		/**
@@ -552,8 +552,8 @@ class ModuleACL extends Module {
 	public function IsAllowLockTopicControl($oTopic,$oUser) {
 		if(!$oUser) return false;
 		if(
-			$oUser->isAdministrator() ||
-			($oUser->isGlobalModerator() && $oTopic->getBlog()->getType() == 'open')
+			$oUser->isAdministrator()
+//			($oUser->isGlobalModerator() && $oTopic->getBlog()->getType() == 'open')
 		) return true;
 		$oBlog = $oTopic->getBlog();
 		if(

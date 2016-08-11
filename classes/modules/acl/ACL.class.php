@@ -374,7 +374,7 @@ class ModuleACL extends Module {
 		if (($oTopic->getUserId()==$oUser->getId() && !$oTopic->isControlLocked()) or $oUser->getIsAdministrator()) {
 			return true;
 		}
-		if ($oUser->isGlobalModerator() and $oTopic->getBlog()->getType() == "open" ) 
+		if ($oUser->isGlobalModerator() and $oTopic->getBlog()->getType() == "open" ) {
                         return true;
                 }
 		/**

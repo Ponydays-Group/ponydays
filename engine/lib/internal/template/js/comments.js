@@ -357,13 +357,19 @@ ls.comments = (function ($) {
 		//if(!this.options.folding){
 		//	return false;
 		//}
-		$(".folding").each(function(index, element){
+		$(".folding").each(function(index, element) {
 			if ($(element).parent(".comment").next(".comment-wrapper").length == 0) {
 				$(element).hide();
 			} else {
 				$(element).show();
 			}
-		}).click(function(x){if(x.target.className=="folding fa fa-minus-square"){ls.comments.collapseComment(x.target)}else{ls.comments.expandComment(x.target)}});
+		}).off("click").click(function(x) {
+			if(x.target.className=="folding fa fa-minus-square") {
+				ls.comments.collapseComment(x.target)
+			} else {
+				ls.comments.expandComment(x.target)
+			}
+		});
 		return false;
 	};
 	

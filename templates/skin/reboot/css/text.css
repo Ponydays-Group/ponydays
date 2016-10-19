@@ -64,3 +64,7 @@
 	filter:contrast(0%) brightness(78.5%) sepia(95.30%) hue-rotate(152.5deg);
 	-webkit-filter:contrast(0%) brightness(78.5%) sepia(95.30%) hue-rotate(152.5deg);
 }
+img.gray:not(:hover)  {
+	filter:contrast(0%) brightness(78.5%) sepia(95.30%) hue-rotate(152.5deg);
+	-webkit-filter:contrast(0%) brightness(78.5%) sepia(95.30%) hue-rotate(152.5deg);
+}

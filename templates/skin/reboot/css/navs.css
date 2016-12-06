@@ -67,7 +67,7 @@
 }
 #userbar .search { float: left; margin: 5px 0 0 6px; margin: 4px 0 0 4px; }
 
-.nav.nav-userbar 									{ float: left; background: #5C6BC0; height: 100%; padding-top: 50px; }
+.nav.nav-userbar 									{ float: left; background: #5C6BC0; height: 100%; padding-top: 50px; min-height: 600px;}
 
 .nav.nav-userbar li 								{ }
 .nav.nav-userbar li a 								{ color: white; }

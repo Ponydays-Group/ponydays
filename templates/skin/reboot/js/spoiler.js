@@ -12,7 +12,7 @@ function spoiler(b){
 
     }
 }
-
+console.log('now')
 function spoiler_click(event){
     var event = event || window.event;
     if(event.button!=0)return;

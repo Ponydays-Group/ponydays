@@ -6,13 +6,13 @@ return array(
 		'cfgAllowTags' => array(
 			// вызов метода с параметрами
 			array(
-				array('span', 'ls','cut','a', 'img', 'i', 'b', 'u', 's', 'video', 'em',  'strong', 'nobr', 'li', 'ol', 'ul', 'sup', 'abbr', 'sub', 'acronym', 'h4', 'h5', 'h6', 'br', 'hr', 'pre', 'code', 'object', 'param', 'embed', 'blockquote', 'iframe','table','th','tr','td', 'small'),
+				array('hid', 'indicator','span', 'ls','cut','a', 'img', 'i', 'b', 'u', 's', 'video', 'em',  'strong', 'nobr', 'li', 'ol', 'ul', 'sup', 'abbr', 'sub', 'acronym', 'h4', 'h5', 'h6', 'br', 'hr', 'pre', 'code', 'object', 'param', 'embed', 'blockquote', 'iframe','table','th','tr','td', 'small'),
 			),
 		),
 		// Коротие теги типа
 		'cfgSetTagShort' => array(
 			array(
-				array('br','img', 'hr', 'cut','ls')
+				array('br','img', 'hr', 'cut','ls','indicator')
 			),
 		),
 		// Преформатированные теги
@@ -24,6 +24,10 @@ return array(
 		// Разрешённые параметры тегов
 		'cfgAllowTagParams' => array(
 			// вызов метода
+			array(
+				'indicator',
+				array('class'=>array('safe', 'questionable', 'explicit', 'suggestive'))
+			),
 			array(
 				'img',
 				array('src', 'alt' => '#text', 'title', 'align' => array('right', 'left', 'center', 'middle'), 'width' => '#int', 'height' => '#int', 'hspace' => '#int', 'vspace' => '#int', 'class'=> array('image-center', 'gray', 'image-center gray'))

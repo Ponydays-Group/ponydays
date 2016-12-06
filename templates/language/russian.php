@@ -867,7 +867,7 @@ return array(
 	'userfeed_get_more' => 'Получить ещё топики',
 	'userfeed_title' => 'Избранные блоги',
 	'userfeed_settings_note_follow_blogs' => 'Выберите блоги которые вы хотели бы убрать из ленты',
-	'userfeed_settings_note_follow_user' => 'Добавьте людей, топики которых вы хотели бы читать',
+	'userfeed_settings_note_follow_user' => 'Добавьте людей, топики которых вы хотели бы заблокировать в ленте',
 	'userfeed_settings_note_follow_friend' => 'Выберите друзей, топики которых вы хотели бы читать',
 	'userfeed_no_subscribed_users' => 'Вы ещё не подписались на пользователей, чьи топики хотите видеть',
 	'userfeed_no_blogs' => 'Вы не вступили ни в один блог',

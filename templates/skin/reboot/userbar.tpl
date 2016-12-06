@@ -97,6 +97,12 @@
         </a>
     </li>
 {/if}
+    <li title="Правила">
+        <a href="/page/rules">
+            Правила
+            <i class="fa fa-gavel"></i>
+        </a>
+    </li>
     <li title="О версии {Config::Get('site_version')}">
         <a href="/page/about">
             О версии {Config::Get('site_version')}

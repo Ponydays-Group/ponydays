@@ -38,6 +38,8 @@ function NewOldBunker(){
 		</div>
 		{hook run='body_end'}
 	</footer>
+{literal}
+{/literal}
 </div> <!-- /container -->
 
 
@@ -63,6 +65,73 @@ function NewOldBunker(){
                 }
         }
 }
+t = `body {
+    background: #edeef0;
+}
+
+#wrapper {
+    background: none;
+    box-shadow: none;
+}
+
+.topic {
+    border-radius: 0px;
+    margin-bottom: 30px;
+}
+
+.block {
+	border: 1px solid #e0e0e0;
+}
+
+.block .block-header {
+    color: white;
+    background: #5c6bc0;
+}
+
+.block .block-header h3 a {
+    color: white;
+}
+
+.nav.nav-pills li a {
+    border-radius: 0px;
+}
+
+.nav.nav-pills li.active a {
+    background: #5c6bc0;
+}
+
+#content.content-right {
+    border: 1px solid #e0e0e0;
+    background: white;
+    padding: 25px;
+}
+
+#footer {
+    box-shadow: none;
+    background: none;
+}
+
+.nav.nav-profile li {
+    margin-right: 0;
+}
+
+.block.block-type-profile-nav {
+    background: white;
+}
+
+.nav.nav-profile {
+    margin-bottom: 0px;
+}
+
+.profile-photo {
+    background: white;
+    border: 1px solid #e0e0e0;
+}`
+
+if(getCookie("SiteStyle") == "Light1"){
+	$('body').append('<style>'+t+'</style>')
+}
+
 var allNew = document.querySelectorAll('.spoiler-title');
 console.log(allNew)
 idx=0

@@ -6,7 +6,7 @@
 
 
 <article class="topic topic-type-{$oTopic->getType()} js-topic {if $bVoteInfoEnabled}voteInfo-enable{/if}">
-<div class="smile" style="background-image: url('https://static.lunavod.ru/smiles/{include file="smiles.php"}')"></div>
+<div class="smile" style="background-image: url(https://static.lunavod.ru/smiles/{include file="smiles.php"})"></div>
 	<header class="topic-header">
 		<h1 class="topic-title word-wrap">
 			{if $oTopic->getPublish() == 0}   

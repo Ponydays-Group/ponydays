@@ -199,3 +199,30 @@ h2.header-table { margin-bottom: 0; border-bottom: 1px solid #eee; padding-botto
 .comment .comment-avatar {
     border-radius: 0px;
 }
+
+indicator {
+    border: 1px solid rgba(0, 0, 0, 0.32);
+    margin-right: 5px;
+    border-radius: 10em;
+    background: white;
+    display: inline-block;
+    width: 0.9em;
+    height: 0.9em;
+    vertical-align: text-top;
+}
+
+.safe {
+    background: #2196F3;
+}
+
+.suggestive {
+    background:#4CAF50;
+}
+
+.questionable {
+    background:#FFEB3B;
+}
+
+.explicit {
+    background:#F44336;
+}

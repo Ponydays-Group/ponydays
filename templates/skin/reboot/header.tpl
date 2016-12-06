@@ -6,14 +6,11 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="ru"> <!--<![endif]-->
 
 <head>
-	{if $sAction!='login'}
-	{if !$oUserCurrent}
-
-	{/if}{/if}
+	<script   src="https://code.jquery.com/jquery-2.2.4.min.js"   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="   crossorigin="anonymous"></script>
 	<script async src="{cfg name="path.static.skin"}/js/spoiler.js"></script>
 
 	{hook run='html_head_begin'}
-	
+	<meta name="viewport" content="width=device-width, initial-scale=1">	
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 	
@@ -89,7 +86,6 @@ function getCookie(name) {
 	
 	
 	{hook run='html_head_end'}
-	
 <style>
 {literal}
 @font-face {

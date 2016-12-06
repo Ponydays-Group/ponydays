@@ -12,7 +12,6 @@
     opacity: 0.2;
     margin-top: -20px;
     margin-right: -20px;
-    transform: rotate(180deg);
 }
 
 .topic { border: 1px solid #E0E0E0; overflow: hidden; zoom: 1; margin-bottom: 50px; background: white; padding: 20px; border-radius: 5px;}

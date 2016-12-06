@@ -71,7 +71,7 @@
 					</div>
 				{/if}
 			</div>
-			<img width=15 src="{$oUser->getProfileAvatarPath(24)}"><strong><a style="padding-left: 5px;" rel="author" href="{$oUser->getUserWebPath()}">{$oUser->getLogin()}</a></strong> Ð² <a href="{$oBlog->getUrlFull()}" class="topic-blog">{$oBlog->getTitle()|escape:'html'}</a>
+			<img width=15 src="{$oUser->getProfileAvatarPath(24)}"><strong><a style="padding-left: 5px;" rel="author" href="{$oUser->getUserWebPath()}">{$oUser->getLogin()}</a></strong> Ò <a href="{$oBlog->getUrlFull()}" class="topic-blog">{$oBlog->getTitle()|escape:'html'}</a>
 			
 			<time datetime="{date_format date=$oTopic->getDateAdd() format='c'}" title="{date_format date=$oTopic->getDateAdd() format='j F Y, H:i'}">
 				{date_format date=$oTopic->getDateAdd() format="j F Y, H:i"}
@@ -83,7 +83,7 @@
 				{/if}
 				
 				{if $oUserCurrent and (($oUserCurrent->isGlobalModerator() and $oTopic->getBlog()->getType() == "open") or $oUserCurrent->isAdministrator() or $oBlog->getUserIsAdministrator() or $oBlog->getUserIsModerator() or ($oTopic->getUserId() === $oUserCurrent->getId() and !$oTopic->isControlLocked()) or $oBlog->getOwnerId()==$oUserCurrent->getId())}
-					<li><a href="{router page='topic'}delete/{$oTopic->getId()}/?security_ls_key={$LIVESTREET_SECURITY_KEY}" title="{$aLang.topic_delete}" onclick="return confirm('{$aLang.topic_delete_confirm}');" class="actions-delete">{$aLang.topic_delete}</a></li>
+					<li><a href="#" title="{$aLang.topic_delete}" onclick="onDelete();" class="actions-delete">{$aLang.topic_delete}</a></li>
 				{/if}
 				
 				{if $bAllowLockControl}
@@ -99,3 +99,12 @@
 {foreach $aVotes as $vote}<span style="color:{if $vote == 1}green{elseif $vote == 0}gray{elseif $vote == -1}red{/if} ;">{$vote@key}</span> {/foreach}
 </div>
 	</header>
+
+<script type='text/javascript'>
+// to prevent Ori-misclick with mouse midbutton will use that function instead of js confirm in delete link:
+function onDelete() {
+    if (confirm('{$aLang.topic_delete_confirm}')) {
+        window.open("{router page='topic'}delete/{$oTopic->getId()}/?security_ls_key={$LIVESTREET_SECURITY_KEY}", '_self');
+    }
+}
+</script>

@@ -71,7 +71,7 @@
 					</div>
 				{/if}
 			</div>
-			<img width=15 src="{$oUser->getProfileAvatarPath(24)}"><strong><a style="padding-left: 5px;" rel="author" href="{$oUser->getUserWebPath()}">{$oUser->getLogin()}</a></strong> Ò <a href="{$oBlog->getUrlFull()}" class="topic-blog">{$oBlog->getTitle()|escape:'html'}</a>
+			<img width=15 src="{$oUser->getProfileAvatarPath(24)}"><strong><a style="padding-left: 5px;" rel="author" href="{$oUser->getUserWebPath()}">{$oUser->getLogin()}</a></strong> Ð² <a href="{$oBlog->getUrlFull()}" class="topic-blog">{$oBlog->getTitle()|escape:'html'}</a>
 			
 			<time datetime="{date_format date=$oTopic->getDateAdd() format='c'}" title="{date_format date=$oTopic->getDateAdd() format='j F Y, H:i'}">
 				{date_format date=$oTopic->getDateAdd() format="j F Y, H:i"}

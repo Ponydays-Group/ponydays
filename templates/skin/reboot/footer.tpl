@@ -1,10 +1,6 @@
 			{hook run='content_end'}
 		</div> <!-- /content -->
 	</div> <!-- /wrapper -->
-{if !$oUserCurrent}
-	        <script src="https://smiles.everypony.ru/smilepack/jrayjn.compat.user.js"></script>
-{/if}
-
 <script>
 {literal}
 function NewOldBunker(){

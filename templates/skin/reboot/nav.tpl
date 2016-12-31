@@ -13,14 +13,49 @@
 
 		<li class="quote" style="float: left;">
 		<a href="#" style="padding-top: 3px; padding-bottom" 0px;>
-<img src="{cfg name="path.static.skin"}/images/woona.gif">
+<img src="{cfg name="path.static.skin"}/images/woona_ny.gif">
 </a>
 </li>	
 	<li class="quote" style="float: left;">
 		<a href="#">
 		<h1>
 		<em>
-{include file="quote.php"}
+{literal}
+<script type="text/javascript">
+function fulltime ()
+{
+var time=new Date();
+var newYear=new Date("January,1,2017,00:00:00");
+var totalRemains=(newYear.getTime()-time.getTime());
+
+if (totalRemains>1){
+
+var RemainsSec = (parseInt(totalRemains/1000));//сколько всего осталось секунд
+var RemainsFullDays=(parseInt(RemainsSec/(24*60*60)));//осталось дней
+var secInLastDay=RemainsSec-RemainsFullDays*24*3600; //осталось секунд в неполном дне
+var RemainsFullHours=(parseInt(secInLastDay/3600));//осталось часов в неполном дне
+if (RemainsFullHours<10){RemainsFullHours="0"+RemainsFullHours};
+var secInLastHour=secInLastDay-RemainsFullHours*3600;//осталось секунд в неполном часе
+var RemainsMinutes=(parseInt(secInLastHour/60));//осталось минут в неполном часе
+if (RemainsMinutes<10){RemainsMinutes="0"+RemainsMinutes};
+var lastSec=secInLastHour-RemainsMinutes*60;//осталось секунд
+if (lastSec<10){lastSec="0"+lastSec};
+
+document.getElementById("RemainsFullHours").innerHTML=RemainsFullHours+":";
+document.getElementById("RemainsMinutes").innerHTML=RemainsMinutes+":";
+document.getElementById("lastSec").innerHTML=lastSec;
+setTimeout('fulltime()',10)
+}
+
+else{
+document.getElementById("clock").innerHTML="C НОВЫМ ГОДОМ!";
+}
+}
+</script>
+<span id="clock">До нового года осталось:
+<b><span id="RemainsFullHours"></span><span id="RemainsMinutes"></span><span id="lastSec"></span></b>
+</span>
+<script type="text/javascript">fulltime();</script>{/literal}
 </em>
 </h1>
 </a>

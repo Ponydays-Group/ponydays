@@ -118,7 +118,7 @@
 <header class="block-header"><h3>Бан</h3></header>
 <div class="block-content">
 {if !$oAceUserProfile->IsBannedByLogin()}
-                    <form method="post" action="http://bunker.lunavod.ru/api/ban/" class="well well-small">
+                    <form method="post" action="/api/ban/" class="well well-small">
                         <br>
                         <input name="security_ls_key" value="{$LIVESTREET_SECURITY_KEY}" type="hidden">
 
@@ -151,7 +151,7 @@
     <br/>
     <strong>{$oUserProfile->getBanComment()}</strong>
 </div>
-<form method="post" action="http://bunker.lunavod.ru/api/ban/" class="well well-small">
+<form method="post" action="/api/ban/" class="well well-small">
                         <input name="security_ls_key" value="{$LIVESTREET_SECURITY_KEY}" type="hidden">
 
                         <input name="ban_login" value="{$oUserProfile->getLogin()}" type="hidden">

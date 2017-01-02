@@ -307,8 +307,6 @@ class ModuleBlog_MapperBlog extends Mapper {
 				".Config::Get('db.table.blog')." as b				
 			WHERE 
 				b.user_owner_id = ? 
-				AND
-				b.blog_type<>'personal'				
 				";
 		$aBlogs=array();
 		if ($aRows=$this->oDb->select($sql,$sUserId)) {
@@ -328,8 +326,6 @@ class ModuleBlog_MapperBlog extends Mapper {
 			b.blog_id			 
 			FROM 
 				".Config::Get('db.table.blog')." as b				
-			WHERE 				
-				b.blog_type<>'personal'				
 				";
 		$aBlogs=array();
 		if ($aRows=$this->oDb->select($sql)) {
@@ -352,8 +348,6 @@ class ModuleBlog_MapperBlog extends Mapper {
 					b.blog_id													
 				FROM 
 					".Config::Get('db.table.blog')." as b 									 
-				WHERE 									
-					b.blog_type<>'personal'									
 				ORDER by b.blog_rating desc
 				LIMIT ?d, ?d 	";
 		$aReturn=array();
@@ -381,8 +375,6 @@ class ModuleBlog_MapperBlog extends Mapper {
 					bu.user_id = ?d
 					AND
 					bu.blog_id = b.blog_id
-					AND				
-					b.blog_type<>'personal'							
 				ORDER by b.blog_rating desc
 				LIMIT 0, ?d 
 				;	
@@ -409,8 +401,6 @@ class ModuleBlog_MapperBlog extends Mapper {
 					".Config::Get('db.table.blog')." as b	
 				WHERE 						
 					b.user_owner_id = ?d
-					AND				
-					b.blog_type<>'personal'													
 				ORDER by b.blog_rating desc
 				LIMIT 0, ?d 
 			;";

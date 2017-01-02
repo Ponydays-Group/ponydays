@@ -638,7 +638,7 @@ class ModuleBlog extends Module {
 	 * @return array('collection'=>array,'count'=>int)
 	 */
 	public function GetBlogsRating($iCurrPage,$iPerPage) {
-		return $this->GetBlogsByFilter(array('exclude_type'=>'personal'),array('blog_rating'=>'desc'),$iCurrPage,$iPerPage);
+		return $this->GetBlogsByFilter(array('blog_rating'=>'desc'),$iCurrPage,$iPerPage);
 	}
 	/**
 	 * Список подключенных блогов по рейтингу
@@ -662,7 +662,7 @@ class ModuleBlog extends Module {
 	 * @return array
 	 */
 	public function GetBlogsRatingSelf($sUserId,$iLimit) {
-		$aResult=$this->GetBlogsByFilter(array('exclude_type'=>'personal','user_owner_id'=>$sUserId),array('blog_rating'=>'desc'),1,$iLimit);
+		$aResult=$this->GetBlogsByFilter(array('user_owner_id'=>$sUserId),array('blog_rating'=>'desc'),1,$iLimit);
 		return $aResult['collection'];
 	}
 	/**

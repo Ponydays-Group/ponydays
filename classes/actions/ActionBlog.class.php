@@ -126,7 +126,7 @@ class ActionBlog extends Action {
 
 		$this->AddEvent('add','EventAddBlog');
 		$this->AddEvent('edit','EventEditBlog');
-		//$this->AddEvent('delete','EventDeleteBlog');
+		$this->AddEvent('delete','EventDeleteBlog');
 		$this->AddEventPreg('/^admin$/i','/^\d+$/i','/^(page([1-9]\d{0,5}))?$/i','EventAdminBlog');
 		$this->AddEvent('invite','EventInviteBlog');
 
@@ -256,12 +256,6 @@ class ActionBlog extends Action {
 		 */
 		$sBlogId=$this->GetParam(0);
 		if (!$oBlog=$this->Blog_GetBlogById($sBlogId)) {
-			return parent::EventNotFound();
-		}
-		/**
-		 * Проверяем тип блога
-		 */
-		if ($oBlog->getType()=='personal') {
 			return parent::EventNotFound();
 		}
 		/**
@@ -556,7 +550,7 @@ class ActionBlog extends Action {
 		/**
 		 * Проверяем доступные типы блога для создания
 		 */
-		if (!in_array(getRequestStr('blog_type'),array('open','close','invite'))) {
+		if (!in_array(getRequestStr('blog_type'),array('open','close','invite', 'personal'))) {
 			$this->Message_AddError($this->Lang_Get('blog_create_type_error'),$this->Lang_Get('error'));
 			$bOk=false;
 		}

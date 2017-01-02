@@ -9,7 +9,7 @@
 	
 <script type="text/javascript">
 	jQuery(document).ready(function($){
-		ls.lang.load({lang_load name="blog_create_type_open_notice,blog_create_type_invite_notice,blog_create_type_close_notice,"});
+		ls.lang.load({lang_load name="blog_create_type_open_notice,blog_create_type_invite_notice,blog_create_type_close_notice,blog_create_type_personal_notice,"});
 		ls.blog.loadInfoType($('#blog_type').val());
 	});
 </script>
@@ -36,6 +36,7 @@
 		<option value="open" {if $_aRequest.blog_type=='open'}selected{/if}>{$aLang.blog_create_type_open}</option>
 		<option value="close" {if $_aRequest.blog_type=='close'}selected{/if}>{$aLang.blog_create_type_close}</option>
 		<option value="invite" {if $_aRequest.blog_type=='invite'}selected{/if}>{$aLang.blog_create_type_invite}</option>
+		<option value="personal" {if $_aRequest.blog_type=='personal'}selected{/if}>{$aLang.blog_create_type_personal}</option>
 	</select>
 	<small class="note" id="blog_type_note">{$aLang.blog_create_type_open_notice}</small></p>
 

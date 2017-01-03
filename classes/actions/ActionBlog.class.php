@@ -673,16 +673,8 @@ class ActionBlog extends Action {
 			$this->Message_AddErrorSingle($this->Lang_Get('blog_close_show'),$this->Lang_Get('not_access'));
 			return Router::Action('error');
 		}
-		/**
-		 * Если запросили топик из персонального блога то перенаправляем на страницу вывода коллективного топика
-		 */
-		if ($sBlogUrl!='' and $oTopic->getBlog()->getType()=='personal') {
-			Router::Location($oTopic->getUrl());
-		}
-		/**
-		 * Если запросили не персональный топик то перенаправляем на страницу для вывода коллективного топика
-		 */
-		if ($sBlogUrl=='' and $oTopic->getBlog()->getType()!='personal') {
+		//Router::Location($oTopic->getUrl());
+		if ($sBlogUrl=='') {
 			Router::Location($oTopic->getUrl());
 		}
 		/**

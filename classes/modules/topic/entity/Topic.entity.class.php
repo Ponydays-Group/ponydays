@@ -353,11 +353,7 @@ class ModuleTopic_EntityTopic extends Entity {
 	 * @return string
 	 */
 	public function getUrl() {
-		if ($this->getBlog()->getType()=='personal') {
-			return Router::GetPath('blog').$this->getId();
-		} else {
-			return Router::GetPath('blog').$this->getBlog()->getUrl().'/'.$this->getId();
-		}
+		return Router::GetPath('blog').$this->getBlog()->getUrl().'/'.$this->getId();
 	}
 	/**
 	 * Возвращает полный URL до страницы редактировани топика

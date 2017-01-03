@@ -30,7 +30,7 @@ class DbSimple_Mysqli extends DbSimple_Database
      * constructor(string $dsn)
      * Connect to MySQL server.
      */
-    function DbSimple_Mysqli($dsn)
+    function __construct($dsn)
     {
         
         if (!is_callable("mysqli_connect"))
@@ -49,18 +49,6 @@ class DbSimple_Mysqli extends DbSimple_Database
     }
 
 	protected function _connect($dsn) {
-		if ( isset($dsn['socket']) ) {
-			// Socket connection
-			$this->link = mysqli_connect(
-				null                                         // host
-				,empty($dsn['user']) ? 'root' : $dsn['user'] // user
-				,empty($dsn['pass']) ? '' : $dsn['pass']     // password
-				,preg_replace('{^/}s', '', $dsn['path'])     // schema
-				,null                                        // port
-				,$dsn['socket']                              // socket
-			);
-		} else if (isset($dsn['host']) ) {
-			// Host connection
 			$this->link = mysqli_connect(
 				$dsn['host']
 				,empty($dsn['user']) ? 'root' : $dsn['user']
@@ -68,9 +56,8 @@ class DbSimple_Mysqli extends DbSimple_Database
 				,preg_replace('{^/}s', '', $dsn['path'])
 				,empty($dsn['port']) ? null : $dsn['port']
 			);
-		} else {
-			return $this->_setDbError('mysqli_connect()');
-		}
+        //echo $dsn['host'],empty($dsn['user']) ? 'root' : $dsn['user'],empty($dsn['pass']) ? '' : $dsn['pass'],preg_replace('{^/}s', '', $dsn['path']),empty($dsn['port']) ? null : $dsn['port'];
+        //$this->link = mysqli_connect($dsn['host'],empty($dsn['user']) ? 'root' : $dsn['user'],empty($dsn['pass']) ? '' : $dsn['pass'],preg_replace('{^/}s', '', $dsn['path']),empty($dsn['port']) ? null : $dsn['port']);
 		$this->_resetLastError();
 		if (!$this->link) return $this->_setDbError('mysqli_connect()');
 
@@ -186,7 +173,7 @@ class DbSimple_Mysqli extends DbSimple_Database
     protected function _performFetch($result)
     {
         $row = mysqli_fetch_assoc($result);
-        if (mysql_error()) return $this->_setDbError($this->_lastQuery);
+        //if (mysql_error()) return $this->_setDbError($this->_lastQuery);
         if ($row === false) return null;
         return $row;
     }

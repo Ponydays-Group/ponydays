@@ -58,7 +58,7 @@ $config['pagination']['pages']['count'] = 10;                  // количес
  * например, для директории первой вложенности www.site.ru/livestreet/ поставить значение равное 1
  */
 if (isset($_SERVER['HTTP_HOST'])) {
-    $config['path']['root']['web']        = 'https://'.$_SERVER['HTTP_HOST'];     // полный WEB адрес сайта
+    $config['path']['root']['web']        = 'http://'.$_SERVER['HTTP_HOST'].'/';     // полный WEB адрес сайта
 } else {
     // for CLI scripts. or you can append "HTTP_HOST=http://yoursite.url" before script run command
     $config['path']['root']['web']        = null;
@@ -209,7 +209,7 @@ $config['module']['user']['usernote_per_page'] = 20; 	      // Число зам
 $config['module']['user']['userfield_max_identical'] = 2; 	// Максимальное число контактов одного типа
 $config['module']['user']['profile_photo_width'] = 250; 	  // ширина квадрата фотографии в профиле, px
 $config['module']['user']['name_max'] = 30; 			  // максимальная длинна имени в профиле пользователя
-$config['module']['user']['captcha_use_registration'] = true;  // проверять поле капчи при регистрации пользователя
+$config['module']['user']['captcha_use_registration'] = false;  // проверять поле капчи при регистрации пользователя
 
 // Модуль Comment
 $config['module']['comment']['per_page'] = 20;          // Число комментариев на одну страницу(это касается только полного списка комментариев прямого эфира)
@@ -309,7 +309,7 @@ $config['module']['autoLoad'] = array('Hook','Cache','Security','Session','Lang'
 /**
  * Настройка базы данных
  */
-$config['db']['params']['host']   = 'localhost';
+$config['db']['params']['host']   = '127.0.0.1';
 $config['db']['params']['port']   = '3306';
 $config['db']['params']['user']   = 'root';
 $config['db']['params']['pass']   = '';

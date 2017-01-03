@@ -21,9 +21,16 @@
  * @param unknown_type $s
  * @return unknown
  */
+
+if (!function_exists('iconv')) {
+    function iconv($a, $b, $s) {
+        return $s;
+    }
+}
+
 if (!function_exists('mb_strlen')) {
 	function mb_strlen($s,$sEncode="UTF-8") {		
-		$length = strlen(iconv($sEncode, 'Windows-1251', $s));
+		$length = strlen($s);
       	return (int)$length;
 	}
 }
@@ -32,12 +39,30 @@ if (!function_exists('mb_strlen')) {
  * Если не стоит расширения mb
  */
 if (!function_exists('mb_strtolower')) {
-	function mb_strtolower($s,$sEncode="UTF-8") {		
-		$s=iconv($sEncode,"Windows-1251",$s);
-		$s=strtolower($s);
-		$s=iconv("Windows-1251",$sEncode,$s);
-		return $s;
-	}
+    function mb_strtolower($s,$sEncode="UTF-8") {
+        $s=iconv($sEncode,"Windows-1251",$s);
+        $s=strtolower($s);
+        //$s=iconv("Windows-1251",$sEncode,$s);
+        return $s;
+    }
+}
+
+if (!function_exists('mb_strtoupper')) {
+    function mb_strtoupper($s,$sEncode="UTF-8") {
+        //$s=iconv($sEncode,"Windows-1251",$s);
+        $s=strtoupper($s);
+        //$s=iconv("Windows-1251",$sEncode,$s);
+        return $s;
+    }
+}
+
+if (!function_exists('mb_substr')) {
+    function mb_substr($s,$start,$l=null, $e="UTF-8") {
+        //$s=iconv($sEncode,"Windows-1251",$s);
+        $s=substr($s, $start, $l, $e);
+        //$s=iconv("Windows-1251",$sEncode,$s);
+        return $s;
+    }
 }
 
 /**

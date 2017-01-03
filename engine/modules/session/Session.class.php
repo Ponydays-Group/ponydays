@@ -97,7 +97,7 @@ class ModuleSession extends Module {
 				if ($sUserAgent and (in_array($sUserAgent,$this->aFlashUserAgent) or strpos($sUserAgent,"Adobe Flash Player")===0) and is_string(getRequest('SSID')) and preg_match("/^[\w\d]{5,40}$/",getRequest('SSID'))) {
 					session_id(getRequest('SSID'));
 				} else {
-					session_regenerate_id();
+					//session_regenerate_id();
 				}
 				session_start();
 			}

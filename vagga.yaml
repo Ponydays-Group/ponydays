@@ -75,9 +75,9 @@ commands:
     container: mysql
     environ:
       DB_HOST: 127.0.0.1
-      DB_DATABASE: stool
-      DB_USERNAME: stool
-      DB_PASSWORD: stool
+      DB_DATABASE: ponydays
+      DB_USERNAME: ponydays
+      DB_PASSWORD: ponydays
     run: |
       mysql_install_db
       mysqld_safe --defaults-extra-file=/config/mysql.conf --skip-syslog --no-auto-restart

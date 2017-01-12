@@ -18,7 +18,7 @@
 /**
  * Настройки HTML вида
  */
-$config['view']['skin']        = 'reboot';                                                              // шаблон(скин)
+$config['view']['skin']        = 'developer';                                                              // шаблон(скин)
 $config['view']['name']        = 'Ponydays dev';                   // название сайта
 $config['view']['description'] = 'Description your site'; // seo description
 $config['view']['keywords']    = 'site, google, internet';      // seo keywords
@@ -311,10 +311,10 @@ $config['module']['autoLoad'] = array('Hook','Cache','Security','Session','Lang'
  */
 $config['db']['params']['host']   = '127.0.0.1';
 $config['db']['params']['port']   = '3306';
-$config['db']['params']['user']   = 'root';
-$config['db']['params']['pass']   = '';
+$config['db']['params']['user']   = 'ponydays';
+$config['db']['params']['pass']   = 'ponydays';
 $config['db']['params']['type']   = 'mysqli';
-$config['db']['params']['dbname'] = 'social';
+$config['db']['params']['dbname'] = 'ponydays';
 /**
  * Настройка таблиц базы данных
  */

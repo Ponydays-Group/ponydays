@@ -5,6 +5,8 @@
 
 
     <div class="block-content">
-        {include file="bquote.php"}
+        <blockquote class="sidebar-quote">
+            {include file="bquote.php"}
+        </blockquote>
     </div>
 </section>

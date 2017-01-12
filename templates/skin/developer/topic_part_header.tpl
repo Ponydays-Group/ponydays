@@ -5,6 +5,21 @@
 
 <article class="topic topic-type-{$oTopic->getType()} js-topic">
 	<header class="topic-header">
+		<div class="topic-header-top">
+			<a href="{$oTopic->getUrl()}" class="topic-title">{$oTopic->getTitle()}</a>
+			<span class="topic-author-login"><i class="fa fa-user-o"></i>{$oUser->getLogin()}</span>
+			<time class="topic-time" datetime="{date_format date=$oTopic->getDateAdd() format='c'}" title="{date_format date=$oTopic->getDateAdd() format='j F Y, H:i'}">
+				<i class="fa fa-clock-o"></i> {date_format date=$oTopic->getDateAdd() format="j F Y, H:i"}
+			</time>
+			<span><i class="fa fa-folder-o"></i><a href="{$oBlog->getUrlFull()}" class="topic-blog">{$oBlog->getTitle()|escape:'html'}</a></span>
+		</div>
+		<div class="topic-header-bottom">
+			<img src="{$oUser->getProfileAvatarPath(64)}" class="topic-author-avatar" />
+
+
+
+		</div>
+		{*
 		<h1 class="topic-title word-wrap">
 			{if $oTopic->getPublish() == 0}   
 				<i class="icon-tag" title="{$aLang.topic_unpublish}"></i>
@@ -46,4 +61,5 @@
 				{/if}
 			</ul>
 		</div>
+		*}
 	</header>

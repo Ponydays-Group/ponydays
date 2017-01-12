@@ -37,9 +37,45 @@
 	</div>
 {/if}
 
+<div class="blog-fullheader">
+	<header>
+		<label for="desc" class="blog-desc-checkbox-label"><i class="fa fa-info-circle"></i></label>
+		<input type="checkbox" name="desc" class="blog-desc-checkbox" />
+		<div class="hidden-desc">{$oBlog->getDescription()}</div>
+		<div class="hidden-desc blur"></div>
+		<div class="blog-info">
+		<span class="blog-title">{$oBlog->getTitle()}</span>
+		<span class="blog-description">{$oBlog->getDescription()|strip_tags|trim|truncate:100:'...'}</span>
+		<div class="blog-admins">
+			<a href="{$oUserOwner->getUserWebPath()}" class="user">@{$oUserOwner->getLogin()}</a>
+	        {if $aBlogAdministrators}
+	        {foreach from=$aBlogAdministrators item=oBlogUser}
+	            {assign var="oUser" value=$oBlogUser->getUser()}
+				<a href="{$oUser->getUserWebPath()}" class="user">@{$oUser->getLogin()}</a>
+	        {/foreach}
+	        {/if}
+		</div>
+		<div class="blog-stat">
+			<div class="blog-readers">
+				<span class="title">{$aLang.blog_user_readers}:</span>
+				<span><i class="fa fa-user-o"></i> {$iCountBlogUsers}</span>
+			</div>
+			<div class="blog-topics">
+				<span class="title">{$aLang.blog_topics_count}:</span>
+				<span>{$iCountBlogTopics}</span>
+			</div>
+			<div id="vote_area_blog_{$oBlog->getId()}" class="vote {if $oBlog->getRating() > 0}vote-count-positive{elseif $oBlog->getRating() < 0}vote-count-negative{/if} {if $oVote} voted {if $oVote->getDirection()>0}voted-up{elseif $oVote->getDirection()<0}voted-down{/if}{/if}">
+				<div class="vote-label">Рейтинг</div>
+				<a href="#" class="vote-up" onclick="return ls.vote.vote({$oBlog->getId()},this,1,'blog');"></a>
+				<a href="#" class="vote-down" onclick="return ls.vote.vote({$oBlog->getId()},this,-1,'blog');"></a>
+				<div id="vote_total_blog_{$oBlog->getId()}" class="vote-count count" title="{$aLang.blog_vote_count}: {$oBlog->getCountVote()}">{if $oBlog->getRating() > 0}+{/if}{$oBlog->getRating()}</div>
+			</div>
+		</div>
+		</div>
+	</header>
+</div>
 
-
-<div class="blog">
+{* <div class="blog">
 	<header class="blog-header">
 		<div id="vote_area_blog_{$oBlog->getId()}" class="vote {if $oBlog->getRating() > 0}vote-count-positive{elseif $oBlog->getRating() < 0}vote-count-negative{/if} {if $oVote} voted {if $oVote->getDirection()>0}voted-up{elseif $oVote->getDirection()<0}voted-down{/if}{/if}">
 			<div class="vote-label">Рейтинг</div>
@@ -82,25 +118,7 @@
 		
 		<footer class="blog-footer">
 			{hook run='blog_info_begin' oBlog=$oBlog}
-			<strong>{$aLang.blog_user_administrators} ({$iCountBlogAdministrators}):</strong>							
-			<a href="{$oUserOwner->getUserWebPath()}" class="user"><i class="icon-user"></i>{$oUserOwner->getLogin()}</a>
-			{if $aBlogAdministrators}			
-				{foreach from=$aBlogAdministrators item=oBlogUser}
-					{assign var="oUser" value=$oBlogUser->getUser()}  									
-					<a href="{$oUser->getUserWebPath()}" class="user"><i class="icon-user"></i>{$oUser->getLogin()}</a>
-				{/foreach}	
-			{/if}<br />		
-
-			
-			<strong>{$aLang.blog_user_moderators} ({$iCountBlogModerators}):</strong>
-			{if $aBlogModerators}						
-				{foreach from=$aBlogModerators item=oBlogUser}  
-					{assign var="oUser" value=$oBlogUser->getUser()}									
-					<a href="{$oUser->getUserWebPath()}" class="user"><i class="icon-user"></i>{$oUser->getLogin()}</a>
-				{/foreach}							
-			{else}
-				{$aLang.blog_user_moderators_empty}
-			{/if}<br />
+			<strong>{$aLang.blog_user_administrators} ({$iCountBlogAdministrators}):</strong>
 			
 			
 			<strong>{$aLang.blog_user_readers} ({$iCountBlogUsers}):</strong>
@@ -121,7 +139,7 @@
 	</div>
 	
 	<a href="#" class="blog-more" id="blog-more" onclick="return ls.blog.toggleInfo()">{$aLang.blog_expand_info}</a>
-</div>
+</div> *}
 
 {hook run='blog_info' oBlog=$oBlog}
 

@@ -6,6 +6,8 @@
 <!--[if gt IE 8]><!--> <html class="no-js" lang="ru"> <!--<![endif]-->
 
 <head>
+	<meta name="viewport" content="width=device-width; initial-scale=1">
+
 	{hook run='html_head_begin'}
 	
 	<meta charset="utf-8">
@@ -15,8 +17,6 @@
 	
 	<meta name="description" content="{$sHtmlDescription}">
 	<meta name="keywords" content="{$sHtmlKeywords}">
-
-	{$aHtmlHeadFiles.css}
 
 	<link href="{cfg name='path.static.skin'}/images/favicon.ico?v1" rel="shortcut icon" />
 	<link rel="search" type="application/opensearchdescription+xml" href="{router page='search'}opensearch/" title="{cfg name='view.name'}" />
@@ -32,7 +32,8 @@
 	{if $bRefreshToHome}
 		<meta  HTTP-EQUIV="Refresh" CONTENT="3; URL={cfg name='path.root.web'}/">
 	{/if}
-	
+
+	<script src="/static/{cfg name="frontend.version"}/vendor.bundle.js"></script>
 	
 	<script type="text/javascript">
 		var DIR_WEB_ROOT 			= '{cfg name="path.root.web"}';
@@ -52,10 +53,8 @@
 			aRouter['{$sPage}'] = '{$sPath}';
 		{/foreach}
 	</script>
-	
-	
-	{$aHtmlHeadFiles.js}
 
+	<script src="/static/{cfg name="frontend.version"}/main.bundle.js"></script>
 	
 	<script type="text/javascript">
 		var tinyMCE = false;
@@ -63,22 +62,9 @@
 		ls.registry.set('comment_max_tree',{json var=$oConfig->Get('module.comment.max_tree')});
 		ls.registry.set('block_stream_show_tip',{json var=$oConfig->Get('block.stream.show_tip')});
 	</script>
-	
-	
-	{if {cfg name='view.grid.type'} == 'fluid'}
-		<style>
-			#container {
-				min-width: {cfg name='view.grid.fluid_min_width'}px;
-				max-width: {cfg name='view.grid.fluid_max_width'}px;
-			}
-		</style>
-	{else}
-		<style>
-			#container {
-				width: {cfg name='view.grid.fixed_width'}px;
-			}
-		</style>
-	{/if}
+
+
+	<link rel="stylesheet" href="/static/{cfg name="frontend.version"}/main.css" type="text/css" />
 	
 	
 	{hook run='html_head_end'}
@@ -120,15 +106,14 @@
 
 	<div id="container" class="{hook run='container_class'}">
 		{include file='header_top.tpl'}
-		{include file='nav.tpl'}
 
-		<div id="wrapper" class="{hook run='wrapper_class'}">
+		<div id="wrapper" class="row container-fluid {hook run='wrapper_class'}">
 			{if !$noSidebar && $sidebarPosition == 'left'}
 				{include file='sidebar.tpl'}
 			{/if}
 		
-			<div id="content" role="main" 
-				class="{if $noSidebar}content-full-width{/if} 
+			<div id="content" role="main"
+				class="col-md-9 {if $noSidebar}content-full-width{/if}
 					   {if $sidebarPosition == 'left'}content-right{/if}"
 				{if $sMenuItemSelect=='profile'}itemscope itemtype="http://data-vocabulary.org/Person"{/if}>
 				

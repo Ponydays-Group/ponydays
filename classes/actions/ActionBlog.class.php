@@ -841,6 +841,7 @@ class ActionBlog extends Action {
 		} else {
 			$bCloseBlog=false;
 		}
+		$this->Viewer_Assign('iCountBlogTopics', $oBlog->getCountTopic());
 		/**
 		 * Меню
 		 */

@@ -4,4 +4,8 @@ uploads/
 templates/compiled/
 templates/cache/
 config/config.local.php
+config/frontend.ver
 .vagga/
+node_modules/*
+.idea/*
+static/*

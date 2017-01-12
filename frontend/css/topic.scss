@@ -2,19 +2,13 @@
 	ТОПИК
 -------------------------------------------- */
 
-.smile {
-    background: transparent url("https://reboot.lunavod.ru/images.php") repeat scroll 0% 0%;
-    width: 70px;
-    height: 70px;
-    margin-bottom: -70px;
-    right: 0px;
-    float: right;
-    opacity: 0.2;
-    margin-top: -20px;
-    margin-right: -20px;
+.topic {
+    border: 2px solid #edf1f2;
+    overflow: hidden;
+    zoom: 1;
+    margin-bottom: 50px;
+    border-radius: 10px;
 }
-
-.topic { border: 1px solid #E0E0E0; overflow: hidden; zoom: 1; margin-bottom: 50px; background: white; padding: 20px; border-radius: 5px;}
 .topic:last-child { margin-bottom: 0; }
 
 /* Header */
@@ -23,30 +17,109 @@
 .topic .topic-header .topic-title i 			{ position: relative; top: 7px; cursor: help; }
 .topic .topic-header .topic-url 				{ margin-bottom: 15px; }
 .topic .topic-header .topic-url a 				{ background: #eee; border-radius: 3px; padding: 3px 10px 4px; text-decoration: none; }
-.topic .topic-header .topic-info 				{ margin-bottom: 5px; color: #777; }
-.topic .topic-header .voters                { margin-bottom: 25px; }
+.topic .topic-header .topic-info 				{ margin-bottom: 25px; color: #777; }
 .topic .topic-header .topic-info time 			{ margin-right: 15px; }
 .topic .topic-header .topic-info .topic-blog 	{ margin-right: 15px; }
 .topic .topic-header .topic-info .actions,
 .topic .topic-header .topic-info .actions li	{ display: inline; float: none; margin-bottom: 0; }
 .topic .topic-header .topic-info .actions li	{ margin-right: 10px; }
 
+.topic-header-top {
+    padding-left: 80px;
+    padding-top: 5px;
+    background: #edf1f2;
+}
+
+.topic .topic-header .topic-title {
+    display: inline-block;
+    color: #67737a;
+    font-size: 26px;
+    line-height: 1.1em;
+    font-weight: normal;
+    width: 100%;
+    margin: 0;
+}
+
+.topic-author-login {
+    display: inline-block;
+    padding: 3px 0px;
+    color: #707b82;
+}
+
+.topic-header-bottom {
+    color: #707b82;
+    padding-top: 3px;
+    padding-left: 80px;
+    position: relative;
+    height: 20px;
+    display: inline-block;
+    margin-bottom: 5px;
+
+    .topic-author-avatar {
+        top: -50px;
+        border-radius: 50%;
+        outline: white;
+        background: white;
+        border: 1px solid #e0e4e6;
+        position: absolute;
+        left: 5px;
+    }
+}
+.topic-header-top {
+    i {
+        display: inline-block;
+        margin-right: 3px;
+    }
+    color: #707b82;
+    .topic-time {
+        font-size: 1.1em;
+        font-style: italic;
+        dicplay: inline-block;
+        margin-right: 10px;
+        margin-left: 10px;
+    }
+
+    .topic-blog {
+        margin-left: 3px;
+    }
+}
+
 /* Content */
 .topic .topic-content 		{ margin-bottom: 15px; }
-.topic .topic-content.text 	{ color: #333; }
+.topic .topic-content.text 	{ color: #333; padding: 0px 10px; }
 
 /* Tags */
-.topic .topic-footer .topic-tags 						{ margin: 0 0 15px; }
+.topic .topic-footer .topic-tags 						{ margin: 0 0 15px; padding: 0px 10px; }
 .topic .topic-footer .topic-tags li 					{ display: inline; color: #888; }
 .topic .topic-footer .topic-tags li.topic-tags-edit 	{ margin-left: 20px; }
 .topic .topic-footer .topic-tags li.topic-tags-user a 	{ color: #3CA023; }
 
 /* Info */
-.topic .topic-footer .topic-info 		{ overflow: hidden; background: #E8EAF6; border-radius: 3px; }
-.topic .topic-footer .topic-info li 	{ float: left; height: 19px; padding: 8px 15px; border-right: 1px solid #E8EAF6; }
-.topic .topic-footer .topic-info li.cut 	{ float: right; text-decoration: none; background: #D9DDF5;  -moz-transition: background 0.8s 0.1s ease;  -o-transition:background 0.8s 0.1s ease;  -webkit-transition: background 0.8s 0.1s ease;}
-.topic .topic-footer .topic-info li.cut:hover 	{ background: #D8DCF3; }
-.topic .topic-footer .topic-info li a 	{ text-decoration: none; }
+
+.topic .topic-footer .topic-info i {font-size: 1.3em; }
+.topic .topic-footer .topic-info 		{
+    overflow: hidden;
+    height: 35px;
+    background: #edf1f2;
+    -webkit-border-radius: 3px;
+}
+.topic .topic-footer .topic-info li 	{
+    font-size: 1.1em;
+    display: flex;
+    float: left;
+    height: 35px;
+    padding: 0px 15px;
+    vertical-align: middle;
+    justify-content: center;
+    align-items: center;
+
+    > a > i {
+        font-size: 1.3em;
+    }
+}
+.topic .topic-footer .topic-info li a 	{ text-decoration: none; color: #a5b1b8; }
+.topic .topic-footer .topic-info li a .fa	{
+    font-size: 1.3em; }
 
 .topic .topic-footer .topic-info li.topic-info-author a 		{ font-weight: bold; color: #333; }
 .topic .topic-footer .topic-info li.topic-info-author a:hover 	{ text-decoration: underline; }
@@ -130,5 +203,3 @@
 .topic-preview { margin-top: 30px; }
 .topic-preview .profile-page-header { border-top: 1px solid #ddd; }
 .topic-preview .topic { margin-bottom: 20px; }
-.cut a {padding: 15px;}
-.topic-info .cut {padding: 8px 0px !important;}

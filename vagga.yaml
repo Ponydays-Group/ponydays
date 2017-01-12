@@ -20,6 +20,7 @@ containers:
         peer: true
         optional: true
         dev: true
+      - !Sh "ln -s /usr/bin/nodejs /usr/local/bin/node"
       environ:
         NODE_PATH: /usr/lib/node_modules
 

@@ -59,7 +59,7 @@ if (!function_exists('mb_strtoupper')) {
 if (!function_exists('mb_substr')) {
     function mb_substr($s,$start,$l=null, $e="UTF-8") {
         //$s=iconv($sEncode,"Windows-1251",$s);
-        $s=substr($s, $start, $l, $e);
+        $s=substr($s, $start, $l);
         //$s=iconv("Windows-1251",$sEncode,$s);
         return $s;
     }

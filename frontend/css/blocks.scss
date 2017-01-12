@@ -1,0 +1,120 @@
+/* -------------------------------------------------------------------
+	БЛОКИ
+------------------------------------------------------------------- */
+
+.block 					{ background: transparent; margin-bottom: 30px; border-radius: 3px; }
+.block:last-child 		{ margin-bottom: 0; }
+.sidebar-left .block 	{ margin-bottom: 10px; }
+
+.block .block-header 					{ padding: 23px 20px; background: transparent; border-top: none; position: relative; }
+.block .block-header 					{ padding: 13px 20px; background: transparent; border-top: none; position: relative; font-family: Monospace; color: #b8c2c7; }
+.block .block-header h3 				{ font-size: 16px; line-height: 1em; font-weight: normal; }
+.block .block-header h3 a 				{ text-decoration: none; color: #b8c2c7; }
+.block .block-header h3 a.link-dotted 	{ color: #5055B2; }
+.block .block-content 					{ padding: 20px; }
+.block footer 							{ margin-top: 15px; font-size: 12px; }
+
+.block .max-height-200 		{ overflow: auto; max-height: 200px; _height: expression( this.scrollHeight > 200 ? "200px" : "auto" ); position: relative; }
+
+
+/* Block Type - Stream */
+#sidebar {
+  color: #707b82;
+
+  a, a:visited {
+    color: #67737a !important;
+  }
+
+  a:hover {
+    color: $link-color !important;
+  }
+}
+.block .block-update 		{ position: absolute; top: 13px; right: 15px; cursor: pointer; }
+.block .block-update.active 	{ background-position: -16px 0; }
+
+
+/* Block Type - Activity Settings */
+.block.block-type-activity p 		{ margin-bottom: 15px; }
+.block.block-type-activity ul li 	{ margin-bottom: 5px; }
+.block.block-type-activity .note 	{ display: block; margin-bottom: 15px; color: #aaa; }
+
+
+/* Block Type - Profile */
+.block.block-type-profile 							{ background: none; border: none; padding: 0; }
+.block.block-type-profile .profile-photo-wrapper 	{ position: relative; min-height: 50px; }
+.block.block-type-profile .profile-photo 			{ vertical-align: top; }
+.block.block-type-profile .status 					{ position: absolute; top: 5px; left: 5px; padding: 0 5px; border-radius: 2px; font-size: 11px; }
+.block.block-type-profile .status.status-online 	{ background: #B7BC1C; color: #fff; }
+.block.block-type-profile .status.status-offline 	{ background: #333; color: #fff; opacity: .5; filter: alpha(opacity=50); }
+.block.block-type-profile .upload-photo 			{ padding: 7px 10px 10px; background: #f7f7f7; }
+
+.block.block-type-profile-note	 			{ background: #F1F7AF; border: 1px solid #E1EA83; padding: 15px; }
+.block.block-type-profile-note p 			{ margin-bottom: 10px; }
+.block.block-type-profile-note .actions 	{ margin-bottom: 0; }
+
+.block.block-type-profile-nav 				{ padding: 0; background: none; }
+
+.block.block-type-profile-actions .block-content 		{ padding: 10px 15px; }
+.block.block-type-profile-actions ul li					{ margin-bottom: 5px; }
+.block.block-type-profile-actions ul li:last-child		{ margin-bottom: 0; }
+.block.block-type-profile-actions ul li a.followed		{ color: #f00; }
+
+
+/* Block Type - Foldable */
+.block.block-type-foldable { background: none; }
+.block.block-type-foldable .block-header { background: none; border: none; padding: 0 0 10px; }
+.block.block-type-foldable .block-content { display: none; background: #fafafa; }
+
+.block.block-type-talk-search { margin-bottom: 10px; }
+.block.block-type-talk-friends { margin-bottom: 10px; }
+
+
+.sidebar-quote {
+  //background: #f7f7f7;
+  border-left: 0px solid #bbb;
+  font-size: 1.1em;
+  font-style: italic;
+  margin: 1.5em 10px;
+  padding: 0.5em 10px;
+}
+
+.sidebar-quote:before {
+  color: #bbb;
+  content: "\201C"; /* Непечатаемый символ слева */
+  font-size: 3em;
+  line-height: 0.1em;
+  margin-right: 0.2em;
+  vertical-align: -.4em;
+}
+
+.sidebar-quote:after {
+  color: #bbb;
+  content: "\201D"; /* Непечатаемый символ справа */
+  font-size: 3em;
+  line-height: 0.1em;
+  vertical-align: -.45em;
+}
+
+.sidebar-quote > p:first-child {
+  display: inline;
+}
+
+.friend {
+  flex-direction: column;
+  display: flex;
+  min-height: 64px;
+  padding-left: 74px;
+  margin-bottom: 10px;
+  justify-content: center;
+
+  .friend-logo {
+    position: absolute;
+    border-radius: 50%;
+    left: 20px;
+  }
+
+  .friend-title {
+    display: inline-block;
+    width: 100%;
+  }
+}

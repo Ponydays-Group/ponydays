@@ -19,7 +19,7 @@
  * Настройки HTML вида
  */
 $config['view']['skin']        = 'reboot';                                                              // шаблон(скин)
-$config['view']['name']        = 'Bunker Developing Site';                   // название сайта
+$config['view']['name']        = 'Ponydays dev';                   // название сайта
 $config['view']['description'] = 'Description your site'; // seo description
 $config['view']['keywords']    = 'site, google, internet';      // seo keywords
 $config['view']['tinymce']         = false;  // использовать или нет визуальный редактор TinyMCE
@@ -313,7 +313,7 @@ $config['db']['params']['host']   = '127.0.0.1';
 $config['db']['params']['port']   = '3306';
 $config['db']['params']['user']   = 'root';
 $config['db']['params']['pass']   = '';
-$config['db']['params']['type']   = 'mysql';
+$config['db']['params']['type']   = 'mysqli';
 $config['db']['params']['dbname'] = 'social';
 /**
  * Настройка таблиц базы данных
@@ -585,6 +585,8 @@ $config['autosubscribe'] = array(2);
 
 //Собственно, номер версии сайта
 $config['site_version'] = '2.1';
+
+$config['frontend']['version'] = file_get_contents('/work/config/frontend.ver');
 
 // точка завершения "старого" периода
 $config['acl']['vote_state']['comment']['oe_end'] = 1470700800;	// 2016-08-09 00:00:00

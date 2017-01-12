@@ -42,6 +42,7 @@ return array(
 	'blog_about' => 'О блоге',
 	'blog_expand_info' => 'Подробнее &darr;',
 	'blog_fold_info' => 'Свернуть &uarr;',
+	'blog_topics_count' => 'Топиков',
 	/**
 	 * Declensions
 	 */
@@ -745,7 +746,7 @@ return array(
 	/**
 	 * Блоки
 	 */
-	'block_tags' => 'Теги',
+	'block_tags' => 'Популярные теги',
 	'block_tags_empty' => 'Нет тегов',
 	'block_tags_search' => 'Поиск тегов',
 	'block_city_tags' => 'Города',

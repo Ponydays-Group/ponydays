@@ -1,1 +1,1 @@
-<li><a href="#" class="editcomment_editlink link-dotted" title="{$aLang.plugin.editcomment.edit_command_title}" onclick="ls.comments.editComment({$iCommentId}); return false;">{$aLang.plugin.editcomment.edit_command_title}</a></li>
+<li class="action-hidden"><a href="#" class="editcomment_editlink" title="{$aLang.plugin.editcomment.edit_command_title}" onclick="ls.comments.editComment({$iCommentId}); return false;"><i class="fa fa-pencil" title="{$aLang.plugin.editcomment.edit_command_title}"></i></a></li>

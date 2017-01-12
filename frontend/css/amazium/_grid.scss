@@ -1,0 +1,139 @@
+/*
+* Amazium (http://www.amazium.co.uk)
+* Copyright 2010 - 2016, Mike Ballan
+* Licensed under MIT (https://github.com/OwlyStuff/Amazium/blob/master/LICENSE)
+*/
+
+/***********************************************
+Mobile First - This applies from 0px to 767px
+***********************************************/
+
+/***** Row setup *****/
+.row                                            { margin:0 auto; padding:0 20px; display:flex; flex-direction:row; box-sizing:border-box; flex:0 1 auto; flex-wrap:wrap; -moz-box-sizing:border-box; box-sizing:border-box; }
+.row--width-fluid                               { margin:0 auto; padding:0 20px; display:flex; flex-direction:row; box-sizing:border-box; flex:0 1 auto; flex-wrap:wrap; width:100%; -moz-box-sizing:border-box; box-sizing:border-box; }
+
+/***** Row alignments *****/
+.row--align-left                                { justify-content:flex-start; }
+.row--align-center                              { justify-content:center; }
+.row--align-right                               { justify-content:flex-end; }
+
+/***** Nested grids resets *****/
+.row .row                                       { padding:0; width:100%; }
+.row .row [class^="grid"]:first-child           { padding-left:0; }
+.row .row [class^="grid"]:only-child            { padding:0; }
+.row .row [class^="grid"]:last-child            { padding-right:0; }
+
+/***** Sets grid widths *****/
+.grid                                           { width:100%; -moz-box-sizing:border-box; box-sizing:border-box; }
+
+@for $i from 1 through $grid-columns            {
+  .grid-#{$i}                                   { width:100%; -moz-box-sizing:border-box; box-sizing:border-box; }
+}
+
+/***** grid ordering *****/
+.row--order-reverse                             { flex-direction:column-reverse; }
+.grid--order-first                              { order:-1; }
+.grid--order-last                               { order:1; }
+
+/***** Sets mobile override grid width *****/
+@for $i from 1 through $grid-columns {
+  .grid-#{$i}-mobile                            { flex-basis:$i / $grid-columns * 100%; }
+}
+
+/***********************************************
+Tablet - This applies from 768px onwards
+***********************************************/
+@media (min-width:$grid-width-tablet) {
+
+  /***** Row setup *****/
+  .row                                          { width:$grid-width-tablet; }
+
+  /***** Grid gutters *****/
+  %grid-styles-tablet                           { @include padding(0 $grid-gutter-tablet); }
+
+  /***** Sets grid widths *****/
+  .grid                                         { flex:1 1 0%; @extend %grid-styles-tablet; }
+
+  @for $i from 1 through $grid-columns          {
+    .grid-#{$i}                                 { flex-basis:100% / $grid-columns *$i; max-width:100% / $grid-columns *$i; @extend %grid-styles-tablet; }
+  }
+
+  /***** Sets grid offsets *****/
+  @for $i from 1 through $grid-columns - 1      {
+    .grid--offset-#{$i}                         { margin-left:100% / $grid-columns *$i; }
+  }
+
+  /***** Grid ordering *****/
+  .row--order-reverse                           { flex-direction:row-reverse; }
+  .grid--order-first                            { order:-1; }
+  .grid--order-last                             { order:1; }
+}
+
+/***********************************************
+Smaller screen - This applies from 992px onwards
+***********************************************/
+@media (min-width:$grid-width-smscreen) {
+
+  /***** Row setup *****/
+  .row                                          { width:$grid-width-smscreen; }
+
+  /***** Grid gutters *****/
+  %grid-styles-smscreen                         { @include padding(0 $grid-gutter-smscreen); }
+
+  /***** Sets grid widths *****/
+  .grid                                         { @extend %grid-styles-smscreen; }
+
+  @for $i from 1 through $grid-columns          {
+    .grid-#{$i}                                 { @extend %grid-styles-smscreen; }
+  }
+}
+
+/***********************************************
+Screen - This applies from 1200px onwards
+***********************************************/
+@media (min-width:$grid-width - 1px) {
+
+  /***** Row setup *****/
+  .row                                          { width:$grid-width; }
+
+  /***** Grid gutters *****/
+  %grid-styles                                  { @include padding(0 $grid-gutter); }
+
+  /***** Sets grid widths *****/
+  .grid                                         { @extend %grid-styles; }
+
+  @for $i from 1 through $grid-columns          {
+    .grid-#{$i}                                 { @extend %grid-styles; }
+  }
+}
+
+/***********************************************
+Tablet - This applies from 768px to 992px
+***********************************************/
+@media only screen and (min-width:$grid-width-tablet) and (max-width:$grid-width-smscreen - 1px) {
+
+  /***** Sets table override grid width *****/
+  @for $i from 1 through $grid-columns {
+    .grid-#{$i}-tablet                          { flex-basis:$i / $grid-columns * 100%; max-width:100% / $grid-columns *$i; }
+  }
+
+  /***** Grid ordering *****/
+  .grid--order-first-tablet                     { order:inherit; }
+  .grid--order-last-tablet                      { order:inherit; }
+
+  /***** Sets tablet override grid width *****/
+  @for $i from 1 through $grid-columns {
+    .grid-#{$i}-tablet                          { flex-basis:$i / $grid-columns * 100%; }
+  }
+}
+
+/***********************************************
+Mobile - This applies from 0px to 767px
+***********************************************/
+@media only screen and (max-width:$grid-width-tablet - 1px) {
+
+  /***** Grid ordering *****/
+  .row--order-reverse-mobile                    { flex-direction:inherit; }
+  .grid--order-first-mobile                     { order:inherit; }
+  .grid--order-last-mobile                      { order:inherit; }
+}

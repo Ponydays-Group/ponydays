@@ -90,11 +90,11 @@ function getCookie(name) {
 {literal}
 @font-face {
  font-family:"Modernist One";
- src: url('/Modernist_One.ttf');
+ src: url('/public/Modernist_One.ttf');
 }
 @font-face {
  font-family:"DS Goose";
- src: url('/DS_Goose.ttf');
+ src: url('/public/DS_Goose.ttf');
 }
 {/literal}
 
@@ -129,6 +129,8 @@ function getCookie(name) {
 
 
 <body class="{$body_classes} width-{cfg name='view.grid.type'}">
+<div class="blur1"></div>
+<div class="blur2"></div>
 <img src="{cfg name="path.static.skin"}/images/woona-big.png" class="woona">
 <script src="{cfg name="path.static.skin"}/js/woona.js"></script>
 	{hook run='body_begin'}

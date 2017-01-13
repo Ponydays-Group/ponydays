@@ -8,6 +8,10 @@ isProduction = process.env.NODE_ENV == 'production';
 vendors = [
     'babel-polyfill',
     './js/jquery',
+    './js/jquery.file.js',
+    './js/jquery.jqmodal.js',
+    './js/jquery.notifier.js',
+    'jquery-form',
     './css/bootstrap/assets/javascripts/bootstrap'
 ];
 

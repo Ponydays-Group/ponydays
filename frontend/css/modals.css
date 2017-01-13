@@ -4,26 +4,26 @@
 
 .modal {
     display: none;
-    
+
     position: fixed;
     top: 25%;
     left: 50%;
-    
+
     width: 300px;
     margin-left: -150px;
-	
+
     color: #333;
-    border: 1px solid #666;
+    // border: 1px solid #666;
     background-color: #fff;
 	border-radius: 5px;
-	-webkit-box-shadow: 0 0 15px rgba(0,0,0,.5); box-shadow: 0 0 15px rgba(0,0,0,.5);
+	// -webkit-box-shadow: 0 0 15px rgba(0,0,0,.5); box-shadow: 0 0 15px rgba(0,0,0,.5);
 	overflow: hidden;
 }
-.modal .close { 
-	position: absolute; 
-	top: 14px; 
-	right: 14px; 
-	width: 14px; 
+.modal .close {
+	position: absolute;
+	top: 14px;
+	right: 14px;
+	width: 14px;
 	height: 14px;
 	background: url(images/icons.png) -312px 0 no-repeat;
 	opacity: .3;
@@ -63,6 +63,3 @@
 
 /* Upload Image */
 .modal-image-upload { width: 500px; margin-left: -250px; }
-
-
-

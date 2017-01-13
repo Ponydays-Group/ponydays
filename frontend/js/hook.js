@@ -19,98 +19,94 @@
  * @author Sergey S Yaglov
  * @link http://livestreet.ru/profile/1d10t
  */
-ls.hook = (function ($) {
-	this.hooks = {};
 
-	this.cloneFunc = function(func,as_text,no_def) {
-		var f;
-		if($.type(func)=='string'){
-			eval('f = '+func+';');
-		}else if($.type(func)=='array'){
-			f = func[0][func[1]];
-		}else{
-			f = func;
-		}
-		if($.type(f)=='function'){
-			var fbody = f.toString().replace(/^(function)([^\(]*)\(/gi, '$1 (');
-			if(typeof as_text!='undefined' && as_text){
-				if(typeof no_def!='undefined' && no_def){
-					return fbody.replace(/^[^\{]*\{/gi, '').replace(/\}$/gi, '');
-				}else{
-					return fbody;
-				}
-			}
-			return eval('('+fbody+')');
-		}
-		return function(){};
-	};
+export let hooks = {}
 
-	/**
-	 * @param func functionName|object[parentObject,functionName] Name of function that will be modified
-	 * @param funcInj function|string Function or code to be injected
-	 * @param marker string
-	 */
-	this.inject = function(func,funcInj,marker) {
-		var funcBody = ls.hook.cloneFunc(func, 1);
-		var funcDefinition = ($.type(func)=='string'?func:($.type(func)=='array'?'func[0][func[1]]':'func'))+' = ';
-		var replaceFrom = /\{/m;
-		var replaceTo = '{ ';
-		if($.type(marker) == 'string'){
-			//replaceFrom = new RegExp('(\'\\*'+marker+'\\*\'[\r\n\t ]*;?)', 'm');
-			replaceFrom = new RegExp('(ls\\.hook\\.marker\\(([\'"])'+marker+'(\\2)\\)[\\r\\n\\t ]*;?)','m');
-			replaceTo = '$1';
-		}
-		if($.type(funcInj)=='function'){
-			var funcInjName = 'funcInj'+Math.floor(Math.random()*1000000);
-			eval('window["'+funcInjName+'"] = funcInj;');
-			eval(funcDefinition + funcBody.replace(replaceFrom,replaceTo+funcInjName+'.apply(this, arguments); '));
-		}else{
-			eval(funcDefinition  + funcBody.replace(replaceFrom,replaceTo+funcInj+'; '));
-		}
-	};
+export function cloneFunc(func, as_text, no_def) {
+    var f;
+    if ($.type(func) == 'string') {
+        eval('f = ' + func + ';');
+    } else if ($.type(func) == 'array') {
+        f = func[0][func[1]];
+    } else {
+        f = func;
+    }
+    if ($.type(f) == 'function') {
+        var fbody = f.toString().replace(/^(function)([^\(]*)\(/gi, '$1 (');
+        if (typeof as_text != 'undefined' && as_text) {
+            if (typeof no_def != 'undefined' && no_def) {
+                return fbody.replace(/^[^\{]*\{/gi, '').replace(/\}$/gi, '');
+            } else {
+                return fbody;
+            }
+        }
+        return eval('(' + fbody + ')');
+    }
+    return function () {
+    };
+}
 
-	this.add = function(name,callback,priority) {
-		var priority = priority || 0;
-		if(typeof ls.hook.hooks[name] == 'undefined'){
-			ls.hook.hooks[name] = [];
-		}
-		ls.hook.hooks[name].push({
-			'callback': callback,
-			'priority': priority
-		});
-	};
+/**
+ * @param func functionName|object[parentObject,functionName] Name of function that will be modified
+ * @param funcInj function|string Function or code to be injected
+ * @param marker string
+ */
+export function inject(func, funcInj, marker) {
+    var funcBody = ls.hook.cloneFunc(func, 1);
+    var funcDefinition = ($.type(func) == 'string' ? func : ($.type(func) == 'array' ? 'func[0][func[1]]' : 'func')) + ' = ';
+    var replaceFrom = /\{/m;
+    var replaceTo = '{ ';
+    if ($.type(marker) == 'string') {
+        //replaceFrom = new RegExp('(\'\\*'+marker+'\\*\'[\r\n\t ]*;?)', 'm');
+        replaceFrom = new RegExp('(ls\\.hook\\.marker\\(([\'"])' + marker + '(\\2)\\)[\\r\\n\\t ]*;?)', 'm');
+        replaceTo = '$1';
+    }
+    if ($.type(funcInj) == 'function') {
+        var funcInjName = 'funcInj' + Math.floor(Math.random() * 1000000);
+        eval('window["' + funcInjName + '"] = funcInj;');
+        eval(funcDefinition + funcBody.replace(replaceFrom, replaceTo + funcInjName + '.apply(this, arguments); '));
+    } else {
+        eval(funcDefinition + funcBody.replace(replaceFrom, replaceTo + funcInj + '; '));
+    }
+}
 
-	this.run = function(name,params,o) {
-		var params = params || [];
-		var hooks = ls.hook.hooks;
-		if(typeof hooks[name] != 'undefined'){
-			hooks[name].sort(function(a,b){
-				return a.priority > b.priority ?
-					1
-					: (a.priority < b.priority ? -1 : 0)
-					;
-			});
-			$.each(hooks[name], function(i){
-				var callback = hooks[name][i].callback;
-				if($.type(callback) == 'function'){
-					callback.apply(o, params);
-				}else if($.type(callback) == 'array'){
-					//console.log(callback);
-					callback[0][callback[1]].apply(o, params);
-				}else if($.type(callback) == 'string'){
-					eval('(function(){'+callback+'}).apply(o, params);');
-				}else{
-					ls.debug('cant call hook "'+name+'"['+i+']');
-				}
-			});
-		}
-	};
+export function add(name, callback, priority) {
+    var priority = priority || 0;
+    if (typeof ls.hook.hooks[name] == 'undefined') {
+        ls.hook.hooks[name] = [];
+    }
+    ls.hook.hooks[name].push({
+        'callback': callback,
+        'priority': priority
+    });
+}
 
-	this.marker = function(name){
-		// noop
-	};
+export function run(name, params, o) {
+    var params = params || [];
+    //var hooks = ls.hook.hooks;
+    if (typeof hooks[name] != 'undefined') {
+        hooks[name].sort(function (a, b) {
+            return a.priority > b.priority ?
+                1
+                : (a.priority < b.priority ? -1 : 0)
+                ;
+        });
+        $.each(hooks[name], function (i) {
+            var callback = hooks[name][i].callback;
+            if ($.type(callback) == 'function') {
+                callback.apply(o, params);
+            } else if ($.type(callback) == 'array') {
+                //console.log(callback);
+                callback[0][callback[1]].apply(o, params);
+            } else if ($.type(callback) == 'string') {
+                eval('(function(){' + callback + '}).apply(o, params);');
+            } else {
+                ls.debug('cant call hook "' + name + '"[' + i + ']');
+            }
+        });
+    }
+}
 
-	return this;
-}).call(ls || {},jQuery);
-
-module.exports = ls;
+export function marker(name) {
+    // noop
+}

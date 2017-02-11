@@ -24,7 +24,7 @@ a:hover { color: darken($link-color, 10%); }
 
 a:hover, a:focus {text-decoration: none;}
 
-.text a:visited, 
+.text a:visited,
 .topic .topic-header .topic-title a:visited,
 .item-list li a:visited { color: darken($link-color, 15%); }
 
@@ -125,17 +125,17 @@ h2.header-table { margin-bottom: 0; border-bottom: 1px solid #eee; padding-botto
 .question-list li .input-text	{ margin-right: 10px; }
 
 
-.help { 
+.help {
 	display: none;
-	position: relative; 
+	position: relative;
 	padding: 10px 7px 13px;
-	background: #fafafa; 
-	color: #363636; 
-	margin-top: 13px; 
-	font-size: 11px; 
+	background: #fafafa;
+	color: #363636;
+	margin-top: 13px;
+	font-size: 11px;
 	line-height: 16px;
-	border-radius: 3px; 
-	-webkit-box-shadow: 0 0 5px #eaeaea inset; box-shadow: 0 0 5px #eaeaea inset; 
+	border-radius: 3px;
+	-webkit-box-shadow: 0 0 5px #eaeaea inset; box-shadow: 0 0 5px #eaeaea inset;
 }
 .help:before 	{ display: block; content: ""; position: absolute; top: -12px; left: 15px; width: 0; height: 0; border-width: 6px; border-color: transparent transparent #eee transparent; border-style: solid; }
 .help h3 { font-size: 15px; font-weight: bold; margin-bottom: 10px; }

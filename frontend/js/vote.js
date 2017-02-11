@@ -1,4 +1,5 @@
 import $ from 'jquery'
+import * as Ajax from './ajax'
 
 /**
  * Голосование
@@ -17,7 +18,8 @@ export let options = {
         mixed: 'vote-count-mixed',
         voted_zero: 'voted-zero',
         zero: 'vote-count-zero',
-        not_voted: 'not-voted'
+        not_voted: 'not-voted',
+        hidden: 'action-hidden',
     },
     prefix_area: 'vote_area_',
     prefix_total: 'vote_total_',
@@ -52,7 +54,7 @@ export function vote(idTarget, objVote, value, type) {
     params[this.options.type[type].targetName] = idTarget;
 
     ls.hook.marker('voteBefore');
-    ls.ajax(this.options.type[type].url, params, function (result) {
+    Ajax.ajax(this.options.type[type].url, params, function (result) {
         var args = [idTarget, objVote, value, type, result];
         this.onVote.apply(this, args);
     }.bind(this));
@@ -72,12 +74,15 @@ export function onVote(idTarget, objVote, value, type, result) {
         if (value > 0) {
             divVoting.addClass(this.options.classes.plus);
             divVoting.removeClass(this.options.classes.minus);
+            divVoting.removeClass(this.options.classes.hidden);
         }
         if (value < 0) {
             divVoting.addClass(this.options.classes.minus);
             divVoting.removeClass(this.options.classes.plus);
+            divVoting.removeClass(this.options.classes.hidden);
         }
         if (value == 0) {
+            divVoting.addCLass(this.options.classes.hidden);
             divVoting.addClass(this.options.classes.voted_zero);
         }
 
@@ -133,7 +138,7 @@ export function getVotes(targetId, targetType, el) {
     params['targetId'] = targetId;
     params['targetType'] = targetType;
     var url = aRouter['ajax'] + 'get-object-votes';
-    ls.ajax(url, params, this.onGetVotes.bind({"orig": this, "control": el}));
+    Ajax.ajax(url, params, this.onGetVotes.bind({"orig": this, "control": el}));
     el.dataset.queryState = "query";
     return false;
 }

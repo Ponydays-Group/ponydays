@@ -150,7 +150,7 @@ class ActionProfile extends Action {
 		 */
 		$this->Viewer_Assign('aPaging',$aPaging);
 		$this->Viewer_Assign('aFriends',$aFriends);
-		
+
 		$this->Viewer_AddHtmlTitle($this->Lang_Get('user_menu_profile_friends').' '.$this->oUserProfile->getLogin());
 
 		$this->SetTemplateAction('friends');
@@ -195,7 +195,7 @@ class ActionProfile extends Action {
 		/**
 		 * Устанавливаем шаблон вывода
 		 */
-		
+
 		$this->SetTemplateAction('created_topics');
 	}
 	/**
@@ -224,7 +224,7 @@ class ActionProfile extends Action {
 		 */
 		$this->Viewer_Assign('aPaging',$aPaging);
 		$this->Viewer_Assign('aComments',$aComments);
-		
+
 		$this->Viewer_AddHtmlTitle($this->Lang_Get('user_menu_publication').' '.$this->oUserProfile->getLogin());
 		$this->Viewer_AddHtmlTitle($this->Lang_Get('user_menu_publication_comment'));
 		/**
@@ -267,7 +267,7 @@ class ActionProfile extends Action {
 		 */
 		$this->Viewer_Assign('aPaging',$aPaging);
 		$this->Viewer_Assign('aTopics',$aTopics);
-		
+
 		$this->Viewer_AddHtmlTitle($this->Lang_Get('user_menu_profile').' '.$this->oUserProfile->getLogin());
 		$this->Viewer_AddHtmlTitle($this->Lang_Get('user_menu_profile_favourites'));
 		/**
@@ -313,7 +313,7 @@ class ActionProfile extends Action {
 		$this->Viewer_Assign('aPaging',$aPaging);
 		$this->Viewer_Assign('aTopics',$aTopics);
 		$this->Viewer_Assign('sFavouriteTag',htmlspecialchars($sTag));
-		
+
 		$this->Viewer_AddHtmlTitle($this->Lang_Get('user_menu_profile').' '.$this->oUserProfile->getLogin());
 		$this->Viewer_AddHtmlTitle($this->Lang_Get('user_menu_profile_favourites'));
 		/**
@@ -348,7 +348,7 @@ class ActionProfile extends Action {
 		 */
 		$this->Viewer_Assign('aPaging',$aPaging);
 		$this->Viewer_Assign('aComments',$aComments);
-		
+
 		$this->Viewer_AddHtmlTitle($this->Lang_Get('user_menu_profile').' '.$this->oUserProfile->getLogin());
 		$this->Viewer_AddHtmlTitle($this->Lang_Get('user_menu_profile_favourites_comments'));
 		/**
@@ -364,61 +364,7 @@ class ActionProfile extends Action {
 		if (!$this->CheckUserProfile()) {
 			return parent::EventNotFound();
 		}
-		$this->sMenuSubItemSelect='main';
-		/**
-		 * Получаем список друзей
-		 */
-		$aUsersFriend=$this->User_GetUsersFriend($this->oUserProfile->getId(),1,Config::Get('module.user.friend_on_profile'));
-		/**
-		 * Если активен режим инвайтов, то прогружаем дополнительную информацию
-		 */
-		if (Config::Get('general.reg.invite')) {
-			/**
-			 * Получаем список тех кого пригласил юзер
-			 */
-			$aUsersInvite=$this->User_GetUsersInvite($this->oUserProfile->getId());
-			$this->Viewer_Assign('aUsersInvite',$aUsersInvite);
-			/**
-			 * Получаем того юзера, кто пригласил текущего
-			 */
-			$oUserInviteFrom=$this->User_GetUserInviteFrom($this->oUserProfile->getId());
-			$this->Viewer_Assign('oUserInviteFrom',$oUserInviteFrom);
-		}
-		/**
-		 * Получаем список юзеров блога
-		 */
-		
-		$aBlogUsers=$this->Blog_GetBlogUsersByUserId($this->oUserProfile->getId(),ModuleBlog::BLOG_USER_ROLE_USER);
-		$aBlogModerators=$this->Blog_GetBlogUsersByUserId($this->oUserProfile->getId(),ModuleBlog::BLOG_USER_ROLE_MODERATOR);
-		$aBlogAdministrators=$this->Blog_GetBlogUsersByUserId($this->oUserProfile->getId(),ModuleBlog::BLOG_USER_ROLE_ADMINISTRATOR);
-		/**
-		 * Получаем список блогов которые создал юзер
-		 */
-		$aBlogsOwner=$this->Blog_GetBlogsByOwnerId($this->oUserProfile->getId());
-		/**
-		 * Получаем список контактов
-		 */
-		$aUserFields = $this->User_getUserFieldsValues($this->oUserProfile->getId());
-		/**
-		 * Вызов хуков
-		 */
-		$this->Hook_Run('profile_whois_show',array("oUserProfile"=>$this->oUserProfile));
-		/**
-		 * Загружаем переменные в шаблон
-		 */
-		$this->Viewer_Assign('aBlogUsers',$aBlogUsers);
-		$this->Viewer_Assign('aBlogModerators',$aBlogModerators);
-		$this->Viewer_Assign('aBlogAdministrators',$aBlogAdministrators);
-		$this->Viewer_Assign('aBlogsOwner',$aBlogsOwner);
-		$this->Viewer_Assign('aUsersFriend',$aUsersFriend['collection']);
-		$this->Viewer_Assign('aUserFields',$aUserFields);
-		$this->Viewer_AddHtmlTitle($this->Lang_Get('user_menu_profile').' '.$this->oUserProfile->getLogin());
-		$this->Viewer_AddHtmlTitle($this->Lang_Get('user_menu_profile_whois'));
-		
-		/**
-		 * Устанавливаем шаблон вывода
-		 */
-		$this->SetTemplateAction('whois');
+		Router::Location("/profile/".$this->oUserProfile->getLogin()."/created/topics");
 	}
 	/**
 	 * Отображение стены пользователя
@@ -433,7 +379,7 @@ class ActionProfile extends Action {
 		$aWall=$this->Wall_GetWall(array('wall_user_id'=>$this->oUserProfile->getId(),'pid'=>null),array('id'=>'desc'),1,Config::Get('module.wall.per_page'));
 		$this->Viewer_Assign('aWall',$aWall['collection']);
 		$this->Viewer_Assign('iCountWall',$aWall['count']);
-		
+
 		/**
 		 * Устанавливаем шаблон вывода
 		 */
@@ -1238,7 +1184,7 @@ class ActionProfile extends Action {
 
 		$this->Viewer_Assign('sText',$this->Lang_Get('settings_profile_mail_change_to_notice'));
 		$this->SetTemplateAction('changemail_confirm');
-		
+
 	}
 	/**
 	 * Обработка подтверждения нового емайла при смене старого
@@ -1259,7 +1205,7 @@ class ActionProfile extends Action {
 		$oUser=$this->User_GetUserById($oChangemail->getUserId());
 		$oUser->setMail($oChangemail->getMailTo());
 		$this->User_Update($oUser);
-		
+
 
 		$this->Viewer_Assign('sText',$this->Lang_Get('settings_profile_mail_change_ok',array('mail'=>htmlspecialchars($oChangemail->getMailTo()))));
 		$this->SetTemplateAction('changemail_confirm');

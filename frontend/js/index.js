@@ -83,7 +83,7 @@ let ls = {
     topic: Topic,
     userfield: Userfield,
     tools: Tools,
-    cote: Vote,
+    vote: Vote,
     user: User,
     wall: Wall,
     usernote: Usernote,

@@ -8,10 +8,10 @@
 
 .block .block-header 					{ padding: 23px 20px; background: transparent; border-top: none; position: relative; }
 .block .block-header 					{ padding: 13px 20px; background: transparent; border-top: none; position: relative; font-family: Monospace; color: #b8c2c7; }
-.block .block-header h3 				{ font-size: 16px; line-height: 1em; font-weight: normal; }
+.block .block-header h3 				{ font-size: 16px; line-height: 1em; font-weight: normal; color: #67737a; }
 .block .block-header h3 a 				{ text-decoration: none; color: #b8c2c7; }
 .block .block-header h3 a.link-dotted 	{ color: #5055B2; }
-.block .block-content 					{ padding: 20px; }
+.block .block-content 					{ padding: 10px; }
 .block footer 							{ margin-top: 15px; font-size: 12px; }
 
 .block .max-height-200 		{ overflow: auto; max-height: 200px; _height: expression( this.scrollHeight > 200 ? "200px" : "auto" ); position: relative; }
@@ -28,7 +28,22 @@
   a:hover {
     color: $link-color !important;
   }
+
+  .colorful-links {
+    a, a:visited {
+      color: $link-color !important;
+    }
+
+    a:hover {
+      color: darken($link-color, 10%) !important;
+    }
+  }
+
+  .table.table-profile-info {
+    margin-bottom: 0px;
+  }
 }
+
 .block .block-update 		{ position: absolute; top: 13px; right: 15px; cursor: pointer; }
 .block .block-update.active 	{ background-position: -16px 0; }
 

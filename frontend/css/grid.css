@@ -10,15 +10,13 @@
 }
 #header 	{ padding: 50px 0; position: relative; }
 #nav 		{ overflow: hidden; }
-#wrapper 	{ overflow: hidden; zoom: 1; background: #fff; border-bottom: 1px solid #eee; -webkit-box-shadow: 0 0 3px rgba(0,0,0,.1); box-shadow: 0 0 3px rgba(0,0,0,.1); }
+#wrapper 	{ position: relative; overflow: hidden; zoom: 1; background: #fff; border-bottom: 1px solid #eee; -webkit-box-shadow: 0 0 3px rgba(0,0,0,.1); box-shadow: 0 0 3px rgba(0,0,0,.1); }
 #content 	{ float: left;  margin-right: 0; background: #fff; position: relative; padding-top: 20px; }
-#sidebar	{ float: left;  background-color: #edf1f2; padding: 20px 0px;}
+#sidebar	{ right: 0; height: 100%; float: left;  background-color: #edf1f2; padding: 20px 0px;}
 #footer 	{ overflow: hidden; zoom: 1; margin-bottom: 20px; padding: 20px 0 50px; color: #777; }
 
 
 #content.content-full-width { width: 100%; margin-right: 0; }
 
-#content.content-right 		{ margin-right: 0; float: none; margin-left: 311px; width: auto; }
-#sidebar.sidebar-left 		{ float: left; width: 250px; padding-right: 30px; border-right: 1px solid #eee; margin-right: 30px; }
-
-
+#content.content-right 		{ margin-right: 0; float: right; }
+#sidebar.sidebar-left 		{ left: 0; float: left; padding-right: 0px; border-right: 1px solid #eee; padding-top: 0;}

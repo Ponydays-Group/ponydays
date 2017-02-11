@@ -2,9 +2,9 @@
 	ОБЩИЕ СТИЛИ
 ------------------------------------------------------------------- */
 
-/* Голосование 
+/* Голосование
 ---------------------------------------------------- */
-.vote .vote-count 							{ display: inline-block; font-weight: bold; color: #aaa; font-size: 14px; }
+.vote .vote-count 							{ display: inline-block; font-weight: bold; color: #aaa; margin-top: -1px; margin-right: 5px;}
 .vote .vote-count a 						{ text-decoration: none; color: #999; outline: none; }
 
 .vote.vote-count-positive .vote-count 		{ color: #390; }
@@ -27,7 +27,7 @@
 
 
 
-/* Избранное 
+/* Избранное
 ---------------------------------------------------- */
 .favourite 			{ display: inline-block; vertical-align: middle; background: url(images/icons.png) -96px 0 no-repeat; opacity: .3; filter: alpha(opacity=30); cursor: pointer; }
 .favourite.active 	{ opacity: 1; filter: alpha(opacity=100); }
@@ -36,7 +36,7 @@
 
 
 
-/* Пагинация 
+/* Пагинация
 ---------------------------------------------------- */
 .pagination ul 					{ overflow: hidden; zoom: 1; line-height: 1em; }
 .pagination ul li 				{ float: left; margin-right: 5px; }
@@ -48,7 +48,7 @@
 
 
 
-/* Actions 
+/* Actions
 ---------------------------------------------------- */
 .actions 						{ overflow: hidden; zoom: 1; margin-bottom: 10px; }
 .actions li 					{ float: left; margin-right: 10px; }
@@ -59,7 +59,7 @@
 
 
 
-/* Toolbar 
+/* Toolbar
 ---------------------------------------------------- */
 .toolbar 					{ float: right; position: fixed; top: 220px; right: 10px; z-index: 100; }
 .toolbar section 			{ width: 34px; line-height: 14px; background: #fff; -webkit-box-shadow: 0 0 5px rgba(0,0,0,.05); box-shadow: 0 0 5px rgba(0,0,0,.05); margin-bottom: 10px; }
@@ -85,7 +85,7 @@
 
 
 
-/* Список пользователей 
+/* Список пользователей
 ---------------------------------------------------- */
 .user-list-avatar 			{ overflow: hidden; zoom: 1; }
 .user-list-avatar li 		{ width: 64px; overflow: hidden; float: left; margin-right: 20px; margin-bottom: 15px; text-align: center; font-size: 11px; }
@@ -93,7 +93,7 @@
 
 
 
-/* Поиск 
+/* Поиск
 ---------------------------------------------------- */
 .search {
 	display: flex;
@@ -117,6 +117,8 @@
 	border-bottom: 2px solid $search-color;
 	border-radius: 0px;
 	transition: border-bottom .4s, width .2s;
+
+	@include placeholder ( (('color', white)) )
 
 	&:focus {
 		border-bottom: 2px solid $search-active-color;
@@ -151,7 +153,7 @@
 
 
 
-/* Облако тегов 
+/* Облако тегов
 ---------------------------------------------------- */
 .tag-cloud 					{ width: 100%; }
 .tag-cloud li 				{ display: inline; margin-right: 5px; line-height: 22px; }
@@ -169,7 +171,7 @@
 
 
 
-/* Item List 
+/* Item List
 ---------------------------------------------------- */
 .item-list 					{ border-top: 1px solid #eee; }
 .item-list li 				{ min-height: 51px; padding: 7px 0 10px 58px; border-bottom: 1px solid #eee; position: relative; zoom: 1; }
@@ -205,9 +207,9 @@
 .word-wrap {
 	white-space: -moz-pre-wrap !important;
 	white-space: -pre-wrap;
-	white-space: -o-pre-wrap; 
+	white-space: -o-pre-wrap;
 	white-space: pre-wrap;
-	word-wrap: break-word; 
+	word-wrap: break-word;
 	white-space: normal;
 }
 

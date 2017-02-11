@@ -8,8 +8,20 @@ $search-color: white;
 $search-active-color: rgba(61, 142, 185, 1);
 $search-background: #38a6a6;
 
-@import "bootstrap/assets/stylesheets/bootstrap";
+@mixin placeholder ($rules) {
 
+  @each $rule in $rules {
+    ::-webkit-input-placeholder,
+    :-moz-placeholder,
+    ::-moz-placeholder,
+    :-ms-input-placeholder {
+      #{nth($rule, 1)}: #{nth($rule, 2)};
+    }
+  }
+}
+
+@import "bootstrap/assets/stylesheets/bootstrap";
+@import "./markitup";
 @import "./base";
 @import "./blocks";
 @import "./blog";

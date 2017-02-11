@@ -1,4 +1,6 @@
 import $ from "jquery";
+import * as Ajax from "./ajax"
+
 /**
  * Обработка комментариев
  */
@@ -47,7 +49,7 @@ export function add(formObj, targetId, targetType) {
     $('#form_comment_text').addClass(this.options.classes.form_loader).attr('readonly', true);
     $('#comment-button-submit').attr('disabled', 'disabled');
 
-    ls.ajax(this.options.type[targetType].url_add, formObj.serializeJSON(), function (result) {
+    Ajax.ajax(this.options.type[targetType].url_add, formObj.serializeJSON(), function (result) {
         $('#comment-button-submit').removeAttr('disabled');
         if (!result) {
             this.enableFormComment();
@@ -124,7 +126,7 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
         }.bind(this));
     }
 
-    objImg = $('#update-comments');
+    let objImg = $('#update-comments');
     objImg.addClass('fa-pulse');
 
     var params = {idCommentLast: idCommentLast, idTarget: idTarget, typeTarget: typeTarget};
@@ -135,7 +137,7 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
         params.bUsePaging = 1;
     }
 
-    ls.ajax(this.options.type[typeTarget].url_response, params, function (result) {
+    Ajax.ajax(this.options.type[typeTarget].url_response, params, function (result) {
         objImg.removeClass('fa-pulse');
 
         if (!result) {
@@ -238,7 +240,7 @@ export function toggle(obj, commentId) {
     var params = {idComment: commentId};
 
     ls.hook.marker('toggleBefore');
-    ls.ajax(url, params, function (result) {
+    Ajax.ajax(url, params, function (result) {
         if (!result) {
             ls.msg.error('Error', 'Please try again later');
         }
@@ -422,7 +424,7 @@ export function init() {
 
 export function initEvent() {
     $('#form_comment_text').bind('keyup', function (e) {
-        key = e.keyCode || e.which;
+        var key = e.keyCode || e.which;
         if (e.ctrlKey && (key == 13)) {
             $('#comment-button-submit').click();
             return false;
@@ -439,4 +441,3 @@ export function initEvent() {
         }.bind(this));
     }
 }
-

@@ -1,4 +1,3 @@
-<h3 class="profile-page-header">{$aLang.user_menu_profile_favourites}</h3>
 
 <ul class="nav nav-pills nav-pills-profile">
 	<li {if $sMenuSubItemSelect=='topics'}class="active"{/if}>

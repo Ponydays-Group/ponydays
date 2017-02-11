@@ -11,6 +11,8 @@ vendors = [
     './js/jquery.file.js',
     './js/jquery.jqmodal.js',
     './js/jquery.notifier.js',
+    './js/jquery.markitup.js',
+    './js/jquery.serialize.js',
     'jquery-form',
     './css/bootstrap/assets/javascripts/bootstrap'
 ];

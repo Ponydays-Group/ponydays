@@ -28,8 +28,17 @@ if (!function_exists('iconv')) {
     }
 }
 
+if (!function_exists('iconv_substr')) {
+  function iconv_substr($s,$start,$l=null, $e="UTF-8") {
+      //$s=iconv($sEncode,"Windows-1251",$s);
+      $s=substr($s, $start, $l);
+      //$s=iconv("Windows-1251",$sEncode,$s);
+      return $s;
+  }
+}
+
 if (!function_exists('mb_strlen')) {
-	function mb_strlen($s,$sEncode="UTF-8") {		
+	function mb_strlen($s,$sEncode="UTF-8") {
 		$length = strlen($s);
       	return (int)$length;
 	}
@@ -93,8 +102,8 @@ function dump($msg) {
 
 
 /**
- * функция доступа к GET POST параметрам 
- * 
+ * функция доступа к GET POST параметрам
+ *
  * @param  string $sName
  * @param  mixed  $default
  * @param  string $sType
@@ -114,9 +123,9 @@ function getRequest($sName,$default=null,$sType=null) {
 			break;
 		case 'post':
 			$aStorage = $_POST;
-			break;	
+			break;
 	}
-	
+
 	if (isset($aStorage[$sName])) {
 		if (is_string($aStorage[$sName])) {
 			return trim($aStorage[$sName]);
@@ -170,7 +179,7 @@ function func_generator($iLength=10) {
  * @param int %walkIndex - represents the key/index of the array being recursively htmlspecialchars'ed
  * @return void
  */
-function func_htmlspecialchars(&$data, $walkIndex = null) 
+function func_htmlspecialchars(&$data, $walkIndex = null)
 {
 	if(is_string($data)){
 		$data = htmlspecialchars($data);
@@ -213,14 +222,14 @@ function func_check($sValue,$sParam,$iMin=1,$iMax=100) {
 	}
 	switch($sParam)
 	{
-		case 'id': if (preg_match("/^\d{".$iMin.','.$iMax."}$/",$sValue)){ return true; } break;				
-		case 'float': if (preg_match("/^[\-]?\d+[\.]?\d*$/",$sValue)){ return true; } break;	
+		case 'id': if (preg_match("/^\d{".$iMin.','.$iMax."}$/",$sValue)){ return true; } break;
+		case 'float': if (preg_match("/^[\-]?\d+[\.]?\d*$/",$sValue)){ return true; } break;
 		case 'mail': if (preg_match("/^[\da-z\_\-\.\+]+@[\da-z_\-\.]+\.[a-z]{2,5}$/i",$sValue)){ return true; } break;
 		case 'login': if (preg_match("/^[\da-z\_\-]{".$iMin.','.$iMax."}$/i",$sValue)){ return true; } break;
 		case 'md5': if (preg_match("/^[\da-z]{32}$/i",$sValue)){ return true; } break;
 		case 'password': if (mb_strlen($sValue,'UTF-8')>=$iMin){ return true; } break;
 		case 'text': if (mb_strlen($sValue,'UTF-8')>=$iMin and mb_strlen($sValue,'UTF-8')<=$iMax){ return true; } break;
-		default: 
+		default:
 			return false;
 	}
 	return false;
@@ -246,7 +255,7 @@ function func_encrypt($sData) {
 function func_getIp() {
 	// Если запускаем через консоль, то REMOTE_ADDR не определен
     return isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : '127.0.0.1';
-} 
+}
 
 
 /**
@@ -283,7 +292,7 @@ function func_mkdir($sBasePath,$sNewDir) {
 function func_rmdir($sPath) {
 	if(!is_dir($sPath)) return true;
 	$sPath = rtrim($sPath,'/').'/';
-	
+
 	if ($aFiles = glob($sPath.'*', GLOB_MARK)) {
 		foreach($aFiles as $sFile ) {
 			if (is_dir($sFile)) {
@@ -293,7 +302,7 @@ function func_rmdir($sPath) {
 			}
 		}
 	}
-    if(is_dir($sPath)) @rmdir($sPath); 	
+    if(is_dir($sPath)) @rmdir($sPath);
 }
 
 /**
@@ -307,7 +316,7 @@ function func_text_words($sText,$iCountWords) {
 	if($iCountWords < count($aWords)){
 		$aWords = array_slice($aWords,0,$iCountWords);
 	}
-	return join(' ', $aWords);	
+	return join(' ', $aWords);
 }
 
 /**
@@ -371,7 +380,7 @@ function func_array_sort_by_keys($array,$aKeys) {
  */
 function func_array_merge_assoc($aArr1,$aArr2) {
 	$aRes=$aArr1;
-	foreach ($aArr2 as $k2 => $v2) {		
+	foreach ($aArr2 as $k2 => $v2) {
 		$bIsKeyInt=false;
 		if (is_array($v2)) {
 			foreach ($v2 as $k => $v) {
@@ -380,12 +389,12 @@ function func_array_merge_assoc($aArr1,$aArr2) {
 					break;
 				}
 			}
-		}		
+		}
 		if (is_array($v2) and !$bIsKeyInt and isset($aArr1[$k2])) {
 			$aRes[$k2]=func_array_merge_assoc($aArr1[$k2],$v2);
 		} else {
 			$aRes[$k2]=$v2;
-		}		
+		}
 	}
 	return $aRes;
 }

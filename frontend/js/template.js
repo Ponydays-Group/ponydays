@@ -6,6 +6,8 @@ export default function init() {
 
         $('html').removeClass('no-js');
 
+        $("#sidebar").css("height", $("#wrapper").height() > $("#sidebar").height() ? $("#wrapper").height() : null)
+
         // Всплывающие окна
         $('#window_login_form').jqm();
         $('#blog_delete_form').jqm({trigger: '#blog_delete_show'});

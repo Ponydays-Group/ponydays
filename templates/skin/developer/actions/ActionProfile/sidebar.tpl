@@ -1,114 +1,207 @@
-{hook run='profile_sidebar_begin' oUserProfile=$oUserProfile}
+{assign var="oSession" value=$oUserProfile->getSession()}
+{assign var="oVote" value=$oUserProfile->getVote()}
+{assign var="oGeoTarget" value=$oUserProfile->getGeoTarget()}
 
-<section class="block block-type-profile">
-	<div class="profile-photo-wrapper">
-		<div class="status {if $oUserProfile->isOnline()}status-online{else}status-offline{/if}">{if $oUserProfile->isOnline()}{$aLang.user_status_online}{else}{$aLang.user_status_offline}{/if}</div>
-		<a href="{$oUserProfile->getUserWebPath()}"><img src="{$oUserProfile->getProfileFotoPath()}" alt="photo" class="profile-photo" id="foto-img" /></a>
+<section class="block">
+	<div class="profile-main">
+		<div class="user-avatar-wrapper"><img class="user-avatar" src="{$oUserProfile->getProfileAvatarPath(100)}" /></div>
+		<div class="user-info">
+			<span class="user-login">{$oUserProfile->getLogin()}</span>
+			<div class="user-rating">
+				<div id="vote_area_user_{$oUserProfile->getId()}" class="vote {if $oUserProfile->getRating()>=0}vote-count-positive{else}vote-count-negative{/if} {if $oVote} voted {if $oVote->getDirection()>0}voted-up{elseif $oVote->getDirection()<0}voted-down{/if}{/if}">
+		<a href="#" class="vote-up" onclick="return ls.vote.vote({$oUserProfile->getId()},this,1,'user');"></a>
+		<a href="#" class="vote-down" onclick="return ls.vote.vote({$oUserProfile->getId()},this,-1,'user');"></a>
+		<div id="vote_total_user_{$oUserProfile->getId()}" class="vote-count count" title="{$aLang.user_vote_count}: {$oUserProfile->getCountVote()}">{if $oUserProfile->getRating() > 0}+{/if}{$oUserProfile->getRating()}</div>
 	</div>
-	
-	{if $sAction=='settings' and $oUserCurrent and $oUserCurrent->getId() == $oUserProfile->getId()}
-		<script type="text/javascript">
-			jQuery(function($){
-				$('#foto-upload').file({ name:'foto' }).choose(function(e, input) {
-					ls.user.uploadFoto(null,input);
-				});
-			});
-		</script>
-		
-		<p class="upload-photo">
-			<a href="#" id="foto-upload" class="link-dotted">{if $oUserCurrent->getProfileFoto()}{$aLang.settings_profile_photo_change}{else}{$aLang.settings_profile_photo_upload}{/if}</a>&nbsp;&nbsp;&nbsp;
-			<a href="#" id="foto-remove" class="link-dotted" onclick="return ls.user.removeFoto();" style="{if !$oUserCurrent->getProfileFoto()}display:none;{/if}">{$aLang.settings_profile_foto_delete}</a>
-		</p>
 
-		<div class="modal" id="foto-resize">
-			<header class="modal-header">
-				<h3>{$aLang.uploadimg}</h3>
-			</header>
-			
-			<div class="modal-content">
-				<img src="" alt="" id="foto-resize-original-img"><br />
-				<button type="submit" class="button button-primary" onclick="return ls.user.resizeFoto();">{$aLang.settings_profile_avatar_resize_apply}</button>
-				<button type="submit" class="button" onclick="return ls.user.cancelFoto();">{$aLang.settings_profile_avatar_resize_cancel}</button>
-			</div>
+	<div class="strength">
+		<div class="count" id="user_skill_{$oUserProfile->getId()}">{$oUserProfile->getSkill()}</div>
+	</div>
+</div>
 		</div>
-	{/if}
+	</div>
+</section>
+{if $oUserProfile->getProfileAbout()}
+<section class="block">
+	<header class="block-header">
+		<h3>О себе</h3>
+	</header>
+	<div class="block-content colorful-links">
+		{$oUserProfile->getProfileAbout()}
+	</div>
+</section>
+{/if}
+<section class="block">
+	<header class="block-header">
+		<h3>Личное</h3>
+	</header>
+	<div class="block-content colorful-links">
+		<table class="table table-profile-info">
+			{if $oUserProfile->getProfileSex()!='other'}
+				<tr>
+					<td class="cell-label">{$aLang.profile_sex}:</td>
+					<td>
+						{if $oUserProfile->getProfileSex()=='man'}
+							{$aLang.profile_sex_man}
+						{else}
+							{$aLang.profile_sex_woman}
+						{/if}
+					</td>
+				</tr>
+			{/if}
+
+
+			{if $oUserProfile->getProfileBirthday()}
+				<tr>
+					<td class="cell-label">{$aLang.profile_birthday}:</td>
+					<td>{date_format date=$oUserProfile->getProfileBirthday() format="j F Y"}</td>
+				</tr>
+			{/if}
+
+
+			{if $oGeoTarget}
+				<tr>
+					<td class="cell-label">{$aLang.profile_place}:</td>
+					<td itemprop="address" itemscope itemtype="http://data-vocabulary.org/Address">
+						{if $oGeoTarget->getCountryId()}
+							<a href="{router page='people'}country/{$oGeoTarget->getCountryId()}/" itemprop="country-name">{$oUserProfile->getProfileCountry()|escape:'html'}</a>{if $oGeoTarget->getCityId()},{/if}
+						{/if}
+
+						{if $oGeoTarget->getCityId()}
+							<a href="{router page='people'}city/{$oGeoTarget->getCityId()}/" itemprop="locality">{$oUserProfile->getProfileCity()|escape:'html'}</a>
+						{/if}
+					</td>
+				</tr>
+			{/if}
+
+			{if $aUserFieldValues}
+				{foreach from=$aUserFieldValues item=oField}
+					<tr>
+						<td class="cell-label"><i class="icon-contact icon-contact-{$oField->getName()}"></i> {$oField->getTitle()|escape:'html'}:</td>
+						<td>{$oField->getValue(true,true)}</td>
+					</tr>
+				{/foreach}
+			{/if}
+
+			{hook run='profile_whois_privat_item' oUserProfile=$oUserProfile}
+		</table>
+	</div>
 </section>
 
-
-
-{if $oUserCurrent && $oUserCurrent->getId()!=$oUserProfile->getId()}
-	<script type="text/javascript">
-		jQuery(function($){
-			ls.lang.load({lang_load name="profile_user_unfollow,profile_user_follow"});
-		});
-	</script>
-
-	<section class="block block-type-profile-actions">
-		<div class="block-content">
-			<ul class="profile-actions" id="profile_actions">
-				{include file='actions/ActionProfile/friend_item.tpl' oUserFriend=$oUserProfile->getUserFriend()}
-				<li><a href="{router page='talk'}add/?talk_users={$oUserProfile->getLogin()}">{$aLang.user_write_prvmsg}</a></li>						
-				<li>
-					<a href="#" onclick="ls.user.followToggle(this, {$oUserProfile->getId()}); return false;" class="{if $oUserProfile->isFollow()}followed{/if}">
-						{if $oUserProfile->isFollow()}{$aLang.profile_user_unfollow}{else}{$aLang.profile_user_follow}{/if}
-					</a>
-				</li>						
-			</ul>
-		</div>
-	</section>
-{/if}	
-
-
-
-{if $oUserCurrent && $oUserCurrent->getId() != $oUserProfile->getId()}
-	<section class="block block-type-profile-note">
-		{if $oUserNote}
-			<script type="text/javascript">
-				ls.usernote.sText = {json var = $oUserNote->getText()};
-			</script>
-		{/if}
-
-		<div id="usernote-note" class="profile-note" {if !$oUserNote}style="display: none;"{/if}>
-			<p id="usernote-note-text">
-				{if $oUserNote}
-					{$oUserNote->getText()}
-				{/if}
-			</p>
-			
-			<ul class="actions">
-				<li><a href="#" onclick="return ls.usernote.showForm();" class="link-dotted">{$aLang.user_note_form_edit}</a></li>
-				<li><a href="#" onclick="return ls.usernote.remove({$oUserProfile->getId()});" class="link-dotted">{$aLang.user_note_form_delete}</a></li>
-			</ul>
-		</div>
-		
-		<div id="usernote-form" style="display: none;">
-			<p><textarea rows="4" cols="20" id="usernote-form-text" class="input-text input-width-full"></textarea></p>
-			<button type="submit" onclick="return ls.usernote.save({$oUserProfile->getId()});" class="button button-primary">{$aLang.user_note_form_save}</button>
-			<button type="submit" onclick="return ls.usernote.hideForm();" class="button">{$aLang.user_note_form_cancel}</button>
-		</div>
-		
-		<a href="#" onclick="return ls.usernote.showForm();" id="usernote-button-add" class="link-dotted" {if $oUserNote}style="display:none;"{/if}>{$aLang.user_note_add}</a>
-	</section>
+{assign var="aUserFieldContactValues" value=$oUserProfile->getUserFieldValues(true,array('social'))}
+{if $aUserFieldContactValues}
+<section class="block">
+	<header class="block-header">
+		<h2>{$aLang.profile_contacts}</h2>
+	</header>
+	<div class="block-content colorful-links">
+	<table class="table table-profile-info">
+		{foreach from=$aUserFieldContactValues item=oField}
+			<tr>
+				<td class="cell-label"><i class="icon-contact icon-contact-{$oField->getName()}"></i> {$oField->getTitle()|escape:'html'}:</td>
+				<td>{$oField->getValue(true,true)}</td>
+			</tr>
+		{/foreach}
+	</table>
+</div>
+</section>
 {/if}
 
-{hook run='profile_sidebar_menu_before' oUserProfile=$oUserProfile}
+<section class="block">
+	<header class="block-header">
+		<h3>{$aLang.profile_activity}</h3>
+	</header>
+	<div class="block-content colorful-links">
+<table class="table table-profile-info">
 
-<section class="block block-type-profile-nav">
-	<ul class="nav nav-pills nav-profile">
-		{hook run='profile_sidebar_menu_item_first' oUserProfile=$oUserProfile}
-		<li {if $sAction=='profile' && ($aParams[0]=='whois' or $aParams[0]=='')}class="active"{/if}><a href="{$oUserProfile->getUserWebPath()}">{$aLang.user_menu_profile_whois}</a></li>
-		<li {if $sAction=='profile' && $aParams[0]=='wall'}class="active"{/if}><a href="{$oUserProfile->getUserWebPath()}wall/">{$aLang.user_menu_profile_wall}{if ($iCountWallUser)>0} ({$iCountWallUser}){/if}</a></li>
-		<li {if $sAction=='profile' && $aParams[0]=='created'}class="active"{/if}><a href="{$oUserProfile->getUserWebPath()}created/topics/">{$aLang.user_menu_publication}{if ($iCountCreated)>0} ({$iCountCreated}){/if}</a></li>
-		<li {if $sAction=='profile' && $aParams[0]=='favourites'}class="active"{/if}><a href="{$oUserProfile->getUserWebPath()}favourites/topics/">{$aLang.user_menu_profile_favourites}{if ($iCountFavourite)>0} ({$iCountFavourite}){/if}</a></li>
-		<li {if $sAction=='profile' && $aParams[0]=='friends'}class="active"{/if}><a href="{$oUserProfile->getUserWebPath()}friends/">{$aLang.user_menu_profile_friends}{if ($iCountFriendsUser)>0} ({$iCountFriendsUser}){/if}</a></li>
-		<li {if $sAction=='profile' && $aParams[0]=='stream'}class="active"{/if}><a href="{$oUserProfile->getUserWebPath()}stream/">{$aLang.user_menu_profile_stream}</a></li>
-		
-		{if $oUserCurrent and $oUserCurrent->getId() == $oUserProfile->getId()}
-			<li {if $sAction=='talk'}class="active"{/if}><a href="{router page='talk'}">{$aLang.talk_menu_inbox}{if $iUserCurrentCountTalkNew} ({$iUserCurrentCountTalkNew}){/if}</a></li>
-			<li {if $sAction=='settings'}class="active"{/if}><a href="{router page='settings'}">{$aLang.settings_menu}</a></li>
-		{/if}
-		{hook run='profile_sidebar_menu_item_last' oUserProfile=$oUserProfile}
-	</ul>
+	{if $oConfig->GetValue('general.reg.invite') and $oUserInviteFrom}
+		<tr>
+			<td class="cell-label">{$aLang.profile_invite_from}:</td>
+			<td>
+				<a href="{$oUserInviteFrom->getUserWebPath()}">{$oUserInviteFrom->getLogin()}</a>&nbsp;
+			</td>
+		</tr>
+	{/if}
+
+
+	{if $oConfig->GetValue('general.reg.invite') and $aUsersInvite}
+		<tr>
+			<td class="cell-label">{$aLang.profile_invite_to}:</td>
+			<td>
+				{foreach from=$aUsersInvite item=oUserInvite}
+					<a href="{$oUserInvite->getUserWebPath()}">{$oUserInvite->getLogin()}</a>&nbsp;
+				{/foreach}
+			</td>
+		</tr>
+	{/if}
+
+
+	{if $aBlogsOwner}
+		<tr>
+			<td class="cell-label">{$aLang.profile_blogs_self}:</td>
+			<td>
+				{foreach from=$aBlogsOwner item=oBlog name=blog_owner}
+					<a href="{$oBlog->getUrlFull()}">{$oBlog->getTitle()|escape:'html'}</a>{if !$smarty.foreach.blog_owner.last}, {/if}
+				{/foreach}
+			</td>
+		</tr>
+	{/if}
+
+
+	{if $aBlogAdministrators}
+		<tr>
+			<td class="cell-label">{$aLang.profile_blogs_administration}:</td>
+			<td>
+				{foreach from=$aBlogAdministrators item=oBlogUser name=blog_user}
+					{assign var="oBlog" value=$oBlogUser->getBlog()}
+					<a href="{$oBlog->getUrlFull()}">{$oBlog->getTitle()|escape:'html'}</a>{if !$smarty.foreach.blog_user.last}, {/if}
+				{/foreach}
+			</td>
+		</tr>
+	{/if}
+
+
+	{if $aBlogModerators}
+		<tr>
+			<td class="cell-label">{$aLang.profile_blogs_moderation}:</td>
+			<td>
+				{foreach from=$aBlogModerators item=oBlogUser name=blog_user}
+					{assign var="oBlog" value=$oBlogUser->getBlog()}
+					<a href="{$oBlog->getUrlFull()}">{$oBlog->getTitle()|escape:'html'}</a>{if !$smarty.foreach.blog_user.last}, {/if}
+				{/foreach}
+			</td>
+		</tr>
+	{/if}
+
+
+	{if $aBlogUsers}
+		<tr>
+			<td class="cell-label">{$aLang.profile_blogs_join}:</td>
+			<td>
+				{foreach from=$aBlogUsers item=oBlogUser name=blog_user}
+					{assign var="oBlog" value=$oBlogUser->getBlog()}
+					<a href="{$oBlog->getUrlFull()}">{$oBlog->getTitle()|escape:'html'}</a>{if !$smarty.foreach.blog_user.last}, {/if}
+				{/foreach}
+			</td>
+		</tr>
+	{/if}
+
+
+	{hook run='profile_whois_activity_item' oUserProfile=$oUserProfile}
+
+
+	<tr>
+		<td class="cell-label">{$aLang.profile_date_registration}:</td>
+		<td>{date_format date=$oUserProfile->getDateRegister()}</td>
+	</tr>
+
+
+	{if $oSession}
+		<tr>
+			<td class="cell-label">{$aLang.profile_date_last}:</td>
+			<td>{date_format date=$oSession->getDateLast()}</td>
+		</tr>
+	{/if}
+</table>
+</div>
 </section>
-
-{hook run='profile_sidebar_end' oUserProfile=$oUserProfile}

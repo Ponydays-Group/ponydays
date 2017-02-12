@@ -1,10 +1,11 @@
 import $ from 'jquery'
+import * as Ajax from './ajax'
 
 /**
  * Функционал личных сообщений
  */
 export function markAsRead(id) {
-    ls.ajax(DIR_WEB_ROOT + 'talk/ajaxmarkasread',
+    Ajax.ajax(DIR_WEB_ROOT + 'talk/ajaxmarkasread',
         {"target": id},
         function (result) {
             if (result.bStateError) {
@@ -27,7 +28,7 @@ export function addToTalk(idTalk) {
     var params = {users: sUsers, idTalk: idTalk};
 
     ls.hook.marker('addToTalkBefore');
-    ls.ajax(url, params, function (result) {
+    Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             ls.msg.error(null, result.sMsg);
         } else {
@@ -67,7 +68,7 @@ export function removeFromTalk(link, idTalk) {
     var params = {idTarget: idTarget, idTalk: idTalk};
 
     ls.hook.marker('removeFromTalkBefore');
-    ls.ajax(url, params, function (result) {
+    Ajax.ajax(url, params, function (result) {
         if (!result) {
             ls.msg.error('Error', 'Please try again later');
             link.parent('li').show();
@@ -94,7 +95,7 @@ export function addToBlackList() {
     var params = {users: sUsers};
 
     ls.hook.marker('addToBlackListBefore');
-    ls.ajax(url, params, function (result) {
+    Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             ls.msg.error(null, result.sMsg);
         } else {
@@ -133,7 +134,7 @@ export function removeFromBlackList(link) {
     var params = {idTarget: idTarget};
 
     ls.hook.marker('removeFromBlackListBefore');
-    ls.ajax(url, params, function (result) {
+    Ajax.ajax(url, params, function (result) {
         if (!result) {
             ls.msg.error('Error', 'Please try again later');
             link.parent('li').show();

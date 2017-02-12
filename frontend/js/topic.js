@@ -1,4 +1,5 @@
 import $ from 'jquery'
+import * as Ajax from './ajax'
 
 /**
  * Опросы
@@ -9,7 +10,7 @@ export function preview(form, preview) {
     preview = $('#' + preview);
     var url = aRouter['ajax'] + 'preview/topic/';
     ls.hook.marker('previewBefore');
-    ls.ajaxSubmit(url, form, function (result) {
+    Ajax.ajaxSubmit(url, form, function (result) {
         if (result.bStateError) {
             ls.msg.error(null, result.sMsg);
         } else {
@@ -46,6 +47,6 @@ export function lockControl(idTopic, obj) {
 
     var url = aRouter['ajax'] + 'topic-lock-control';
     ls.hook.marker('topicLockControlBefore');
-    ls.ajax(url, params, this.onControlLocked.bind(obj));
+    Ajax.ajax(url, params, this.onControlLocked.bind(obj));
     return true;
 };

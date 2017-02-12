@@ -334,7 +334,9 @@ export function goToNextComment() {
 
 // Прокрутка к комментарию
 export function scrollToComment(idComment) {
-    $.scrollTo('#comment_id_' + idComment, 350, {offset: -250});
+    $('html, body').animate({
+        scrollTop: $('#comment_id_' + idComment).offset().top - 250
+    }, 350);
 
     if (this.iCurrentViewComment) {
         $('#comment_id_' + this.iCurrentViewComment).removeClass(this.options.classes.comment_current);
@@ -348,7 +350,7 @@ export function scrollToComment(idComment) {
 
 // Прокрутка к родительскому комментарию
 export function goToParentComment(id, pid) {
-    thisObj = this;
+    let thisObj = this;
     $('.' + this.options.classes.comment_goto_child).hide().find('a').unbind();
 
     $("#comment_id_" + pid).find('.' + this.options.classes.comment_goto_child).show().find("a").bind("click", function () {

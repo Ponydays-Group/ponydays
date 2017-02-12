@@ -1,4 +1,5 @@
 import $ from 'jquery'
+import * as Ajax from './ajax'
 
 export let sText = '';
 
@@ -29,7 +30,7 @@ export function save(iUserId) {
     var url = aRouter['profile'] + 'ajax-note-save/';
     var params = {iUserId: iUserId, text: $('#usernote-form-text').val()};
     ls.hook.marker('saveBefore');
-    ls.ajax(url, params, function (result) {
+    Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             ls.msg.error(null, result.sMsg);
         } else {
@@ -51,7 +52,7 @@ export function remove(iUserId) {
     var url = aRouter['profile'] + 'ajax-note-remove/';
     var params = {iUserId: iUserId};
     ls.hook.marker('removeBefore');
-    ls.ajax(url, params, function (result) {
+    Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             ls.msg.error(null, result.sMsg);
         } else {

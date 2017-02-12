@@ -13,6 +13,7 @@ vendors = [
     './js/jquery.notifier.js',
     './js/jquery.markitup.js',
     './js/jquery.serialize.js',
+    './js/jquery.scrollto.js',
     'jquery-form',
     './css/bootstrap/assets/javascripts/bootstrap'
 ];

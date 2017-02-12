@@ -1,4 +1,5 @@
 import $ from "jquery"
+import * as Ajax from './ajax'
 
 /**
  * Всплывающие поп-апы
@@ -123,7 +124,7 @@ export function showInfoBlog(oLink, iBlogId) {
     var params = {iBlogId: iBlogId};
     '*showInfoBlogBefore*';
     '*/showInfoBlogBefore*';
-    ls.ajax(url, params, function (result) {
+    Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             ls.msg.error(null, result.sMsg);
             this.hide(oLink);

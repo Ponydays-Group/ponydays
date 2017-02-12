@@ -1,6 +1,6 @@
 import $ from 'jquery'
 import * as Tools from './tools'
-import * as Ajax from './ajax'
+import * as Hook from './hook'
 
 export function ajax(url, params, callback, more) {
     more = more || {};
@@ -36,7 +36,7 @@ export function ajax(url, params, callback, more) {
         }.bind(this)
     };
 
-    ls.hook.run('ls_ajax_before', [ajaxOptions], this);
+    Hook.run('ls_ajax_before', [ajaxOptions], this);
 
     return $.ajax(ajaxOptions);
 }
@@ -66,7 +66,7 @@ export function ajaxSubmit(url, form, callback, more) {
 
     };
 
-    ls.hook.run('ls_ajaxsubmit_before', [options], this);
+    Hook.run('ls_ajaxsubmit_before', [options], this);
 
     form.ajaxSubmit(options);
 }
@@ -75,15 +75,15 @@ export function ajaxSubmit(url, form, callback, more) {
  * Загрузка изображения
  */
 export function ajaxUploadImg(form, sToLoad) {
-    ls.hook.marker('ajaxUploadImgBefore');
-    Ajax.debugSubmit('upload/image/', form, function (data) {
+    Hook.marker('ajaxUploadImgBefore');
+    debugSubmit('upload/image/', form, function (data) {
         if (data.bStateError) {
             ls.msg.error(data.sMsgTitle, data.sMsg);
         } else {
             $.markItUp({replaceWith: data.sText});
             $('#window_upload_img').find('input[type="text"], input[type="file"]').val('');
             $('#window_upload_img').jqmHide();
-            ls.hook.marker('ajaxUploadImgAfter');
+            Hook.marker('ajaxUploadImgAfter');
         }
     });
 }

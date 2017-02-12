@@ -1,5 +1,5 @@
 <div class="nav-filter-wrapper">
-	<ul class="nav nav-filter">
+	<ul class="nav nav-pills">
 		<li {if $sMenuItemSelect=='index'}class="active"{/if}>
 			<a href="{cfg name='path.root.web'}/">{$aLang.blog_menu_all}</a> {if $iCountTopicsNew>0}<a href="{router page='index'}new/" class="new">+{$iCountTopicsNew}</a>{/if}
 		</li>
@@ -11,7 +11,7 @@
 		<li {if $sMenuItemSelect=='log'}class="active"{/if}>
 			<a href="{router page='personal_blog'}">{$aLang.blog_menu_personal}</a> {if $iCountTopicsPersonalNew>0}<a href="{router page='personal_blog'}new/" class="new">+{$iCountTopicsPersonalNew}</a>{/if}
 		</li>
-		
+
 		{if $oUserCurrent}
 			<li {if $sMenuItemSelect=='feed'}class="active"{/if}>
 				<a href="{router page='feed'}">{$aLang.userfeed_title}</a>

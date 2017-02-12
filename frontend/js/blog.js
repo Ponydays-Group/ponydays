@@ -1,4 +1,5 @@
 import $ from "jquery"
+import * as Ajax from './ajax'
 
 /**
  * JS функционал для блогов
@@ -12,7 +13,7 @@ export function toggleJoin(obj, idBlog) {
     let params = {idBlog: idBlog};
 
     ls.hook.marker('toggleJoinBefore');
-    ls.ajax(url, params, function (result) {
+    Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             ls.msg.error(null, result.sMsg);
         } else {
@@ -46,7 +47,7 @@ export function addInvite(idBlog) {
     let params = {users: sUsers, idBlog: idBlog};
 
     ls.hook.marker('addInviteBefore');
-    ls.ajax(url, params, function (result) {
+    Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             ls.msg.error(null, result.sMsg);
         } else {
@@ -79,7 +80,7 @@ export function repeatInvite(idUser, idBlog) {
     let params = {idUser: idUser, idBlog: idBlog};
 
     ls.hook.marker('repeatInviteBefore');
-    ls.ajax(url, params, function (result) {
+    Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             ls.msg.error(null, result.sMsg);
         } else {
@@ -100,7 +101,7 @@ export function removeInvite(idUser, idBlog) {
     let params = {idUser: idUser, idBlog: idBlog};
 
     ls.hook.marker('removeInviteBefore');
-    ls.ajax(url, params, function (result) {
+    Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             ls.msg.error(null, result.sMsg);
         } else {
@@ -123,7 +124,7 @@ export function loadInfo(idBlog) {
     let params = {idBlog: idBlog};
 
     ls.hook.marker('loadInfoBefore');
-    ls.ajax(url, params, function (result) {
+    Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             ls.msg.error(null, result.sMsg);
         } else {
@@ -152,7 +153,7 @@ export function searchBlogs(form) {
     inputSearch.addClass('loader');
 
     ls.hook.marker('searchBlogsBefore');
-    ls.ajaxSubmit(url, form, function (result) {
+    Ajax.ajaxSubmit(url, form, function (result) {
         inputSearch.removeClass('loader');
         if (result.bStateError) {
             $('#blogs-list-search').hide();
@@ -182,5 +183,3 @@ export function toggleInfo() {
 
     return false;
 }
-
-

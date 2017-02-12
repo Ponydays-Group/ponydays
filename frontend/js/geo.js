@@ -1,4 +1,5 @@
 import $ from "jquery";
+import * as Ajax from "./ajax"
 
 /**
  * Гео-объекты
@@ -35,7 +36,7 @@ export function loadRegions($country) {
     var url = aRouter['ajax'] + 'geo/get/regions/';
     var params = {country: $country.val()};
     ls.hook.marker('loadRegionsBefore');
-    ls.ajax(url, params, function (result) {
+    Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             ls.msg.error(null, result.sMsg);
         } else {
@@ -61,7 +62,7 @@ export function loadCities($region) {
     var url = aRouter['ajax'] + 'geo/get/cities/';
     var params = {region: $region.val()};
     ls.hook.marker('loadCitiesBefore');
-    ls.ajax(url, params, function (result) {
+    Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             ls.msg.error(null, result.sMsg);
         } else {

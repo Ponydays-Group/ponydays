@@ -1,4 +1,5 @@
 import $ from 'jquery'
+import * as Ajax from './ajax'
 
 export let isBusy = false;
 export let dateLast = null;
@@ -8,7 +9,7 @@ export function subscribe(iTargetUserId) {
     var params = {'id': iTargetUserId};
 
     ls.hook.marker('subscribeBefore');
-    ls.ajax(url, params, function (data) {
+    Ajax.ajax(url, params, function (data) {
         if (data.bStateError) {
             ls.msg.error(data.sMsgTitle, data.sMsg);
         } else {
@@ -23,7 +24,7 @@ export function unsubscribe(iId) {
     var params = {'id': iId};
 
     ls.hook.marker('unsubscribeBefore');
-    ls.ajax(url, params, function (data) {
+    Ajax.ajax(url, params, function (data) {
         if (!data.bStateError) {
             ls.msg.notice(data.sMsgTitle, data.sMsg);
             ls.hook.run('ls_stream_unsubscribe_after', [params, data]);
@@ -36,7 +37,7 @@ export function switchEventType(iType) {
     var params = {'type': iType};
 
     ls.hook.marker('switchEventTypeBefore');
-    ls.ajax(url, params, function (data) {
+    Ajax.ajax(url, params, function (data) {
         if (!data.bStateError) {
             ls.msg.notice(data.sMsgTitle, data.sMsg);
             ls.hook.run('ls_stream_switch_event_type_after', [params, data]);
@@ -52,7 +53,7 @@ export function appendUser() {
     var params = {'login': sLogin};
 
     ls.hook.marker('appendUserBefore');
-    ls.ajax(url, params, function (data) {
+    Ajax.ajax(url, params, function (data) {
         if (!data.bStateError) {
             $('#stream_no_subscribed_users').remove();
             var checkbox = $('#strm_u_' + data.uid);
@@ -88,7 +89,7 @@ export function getMore() {
     var params = {'last_id': lastId, 'date_last': this.dateLast};
 
     ls.hook.marker('getMoreBefore');
-    ls.ajax(url, params, function (data) {
+    Ajax.ajax(url, params, function (data) {
         if (!data.bStateError && data.events_count) {
             $('#stream-list').append(data.result);
             $('#stream_last_id').attr('value', data.iStreamLastId);
@@ -115,7 +116,7 @@ export function getMoreAll() {
     var params = {'last_id': lastId, 'date_last': this.dateLast};
 
     ls.hook.marker('getMoreAllBefore');
-    ls.ajax(url, params, function (data) {
+    Ajax.ajax(url, params, function (data) {
         if (!data.bStateError && data.events_count) {
             $('#stream-list').append(data.result);
             $('#stream_last_id').attr('value', data.iStreamLastId);
@@ -142,7 +143,7 @@ export function getMoreByUser(iUserId) {
     var params = {'last_id': lastId, user_id: iUserId, 'date_last': this.dateLast};
 
     ls.hook.marker('getMoreByUserBefore');
-    ls.ajax(url, params, function (data) {
+    Ajax.ajax(url, params, function (data) {
         if (!data.bStateError && data.events_count) {
             $('#stream-list').append(data.result);
             $('#stream_last_id').attr('value', data.iStreamLastId);

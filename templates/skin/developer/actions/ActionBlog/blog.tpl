@@ -16,8 +16,8 @@
 			<h3>{$aLang.blog_admin_delete_title}</h3>
 			<a href="#" class="close jqmClose"></a>
 		</header>
-		
-		
+
+
 		<form action="{router page='blog'}delete/{$oBlog->getId()}/" method="POST" class="modal-content">
 			<p><label for="topic_move_to">{$aLang.blog_admin_delete_move}:</label>
 			<select name="topic_move_to" id="topic_move_to" class="input-width-full">
@@ -30,7 +30,7 @@
 					</optgroup>
 				{/if}
 			</select></p>
-			
+
 			<input type="hidden" value="{$LIVESTREET_SECURITY_KEY}" name="security_ls_key" />
 			<button type="submit" class="button button-primary">{$aLang.blog_delete}</button>
 		</form>
@@ -83,14 +83,14 @@
 			<a href="#" class="vote-down" onclick="return ls.vote.vote({$oBlog->getId()},this,-1,'blog');"></a>
 			<div id="vote_total_blog_{$oBlog->getId()}" class="vote-count count" title="{$aLang.blog_vote_count}: {$oBlog->getCountVote()}">{if $oBlog->getRating() > 0}+{/if}{$oBlog->getRating()}</div>
 		</div>
-		
-		
+
+
 		<img src="{$oBlog->getAvatarPath(48)}" alt="avatar" class="avatar" />
-		
-		
+
+
 		<h2>{if $oBlog->getType()=='close'}<i title="{$aLang.blog_closed}" class="icon icon-lock"></i> {/if}{$oBlog->getTitle()|escape:'html'}</h2>
-		
-		
+
+
 		<ul class="actions">
 			<li><a href="{router page='rss'}blog/{$oBlog->getUrl()}/" class="rss">RSS</a></li>
 			{if $oUserCurrent and $oUserCurrent->getId()!=$oBlog->getOwnerId()}
@@ -108,26 +108,26 @@
 			{/if}
 		</ul>
 	</header>
-	
-	
+
+
 	<div class="blog-more-content" id="blog-more-content" style="display: none;">
 		<div class="blog-content">
 			<p class="blog-description">{$oBlog->getDescription()}</p>
 		</div>
-		
-		
+
+
 		<footer class="blog-footer">
 			{hook run='blog_info_begin' oBlog=$oBlog}
 			<strong>{$aLang.blog_user_administrators} ({$iCountBlogAdministrators}):</strong>
-			
-			
+
+
 			<strong>{$aLang.blog_user_readers} ({$iCountBlogUsers}):</strong>
 			{if $aBlogUsers}
 				{foreach from=$aBlogUsers item=oBlogUser}
 					{assign var="oUser" value=$oBlogUser->getUser()}
 					<a href="{$oUser->getUserWebPath()}" class="user"><i class="icon-user"></i>{$oUser->getLogin()}</a>
 				{/foreach}
-				
+
 				{if count($aBlogUsers) < $iCountBlogUsers}
 					<br /><a href="{$oBlog->getUrlFull()}users/">{$aLang.blog_user_readers_all}</a>
 				{/if}
@@ -137,14 +137,14 @@
 			{hook run='blog_info_end' oBlog=$oBlog}
 		</footer>
 	</div>
-	
+
 	<a href="#" class="blog-more" id="blog-more" onclick="return ls.blog.toggleInfo()">{$aLang.blog_expand_info}</a>
 </div> *}
 
 {hook run='blog_info' oBlog=$oBlog}
 
 <div class="nav-filter-wrapper">
-	<ul class="nav nav-filter">
+	<ul class="nav nav-pills">
 		<li {if $sMenuSubItemSelect=='good'}class="active"{/if}><a href="{$sMenuSubBlogUrl}">{$aLang.blog_menu_collective_good}</a></li>
 		<li {if $sMenuSubItemSelect=='new'}class="active"{/if}><a href="{$sMenuSubBlogUrl}newall/">{$aLang.blog_menu_collective_new}</a>{if $iCountTopicsBlogNew>0} <a href="{$sMenuSubBlogUrl}new/">+{$iCountTopicsBlogNew}</a>{/if}</li>
 		<li {if $sMenuSubItemSelect=='discussed'}class="active"{/if}><a href="{$sMenuSubBlogUrl}discussed/">{$aLang.blog_menu_collective_discussed}</a></li>

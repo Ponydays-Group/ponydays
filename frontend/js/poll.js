@@ -1,4 +1,5 @@
 import $ from 'jquery'
+import * as Ajax from './ajax'
 
 /**
  * Опросы
@@ -11,7 +12,7 @@ export function vote(idTopic, idAnswer) {
     var url = aRouter['ajax'] + 'vote/question/';
     var params = {idTopic: idTopic, idAnswer: idAnswer};
     ls.hook.marker('voteBefore');
-    ls.ajax(url, params, function (result) {
+    Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             ls.msg.error(null, result.sMsg);
         } else {

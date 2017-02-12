@@ -1,4 +1,5 @@
 import $ from 'jquery'
+import * as Ajax from './ajax'
 
 export let isBusy = false;
 
@@ -7,7 +8,7 @@ export function subscribe(sType, iId) {
     var params = {'type': sType, 'id': iId};
 
     ls.hook.marker('subscribeBefore');
-    ls.ajax(url, params, function (data) {
+    Ajax.ajax(url, params, function (data) {
         if (!data.bStateError) {
             ls.msg.notice(data.sMsgTitle, data.sMsg);
             ls.hook.run('ls_userfeed_subscribe_after', [sType, iId, data]);
@@ -20,7 +21,7 @@ export function subscribeAll() {
     var params = {};
 
     ls.hook.marker('subscribeBefore');
-    ls.ajax(url, params, function (data) {
+    Ajax.ajax(url, params, function (data) {
         if (!data.bStateError) {
             ls.msg.notice(data.sMsgTitle, data.sMsg);
             ls.hook.run('ls_userfeed_subscribe_all_after', [data]);
@@ -34,7 +35,7 @@ export function unsubscribe(sType, iId) {
     var params = {'type': sType, 'id': iId};
 
     ls.hook.marker('unsubscribeAllBefore');
-    ls.ajax(url, params, function (data) {
+    Ajax.ajax(url, params, function (data) {
         if (!data.bStateError) {
             ls.msg.notice(data.sMsgTitle, data.sMsg);
             ls.hook.run('ls_userfeed_unsubscribe_after', [sType, iId, data]);
@@ -47,7 +48,7 @@ export function unsubscribeAll() {
     var params = {};
 
     ls.hook.marker('unsubscribeAllBefore');
-    ls.ajax(url, params, function (data) {
+    Ajax.ajax(url, params, function (data) {
         if (!data.bStateError) {
             ls.msg.notice(data.sMsgTitle, data.sMsg);
             ls.hook.run('ls_userfeed_unsubscribe_all_after', [data]);
@@ -64,7 +65,7 @@ export function appendUser() {
     var params = {'login': sLogin};
 
     ls.hook.marker('appendUserBefore');
-    ls.ajax(url, params, function (data) {
+    Ajax.ajax(url, params, function (data) {
         if (data.bStateError) {
             ls.msg.error(data.sMsgTitle, data.sMsg);
         } else {
@@ -100,7 +101,7 @@ export function getMore() {
     var params = {'last_id': lastId};
 
     ls.hook.marker('getMoreBefore');
-    ls.ajax(url, params, function (data) {
+    Ajax.ajax(url, params, function (data) {
         if (!data.bStateError && data.topics_count) {
             $('#userfeed_loaded_topics').append(data.result);
             $('#userfeed_last_id').attr('value', data.iUserfeedLastId);

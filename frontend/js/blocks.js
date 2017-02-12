@@ -1,5 +1,5 @@
 import $ from "jquery"
-
+import * as Ajax from './ajax'
 
 /**
  * Опции
@@ -44,7 +44,7 @@ export function load(obj, block, params) {
     $('.js-block-' + block + '-item').removeClass(options.active);
     $(obj).addClass(options.active);
 
-    ls.ajax(options.type[type].url, params, function (result) {
+    Ajax.ajax(options.type[type].url, params, function (result) {
         let args = [content, result];
         ls.hook.marker('onLoadBefore');
         onLoad.apply(this, args);

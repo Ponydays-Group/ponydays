@@ -1,4 +1,5 @@
 import $ from "jquery"
+import * as Ajax from './ajax'
 
 /**
  * Добавление в избранное
@@ -40,7 +41,7 @@ export function toggle(idTarget, objFavourite, type) {
     params[this.options.type[type].targetName] = idTarget;
 
     ls.hook.marker('toggleBefore');
-    ls.ajax(this.options.type[type].url, params, function (result) {
+    Ajax.ajax(this.options.type[type].url, params, function (result) {
         $(this).trigger('toggle', [idTarget, objFavourite, type, params, result]);
         if (result.bStateError) {
             ls.msg.error(null, result.sMsg);
@@ -87,7 +88,7 @@ export function hideEditTags() {
 export function saveTags(form) {
     var url = aRouter['ajax'] + 'favourite/save-tags/';
     ls.hook.marker('saveTagsBefore');
-    ls.ajaxSubmit(url, $(form), function (result) {
+    Ajax.ajaxSubmit(url, $(form), function (result) {
         if (result.bStateError) {
             ls.msg.error(null, result.sMsg);
         } else {

@@ -1,3 +1,5 @@
+import * as Ajax from './ajax'
+
 /**
  * Автокомплитер
  */
@@ -15,7 +17,7 @@ export function add(obj, sPath, multiple)
         })
             .autocomplete({
                 source: function (request, response) {
-                    ls.ajax(sPath, {value: ls.autocomplete.extractLast(request.term)}, function (data) {
+                    Ajax.ajax(sPath, {value: ls.autocomplete.extractLast(request.term)}, function (data) {
                         response(data.aItems);
                     });
                 },

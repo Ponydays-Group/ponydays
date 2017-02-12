@@ -1,4 +1,5 @@
 import $ from 'jquery'
+import * as Ajax from './ajax'
 
 /**
  * Вспомогательные функции
@@ -38,7 +39,7 @@ export function textPreview(textId, save, divPreview)
     let ajaxUrl = aRouter['ajax'] + 'preview/text/';
     let ajaxOptions = {text: text, save: save};
     ls.hook.marker('textPreviewAjaxBefore');
-    ls.ajax(ajaxUrl, ajaxOptions, function (result) {
+    Ajax.ajax(ajaxUrl, ajaxOptions, function (result) {
         if (!result) {
             ls.msg.error('Error', 'Please try again later');
         }

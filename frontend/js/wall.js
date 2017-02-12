@@ -1,4 +1,5 @@
 import $ from 'jquery'
+import * as Ajax from './ajax'
 
 /**
  * Стена пользователя
@@ -19,7 +20,7 @@ export function add(sText, iPid) {
 
     ls.hook.marker('addBefore');
     $('#wall-text').addClass('loader');
-    ls.ajax(url, params, function (result) {
+    Ajax.ajax(url, params, function (result) {
         $('.js-button-wall-submit').attr('disabled', false);
         if (result.bStateError) {
             ls.msg.error(null, result.sMsg);
@@ -41,7 +42,7 @@ export function addReply(sText, iPid) {
 
     ls.hook.marker('addReplyBefore');
     $('#wall-reply-text-' + iPid).addClass('loader');
-    ls.ajax(url, params, function (result) {
+    Ajax.ajax(url, params, function (result) {
         $('.js-button-wall-submit').attr('disabled', false);
         if (result.bStateError) {
             ls.msg.error(null, result.sMsg);
@@ -59,7 +60,7 @@ export function load(iIdLess, iIdMore, callback) {
     var url = aRouter['profile'] + this.options.login + '/wall/load/';
     var params = {iIdLess: iIdLess ? iIdLess : '', iIdMore: iIdMore ? iIdMore : ''};
     ls.hook.marker('loadBefore');
-    ls.ajax(url, params, callback);
+    Ajax.ajax(url, params, callback);
     return false;
 };
 
@@ -67,7 +68,7 @@ export function loadReply(iIdLess, iIdMore, iPid, callback) {
     var url = aRouter['profile'] + this.options.login + '/wall/load-reply/';
     var params = {iIdLess: iIdLess ? iIdLess : '', iIdMore: iIdMore ? iIdMore : '', iPid: iPid};
     ls.hook.marker('loadReplyBefore');
-    ls.ajax(url, params, callback);
+    Ajax.ajax(url, params, callback);
     return false;
 };
 
@@ -218,7 +219,7 @@ export function remove(iId) {
     var url = aRouter['profile'] + this.options.login + '/wall/remove/';
     var params = {iId: iId};
     ls.hook.marker('removeBefore');
-    ls.ajax(url, params, function (result) {
+    Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             ls.msg.error(null, result.sMsg);
         } else {

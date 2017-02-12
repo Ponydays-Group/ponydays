@@ -4,15 +4,15 @@
  * Examples:
  *
  * - inject function call/code at top of function body
- * ls.hook.inject([ls.lang,'get'], function(){ls.msg.notice('lang debug');})});
- * ls.hook.inject([ls,'ajax'], 'alert(url)');
+ * inject([ls.lang,'get'], function(){ls.msg.notice('lang debug');})});
+ * inject([ls,'ajax'], 'alert(url)');
  *
  * - add and call hooks
- * ls.hook.add('somefunc_hook1_name', function(param1, param2){ ... });
+ * add('somefunc_hook1_name', function(param1, param2){ ... });
  *
  * function someFunc(..params..){
  * 	//code
- * 	ls.hook.run('somefunc_hook1_name', [param1,param2], thisArg);
+ * 	run('somefunc_hook1_name', [param1,param2], thisArg);
  * 	//code
  * }
  *
@@ -52,7 +52,7 @@ export function cloneFunc(func, as_text, no_def) {
  * @param marker string
  */
 export function inject(func, funcInj, marker) {
-    var funcBody = ls.hook.cloneFunc(func, 1);
+    var funcBody = cloneFunc(func, 1);
     var funcDefinition = ($.type(func) == 'string' ? func : ($.type(func) == 'array' ? 'func[0][func[1]]' : 'func')) + ' = ';
     var replaceFrom = /\{/m;
     var replaceTo = '{ ';
@@ -72,10 +72,10 @@ export function inject(func, funcInj, marker) {
 
 export function add(name, callback, priority) {
     var priority = priority || 0;
-    if (typeof ls.hook.hooks[name] == 'undefined') {
-        ls.hook.hooks[name] = [];
+    if (typeof hooks[name] == 'undefined') {
+        hooks[name] = [];
     }
-    ls.hook.hooks[name].push({
+    hooks[name].push({
         'callback': callback,
         'priority': priority
     });
@@ -83,7 +83,7 @@ export function add(name, callback, priority) {
 
 export function run(name, params, o) {
     var params = params || [];
-    //var hooks = ls.hook.hooks;
+    //var hooks = hooks;
     if (typeof hooks[name] != 'undefined') {
         hooks[name].sort(function (a, b) {
             return a.priority > b.priority ?

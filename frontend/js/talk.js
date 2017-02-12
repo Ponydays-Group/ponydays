@@ -1,3 +1,6 @@
+import * as Lang from './lang'
+import * as Hook from './hook'
+import * as Msg from './msg'
 import $ from 'jquery'
 import * as Ajax from './ajax'
 
@@ -9,9 +12,9 @@ export function markAsRead(id) {
         {"target": id},
         function (result) {
             if (result.bStateError) {
-                ls.msg.error(null, result.sMsg);
+                Msg.error(null, result.sMsg);
             } else {
-                ls.msg.notice(null, result.sMsg);
+                Msg.notice(null, result.sMsg);
             }
         }
     );
@@ -27,27 +30,27 @@ export function addToTalk(idTalk) {
     var url = aRouter['talk'] + 'ajaxaddtalkuser/';
     var params = {users: sUsers, idTalk: idTalk};
 
-    ls.hook.marker('addToTalkBefore');
+    Hook.marker('addToTalkBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
         } else {
             $.each(result.aUsers, function (index, item) {
                 if (item.bStateError) {
-                    ls.msg.notice(null, item.sMsg);
+                    Msg.notice(null, item.sMsg);
                 } else {
                     var list = $('#speaker_list');
                     if (list.length == 0) {
                         list = $('<ul class="list" id="speaker_list"></ul>');
                         $('#speaker_list_block').append(list);
                     }
-                    var listItem = $('<li id="speaker_item_' + item.sUserId + '_area"><a href="' + item.sUserLink + '" class="user">' + item.sUserLogin + '</a> - <a href="#" id="speaker_item_' + item.sUserId + '" class="delete">' + ls.lang.get('delete') + '</a></li>')
+                    var listItem = $('<li id="speaker_item_' + item.sUserId + '_area"><a href="' + item.sUserLink + '" class="user">' + item.sUserLogin + '</a> - <a href="#" id="speaker_item_' + item.sUserId + '" class="delete">' + Lang.get('delete') + '</a></li>')
                     list.append(listItem);
-                    ls.hook.run('ls_talk_add_to_talk_item_after', [idTalk, item], listItem);
+                    Hook.run('ls_talk_add_to_talk_item_after', [idTalk, item], listItem);
                 }
             });
 
-            ls.hook.run('ls_talk_add_to_talk_after', [idTalk, result]);
+            Hook.run('ls_talk_add_to_talk_after', [idTalk, result]);
         }
     });
     return false;
@@ -67,17 +70,17 @@ export function removeFromTalk(link, idTalk) {
     var url = aRouter['talk'] + 'ajaxdeletetalkuser/';
     var params = {idTarget: idTarget, idTalk: idTalk};
 
-    ls.hook.marker('removeFromTalkBefore');
+    Hook.marker('removeFromTalkBefore');
     Ajax.ajax(url, params, function (result) {
         if (!result) {
-            ls.msg.error('Error', 'Please try again later');
+            Msg.error('Error', 'Please try again later');
             link.parent('li').show();
         }
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
             link.parent('li').show();
         }
-        ls.hook.run('ls_talk_remove_from_talk_after', [idTalk, idTarget], link);
+        Hook.run('ls_talk_remove_from_talk_after', [idTalk, idTarget], link);
     });
 
     return false;
@@ -94,26 +97,26 @@ export function addToBlackList() {
     var url = aRouter['talk'] + 'ajaxaddtoblacklist/';
     var params = {users: sUsers};
 
-    ls.hook.marker('addToBlackListBefore');
+    Hook.marker('addToBlackListBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
         } else {
             $.each(result.aUsers, function (index, item) {
                 if (item.bStateError) {
-                    ls.msg.notice(null, item.sMsg);
+                    Msg.notice(null, item.sMsg);
                 } else {
                     var list = $('#black_list');
                     if (list.length == 0) {
                         list = $('<ul class="list" id="black_list"></ul>');
                         $('#black_list_block').append(list);
                     }
-                    var listItem = $('<li id="blacklist_item_' + item.sUserId + '_area"><a href="#" class="user">' + item.sUserLogin + '</a> - <a href="#" id="blacklist_item_' + item.sUserId + '" class="delete">' + ls.lang.get('delete') + '</a></li>');
+                    var listItem = $('<li id="blacklist_item_' + item.sUserId + '_area"><a href="#" class="user">' + item.sUserLogin + '</a> - <a href="#" id="blacklist_item_' + item.sUserId + '" class="delete">' + Lang.get('delete') + '</a></li>');
                     $('#black_list').append(listItem);
-                    ls.hook.run('ls_talk_add_to_black_list_item_after', [item], listItem);
+                    Hook.run('ls_talk_add_to_black_list_item_after', [item], listItem);
                 }
             });
-            ls.hook.run('ls_talk_add_to_black_list_after', [result]);
+            Hook.run('ls_talk_add_to_black_list_after', [result]);
         }
     });
     return false;
@@ -133,17 +136,17 @@ export function removeFromBlackList(link) {
     var url = aRouter['talk'] + 'ajaxdeletefromblacklist/';
     var params = {idTarget: idTarget};
 
-    ls.hook.marker('removeFromBlackListBefore');
+    Hook.marker('removeFromBlackListBefore');
     Ajax.ajax(url, params, function (result) {
         if (!result) {
-            ls.msg.error('Error', 'Please try again later');
+            Msg.error('Error', 'Please try again later');
             link.parent('li').show();
         }
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
             link.parent('li').show();
         }
-        ls.hook.run('ls_talk_remove_from_black_list_after', [idTarget], link);
+        Hook.run('ls_talk_remove_from_black_list_after', [idTarget], link);
     });
     return false;
 };

@@ -1,3 +1,4 @@
+import * as Msg from './msg'
 import $ from 'jquery'
 import * as Tools from './tools'
 import * as Hook from './hook'
@@ -78,7 +79,7 @@ export function ajaxUploadImg(form, sToLoad) {
     Hook.marker('ajaxUploadImgBefore');
     debugSubmit('upload/image/', form, function (data) {
         if (data.bStateError) {
-            ls.msg.error(data.sMsgTitle, data.sMsg);
+            Msg.error(data.sMsgTitle, data.sMsg);
         } else {
             $.markItUp({replaceWith: data.sText});
             $('#window_upload_img').find('input[type="text"], input[type="file"]').val('');

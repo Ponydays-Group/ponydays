@@ -1,3 +1,5 @@
+import * as Msg from './msg'
+import * as Hook from './hook'
 import $ from 'jquery'
 import * as Ajax from './ajax'
 
@@ -38,22 +40,22 @@ export function textPreview(textId, save, divPreview)
     let text = (BLOG_USE_TINYMCE) ? tinyMCE.activeEditor.getContent() : $('#' + textId).val();
     let ajaxUrl = aRouter['ajax'] + 'preview/text/';
     let ajaxOptions = {text: text, save: save};
-    ls.hook.marker('textPreviewAjaxBefore');
+    Hook.marker('textPreviewAjaxBefore');
     Ajax.ajax(ajaxUrl, ajaxOptions, function (result) {
         if (!result) {
-            ls.msg.error('Error', 'Please try again later');
+            Msg.error('Error', 'Please try again later');
         }
         if (result.bStateError) {
-            ls.msg.error(result.sMsgTitle || 'Error', result.sMsg || 'Please try again later');
+            Msg.error(result.sMsgTitle || 'Error', result.sMsg || 'Please try again later');
         } else {
             if (!divPreview) {
                 divPreview = 'text_preview';
             }
             let elementPreview = $('#' + divPreview);
-            ls.hook.marker('textPreviewDisplayBefore');
+            Hook.marker('textPreviewDisplayBefore');
             if (elementPreview.length) {
                 elementPreview.html(result.sText);
-                ls.hook.marker('textPreviewDisplayAfter');
+                Hook.marker('textPreviewDisplayAfter');
             }
         }
     });
@@ -101,7 +103,7 @@ export function debug()
 export function Log()
 {
     if (window.console && window.console.log) {
-        Function.prototype.bind.call(console.log, console).apply(console, arguments);
+        //Function.prototype.bind.call(console.log, console).apply(console, arguments);
     } else {
         //alert(msg);
     }

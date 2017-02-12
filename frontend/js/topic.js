@@ -1,3 +1,5 @@
+import * as Msg from './msg'
+import * as Hook from './hook'
 import $ from 'jquery'
 import * as Ajax from './ajax'
 
@@ -9,13 +11,13 @@ export function preview(form, preview) {
     form = $('#' + form);
     preview = $('#' + preview);
     var url = aRouter['ajax'] + 'preview/topic/';
-    ls.hook.marker('previewBefore');
+    Hook.marker('previewBefore');
     Ajax.ajaxSubmit(url, form, function (result) {
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
         } else {
             preview.show().html(result.sText);
-            ls.hook.run('ls_topic_preview_after', [form, preview, result]);
+            Hook.run('ls_topic_preview_after', [form, preview, result]);
         }
     });
 };
@@ -31,10 +33,10 @@ export function insertImageToEditor(sUrl, sAlign, sTitle) {
 export function onControlLocked(result) {
     if (result.bStateError) {
         this.checked = this.dataset.checkedOld == "1";
-        ls.msg.error(null, result.sMsg);
+        Msg.error(null, result.sMsg);
     } else {
         this.checked = result.bState;
-        ls.msg.notice(null, result.sMsg);
+        Msg.notice(null, result.sMsg);
     }
     delete this.dataset.checkedOld;
 };
@@ -46,7 +48,7 @@ export function lockControl(idTopic, obj) {
     params['bState'] = state ? "1" : "0";
 
     var url = aRouter['ajax'] + 'topic-lock-control';
-    ls.hook.marker('topicLockControlBefore');
+    Hook.marker('topicLockControlBefore');
     Ajax.ajax(url, params, this.onControlLocked.bind(obj));
     return true;
 };

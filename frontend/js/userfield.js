@@ -1,3 +1,6 @@
+import * as Lang from './lang'
+import * as Msg from './msg'
+import * as Hook from './hook'
 import $ from 'jquery'
 import * as Ajax from './ajax'
 
@@ -45,22 +48,22 @@ export function addUserfield() {
     var url = aRouter['admin'] + 'userfields';
     var params = {'action': 'add', 'name': name, 'title': title, 'pattern': pattern, 'type': type};
 
-    ls.hook.marker('addUserfieldBefore');
+    Hook.marker('addUserfieldBefore');
     Ajax.ajax(url, params, function (data) {
         if (!data.bStateError) {
             liElement = $('<li id="field_' + data.id + '"><span class="userfield_admin_name"></span > / <span class="userfield_admin_title"></span> / <span class="userfield_admin_pattern"></span> / <span class="userfield_admin_type"></span>'
-                + '<div class="userfield-actions"><a class="icon-edit" href="javascript:ls.userfield.showEditForm(' + data.id + ')"></a> '
-                + '<a class="icon-remove" href="javascript:ls.userfield.deleteUserfield(' + data.id + ')"></a></div>')
+                + '<div class="userfield-actions"><a class="icon-edit" href="javascript:ls.userfieldshowEditForm(' + data.id + ')"></a> '
+                + '<a class="icon-remove" href="javascript:ls.userfielddeleteUserfield(' + data.id + ')"></a></div>')
             ;
             $('#user_field_list').append(liElement);
             $('#field_' + data.id + ' .userfield_admin_name').text(name);
             $('#field_' + data.id + ' .userfield_admin_title').text(title);
             $('#field_' + data.id + ' .userfield_admin_pattern').text(pattern);
             $('#field_' + data.id + ' .userfield_admin_type').text(type);
-            ls.msg.notice(data.sMsgTitle, data.sMsg);
-            ls.hook.run('ls_userfield_add_userfield_after', [params, data], liElement);
+            Msg.notice(data.sMsgTitle, data.sMsg);
+            Hook.run('ls_userfield_add_userfield_after', [params, data], liElement);
         } else {
-            ls.msg.error(data.sMsgTitle, data.sMsg);
+            Msg.error(data.sMsgTitle, data.sMsg);
         }
     });
 };
@@ -75,37 +78,37 @@ export function updateUserfield() {
     var url = aRouter['admin'] + 'userfields';
     var params = {'action': 'update', 'id': id, 'name': name, 'title': title, 'pattern': pattern, 'type': type};
 
-    ls.hook.marker('updateUserfieldBefore');
+    Hook.marker('updateUserfieldBefore');
     Ajax.ajax(url, params, function (data) {
         if (!data.bStateError) {
             $('#field_' + id + ' .userfield_admin_name').text(name);
             $('#field_' + id + ' .userfield_admin_title').text(title);
             $('#field_' + id + ' .userfield_admin_pattern').text(pattern);
             $('#field_' + id + ' .userfield_admin_type').text(type);
-            ls.msg.notice(data.sMsgTitle, data.sMsg);
-            ls.hook.run('ls_userfield_update_userfield_after', [params, data]);
+            Msg.notice(data.sMsgTitle, data.sMsg);
+            Hook.run('ls_userfield_update_userfield_after', [params, data]);
         } else {
-            ls.msg.error(data.sMsgTitle, data.sMsg);
+            Msg.error(data.sMsgTitle, data.sMsg);
         }
     });
 };
 
 export function deleteUserfield(id) {
-    if (!confirm(ls.lang.get('user_field_delete_confirm'))) {
+    if (!confirm(Lang.get('user_field_delete_confirm'))) {
         return;
     }
 
     var url = aRouter['admin'] + 'userfields';
     var params = {'action': 'delete', 'id': id};
 
-    ls.hook.marker('deleteUserfieldBefore');
+    Hook.marker('deleteUserfieldBefore');
     Ajax.ajax(url, params, function (data) {
         if (!data.bStateError) {
             $('#field_' + id).remove();
-            ls.msg.notice(data.sMsgTitle, data.sMsg);
-            ls.hook.run('ls_userfield_update_userfield_after', [params, data]);
+            Msg.notice(data.sMsgTitle, data.sMsg);
+            Hook.run('ls_userfield_update_userfield_after', [params, data]);
         } else {
-            ls.msg.error(data.sMsgTitle, data.sMsg);
+            Msg.error(data.sMsgTitle, data.sMsg);
         }
     });
 };
@@ -127,7 +130,7 @@ export function addFormField() {
         tpl.find('select').val(value);
         $('#user-field-contact-contener').append(tpl.show());
     } else {
-        ls.msg.error('', ls.lang.get('settings_profile_field_error_max', {count: this.iCountMax}));
+        Msg.error('', Lang.get('settings_profile_field_error_max', {count: this.iCountMax}));
     }
     return false;
 };
@@ -135,7 +138,7 @@ export function addFormField() {
 export function changeFormField(obj) {
     var iCount = this.getCountFormField($(obj).val());
     if (iCount > this.iCountMax) {
-        ls.msg.error('', ls.lang.get('settings_profile_field_error_max', {count: this.iCountMax}));
+        Msg.error('', Lang.get('settings_profile_field_error_max', {count: this.iCountMax}));
     }
 };
 

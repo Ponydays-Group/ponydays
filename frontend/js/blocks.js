@@ -1,3 +1,5 @@
+import * as Msg from './msg'
+import * as Hook from './hook'
 import $ from "jquery"
 import * as Ajax from './ajax'
 
@@ -30,8 +32,10 @@ export let options = {
  * Метод загрузки содержимого блока
  */
 export function load(obj, block, params) {
-    let type = $(obj).data('type');
-    ls.hook.marker('loadBefore');
+  console.log(obj)
+    let type = $(obj).data('type') || "comment";
+    console.log(type)
+    Hook.marker('loadBefore');
 
     if (!type) return;
     type = block + '_' + type;
@@ -46,7 +50,7 @@ export function load(obj, block, params) {
 
     Ajax.ajax(options.type[type].url, params, function (result) {
         let args = [content, result];
-        ls.hook.marker('onLoadBefore');
+        Hook.marker('onLoadBefore');
         onLoad.apply(this, args);
     }.bind(this));
 }
@@ -84,7 +88,7 @@ export function switchTab(obj, block) {
             $(v).show();
         }
     });
-    ls.hook.run('ls_blocks_switch_tab_after', [obj, block], this);
+    Hook.run('ls_blocks_switch_tab_after', [obj, block], this);
     return true;
 }
 
@@ -103,10 +107,10 @@ export function onLoad(content, result) {
     $(this).trigger('loadSuccessful', arguments);
     content.empty().css({'background': 'none', 'height': 'auto', 'min-height': 0});
     if (result.bStateError) {
-        ls.msg.error(null, result.sMsg);
+        Msg.error(null, result.sMsg);
     } else {
         content.html(result.sText);
-        ls.hook.run('ls_block_onload_html_after', arguments, this);
+        Hook.run('ls_block_onload_html_after', arguments, this);
     }
 }
 
@@ -121,15 +125,17 @@ export function getCurrentItem(block) {
 
 export function initSwitch(block) {
     $('.js-block-' + block + '-item').click(function () {
-        ls.blocks.switchTab(this, block);
+        switchTab(this, block);
         return false;
     });
 }
 
+import * as Blocks from "./blocks"
+
 export function init(block, params) {
     params = params || {};
     $('.js-block-' + block + '-item').click(function () {
-        ls.blocks.load(this, block);
+        Blocks.load(this, block);
         return false;
     });
     if (params.group_items) {
@@ -139,7 +145,7 @@ export function init(block, params) {
     let $this = this;
     $('.js-block-' + block + '-update').click(function () {
         $(this).addClass('fa-spin');
-        ls.blocks.load(getCurrentItem(block), block);
+        console.log(load(getCurrentItem(block), block));
         setTimeout(function () {
             $(this).removeClass('fa-spin');
         }.bind(this), 600);
@@ -184,5 +190,5 @@ export function initNavigation(block, count) {
         $('.js-block-' + block + '-nav').show();
         $('.js-block-' + block + '-dropdown').hide();
     }
-    //ls.hook.run('ls_blocks_init_navigation_after',[block,count],this);
+    //Hook.run('ls_blocks_init_navigation_after',[block,count],this);
 }

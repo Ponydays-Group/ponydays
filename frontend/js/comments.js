@@ -1,3 +1,7 @@
+import * as Registry from './registry'
+import * as Blocks from './blocks'
+import * as Hook from './hook'
+import * as Msg from './msg'
 import $ from "jquery";
 import * as Ajax from "./ajax"
 
@@ -53,19 +57,19 @@ export function add(formObj, targetId, targetType) {
         $('#comment-button-submit').removeAttr('disabled');
         if (!result) {
             this.enableFormComment();
-            ls.msg.error('Error', 'Please try again later');
+            Msg.error('Error', 'Please try again later');
             return;
         }
         if (result.bStateError) {
             this.enableFormComment();
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
         } else {
             this.enableFormComment();
             $('#form_comment_text').val('');
 
             // Load new comments
             this.load(targetId, targetType, result.sCommentId, true);
-            ls.hook.run('ls_comments_add_after', [formObj, targetId, targetType, result]);
+            Hook.run('ls_comments_add_after', [formObj, targetId, targetType, result]);
         }
     }.bind(this));
 }
@@ -101,11 +105,6 @@ export function toggleCommentForm(idComment, bNoFocus) {
         tinyMCE.execCommand('mceAddControl', true, 'form_comment_text');
     }
     if (!bNoFocus) $('#form_comment_text').focus();
-
-    if ($('html').hasClass('ie7')) {
-        var inputs = $('input.input-text, textarea');
-        ls.ie.bordersizing(inputs);
-    }
 }
 
 
@@ -141,19 +140,19 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
         objImg.removeClass('fa-pulse');
 
         if (!result) {
-            ls.msg.error('Error', 'Please try again later');
+            Msg.error('Error', 'Please try again later');
         }
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
         } else {
             var aCmt = result.aComments;
             if (aCmt.length > 0 && result.iMaxIdComment) {
                 $("#comment_last_id").val(result.iMaxIdComment);
                 $('#count-comments').text(parseInt($('#count-comments').text()) + aCmt.length);
                 if (ls.blocks) {
-                    var curItemBlock = ls.blocks.getCurrentItem('stream');
+                    var curItemBlock = Blocks.getCurrentItem('stream');
                     if (curItemBlock.data('type') == 'comment') {
-                        ls.blocks.load(curItemBlock, 'stream');
+                        Blocks.load(curItemBlock, 'stream');
                     }
                 }
             }
@@ -185,14 +184,14 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
             this.checkFolding();
             this.aCommentNew = [];
             this.calcNewComments();
-            ls.hook.run('ls_comments_load_after', [idTarget, typeTarget, selfIdComment, bNotFlushNew, result]);
+            Hook.run('ls_comments_load_after', [idTarget, typeTarget, selfIdComment, bNotFlushNew, result]);
 
             try {
                 var new_messages = document.getElementById("new_messages");
-                var pm_title = new_messages.dataset.title;
+                var pm_title = "";
                 if (result.iUserCurrentCountTalkNew > 0) {
                     new_messages.classList.add("new-messages");
-                    pm_title += " (" + result.iUserCurrentCountTalkNew.toString() + ")";
+                    pm_title = " (" + result.iUserCurrentCountTalkNew.toString() + ")";
                 } else {
                     new_messages.classList.remove("new-messages");
                 }
@@ -221,7 +220,7 @@ export function inject(idCommentParent, idComment, sHtml) {
     if (idCommentParent) {
         // Уровень вложенности родителя
         var iCurrentTree = $('#comment_wrapper_id_' + idCommentParent).parentsUntil('#comments').length;
-        if (iCurrentTree == ls.registry.get('comment_max_tree')) {
+        if (iCurrentTree == Registry.get('comment_max_tree')) {
             // Определяем id предыдушего родителя
             var prevCommentParent = $('#comment_wrapper_id_' + idCommentParent).parent();
             idCommentParent = parseInt(prevCommentParent.attr('id').replace('comment_wrapper_id_', ''));
@@ -230,7 +229,7 @@ export function inject(idCommentParent, idComment, sHtml) {
     } else {
         $('#comments').append(newComment);
     }
-    ls.hook.run('ls_comment_inject_after', arguments, newComment);
+    Hook.run('ls_comment_inject_after', arguments, newComment);
 }
 
 
@@ -239,22 +238,22 @@ export function toggle(obj, commentId) {
     var url = aRouter['ajax'] + 'comment/delete/';
     var params = {idComment: commentId};
 
-    ls.hook.marker('toggleBefore');
+    Hook.marker('toggleBefore');
     Ajax.ajax(url, params, function (result) {
         if (!result) {
-            ls.msg.error('Error', 'Please try again later');
+            Msg.error('Error', 'Please try again later');
         }
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
         } else {
-            ls.msg.notice(null, result.sMsg);
+            Msg.notice(null, result.sMsg);
 
             $('#comment_id_' + commentId).removeClass(this.options.classes.comment_self + ' ' + this.options.classes.comment_new + ' ' + this.options.classes.comment_deleted + ' ' + this.options.classes.comment_current);
             if (result.bState) {
                 $('#comment_id_' + commentId).addClass(this.options.classes.comment_deleted);
             }
             $(obj).text(result.sTextToggle);
-            ls.hook.run('ls_comments_toggle_after', [obj, commentId, result]);
+            Hook.run('ls_comments_toggle_after', [obj, commentId, result]);
         }
     }.bind(this));
 }
@@ -377,9 +376,9 @@ export function checkFolding() {
         }
     }).off("click").click(function (x) {
         if (x.target.className == "folding fa fa-minus-square") {
-            ls.comments.collapseComment(x.target)
+            collapseComment(x.target)
         } else {
-            ls.comments.expandComment(x.target)
+            expandComment(x.target)
         }
     });
     return false;
@@ -420,7 +419,7 @@ export function init() {
     if (typeof(this.options.wysiwyg) != 'number') {
         this.options.wysiwyg = Boolean(BLOG_USE_TINYMCE && tinyMCE);
     }
-    //ls.hook.run('ls_comments_init_after',[],this);
+    //Hook.run('ls_comments_init_after',[],this);
 }
 
 

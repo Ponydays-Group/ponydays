@@ -1,3 +1,5 @@
+import * as Msg from './msg'
+import * as Hook from './hook'
 import $ from "jquery"
 import * as Ajax from './ajax'
 
@@ -40,13 +42,13 @@ export function toggle(idTarget, objFavourite, type) {
     params['type'] = !this.objFavourite.hasClass(this.options.active);
     params[this.options.type[type].targetName] = idTarget;
 
-    ls.hook.marker('toggleBefore');
+    Hook.marker('toggleBefore');
     Ajax.ajax(this.options.type[type].url, params, function (result) {
         $(this).trigger('toggle', [idTarget, objFavourite, type, params, result]);
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
         } else {
-            ls.msg.notice(null, result.sMsg);
+            Msg.notice(null, result.sMsg);
             this.objFavourite.removeClass(this.options.active);
             if (result.bState) {
                 this.objFavourite.addClass(this.options.active);
@@ -54,7 +56,7 @@ export function toggle(idTarget, objFavourite, type) {
             } else {
                 this.hideTags(type, idTarget);
             }
-            ls.hook.run('ls_favourite_toggle_after', [idTarget, objFavourite, type, params, result], this);
+            Hook.run('ls_favourite_toggle_after', [idTarget, objFavourite, type, params, result], this);
         }
     }.bind(this));
     return false;
@@ -87,10 +89,10 @@ export function hideEditTags() {
 
 export function saveTags(form) {
     var url = aRouter['ajax'] + 'favourite/save-tags/';
-    ls.hook.marker('saveTagsBefore');
+    Hook.marker('saveTagsBefore');
     Ajax.ajaxSubmit(url, $(form), function (result) {
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
         } else {
             this.hideEditTags();
             var type = $('#favourite-form-tags-target-type').val();
@@ -101,7 +103,7 @@ export function saveTags(form) {
                 edit.before('<li class="' + type + '-tags-user js-favourite-tag-user">, <a rel="tag" href="' + v.url + '">' + v.tag + '</a></li>');
             });
 
-            ls.hook.run('ls_favourite_save_tags_after', [form, result], this);
+            Hook.run('ls_favourite_save_tags_after', [form, result], this);
         }
     }.bind(this));
     return false;

@@ -17,12 +17,12 @@ export function add(obj, sPath, multiple)
         })
             .autocomplete({
                 source: function (request, response) {
-                    Ajax.ajax(sPath, {value: ls.autocomplete.extractLast(request.term)}, function (data) {
+                    Ajax.ajax(sPath, {value: extractLast(request.term)}, function (data) {
                         response(data.aItems);
                     });
                 },
                 search: function () {
-                    var term = ls.autocomplete.extractLast(this.value);
+                    var term = extractLast(this.value);
                     if (term.length < 2) {
                         return false;
                     }
@@ -31,7 +31,7 @@ export function add(obj, sPath, multiple)
                     return false;
                 },
                 select: function (event, ui) {
-                    var terms = ls.autocomplete.split(this.value);
+                    var terms = split(this.value);
                     terms.pop();
                     terms.push(ui.item.value);
                     terms.push("");
@@ -42,7 +42,7 @@ export function add(obj, sPath, multiple)
     } else {
         obj.autocomplete({
             source: function (request, response) {
-                ajax(sPath, {value: ls.autocomplete.extractLast(request.term)}, function (data) {
+                ajax(sPath, {value: extractLast(request.term)}, function (data) {
                     response(data.aItems);
                 });
             }

@@ -1,3 +1,5 @@
+import * as Msg from './msg'
+import * as Hook from './hook'
 import $ from 'jquery'
 import * as Ajax from './ajax'
 
@@ -53,7 +55,7 @@ export function vote(idTarget, objVote, value, type) {
     params['value'] = value;
     params[this.options.type[type].targetName] = idTarget;
 
-    ls.hook.marker('voteBefore');
+    Hook.marker('voteBefore');
     Ajax.ajax(this.options.type[type].url, params, function (result) {
         var args = [idTarget, objVote, value, type, result];
         this.onVote.apply(this, args);
@@ -63,9 +65,9 @@ export function vote(idTarget, objVote, value, type) {
 
 export function onVote(idTarget, objVote, value, type, result) {
     if (result.bStateError) {
-        ls.msg.error(null, result.sMsg);
+        Msg.error(null, result.sMsg);
     } else {
-        ls.msg.notice(null, result.sMsg);
+        Msg.notice(null, result.sMsg);
 
         var divVoting = $('#' + this.options.prefix_area + type + '_' + idTarget);
 
@@ -163,7 +165,7 @@ export function __makeProfileLink(path, data) {
 
 export function onGetVotes(result) {
     if (result.bStateError) {
-        ls.msg.error(null, result.sMsg);
+        Msg.error(null, result.sMsg);
     } else {
         var voteSum = 0;
         if (result.aVotes.length > 0) {

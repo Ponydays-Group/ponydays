@@ -1,3 +1,6 @@
+import * as Msg from './msg'
+import * as Hook from './hook'
+import * as Lang from './lang'
 import $ from "jquery";
 import * as Ajax from "./ajax"
 
@@ -24,7 +27,7 @@ export function loadRegions($country) {
     $region = $country.parents('.js-geo-select').find('.js-geo-region');
     $city = $country.parents('.js-geo-select').find('.js-geo-city');
     $region.empty();
-    $region.append('<option value="">' + ls.lang.get('geo_select_region') + '</option>');
+    $region.append('<option value="">' + Lang.get('geo_select_region') + '</option>');
     $city.empty();
     $city.hide();
 
@@ -35,16 +38,16 @@ export function loadRegions($country) {
 
     var url = aRouter['ajax'] + 'geo/get/regions/';
     var params = {country: $country.val()};
-    ls.hook.marker('loadRegionsBefore');
+    Hook.marker('loadRegionsBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
         } else {
             $.each(result.aRegions, function (k, v) {
                 $region.append('<option value="' + v.id + '">' + v.name + '</option>');
             });
             $region.show();
-            ls.hook.run('ls_geo_load_regions_after', [$country, result]);
+            Hook.run('ls_geo_load_regions_after', [$country, result]);
         }
     });
 };
@@ -52,7 +55,7 @@ export function loadRegions($country) {
 export function loadCities($region) {
     $city = $region.parents('.js-geo-select').find('.js-geo-city');
     $city.empty();
-    $city.append('<option value="">' + ls.lang.get('geo_select_city') + '</option>');
+    $city.append('<option value="">' + Lang.get('geo_select_city') + '</option>');
 
     if (!$region.val()) {
         $city.hide();
@@ -61,16 +64,16 @@ export function loadCities($region) {
 
     var url = aRouter['ajax'] + 'geo/get/cities/';
     var params = {region: $region.val()};
-    ls.hook.marker('loadCitiesBefore');
+    Hook.marker('loadCitiesBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
         } else {
             $.each(result.aCities, function (k, v) {
                 $city.append('<option value="' + v.id + '">' + v.name + '</option>');
             });
             $city.show();
-            ls.hook.run('ls_geo_load_cities_after', [$region, result]);
+            Hook.run('ls_geo_load_cities_after', [$region, result]);
         }
     });
 };

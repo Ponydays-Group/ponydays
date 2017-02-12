@@ -6,9 +6,16 @@
 	</form>
 
 	{hook run='userbar_nav'}
-	
+
 	<ul class="nav nav-userbar">
 		{if $oUserCurrent}
+		<li title="{$aLang.user_privat_messages}{if $iUserCurrentCountTalkNew} ({$iUserCurrentCountTalkNew}){/if}">
+        <a data-title="{$aLang.user_privat_messages}" href="{router page='talk'}" {if $iUserCurrentCountTalkNew}class="new-messages"{/if} id="new_messages">
+            {if $iUserCurrentCountTalkNew} ({$iUserCurrentCountTalkNew}){/if}
+            <i class="fa fa-envelope-o"></i>
+            <i class="fa fa-envelope"></i>
+        </a>
+    </li>
 			<li class="nav-userbar-username">
 				<a href="{$oUserCurrent->getUserWebPath()}" class="username">
 					<span>{$oUserCurrent->getLogin()}</span>

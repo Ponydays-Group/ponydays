@@ -1,3 +1,5 @@
+import * as Msg from './msg'
+import * as Hook from './hook'
 import $ from 'jquery'
 import * as Ajax from './ajax'
 
@@ -7,11 +9,11 @@ export function subscribe(sType, iId) {
     var url = aRouter['feed'] + 'subscribe/';
     var params = {'type': sType, 'id': iId};
 
-    ls.hook.marker('subscribeBefore');
+    Hook.marker('subscribeBefore');
     Ajax.ajax(url, params, function (data) {
         if (!data.bStateError) {
-            ls.msg.notice(data.sMsgTitle, data.sMsg);
-            ls.hook.run('ls_userfeed_subscribe_after', [sType, iId, data]);
+            Msg.notice(data.sMsgTitle, data.sMsg);
+            Hook.run('ls_userfeed_subscribe_after', [sType, iId, data]);
         }
     });
 }
@@ -20,11 +22,11 @@ export function subscribeAll() {
     var url = aRouter['feed'] + 'subscribe_all/';
     var params = {};
 
-    ls.hook.marker('subscribeBefore');
+    Hook.marker('subscribeBefore');
     Ajax.ajax(url, params, function (data) {
         if (!data.bStateError) {
-            ls.msg.notice(data.sMsgTitle, data.sMsg);
-            ls.hook.run('ls_userfeed_subscribe_all_after', [data]);
+            Msg.notice(data.sMsgTitle, data.sMsg);
+            Hook.run('ls_userfeed_subscribe_all_after', [data]);
             location.reload();
         }
     });
@@ -34,11 +36,11 @@ export function unsubscribe(sType, iId) {
     var url = aRouter['feed'] + 'unsubscribe/';
     var params = {'type': sType, 'id': iId};
 
-    ls.hook.marker('unsubscribeAllBefore');
+    Hook.marker('unsubscribeAllBefore');
     Ajax.ajax(url, params, function (data) {
         if (!data.bStateError) {
-            ls.msg.notice(data.sMsgTitle, data.sMsg);
-            ls.hook.run('ls_userfeed_unsubscribe_after', [sType, iId, data]);
+            Msg.notice(data.sMsgTitle, data.sMsg);
+            Hook.run('ls_userfeed_unsubscribe_after', [sType, iId, data]);
         }
     });
 }
@@ -47,11 +49,11 @@ export function unsubscribeAll() {
     var url = aRouter['feed'] + 'unsubscribe_all/';
     var params = {};
 
-    ls.hook.marker('unsubscribeAllBefore');
+    Hook.marker('unsubscribeAllBefore');
     Ajax.ajax(url, params, function (data) {
         if (!data.bStateError) {
-            ls.msg.notice(data.sMsgTitle, data.sMsg);
-            ls.hook.run('ls_userfeed_unsubscribe_all_after', [data]);
+            Msg.notice(data.sMsgTitle, data.sMsg);
+            Hook.run('ls_userfeed_unsubscribe_all_after', [data]);
             location.reload();
         }
     });
@@ -64,25 +66,25 @@ export function appendUser() {
     var url = aRouter['feed'] + 'subscribeByLogin/';
     var params = {'login': sLogin};
 
-    ls.hook.marker('appendUserBefore');
+    Hook.marker('appendUserBefore');
     Ajax.ajax(url, params, function (data) {
         if (data.bStateError) {
-            ls.msg.error(data.sMsgTitle, data.sMsg);
+            Msg.error(data.sMsgTitle, data.sMsg);
         } else {
             $('#userfeed_no_subscribed_users').remove();
             var checkbox = $('#usf_u_' + data.uid);
             if (checkbox.length) {
                 if (checkbox.attr('checked')) {
-                    ls.msg.error(data.lang_error_title, data.lang_error_msg);
+                    Msg.error(data.lang_error_title, data.lang_error_msg);
                     return;
                 } else {
                     checkbox.attr('checked', 'on');
-                    ls.msg.notice(data.sMsgTitle, data.sMsg);
+                    Msg.notice(data.sMsgTitle, data.sMsg);
                 }
             } else {
-                var liElement = $('<li><input type="checkbox" class="userfeedUserCheckbox input-checkbox" id="usf_u_' + data.uid + '" checked="checked" onClick="if ($(this).get(\'checked\')) {ls.userfeed.subscribe(\'users\',' + data.uid + ')} else {ls.userfeed.unsubscribe(\'users\',' + data.uid + ')}" /><a href="' + data.user_web_path + '">' + data.user_login + '</a></li>');
+                var liElement = $('<li><input type="checkbox" class="userfeedUserCheckbox input-checkbox" id="usf_u_' + data.uid + '" checked="checked" onClick="if ($(this).get(\'checked\')) {ls.userfeedsubscribe(\'users\',' + data.uid + ')} else {ls.userfeedunsubscribe(\'users\',' + data.uid + ')}" /><a href="' + data.user_web_path + '">' + data.user_login + '</a></li>');
                 $('#userfeed_block_users_list').append(liElement);
-                ls.msg.notice(data.sMsgTitle, data.sMsg);
+                Msg.notice(data.sMsgTitle, data.sMsg);
             }
         }
     });
@@ -100,7 +102,7 @@ export function getMore() {
     var url = aRouter['feed'] + 'get_more/';
     var params = {'last_id': lastId};
 
-    ls.hook.marker('getMoreBefore');
+    Hook.marker('getMoreBefore');
     Ajax.ajax(url, params, function (data) {
         if (!data.bStateError && data.topics_count) {
             $('#userfeed_loaded_topics').append(data.result);
@@ -110,7 +112,7 @@ export function getMore() {
             $('#userfeed_get_more').hide();
         }
         $('#userfeed_get_more').removeClass('userfeed_loading');
-        ls.hook.run('ls_userfeed_get_more_after', [lastId, data]);
+        Hook.run('ls_userfeed_get_more_after', [lastId, data]);
         this.isBusy = false;
     }.bind(this));
 }

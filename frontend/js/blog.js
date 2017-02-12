@@ -1,3 +1,6 @@
+import * as Lang from './lang'
+import * as Msg from './msg'
+import * as Hook from './hook'
 import $ from "jquery"
 import * as Ajax from './ajax'
 
@@ -12,24 +15,24 @@ export function toggleJoin(obj, idBlog) {
     let url = aRouter['blog'] + 'ajaxblogjoin/';
     let params = {idBlog: idBlog};
 
-    ls.hook.marker('toggleJoinBefore');
+    Hook.marker('toggleJoinBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
         } else {
             obj = $(obj);
-            ls.msg.notice(null, result.sMsg);
+            Msg.notice(null, result.sMsg);
 
             let text = result.bState
-                    ? ls.lang.get('blog_leave')
-                    : ls.lang.get('blog_join')
+                    ? Lang.get('blog_leave')
+                    : Lang.get('blog_join')
                 ;
 
             obj.empty().text(text);
             obj.toggleClass('active');
 
             $('#blog_user_count_' + idBlog).text(result.iCountUser);
-            ls.hook.run('ls_blog_toggle_join_after', [idBlog, result], obj);
+            Hook.run('ls_blog_toggle_join_after', [idBlog, result], obj);
         }
     });
 }
@@ -46,14 +49,14 @@ export function addInvite(idBlog) {
     let url = aRouter['blog'] + 'ajaxaddbloginvite/';
     let params = {users: sUsers, idBlog: idBlog};
 
-    ls.hook.marker('addInviteBefore');
+    Hook.marker('addInviteBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
         } else {
             $.each(result.aUsers, function (index, item) {
                 if (item.bStateError) {
-                    ls.msg.error(null, item.sMsg);
+                    Msg.error(null, item.sMsg);
                 } else {
                     if ($('#invited_list').length == 0) {
                         $('#invited_list_block').append($('<ul class="list" id="invited_list"></ul>'));
@@ -61,10 +64,10 @@ export function addInvite(idBlog) {
                     let listItem = $('<li><a href="' + item.sUserWebPath + '" class="user">' + item.sUserLogin + '</a></li>');
                     $('#invited_list').append(listItem);
                     $('#blog-invite-empty').hide();
-                    ls.hook.run('ls_blog_add_invite_user_after', [idBlog, item], listItem);
+                    Hook.run('ls_blog_add_invite_user_after', [idBlog, item], listItem);
                 }
             });
-            ls.hook.run('ls_blog_add_invite_after', [idBlog, sUsers, result]);
+            Hook.run('ls_blog_add_invite_after', [idBlog, sUsers, result]);
         }
     });
 
@@ -79,13 +82,13 @@ export function repeatInvite(idUser, idBlog) {
     let url = aRouter['blog'] + 'ajaxrebloginvite/';
     let params = {idUser: idUser, idBlog: idBlog};
 
-    ls.hook.marker('repeatInviteBefore');
+    Hook.marker('repeatInviteBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
         } else {
-            ls.msg.notice(null, result.sMsg);
-            ls.hook.run('ls_blog_repeat_invite_after', [idUser, idBlog, result]);
+            Msg.notice(null, result.sMsg);
+            Hook.run('ls_blog_repeat_invite_after', [idUser, idBlog, result]);
         }
     });
 
@@ -100,15 +103,15 @@ export function removeInvite(idUser, idBlog) {
     let url = aRouter['blog'] + 'ajaxremovebloginvite/';
     let params = {idUser: idUser, idBlog: idBlog};
 
-    ls.hook.marker('removeInviteBefore');
+    Hook.marker('removeInviteBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
         } else {
             $('#blog-invite-remove-item-' + idBlog + '-' + idUser).remove();
-            ls.msg.notice(null, result.sMsg);
+            Msg.notice(null, result.sMsg);
             if ($('#invited_list li').length == 0) $('#blog-invite-empty').show();
-            ls.hook.run('ls_blog_remove_invite_after', [idUser, idBlog, result]);
+            Hook.run('ls_blog_remove_invite_after', [idUser, idBlog, result]);
         }
     });
 
@@ -123,14 +126,14 @@ export function loadInfo(idBlog) {
     let url = aRouter['blog'] + 'ajaxbloginfo/';
     let params = {idBlog: idBlog};
 
-    ls.hook.marker('loadInfoBefore');
+    Hook.marker('loadInfoBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
         } else {
             let block = $('#block_blog_info');
             block.html(result.sText);
-            ls.hook.run('ls_blog_load_info_after', [idBlog, result], block);
+            Hook.run('ls_blog_load_info_after', [idBlog, result], block);
         }
     });
 }
@@ -140,7 +143,7 @@ export function loadInfo(idBlog) {
  * Отображение информации о типе блога
  */
 export function loadInfoType(type) {
-    $('#blog_type_note').text(ls.lang.get('blog_create_type_' + type + '_notice'));
+    $('#blog_type_note').text(Lang.get('blog_create_type_' + type + '_notice'));
 }
 
 
@@ -152,7 +155,7 @@ export function searchBlogs(form) {
     let inputSearch = $('#' + form).find('input');
     inputSearch.addClass('loader');
 
-    ls.hook.marker('searchBlogsBefore');
+    Hook.marker('searchBlogsBefore');
     Ajax.ajaxSubmit(url, form, function (result) {
         inputSearch.removeClass('loader');
         if (result.bStateError) {
@@ -161,7 +164,7 @@ export function searchBlogs(form) {
         } else {
             $('#blogs-list-original').hide();
             $('#blogs-list-search').html(result.sText).show();
-            ls.hook.run('ls_blog_search_blogs_after', [form, result]);
+            Hook.run('ls_blog_search_blogs_after', [form, result]);
         }
     });
 }
@@ -176,9 +179,9 @@ export function toggleInfo() {
     more.toggleClass('expanded');
 
     if (more.hasClass('expanded')) {
-        more.html(ls.lang.get('blog_fold_info'));
+        more.html(Lang.get('blog_fold_info'));
     } else {
-        more.html(ls.lang.get('blog_expand_info'));
+        more.html(Lang.get('blog_expand_info'));
     }
 
     return false;

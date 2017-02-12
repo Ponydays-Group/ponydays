@@ -1,3 +1,4 @@
+import * as Lang from './lang'
 import $ from 'jquery'
 
 /**
@@ -19,36 +20,36 @@ export function getMarkitup() {
             {name: "right", className: 'fa fa-align-right', openWith: '<span class="right">', closeWith: '</span>'},
             {separator: '---------------'},
             {
-                name: ls.lang.get('panel_b'),
+                name: Lang.get('panel_b'),
                 className: 'fa fa-bold',
                 key: 'B',
                 openWith: '(!(<strong>|!|<b>)!)',
                 closeWith: '(!(</strong>|!|</b>)!)'
             },
             {
-                name: ls.lang.get('panel_i'),
+                name: Lang.get('panel_i'),
                 className: 'fa fa-italic',
                 key: 'I',
                 openWith: '(!(<em>|!|<i>)!)',
                 closeWith: '(!(</em>|!|</i>)!)'
             },
             {
-                name: ls.lang.get('panel_s'),
+                name: Lang.get('panel_s'),
                 className: 'fa fa-strikethrough',
                 key: 'S',
                 openWith: '<s>',
                 closeWith: '</s>'
             },
-            {name: ls.lang.get('panel_u'), className: 'fa fa-underline', key: 'U', openWith: '<u>', closeWith: '</u>'},
+            {name: Lang.get('panel_u'), className: 'fa fa-underline', key: 'U', openWith: '<u>', closeWith: '</u>'},
             {
-                name: ls.lang.get('panel_quote'), className: 'fa fa-quote-left', key: 'Q', replaceWith: function (m) {
+                name: Lang.get('panel_quote'), className: 'fa fa-quote-left', key: 'Q', replaceWith: function (m) {
                 if (m.selectionOuter) return '<blockquote>' + m.selectionOuter + '</blockquote>'; else if (m.selection) return '<blockquote>' + m.selection + '</blockquote>'; else return '<blockquote></blockquote>'
             }
             },
-            {name: ls.lang.get('panel_code'), className: 'fa fa-code', openWith: '<code>', closeWith: '</code>'},
+            {name: Lang.get('panel_code'), className: 'fa fa-code', openWith: '<code>', closeWith: '</code>'},
             {separator: '---------------'},
             {
-                name: ls.lang.get('panel_list'),
+                name: Lang.get('panel_list'),
                 className: 'fa fa-list-ul',
                 openWith: '    <li>',
                 closeWith: '</li>',
@@ -57,7 +58,7 @@ export function getMarkitup() {
                 closeBlockWith: '\n</ul>'
             },
             {
-                name: ls.lang.get('panel_list'),
+                name: Lang.get('panel_list'),
                 className: 'fa fa-list-ol',
                 openWith: '    <li>',
                 closeWith: '</li>',
@@ -65,30 +66,30 @@ export function getMarkitup() {
                 openBlockWith: '<ol>\n',
                 closeBlockWith: '\n</ol>'
             },
-            {name: ls.lang.get('panel_list_li'), className: 'fa fa-hashtag', openWith: '<li>', closeWith: '</li>'},
+            {name: Lang.get('panel_list_li'), className: 'fa fa-hashtag', openWith: '<li>', closeWith: '</li>'},
             {separator: '---------------'},
             {
-                name: ls.lang.get('panel_image'), className: 'fa fa-picture-o', key: 'P', beforeInsert: function (h) {
+                name: Lang.get('panel_image'), className: 'fa fa-picture-o', key: 'P', beforeInsert: function (h) {
                 jQuery('#window_upload_img').jqmShow();
             }
             },
             {
-                name: ls.lang.get('panel_video'),
+                name: Lang.get('panel_video'),
                 className: 'fa fa-video-camera',
-                replaceWith: '<video>[![' + ls.lang.get('panel_video_promt') + ':!:http://]!]</video>'
+                replaceWith: '<video>[![' + Lang.get('panel_video_promt') + ':!:http://]!]</video>'
             },
             {
-                name: ls.lang.get('panel_url'),
+                name: Lang.get('panel_url'),
                 className: 'fa fa-link',
                 key: 'L',
-                openWith: '<a target="_blank" href="[![' + ls.lang.get('panel_url_promt') + ':!:http://]!]"(!( title="[![Title]!]")!)>',
+                openWith: '<a target="_blank" href="[![' + Lang.get('panel_url_promt') + ':!:http://]!]"(!( title="[![Title]!]")!)>',
                 closeWith: '</a>',
                 placeHolder: 'Your text to link...'
             },
             {
-                name: ls.lang.get('panel_user'),
+                name: Lang.get('panel_user'),
                 className: 'fa fa-user',
-                replaceWith: '<ls user="[![' + ls.lang.get('panel_user_promt') + ']!]" />'
+                replaceWith: '<ls user="[![' + Lang.get('panel_user_promt') + ']!]" />'
             },
             {separator: '---------------'},
             {
@@ -103,12 +104,12 @@ export function getMarkitup() {
             },
             {separator: '---------------'},
             {
-                name: ls.lang.get('panel_clear_tags'), className: 'fa fa-times', replaceWith: function (markitup) {
+                name: Lang.get('panel_clear_tags'), className: 'fa fa-times', replaceWith: function (markitup) {
                 return markitup.selection.replace(/<(.*?)>/g, "")
             }
             },
             {
-                name: ls.lang.get('panel_cut'), className: 'fa fa-cut', replaceWith: function (markitup) {
+                name: Lang.get('panel_cut'), className: 'fa fa-cut', replaceWith: function (markitup) {
                 if (markitup.selection) return '<cut name="' + markitup.selection + '">'; else return '<cut>'
             }
             }
@@ -122,27 +123,27 @@ export function getMarkitupComment() {
         onTab: {keepDefault: false, replaceWith: '    '},
         markupSet: [
             {
-                name: ls.lang.get('panel_b'),
+                name: Lang.get('panel_b'),
                 className: 'fa fa-bold',
                 key: 'B',
                 openWith: '(!(<strong>|!|<b>)!)',
                 closeWith: '(!(</strong>|!|</b>)!)'
             },
             {
-                name: ls.lang.get('panel_i'),
+                name: Lang.get('panel_i'),
                 className: 'fa fa-italic',
                 key: 'I',
                 openWith: '(!(<em>|!|<i>)!)',
                 closeWith: '(!(</em>|!|</i>)!)'
             },
             {
-                name: ls.lang.get('panel_s'),
+                name: Lang.get('panel_s'),
                 className: 'fa fa-strikethrough',
                 key: 'S',
                 openWith: '<s>',
                 closeWith: '</s>'
             },
-            {name: ls.lang.get('panel_u'), className: 'fa fa-underline', key: 'U', openWith: '<u>', closeWith: '</u>'},
+            {name: Lang.get('panel_u'), className: 'fa fa-underline', key: 'U', openWith: '<u>', closeWith: '</u>'},
             {name: "sup", className: 'fa fa-superscript', openWith: '<sup>', closeWith: '</sup>'},
             {name: "sup", className: 'fa fa-subscript', openWith: '<sub>', closeWith: '</sub>'},
             {name: "small", className: 'fa fa-text-height', openWith: '<small>', closeWith: '</small>'},
@@ -152,33 +153,33 @@ export function getMarkitupComment() {
             {name: "right", className: 'fa fa-align-right', openWith: '<span class="right">', closeWith: '</span>'},
             {separator: '---------------'},
             {
-                name: ls.lang.get('panel_quote'), className: 'fa fa-quote-left', key: 'Q', replaceWith: function (m) {
+                name: Lang.get('panel_quote'), className: 'fa fa-quote-left', key: 'Q', replaceWith: function (m) {
                 if (m.selectionOuter) return '<blockquote>' + m.selectionOuter + '</blockquote>'; else if (m.selection) return '<blockquote>' + m.selection + '</blockquote>'; else return '<blockquote></blockquote>'
             }
             },
-            {name: ls.lang.get('panel_code'), className: 'fa fa-code', openWith: '<code>', closeWith: '</code>'},
+            {name: Lang.get('panel_code'), className: 'fa fa-code', openWith: '<code>', closeWith: '</code>'},
             {
-                name: ls.lang.get('panel_image'), className: 'fa fa-picture-o', key: 'P', beforeInsert: function (h) {
+                name: Lang.get('panel_image'), className: 'fa fa-picture-o', key: 'P', beforeInsert: function (h) {
                 jQuery('#window_upload_img').jqmShow();
             }
             },
             {
-                name: ls.lang.get('panel_url'),
+                name: Lang.get('panel_url'),
                 className: 'fa fa-link',
                 key: 'L',
-                openWith: '<a target="_blank" href="[![' + ls.lang.get('panel_url_promt') + ':!:http://]!]"(!( title="[![Title]!]")!)>',
+                openWith: '<a target="_blank" href="[![' + Lang.get('panel_url_promt') + ':!:http://]!]"(!( title="[![Title]!]")!)>',
                 closeWith: '</a>',
                 placeHolder: 'Your text to link...'
             },
             {
-                name: ls.lang.get('panel_video'),
+                name: Lang.get('panel_video'),
                 className: 'fa fa-video-camera',
-                replaceWith: '<video>[![' + ls.lang.get('panel_video_promt') + ':!:http://]!]</video>'
+                replaceWith: '<video>[![' + Lang.get('panel_video_promt') + ':!:http://]!]</video>'
             },
             {
-                name: ls.lang.get('panel_user'),
+                name: Lang.get('panel_user'),
                 className: 'fa fa-user',
-                replaceWith: '<ls user="[![' + ls.lang.get('panel_user_promt') + ']!]" />'
+                replaceWith: '<ls user="[![' + Lang.get('panel_user_promt') + ']!]" />'
             },
             {separator: '---------------'},
             {
@@ -194,7 +195,7 @@ export function getMarkitupComment() {
             },
             {separator: '---------------'},
             {
-                name: ls.lang.get('panel_clear_tags'), className: 'fa fa-times', replaceWith: function (markitup) {
+                name: Lang.get('panel_clear_tags'), className: 'fa fa-times', replaceWith: function (markitup) {
                 return markitup.selection.replace(/<(.*?)>/g, "")
             }
             }

@@ -1,3 +1,7 @@
+import * as Lang from './lang'
+import * as Stream from './stream'
+import * as Msg from './msg'
+import * as Hook from './hook'
 import $ from 'jquery'
 import * as Ajax from './ajax' 
 
@@ -25,22 +29,22 @@ export function addFriend(obj, idUser, sAction) {
 
     var params = {idUser: idUser, userText: sText};
 
-    ls.hook.marker('addFriendBefore');
+    Hook.marker('addFriendBefore');
     Ajax.ajax(url, params, function (result) {
         $('#add_friend_form').children().each(function (i, item) {
             $(item).removeAttr('disabled')
         });
         if (!result) {
-            ls.msg.error('Error', 'Please try again later');
+            Msg.error('Error', 'Please try again later');
         }
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
         } else {
-            ls.msg.notice(null, result.sMsg);
+            Msg.notice(null, result.sMsg);
             $('#add_friend_form').jqmHide();
             $('#add_friend_item').remove();
             $('#profile_actions').prepend($(result.sToggleText));
-            ls.hook.run('ls_user_add_friend_after', [idUser, sAction, result], obj);
+            Hook.run('ls_user_add_friend_after', [idUser, sAction, result], obj);
         }
     });
     return false;
@@ -53,15 +57,15 @@ export function removeFriend(obj, idUser, sAction) {
     var url = aRouter.profile + 'ajaxfrienddelete/';
     var params = {idUser: idUser, sAction: sAction};
 
-    ls.hook.marker('removeFriendBefore');
+    Hook.marker('removeFriendBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
         } else {
-            ls.msg.notice(null, result.sMsg);
+            Msg.notice(null, result.sMsg);
             $('#delete_friend_item').remove();
             $('#profile_actions').prepend($(result.sToggleText));
-            ls.hook.run('ls_user_remove_friend_after', [idUser, sAction, result], obj);
+            Hook.run('ls_user_remove_friend_after', [idUser, sAction, result], obj);
         }
     });
     return false;
@@ -85,7 +89,7 @@ export function uploadAvatar(form, input) {
 
     Ajax.ajaxSubmit(aRouter['settings'] + 'profile/upload-avatar/', form, function (data) {
         if (data.bStateError) {
-            ls.msg.error(data.sMsgTitle, data.sMsg);
+            Msg.error(data.sMsgTitle, data.sMsg);
         } else {
             this.showResizeAvatar(data.sTmpFile);
         }
@@ -122,16 +126,16 @@ export function resizeAvatar() {
     var url = aRouter.settings + 'profile/resize-avatar/';
     var params = {size: this.jcropAvatar.tellSelect()};
 
-    ls.hook.marker('resizeAvatarBefore');
+    Hook.marker('resizeAvatarBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
         } else {
             $('#avatar-img').attr('src', result.sFile + '?' + Math.random());
             $('#avatar-resize').jqmHide();
             $('#avatar-remove').show();
             $('#avatar-upload').text(result.sTitleUpload);
-            ls.hook.run('ls_user_resize_avatar_after', [params, result]);
+            Hook.run('ls_user_resize_avatar_after', [params, result]);
         }
     });
 
@@ -145,15 +149,15 @@ export function removeAvatar() {
     var url = aRouter.settings + 'profile/remove-avatar/';
     var params = {};
 
-    ls.hook.marker('removeAvatarBefore');
+    Hook.marker('removeAvatarBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
         } else {
             $('#avatar-img').attr('src', result.sFile + '?' + Math.random());
             $('#avatar-remove').hide();
             $('#avatar-upload').text(result.sTitleUpload);
-            ls.hook.run('ls_user_remove_avatar_after', [params, result]);
+            Hook.run('ls_user_remove_avatar_after', [params, result]);
         }
     });
 
@@ -167,13 +171,13 @@ export function cancelAvatar() {
     var url = aRouter.settings + 'profile/cancel-avatar/';
     var params = {};
 
-    ls.hook.marker('cancelAvatarBefore');
+    Hook.marker('cancelAvatarBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
         } else {
             $('#avatar-resize').jqmHide();
-            ls.hook.run('ls_user_cancel_avatar_after', [params, result]);
+            Hook.run('ls_user_cancel_avatar_after', [params, result]);
         }
     });
 
@@ -198,7 +202,7 @@ export function uploadFoto(form, input) {
 
     Ajax.ajaxSubmit(aRouter['settings'] + 'profile/upload-foto/', form, function (data) {
         if (data.bStateError) {
-            ls.msg.error(data.sMsgTitle, data.sMsg);
+            Msg.error(data.sMsgTitle, data.sMsg);
         } else {
             this.showResizeFoto(data.sTmpFile);
         }
@@ -234,16 +238,16 @@ export function resizeFoto() {
     var url = aRouter.settings + 'profile/resize-foto/';
     var params = {size: this.jcropFoto.tellSelect()};
 
-    ls.hook.marker('resizeFotoBefore');
+    Hook.marker('resizeFotoBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
         } else {
             $('#foto-img').attr('src', result.sFile + '?' + Math.random());
             $('#foto-resize').jqmHide();
             $('#foto-remove').show();
             $('#foto-upload').text(result.sTitleUpload);
-            ls.hook.run('ls_user_resize_foto_after', [params, result]);
+            Hook.run('ls_user_resize_foto_after', [params, result]);
         }
     });
 
@@ -257,15 +261,15 @@ export function removeFoto() {
     var url = aRouter.settings + 'profile/remove-foto/';
     var params = {};
 
-    ls.hook.marker('removeFotoBefore');
+    Hook.marker('removeFotoBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
         } else {
             $('#foto-img').attr('src', result.sFile + '?' + Math.random());
             $('#foto-remove').hide();
             $('#foto-upload').text(result.sTitleUpload);
-            ls.hook.run('ls_user_remove_foto_after', [params, result]);
+            Hook.run('ls_user_remove_foto_after', [params, result]);
         }
     });
 
@@ -279,13 +283,13 @@ export function cancelFoto() {
     var url = aRouter.settings + 'profile/cancel-foto/';
     var params = {};
 
-    ls.hook.marker('cancelFotoBefore');
+    Hook.marker('cancelFotoBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
         } else {
             $('#foto-resize').jqmHide();
-            ls.hook.run('ls_user_cancel_foto_after', [params, result]);
+            Hook.run('ls_user_cancel_foto_after', [params, result]);
         }
     });
 
@@ -303,7 +307,7 @@ export function validateRegistrationFields(aFields, sForm) {
         sForm = $('#' + sForm);
     }
 
-    //ls.hook.marker('validateRegistrationFieldsBefore');
+    //Hook.marker('validateRegistrationFieldsBefore');
     Ajax.ajax(url, params, function (result) {
         if (!sForm) {
             sForm = $('body'); // поиск полей по всей странице
@@ -317,7 +321,7 @@ export function validateRegistrationFields(aFields, sForm) {
                 sForm.find('.validate-ok-field-' + aField.field).show();
             }
         });
-        ls.hook.run('ls_user_validate_registration_fields_after', [aFields, sForm, result]);
+        Hook.run('ls_user_validate_registration_fields_after', [aFields, sForm, result]);
     });
 };
 
@@ -341,11 +345,11 @@ export function registration(form) {
     var url = aRouter.registration + 'ajax-registration/';
 
     this.formLoader(form);
-    ls.hook.marker('registrationBefore');
+    Hook.marker('registrationBefore');
     Ajax.ajaxSubmit(url, form, function (result) {
         this.formLoader(form, true);
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
         } else {
             if (typeof(form) == 'string') {
                 form = $('#' + form);
@@ -359,13 +363,13 @@ export function registration(form) {
                 });
             } else {
                 if (result.sMsg) {
-                    ls.msg.notice(null, result.sMsg);
+                    Msg.notice(null, result.sMsg);
                 }
                 if (result.sUrlRedirect) {
                     window.location = result.sUrlRedirect;
                 }
             }
-            ls.hook.run('ls_user_registration_after', [form, result]);
+            Hook.run('ls_user_registration_after', [form, result]);
         }
     }.bind(this));
 };
@@ -378,7 +382,7 @@ export function login(form) {
     var url = aRouter.login + 'ajax-login/';
 
     this.formLoader(form);
-    ls.hook.marker('loginBefore');
+    Hook.marker('loginBefore');
     Ajax.ajaxSubmit(url, form, function (result) {
         this.formLoader(form, true);
         if (typeof(form) == 'string') {
@@ -390,12 +394,12 @@ export function login(form) {
             form.find('.validate-error-login').removeClass('validate-error-hide').addClass('validate-error-show').html(result.sMsg);
         } else {
             if (result.sMsg) {
-                ls.msg.notice(null, result.sMsg);
+                Msg.notice(null, result.sMsg);
             }
             if (result.sUrlRedirect) {
                 window.location = result.sUrlRedirect;
             }
-            ls.hook.run('ls_user_login_after', [form, result]);
+            Hook.run('ls_user_login_after', [form, result]);
         }
     }.bind(this));
 };
@@ -426,7 +430,7 @@ export function reminder(form) {
     var url = aRouter.login + 'ajax-reminder/';
 
     this.formLoader(form);
-    ls.hook.marker('reminderBefore');
+    Hook.marker('reminderBefore');
     Ajax.ajaxSubmit(url, form, function (result) {
         this.formLoader(form, true);
         if (typeof(form) == 'string') {
@@ -439,12 +443,12 @@ export function reminder(form) {
         } else {
             form.find('input').val('');
             if (result.sMsg) {
-                ls.msg.notice(null, result.sMsg);
+                Msg.notice(null, result.sMsg);
             }
             if (result.sUrlRedirect) {
                 window.location = result.sUrlRedirect;
             }
-            ls.hook.run('ls_user_reminder_after', [form, result]);
+            Hook.run('ls_user_reminder_after', [form, result]);
         }
     }.bind(this));
 };
@@ -456,7 +460,7 @@ export function reminder(form) {
 export function reactivation(form) {
     var url = aRouter.login + 'ajax-reactivation/';
 
-    ls.hook.marker('reactivationBefore');
+    Hook.marker('reactivationBefore');
     Ajax.ajaxSubmit(url, form, function (result) {
         if (typeof(form) == 'string') {
             form = $('#' + form);
@@ -468,9 +472,9 @@ export function reactivation(form) {
         } else {
             form.find('input').val('');
             if (result.sMsg) {
-                ls.msg.notice(null, result.sMsg);
+                Msg.notice(null, result.sMsg);
             }
-            ls.hook.run('ls_user_reactivation_after', [form, result]);
+            Hook.run('ls_user_reactivation_after', [form, result]);
         }
     });
 };
@@ -483,7 +487,7 @@ export function searchUsers(form) {
     var inputSearch = $('#' + form).find('input');
     inputSearch.addClass('loader');
 
-    ls.hook.marker('searchUsersBefore');
+    Hook.marker('searchUsersBefore');
     Ajax.ajaxSubmit(url, form, function (result) {
         inputSearch.removeClass('loader');
         if (result.bStateError) {
@@ -492,7 +496,7 @@ export function searchUsers(form) {
         } else {
             $('#users-list-original').hide();
             $('#users-list-search').html(result.sText).show();
-            ls.hook.run('ls_user_search_users_after', [form, result]);
+            Hook.run('ls_user_search_users_after', [form, result]);
         }
     });
 };
@@ -506,7 +510,7 @@ export function searchUsersByPrefix(sPrefix, obj) {
     var params = {user_login: sPrefix, isPrefix: 1};
     $('#search-user-login').addClass('loader');
 
-    ls.hook.marker('searchUsersByPrefixBefore');
+    Hook.marker('searchUsersByPrefixBefore');
     Ajax.ajax(url, params, function (result) {
         $('#search-user-login').removeClass('loader');
         $('#user-prefix-filter').find('.active').removeClass('active');
@@ -517,7 +521,7 @@ export function searchUsersByPrefix(sPrefix, obj) {
         } else {
             $('#users-list-original').hide();
             $('#users-list-search').html(result.sText).show();
-            ls.hook.run('ls_user_search_users_by_prefix_after', [sPrefix, obj, result]);
+            Hook.run('ls_user_search_users_by_prefix_after', [sPrefix, obj, result]);
         }
     });
     return false;
@@ -528,11 +532,11 @@ export function searchUsersByPrefix(sPrefix, obj) {
  */
 export function followToggle(obj, iUserId) {
     if ($(obj).hasClass('followed')) {
-        ls.stream.unsubscribe(iUserId);
-        $(obj).toggleClass('followed').text(ls.lang.get('profile_user_follow'));
+        Stream.unsubscribe(iUserId);
+        $(obj).toggleClass('followed').text(Lang.get('profile_user_follow'));
     } else {
-        ls.stream.subscribe(iUserId);
-        $(obj).toggleClass('followed').text(ls.lang.get('profile_user_unfollow'));
+        Stream.subscribe(iUserId);
+        $(obj).toggleClass('followed').text(Lang.get('profile_user_unfollow'));
     }
     return false;
 };

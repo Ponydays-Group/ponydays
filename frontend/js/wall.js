@@ -1,3 +1,5 @@
+import * as Msg from './msg'
+import * as Hook from './hook'
 import $ from 'jquery'
 import * as Ajax from './ajax'
 
@@ -18,17 +20,17 @@ export function add(sText, iPid) {
     var url = aRouter['profile'] + this.options.login + '/wall/add/';
     var params = {sText: sText, iPid: iPid};
 
-    ls.hook.marker('addBefore');
+    Hook.marker('addBefore');
     $('#wall-text').addClass('loader');
     Ajax.ajax(url, params, function (result) {
         $('.js-button-wall-submit').attr('disabled', false);
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
         } else {
             $('.js-wall-reply-parent-text').val('');
             $('#wall-note-list-empty').hide();
             this.loadNew();
-            ls.hook.run('ls_wall_add_after', [sText, iPid, result]);
+            Hook.run('ls_wall_add_after', [sText, iPid, result]);
         }
         $('#wall-text').removeClass('loader');
     }.bind(this));
@@ -40,16 +42,16 @@ export function addReply(sText, iPid) {
     var url = aRouter['profile'] + this.options.login + '/wall/add/';
     var params = {sText: sText, iPid: iPid};
 
-    ls.hook.marker('addReplyBefore');
+    Hook.marker('addReplyBefore');
     $('#wall-reply-text-' + iPid).addClass('loader');
     Ajax.ajax(url, params, function (result) {
         $('.js-button-wall-submit').attr('disabled', false);
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
         } else {
             $('.js-wall-reply-text').val('');
             this.loadReplyNew(iPid);
-            ls.hook.run('ls_wall_addreply_after', [sText, iPid, result]);
+            Hook.run('ls_wall_addreply_after', [sText, iPid, result]);
         }
         $('#wall-reply-text-' + iPid).removeClass('loader');
     }.bind(this));
@@ -59,7 +61,7 @@ export function addReply(sText, iPid) {
 export function load(iIdLess, iIdMore, callback) {
     var url = aRouter['profile'] + this.options.login + '/wall/load/';
     var params = {iIdLess: iIdLess ? iIdLess : '', iIdMore: iIdMore ? iIdMore : ''};
-    ls.hook.marker('loadBefore');
+    Hook.marker('loadBefore');
     Ajax.ajax(url, params, callback);
     return false;
 };
@@ -67,7 +69,7 @@ export function load(iIdLess, iIdMore, callback) {
 export function loadReply(iIdLess, iIdMore, iPid, callback) {
     var url = aRouter['profile'] + this.options.login + '/wall/load-reply/';
     var params = {iIdLess: iIdLess ? iIdLess : '', iIdMore: iIdMore ? iIdMore : '', iPid: iPid};
-    ls.hook.marker('loadReplyBefore');
+    Hook.marker('loadReplyBefore');
     Ajax.ajax(url, params, callback);
     return false;
 };
@@ -82,7 +84,7 @@ export function loadNext() {
     $('#wall-button-next').addClass('loader');
     this.load(idLess, '', function (result) {
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
         } else {
             if (result.iCountWall) {
                 $('#wall-container').append(result.sText);
@@ -93,7 +95,7 @@ export function loadNext() {
             } else {
                 $('#wall-button-next').detach();
             }
-            ls.hook.run('ls_wall_loadnext_after', [idLess, result]);
+            Hook.run('ls_wall_loadnext_after', [idLess, result]);
         }
         $('#wall-button-next').removeClass('loader');
     }.bind(this));
@@ -109,12 +111,12 @@ export function loadNew() {
     }
     this.load('', idMore, function (result) {
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
         } else {
             if (result.iCountWall) {
                 $('#wall-container').prepend(result.sText);
             }
-            ls.hook.run('ls_wall_loadnew_after', [idMore, result]);
+            Hook.run('ls_wall_loadnew_after', [idMore, result]);
         }
     }.bind(this));
     return false;
@@ -129,12 +131,12 @@ export function loadReplyNew(iPid) {
     }
     this.loadReply('', idMore, iPid, function (result) {
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
         } else {
             if (result.iCountWall) {
                 $('#wall-reply-container-' + iPid).append(result.sText);
             }
-            ls.hook.run('ls_wall_loadreplynew_after', [iPid, idMore, result]);
+            Hook.run('ls_wall_loadreplynew_after', [iPid, idMore, result]);
         }
     }.bind(this));
     return false;
@@ -150,7 +152,7 @@ export function loadReplyNext(iPid) {
     $('#wall-reply-button-next-' + iPid).addClass('loader');
     this.loadReply(idLess, '', iPid, function (result) {
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
         } else {
             if (result.iCountWall) {
                 $('#wall-reply-container-' + iPid).prepend(result.sText);
@@ -161,7 +163,7 @@ export function loadReplyNext(iPid) {
             } else {
                 $('#wall-reply-button-next-' + iPid).detach();
             }
-            ls.hook.run('ls_wall_loadreplynext_after', [iPid, idLess, result]);
+            Hook.run('ls_wall_loadreplynext_after', [iPid, idLess, result]);
         }
         $('#wall-reply-button-next-' + iPid).removeClass('loader');
     }.bind(this));
@@ -218,18 +220,18 @@ export function init(opt) {
 export function remove(iId) {
     var url = aRouter['profile'] + this.options.login + '/wall/remove/';
     var params = {iId: iId};
-    ls.hook.marker('removeBefore');
+    Hook.marker('removeBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
         } else {
             $('#wall-item-' + iId).fadeOut('slow', function () {
-                ls.hook.run('ls_wall_remove_item_fade', [iId, result], this);
+                Hook.run('ls_wall_remove_item_fade', [iId, result], this);
             });
             $('#wall-reply-item-' + iId).fadeOut('slow', function () {
-                ls.hook.run('ls_wall_remove_reply_item_fade', [iId, result], this);
+                Hook.run('ls_wall_remove_reply_item_fade', [iId, result], this);
             });
-            ls.hook.run('ls_wall_remove_after', [iId, result]);
+            Hook.run('ls_wall_remove_after', [iId, result]);
         }
     });
     return false;

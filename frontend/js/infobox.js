@@ -1,3 +1,5 @@
+import * as Hook from './hook'
+import * as Msg from './msg'
 import $ from "jquery"
 import * as Ajax from './ajax'
 
@@ -126,11 +128,11 @@ export function showInfoBlog(oLink, iBlogId) {
     '*/showInfoBlogBefore*';
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
-            ls.msg.error(null, result.sMsg);
+            Msg.error(null, result.sMsg);
             this.hide(oLink);
         } else {
             this.show(oLink, result.sText);
-            ls.hook.run('ls_infobox_show_info_blog_after', [oLink, iBlogId, result]);
+            Hook.run('ls_infobox_show_info_blog_after', [oLink, iBlogId, result]);
         }
     }.bind(this));
     return false;

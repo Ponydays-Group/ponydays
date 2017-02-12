@@ -75,13 +75,11 @@ export function goPrev() {
  */
 
 export function goUp() {
-    ls.toolbar.topic.reset();
     $.scrollTo(0, 400);
     return false;
 };
 
 export function goDown() {
-    ls.toolbar.topic.reset();
     $.scrollTo("#footer", 400);
     return false;
 };

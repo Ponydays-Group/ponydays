@@ -15,6 +15,7 @@
 ---------------------------------------------------------
 */
 
+
 /**
  * Экшен обработки URL'ов вида /blog/
  *
@@ -138,7 +139,7 @@ class ActionBlog extends Action {
 		$this->AddEvent('ajaxbloginfo', 'AjaxBlogInfo');
 		$this->AddEvent('ajaxblogjoin', 'AjaxBlogJoin');
 
-		$this->AddEventPreg('/^(\d+)\.html$/i','/^$/i',array('EventShowTopic','topic'));
+		$this->AddEventPreg('/^[\w\-\_]+$/i','/^(\d+)$/i', '/comments/', array('EventShowTopicComments','topic'));
 		$this->AddEventPreg('/^[\w\-\_]+$/i','/^(\d+)$/i',array('EventShowTopic','topic'));
 		$this->AddEventPreg('/^[\w\-\_]+$/i','/^(\d+)\.html$/i',array('EventShowTopic','topic'));
 
@@ -698,21 +699,21 @@ class ActionBlog extends Action {
 			$iPageDef=1;
 		}
 		$iPage=getRequest('cmtpage',0) ? (int)getRequest('cmtpage',0) : $iPageDef;
-		$aReturn=$this->Comment_GetCommentsByTargetId($oTopic->getId(),'topic',$iPage,Config::Get('module.comment.nested_per_page'));
-		$iMaxIdComment=$aReturn['iMaxIdComment'];
-		$aComments=$aReturn['comments'];
+		// $aReturn=$this->Comment_GetCommentsByTargetId($oTopic->getId(),'topic',$iPage,Config::Get('module.comment.nested_per_page'));
+		$iMaxIdComment=0;//$aReturn['iMaxIdComment'];
+		// $aComments=$aReturn['comments'];
 		/**
 		 * Если используется постраничность для комментариев - формируем ее
 		 */
-		if (Config::Get('module.comment.use_nested') and Config::Get('module.comment.nested_per_page')) {
-			$aPaging=$this->Viewer_MakePaging($aReturn['count'],$iPage,Config::Get('module.comment.nested_per_page'),Config::Get('pagination.pages.count'),'');
-			if (!Config::Get('module.comment.nested_page_reverse') and $aPaging) {
-				// переворачиваем страницы в обратном порядке
-				$aPaging['aPagesLeft']=array_reverse($aPaging['aPagesLeft']);
-				$aPaging['aPagesRight']=array_reverse($aPaging['aPagesRight']);
-			}
-			$this->Viewer_Assign('aPagingCmt',$aPaging);
-		}
+		// if (Config::Get('module.comment.use_nested') and Config::Get('module.comment.nested_per_page')) {
+		// 	$aPaging=$this->Viewer_MakePaging($aReturn['count'],$iPage,Config::Get('module.comment.nested_per_page'),Config::Get('pagination.pages.count'),'');
+		// 	if (!Config::Get('module.comment.nested_page_reverse') and $aPaging) {
+		// 		// переворачиваем страницы в обратном порядке
+		// 		$aPaging['aPagesLeft']=array_reverse($aPaging['aPagesLeft']);
+		// 		$aPaging['aPagesRight']=array_reverse($aPaging['aPagesRight']);
+		// 	}
+		// 	$this->Viewer_Assign('aPagingCmt',$aPaging);
+		// }
 		/**
 		 * Отмечаем дату прочтения топика
 		 */
@@ -746,7 +747,7 @@ class ActionBlog extends Action {
 		//}
 		$this->Viewer_Assign('aVotes',$aVote);
 		$this->Viewer_Assign('oTopic',$oTopic);
-		$this->Viewer_Assign('aComments',$aComments);
+		//$this->Viewer_Assign('aComments',$aComments);
 		$this->Viewer_Assign('iMaxIdComment',$iMaxIdComment);
 		/**
 		 * Устанавливаем title страницы
@@ -759,6 +760,69 @@ class ActionBlog extends Action {
 		 */
 		$this->SetTemplateAction('topic');
 	}
+
+	protected function EventShowTopicComments() {
+		$sBlogUrl='';
+		if ($this->GetParamEventMatch(0,1)) {
+			// из коллективного блога
+			$sBlogUrl=$this->sCurrentEvent;
+			$iTopicId=$this->GetParamEventMatch(0,1);
+		} else {
+			// из персонального блога
+			$iTopicId=$this->GetEventMatch(1);
+		}
+		if (!($oTopic=$this->Topic_GetTopicById($iTopicId))) {
+			return parent::EventNotFound();
+		}
+		/**
+		 * Проверяем права на просмотр топика
+		 */
+		if (!$oTopic->getPublish() and (!$this->oUserCurrent or ($this->oUserCurrent->getId()!=$oTopic->getUserId() and !$this->oUserCurrent->isAdministrator()))) {
+			return parent::EventNotFound();
+		}
+
+		/**
+		 * Определяем права на отображение записи из закрытого блога
+		 */
+		if(in_array($oTopic->getBlog()->getType(), array('close', 'invite'))
+			and (!$this->oUserCurrent
+				|| !in_array(
+					$oTopic->getBlog()->getId(),
+					$this->Blog_GetAccessibleBlogsByUser($this->oUserCurrent)
+				)
+			)
+		) {
+			$this->Message_AddErrorSingle($this->Lang_Get('blog_close_show'),$this->Lang_Get('not_access'));
+			return Router::Action('error');
+		}
+		//Router::Location($oTopic->getUrl());
+		if ($sBlogUrl=='') {
+			Router::Location($oTopic->getUrl());
+		}
+
+		/**
+		 * Достаём комменты к топику
+		 */
+		if (!Config::Get('module.comment.nested_page_reverse') and Config::Get('module.comment.use_nested') and Config::Get('module.comment.nested_per_page')) {
+			$iPageDef=ceil($this->Comment_GetCountCommentsRootByTargetId($oTopic->getId(),'topic')/Config::Get('module.comment.nested_per_page'));
+		} else {
+			$iPageDef=1;
+		}
+		$iPage=getRequest('cmtpage',0) ? (int)getRequest('cmtpage',0) : $iPageDef;
+		$aReturn=$this->Comment_GetCommentsByTargetId($oTopic->getId(),'topic');
+		$iMaxIdComment = $aReturn['iMaxIdComment'];
+		$aComments=$aReturn['comments'];
+		var_dump($aComments[840707]);
+	}
+	function getJsonData(){
+	$var = get_object_vars($this);
+	foreach ($var as &$value) {
+			if (is_object($value) && method_exists($value,'getJsonData')) {
+					$value = $value->getJsonData();
+			}
+	}
+	return $var;
+}
 	/**
 	 * Страница со списком читателей блога
 	 *

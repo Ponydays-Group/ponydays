@@ -14,6 +14,7 @@ export default function init() {
         $('html').removeClass('no-js');
 
         $("#sidebar").css("height", $("#wrapper").height() > $("#sidebar").height() ? $("#wrapper").height() : null)
+        $(window).on('resize', function(){$("#sidebar").css("height", $("#wrapper").height() > $("#sidebar").height() ? $("#wrapper").height() : null)})
 
         // Всплывающие окна
         $('#window_login_form').jqm();
@@ -24,7 +25,7 @@ export default function init() {
         $('#favourite-form-tags').jqm();
         $('#modal_write').jqm({trigger: '#modal_write_show'});
         $('#foto-resize').jqm({modal: true});
-        $('#avatar-resize').jqm({modal: true});
+        $('#avatar-resize').jqm({modal: true, trigger: "#area-form-file-avatar"});
         $('#userfield_form').jqm({toTop: true});
         $('#photoset-upload-form').jqm({trigger: '#photoset-start-upload'});
 
@@ -50,12 +51,12 @@ export default function init() {
         /**
          * TODO: навесить языки на datepicker
          */
-        // $('.date-picker').datepicker({
-        // 	dateFormat: 'dd.mm.yy',
-        // 	dayNamesMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
-        // 	monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
-        // 	firstDay: 1
-        // });
+        $('.date-picker').datepicker({
+        	dateFormat: 'dd.mm.yy',
+        	dayNamesMin: ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'],
+        	monthNames: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
+        	firstDay: 1
+        });
 
 
         // Поиск по тегам
@@ -66,84 +67,67 @@ export default function init() {
 
 
         // Автокомплит
-        // Autocomplete.add($(".autocomplete-tags-sep"), aRouter['ajax']+'autocompleter/tag/', true);
-        // Autocomplete.add($(".autocomplete-tags"), aRouter['ajax']+'autocompleter/tag/', false);
-        // Autocomplete.add($(".autocomplete-users-sep"), aRouter['ajax']+'autocompleter/user/', true);
-        // Autocomplete.add($(".autocomplete-users"), aRouter['ajax']+'autocompleter/user/', false);
+        Autocomplete.add($(".autocomplete-tags-sep"), aRouter['ajax']+'autocompleter/tag/', true);
+        Autocomplete.add($(".autocomplete-tags"), aRouter['ajax']+'autocompleter/tag/', false);
+        Autocomplete.add($(".autocomplete-users-sep"), aRouter['ajax']+'autocompleter/user/', true);
+        Autocomplete.add($(".autocomplete-users"), aRouter['ajax']+'autocompleter/user/', false);
 
 
-        // Скролл
-        // $(window)._scrollable();
+        // Всплывающие сообщения
+        if (Registry.get('block_stream_show_tip')) {
+        	$('.js-title-comment, .js-title-topic').poshytip({
+        		className: 'infobox-yellow',
+        		alignTo: 'target',
+        		alignX: 'left',
+        		alignY: 'center',
+        		offsetX: 10,
+        		liveEvents: true,
+        		showTimeout: 500
+        	});
+        }
 
+        $('.js-title-talk').poshytip({
+        	className: 'infobox-yellow',
+        	alignTo: 'target',
+        	alignX: 'left',
+        	alignY: 'center',
+        	offsetX: 10,
+        	liveEvents: true,
+        	showTimeout: 500
+        });
 
-        // Тул-бар топиков
-        Toolbar.init();
-        // Кнопка "UP"
-        // Toolbar.up.init();
+        $('.js-infobox-vote-topic').poshytip({
+        	content: function() {
+        		var id = $(this).attr('id').replace('vote_total_topic_','vote-info-topic-');
+        		return $('#'+id).html();
+        	},
+        	className: 'infobox-standart',
+        	alignTo: 'target',
+        	alignX: 'center',
+        	alignY: 'top',
+        	offsetX: 2,
+        	liveEvents: true,
+        	showTimeout: 100
+        });
 
+        $('.js-tip-help').poshytip({
+        	className: 'infobox-standart',
+        	alignTo: 'target',
+        	alignX: 'right',
+        	alignY: 'center',
+        	offsetX: 5,
+        	liveEvents: true,
+        	showTimeout: 500
+        });
 
-        // // Всплывающие сообщения
-        // if (Registry.get('block_stream_show_tip')) {
-        // 	$('.js-title-comment, .js-title-topic').poshytip({
-        // 		className: 'infobox-yellow',
-        // 		alignTo: 'target',
-        // 		alignX: 'left',
-        // 		alignY: 'center',
-        // 		offsetX: 10,
-        // 		liveEvents: true,
-        // 		showTimeout: 1000
-        // 	});
-        // }
-        //
-        // $('.js-title-talk').poshytip({
-        // 	className: 'infobox-yellow',
-        // 	alignTo: 'target',
-        // 	alignX: 'left',
-        // 	alignY: 'center',
-        // 	offsetX: 10,
-        // 	liveEvents: true,
-        // 	showTimeout: 500
-        // });
-        //
-        // $('.js-infobox-vote-topic').poshytip({
-        // 	content: function() {
-        // 		var id = $(this).attr('id').replace('vote_total_topic_','vote-info-topic-');
-        // 		return $('#'+id).html();
-        // 	},
-        // 	className: 'infobox-standart',
-        // 	alignTo: 'target',
-        // 	alignX: 'center',
-        // 	alignY: 'top',
-        // 	offsetX: 2,
-        // 	liveEvents: true,
-        // 	showTimeout: 100
-        // });
-        //
-        // $('.js-tip-help').poshytip({
-        // 	className: 'infobox-standart',
-        // 	alignTo: 'target',
-        // 	alignX: 'right',
-        // 	alignY: 'center',
-        // 	offsetX: 5,
-        // 	liveEvents: true,
-        // 	showTimeout: 500
-        // });
-        //
-        // $('.js-infobox').poshytip({
-        // 	className: 'infobox-standart',
-        // 	liveEvents: true,
-        // 	showTimeout: 300
-        // });
-        //
-        // // подсветка кода
+        $('.js-infobox').poshytip({
+        	className: 'infobox-standart',
+        	liveEvents: true,
+        	showTimeout: 300
+        });
+
+        // подсветка кода
         // prettyPrint();
-        //
-        // // эмуляция border-sizing в IE
-        // var inputs = $('input.input-text, textarea');
-        // Ie.bordersizing(inputs);
-        //
-        // // эмуляция placeholder'ов в IE
-        // inputs.placeholder();
 
         // инизиализация блоков
         Blocks.init('stream', {group_items: true, group_min: 3});
@@ -235,6 +219,6 @@ export default function init() {
 
 
         // Хук конца инициализации javascript-составляющих шаблона
-        //Hook.run('ls_template_init_end',[],window);
+        Hook.run('ls_template_init_end',[],window);
     });
 }

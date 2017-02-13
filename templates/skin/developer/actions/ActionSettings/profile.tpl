@@ -31,11 +31,11 @@
 	{hook run='form_settings_profile_begin'}
 
 	<input type="hidden" name="security_ls_key" value="{$LIVESTREET_SECURITY_KEY}">
-	
-	
+
+
 	<fieldset>
 		<legend>{$aLang.settings_profile_section_base}</legend>
-		
+
 		<dl class="form-item">
 			<dt><label for="profile_name">{$aLang.settings_profile_name}:</label></dt>
 			<dd>
@@ -43,7 +43,7 @@
 				<small class="note">{$aLang.settings_profile_name_notice}</small>
 			</dd>
 		</dl>
-		
+
 		<dl class="form-item">
 			<dt><label for="profile_sex">{$aLang.settings_profile_sex}:</label></dt>
 			<dd>
@@ -54,7 +54,7 @@
 				</select>
 			</dd>
 		</dl>
-		
+
 		<dl class="form-item">
 			<dt><label for="">{$aLang.settings_profile_birthday}:</label></dt>
 			<dd>
@@ -64,14 +64,14 @@
 						<option value="{$smarty.section.date_day.index}" {if $smarty.section.date_day.index==$oUserCurrent->getProfileBirthday()|date_format:"%d"}selected{/if}>{$smarty.section.date_day.index}</option>
 					{/section}
 				</select>
-				
+
 				<select name="profile_birthday_month" style="width: 165px">
 					<option value="">{$aLang.date_month}</option>
 					{section name=date_month start=1 loop=13 step=1}
 						<option value="{$smarty.section.date_month.index}" {if $smarty.section.date_month.index==$oUserCurrent->getProfileBirthday()|date_format:"%m"}selected{/if}>{$aLang.month_array[$smarty.section.date_month.index][0]}</option>
 					{/section}
 				</select>
-				
+
 				<select name="profile_birthday_year">
 					<option value="">{$aLang.date_year}</option>
 					{section name=date_year loop=$smarty.now|date_format:"%Y"+1 max=$smarty.now|date_format:"%Y"-2012+130 step=-1}
@@ -106,7 +106,7 @@
 					</select>
 				</p>
 
-				
+
 				<select class="js-geo-city input-width-300" name="geo_city" {if !$oGeoTarget or !$oGeoTarget->getRegionId()}style="display:none;"{/if}>
 					<option value="">{$aLang.geo_select_city}</option>
 					{if $aGeoCities}
@@ -117,7 +117,7 @@
 				</select>
 			</dd>
 		</dl>
-		
+
 		<dl class="form-item">
 			<dt><label for="profile_about">{$aLang.settings_profile_about}:</label></dt>
 			<dd><textarea name="profile_about" id="profile_about" class="input-text input-width-300" rows="5">{$oUserCurrent->getProfileAbout()|escape:'html'}</textarea></dd>
@@ -134,9 +134,9 @@
 		{/if}
 
 	</fieldset>
-	
-	
-	
+
+
+
 	<fieldset>
 		<legend>{$aLang.settings_profile_section_contacts}</legend>
 
@@ -159,7 +159,7 @@
 		{/if}
 	</fieldset>
 
-	
+
 	<script type="text/javascript">
 		jQuery(function($){
 			$('#avatar-upload').file({ name:'avatar' }).choose(function(e, input) {
@@ -176,12 +176,12 @@
 			<a href="#" id="avatar-upload" class="link-dotted">{if $oUserCurrent->getProfileAvatar()}{$aLang.settings_profile_avatar_change}{else}{$aLang.settings_profile_avatar_upload}{/if}</a><br />
 			<a href="#" id="avatar-remove" class="link-dotted" onclick="return ls.user.removeAvatar();" style="{if !$oUserCurrent->getProfileAvatar()}display:none;{/if}">{$aLang.settings_profile_avatar_delete}</a>
 		</div>
-		
+
 		<div id="avatar-resize" class="modal">
 			<header class="modal-header">
 				<h3>{$aLang.uploadimg}</h3>
 			</header>
-			
+
 			<div class="modal-content">
 				<p><img src="" alt="" id="avatar-resize-original-img"></p>
 				<button type="submit" class="button button-primary" onclick="return ls.user.resizeAvatar();">{$aLang.settings_profile_avatar_resize_apply}</button>
@@ -190,10 +190,10 @@
 		</div>
 	</div>
 
-	
+
 	{hook run='form_settings_profile_end'}
-	
-	
+
+
 	<button type="submit" name="submit_profile_edit" class="button button-primary" />{$aLang.settings_profile_submit}</button>
 </form>
 

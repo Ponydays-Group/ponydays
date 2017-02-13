@@ -42,7 +42,7 @@ export function add(obj, sPath, multiple)
     } else {
         obj.autocomplete({
             source: function (request, response) {
-                ajax(sPath, {value: extractLast(request.term)}, function (data) {
+                Ajax.ajax(sPath, {value: extractLast(request.term)}, function (data) {
                     response(data.aItems);
                 });
             }
@@ -57,5 +57,5 @@ export function split(val)
 
 export function extractLast(term)
 {
-    return this.split(term).pop();
+    return split(term).pop();
 }

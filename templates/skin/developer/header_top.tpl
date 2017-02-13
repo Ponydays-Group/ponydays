@@ -9,6 +9,11 @@
 
 	<ul class="nav nav-userbar">
 		{if $oUserCurrent}
+		<li title="{$aLang.block_create}">
+        <a href="{router page='topic'}add/" class="write" id="modal_write_show">
+            <i class="fa fa-plus"></i>
+        </a>
+    </li>
 		<li title="{$aLang.user_privat_messages}{if $iUserCurrentCountTalkNew} ({$iUserCurrentCountTalkNew}){/if}">
         <a data-title="{$aLang.user_privat_messages}" href="{router page='talk'}" {if $iUserCurrentCountTalkNew}class="new-messages"{/if} id="new_messages">
             {if $iUserCurrentCountTalkNew} ({$iUserCurrentCountTalkNew}){/if}

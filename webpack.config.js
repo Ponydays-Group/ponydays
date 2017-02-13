@@ -13,9 +13,11 @@ vendors = [
     './js/jquery.notifier.js',
     './js/jquery.markitup.js',
     './js/jquery.serialize.js',
-    './js/jquery.scrollto.js',
+    './js/jquery.poshytip.js',
+    './js/jquery.Jcrop.js',
     'jquery-form',
-    './css/bootstrap/assets/javascripts/bootstrap'
+    './css/bootstrap/assets/javascripts/bootstrap',
+    'jquery-ui-bundle',
 ];
 
 let contextPath = path.join(__dirname, 'frontend');

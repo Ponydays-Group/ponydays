@@ -82,6 +82,7 @@ export function add(name, callback, priority) {
 }
 
 export function run(name, params, o) {
+  console.info(name)
     var params = params || [];
     //var hooks = hooks;
     if (typeof hooks[name] != 'undefined') {

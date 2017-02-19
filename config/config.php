@@ -311,10 +311,10 @@ $config['module']['autoLoad'] = array('Hook','Cache','Security','Session','Lang'
  */
 $config['db']['params']['host']   = '127.0.0.1';
 $config['db']['params']['port']   = '3306';
-$config['db']['params']['user']   = 'ponydays';
-$config['db']['params']['pass']   = 'ponydays';
+$config['db']['params']['user']   = 'root';
+$config['db']['params']['pass']   = 'epw7h6';
 $config['db']['params']['type']   = 'mysqli';
-$config['db']['params']['dbname'] = 'ponydays';
+$config['db']['params']['dbname'] = 'social';
 /**
  * Настройка таблиц базы данных
  */

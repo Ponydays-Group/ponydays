@@ -45,30 +45,30 @@ export let aCommentOld = [];
 
 // Добавляет комментарий
 export function add(formObj, targetId, targetType) {
-    if (this.options.wysiwyg) {
+    if (options.wysiwyg) {
         $('#' + formObj + ' textarea').val(tinyMCE.activeEditor.getContent());
     }
     formObj = $('#' + formObj);
 
-    $('#form_comment_text').addClass(this.options.classes.form_loader).attr('readonly', true);
+    $('#form_comment_text').addClass(options.classes.form_loader).attr('readonly', true);
     $('#comment-button-submit').attr('disabled', 'disabled');
 
-    Ajax.ajax(this.options.type[targetType].url_add, formObj.serializeJSON(), function (result) {
+    Ajax.ajax(options.type[targetType].url_add, formObj.serializeJSON(), function (result) {
         $('#comment-button-submit').removeAttr('disabled');
         if (!result) {
-            this.enableFormComment();
+            enableFormComment();
             Msg.error('Error', 'Please try again later');
             return;
         }
         if (result.bStateError) {
-            this.enableFormComment();
+            enableFormComment();
             Msg.error(null, result.sMsg);
         } else {
-            this.enableFormComment();
+            enableFormComment();
             $('#form_comment_text').val('');
 
             // Load new comments
-            this.load(targetId, targetType, result.sCommentId, true);
+            load(targetId, targetType, result.sCommentId, true);
             Hook.run('ls_comments_add_after', [formObj, targetId, targetType, result]);
         }
     }.bind(this));
@@ -77,31 +77,31 @@ export function add(formObj, targetId, targetType) {
 
 // Активирует форму
 export function enableFormComment() {
-    $('#form_comment_text').removeClass(this.options.classes.form_loader).attr('readonly', false);
+    $('#form_comment_text').removeClass(options.classes.form_loader).attr('readonly', false);
 }
 
 
 // Показывает/скрывает форму комментирования
-export function toggleCommentForm(idComment, bNoFocus) {
+export function _toggleCommentForm(idComment, bNoFocus) {
     var reply = $('#reply');
     if (!reply.length) {
         return;
     }
-    $('#comment_preview_' + this.iCurrentShowFormComment).remove();
+    $('#comment_preview_' + iCurrentShowFormComment).remove();
 
-    if (this.iCurrentShowFormComment == idComment && reply.is(':visible')) {
+    if (iCurrentShowFormComment == idComment && reply.is(':visible')) {
         reply.hide();
         return;
     }
-    if (this.options.wysiwyg) {
+    if (options.wysiwyg) {
         tinyMCE.execCommand('mceRemoveControl', true, 'form_comment_text');
     }
     reply.insertAfter('#comment_id_' + idComment).show();
     $('#form_comment_text').val('');
     $('#form_comment_reply').val(idComment);
 
-    this.iCurrentShowFormComment = idComment;
-    if (this.options.wysiwyg) {
+    iCurrentShowFormComment = idComment;
+    if (options.wysiwyg) {
         tinyMCE.execCommand('mceAddControl', true, 'form_comment_text');
     }
     if (!bNoFocus) $('#form_comment_text').focus();
@@ -110,18 +110,18 @@ export function toggleCommentForm(idComment, bNoFocus) {
 
 // Подгружает новые комментарии
 export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
-    //if (this.options.loadMutex) return;
-    //this.options.loadMutex = true;
+    //if (options.loadMutex) return;
+    //options.loadMutex = true;
 
     var idCommentLast = $("#comment_last_id").val();
-    if (this.aCommentNew != []) {
-        this.aCommentOld = this.aCommentNew;
+    if (aCommentNew != []) {
+        aCommentOld = aCommentNew;
     }
 
     // Удаляем подсветку у комментариев
     if (!bNotFlushNew) {
         $('.comment').each(function (index, item) {
-            $(item).removeClass(this.options.classes.comment_new + ' ' + this.options.classes.comment_current);
+            $(item).removeClass(options.classes.comment_new + ' ' + options.classes.comment_current);
         }.bind(this));
     }
 
@@ -136,7 +136,7 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
         params.bUsePaging = 1;
     }
 
-    Ajax.ajax(this.options.type[typeTarget].url_response, params, function (result) {
+    Ajax.ajax(options.type[typeTarget].url_response, params, function (result) {
         objImg.removeClass('fa-pulse');
 
         if (!result) {
@@ -158,32 +158,32 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
             }
             var iCountOld = 0;
             if (bNotFlushNew) {
-                iCountOld = this.aCommentNew.length;
+                iCountOld = aCommentNew.length;
             } else {
-                this.aCommentNew = [];
+                aCommentNew = [];
             }
             if (selfIdComment) {
-                this.toggleCommentForm(this.iCurrentShowFormComment, true);
-                this.setCountNewComment(aCmt.length - 1 + iCountOld);
+                toggleCommentForm(iCurrentShowFormComment, true);
+                setCountNewComment(aCmt.length - 1 + iCountOld);
             } else {
-                this.setCountNewComment(aCmt.length + iCountOld);
+                setCountNewComment(aCmt.length + iCountOld);
             }
 
             $.each(aCmt, function (index, item) {
                 if (!document.getElementById('comment_id_' + item.id)) {
                     if (!(selfIdComment && selfIdComment == item.id)) {
-                        this.aCommentNew.push(item.id);
+                        aCommentNew.push(item.id);
                     }
-                    this.inject(item.idParent, item.id, item.html);
+                    inject(item.idParent, item.id, item.html);
                 }
             }.bind(this));
 
             if (selfIdComment && $('#comment_id_' + selfIdComment).length) {
-                this.scrollToComment(selfIdComment);
+                scrollToComment(selfIdComment);
             }
-            this.checkFolding();
-            this.aCommentNew = [];
-            this.calcNewComments();
+            checkFolding();
+            aCommentNew = [];
+            calcNewComments();
             Hook.run('ls_comments_load_after', [idTarget, typeTarget, selfIdComment, bNotFlushNew, result]);
 
             try {
@@ -205,11 +205,11 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
 }
 
 export function turnBack() {
-    this.aCommentNew += this.aCommentOld;
-    this.aCommentNew.forEach(function (item, i) {
-        item.addClass(this.options.comment_new)
+    aCommentNew += aCommentOld;
+    aCommentNew.forEach(function (item, i) {
+        item.addClass(options.comment_new)
     })
-    this.setCountNewComment(this.aCommentNew.length);
+    setCountNewComment(aCommentNew.length);
 
 }
 
@@ -248,9 +248,9 @@ export function toggle(obj, commentId) {
         } else {
             Msg.notice(null, result.sMsg);
 
-            $('#comment_id_' + commentId).removeClass(this.options.classes.comment_self + ' ' + this.options.classes.comment_new + ' ' + this.options.classes.comment_deleted + ' ' + this.options.classes.comment_current);
+            $('#comment_id_' + commentId).removeClass(options.classes.comment_self + ' ' + options.classes.comment_new + ' ' + options.classes.comment_deleted + ' ' + options.classes.comment_current);
             if (result.bState) {
-                $('#comment_id_' + commentId).addClass(this.options.classes.comment_deleted);
+                $('#comment_id_' + commentId).addClass(options.classes.comment_deleted);
             }
             $(obj).text(result.sTextToggle);
             Hook.run('ls_comments_toggle_after', [obj, commentId, result]);
@@ -262,13 +262,13 @@ export function toggle(obj, commentId) {
 
 // Предпросмотр комментария
 export function preview(divPreview) {
-    if (this.options.wysiwyg) {
+    if (options.wysiwyg) {
         $("#form_comment_text").val(tinyMCE.activeEditor.getContent());
     }
     if ($("#form_comment_text").val() == '') return;
-    $("#comment_preview_" + this.iCurrentShowFormComment).remove();
-    $('#reply').before('<div id="comment_preview_' + this.iCurrentShowFormComment + '" class="comment-preview text"></div>');
-    ls.tools.textPreview('form_comment_text', false, 'comment_preview_' + this.iCurrentShowFormComment);
+    $("#comment_preview_" + iCurrentShowFormComment).remove();
+    $('#reply').before('<div id="comment_preview_' + iCurrentShowFormComment + '" class="comment-preview text"></div>');
+    ls.tools.textPreview('form_comment_text', false, 'comment_preview_' + iCurrentShowFormComment);
 }
 
 
@@ -283,15 +283,15 @@ export function isCollapsed(el) {
 // Устанавливает число новых комментариев
 export function setCountNewComment(count) {
     // TODO that will work good only if there are no any other title modificators!
-    if (!this.options.pageTitle) this.options.pageTitle = document.title;
+    if (!options.pageTitle) options.pageTitle = document.title;
     if (count > 0) {
         $('#new_comments_counter').show().text(count);
         if (document.getElementById('autoload').checked) {
-            document.title = '(' + count + ') ' + this.options.pageTitle;
+            document.title = '(' + count + ') ' + options.pageTitle;
         }
     } else {
         $('#new_comments_counter').text(0).hide();
-        document.title = this.options.pageTitle;
+        document.title = options.pageTitle;
     }
 }
 
@@ -299,34 +299,34 @@ export function setCountNewComment(count) {
 
 // Вычисляет кол-во новых комментариев
 export function calcNewComments() {
-    var aCommentsNew = $('.' + this.options.classes.comment + '.' + this.options.classes.comment_new);
+    var aCommentsNew = $('.' + options.classes.comment + '.' + options.classes.comment_new);
     $.each(aCommentsNew, function (k, v) {
-        console.log(this.isCollapsed(v));
+        console.log(isCollapsed(v));
     }.bind(this));
 
     let count = aCommentsNew.length;
     $.each(aCommentsNew, function (k, v) {
-        if (!this.isCollapsed(v)) {
-            this.aCommentNew.push(parseInt($(v).attr('id').replace('comment_id_', '')));
+        if (!isCollapsed(v)) {
+            aCommentNew.push(parseInt($(v).attr('id').replace('comment_id_', '')));
         } else {
             count--;
         }
     }.bind(this));
-    this.setCountNewComment(count);
+    setCountNewComment(count);
 }
 
 
 
 // Переход к следующему комментарию
 export function goToNextComment() {
-    if (this.aCommentNew[0]) {
-        if ($('#comment_id_' + this.aCommentNew[0]).length) {
-            this.scrollToComment(this.aCommentNew[0]);
-            $('#comment_id_' + this.aCommentNew[0]).removeClass(this.options.classes.comment_new);
+    if (aCommentNew[0]) {
+        if ($('#comment_id_' + aCommentNew[0]).length) {
+            scrollToComment(aCommentNew[0]);
+            $('#comment_id_' + aCommentNew[0]).removeClass(options.classes.comment_new);
         }
-        this.aCommentNew.shift();
+        aCommentNew.shift();
     }
-    this.setCountNewComment(this.aCommentNew.length);
+    setCountNewComment(aCommentNew.length);
 }
 
 
@@ -337,12 +337,12 @@ export function scrollToComment(idComment) {
         scrollTop: $('#comment_id_' + idComment).offset().top - 250
     }, 350);
 
-    if (this.iCurrentViewComment) {
-        $('#comment_id_' + this.iCurrentViewComment).removeClass(this.options.classes.comment_current);
-        $('#comment_id_' + this.iCurrentViewComment).removeClass(this.options.classes.comment_new);
+    if (iCurrentViewComment) {
+        $('#comment_id_' + iCurrentViewComment).removeClass(options.classes.comment_current);
+        $('#comment_id_' + iCurrentViewComment).removeClass(options.classes.comment_new);
     }
-    $('#comment_id_' + idComment).addClass(this.options.classes.comment_current);
-    this.iCurrentViewComment = idComment;
+    $('#comment_id_' + idComment).addClass(options.classes.comment_current);
+    iCurrentViewComment = idComment;
 }
 
 
@@ -350,14 +350,14 @@ export function scrollToComment(idComment) {
 // Прокрутка к родительскому комментарию
 export function goToParentComment(id, pid) {
     let thisObj = this;
-    $('.' + this.options.classes.comment_goto_child).hide().find('a').unbind();
+    $('.' + options.classes.comment_goto_child).hide().find('a').unbind();
 
-    $("#comment_id_" + pid).find('.' + this.options.classes.comment_goto_child).show().find("a").bind("click", function () {
+    $("#comment_id_" + pid).find('.' + options.classes.comment_goto_child).show().find("a").bind("click", function () {
         $(this).parent('.' + thisObj.options.classes.comment_goto_child).hide();
         thisObj.scrollToComment(id);
         return false;
     });
-    this.scrollToComment(pid);
+    scrollToComment(pid);
     return false;
 }
 
@@ -365,7 +365,7 @@ export function goToParentComment(id, pid) {
 
 // Сворачивание комментариев
 export function checkFolding() {
-    //if(!this.options.folding){
+    //if(!options.folding){
     //	return false;
     //}
     $(".folding").each(function (index, element) {
@@ -397,27 +397,27 @@ export function collapseComment(folding) {
 
 export function expandCommentAll() {
     $.each($(".folding"), function (k, v) {
-        this.expandComment(v);
+        expandComment(v);
     }.bind(this));
 }
 
 
 export function collapseCommentAll() {
     $.each($(".folding"), function (k, v) {
-        this.collapseComment(v);
+        collapseComment(v);
     }.bind(this));
 }
 
 
 
 export function init() {
-    this.initEvent();
-    this.calcNewComments();
-    this.checkFolding();
-    this.toggleCommentForm(this.iCurrentShowFormComment);
+    initEvent();
+    calcNewComments();
+    checkFolding();
+    toggleCommentForm(iCurrentShowFormComment);
 
-    if (typeof(this.options.wysiwyg) != 'number') {
-        this.options.wysiwyg = Boolean(BLOG_USE_TINYMCE && tinyMCE);
+    if (typeof(options.wysiwyg) != 'number') {
+        options.wysiwyg = Boolean(BLOG_USE_TINYMCE && tinyMCE);
     }
     //Hook.run('ls_comments_init_after',[],this);
 }
@@ -432,13 +432,205 @@ export function initEvent() {
         }
     });
 
-    if (this.options.folding) {
+    if (options.folding) {
         $(".folding").click(function (e) {
             if ($(e.target).hasClass("folded")) {
-                this.expandComment(e.target);
+                expandComment(e.target);
             } else {
-                this.collapseComment(e.target);
+                collapseComment(e.target);
             }
         }.bind(this));
     }
 }
+
+export function toggleCommentForm(idComment, bNoFocus) {
+        if (typeof (sBStyle) != 'undefined')
+            $('#comment-button-submit').css('display', sBStyle);
+        if (typeof (cbsclick) != 'undefined') {
+            $('#comment-button-submit').unbind('click');
+            $('#comment-button-submit').attr('onclick', cbsclick);
+        }
+
+        var b = $('#comment-button-submit-edit');
+        if (b.length)
+            b.remove();
+
+        b = $('#comment-button-history');
+        if (b.length)
+            b.remove();
+
+        b = $('#comment-button-cancel');
+        if (b.length)
+            b.remove();
+
+        _toggleCommentForm(idComment, bNoFocus);
+    }
+
+export function cancelEditComment(idComment) {
+        var reply = $('#reply');
+        if (!reply.length) {
+            return;
+        }
+
+        reply.hide();
+        setFormText('');
+    }
+
+export function editComment(idComment) {
+        var reply = $('#reply');
+        if (!reply.length) {
+            return;
+        }
+
+        if (!(iCurrentShowFormComment == idComment && reply.is(':visible'))) {
+            var thisObj = this;
+            $('#comment_content_id_' + idComment).addClass(thisObj.options.classes.form_loader);
+            Ajax.ajax(aRouter.ajax + 'editcomment-getsource/',
+                {
+                    'idComment':idComment
+                }, function (result) {
+                    $('#comment_content_id_' + idComment).removeClass(thisObj.options.classes.form_loader);
+                    if (!result) {
+                        Msg.error('Error', 'Please try again later');
+                        return;
+                    }
+                    if (result.bStateError) {
+                        Msg.error(null, result.sMsg);
+                    }
+                    else {
+                        thisObj.toggleCommentForm(idComment);
+                        thisObj.sBStyle = $('#comment-button-submit').css('display');
+                        var cbs = $('#comment-button-submit');
+                        cbs.css('display', 'none');
+                        thisObj.cbsclick = $('#comment-button-submit').attr('onclick');
+
+                        $('#comment-button-submit').attr('onclick', "");
+                        $('#comment-button-submit').bind('click', function () {
+                            $('#comment-button-submit-edit').click();
+                            return false;
+                        });
+                        if (result.bHasHistory)
+                            cbs.after($(thisObj.options.history_button_code));
+
+                        cbs.after($(thisObj.options.cancel_button_code));
+
+                        cbs.after($(thisObj.options.edit_button_code));
+                        ls.comments.setFormText(result.sCommentSource);
+
+                        thisObj.enableFormComment();
+                    }
+                });
+        }
+        else {
+            reply.hide();
+            return;
+        }
+    }
+
+export function setFormText(sText)
+    {
+        if (options.wysiwyg) {
+            tinyMCE.execCommand('mceRemoveControl', false, 'form_comment_text');
+            $('#form_comment_text').val(sText);
+            tinyMCE.execCommand('mceAddControl', true, 'form_comment_text');
+        }
+        else if (typeof($('#form_comment_text').getObject) == 'function') {
+            $('#form_comment_text').destroyEditor();
+            $('#form_comment_text').val(sText);
+            $('#form_comment_text').redactor();
+        }
+        else
+            $('#form_comment_text').val(sText);
+    }
+
+export function edit(formObject, targetId, targetType) {
+        if (options.wysiwyg) {
+            $('#' + formObj + ' textarea').val(tinyMCE.activeEditor.getContent());
+        }
+        else
+            if (typeof($('#form_comment_text').getObject) == 'function')
+            {
+                $('#' + formObj + ' textarea').val($('#form_comment_text').getCode());
+            }
+        var formObj = $('#' + formObject);
+
+        $('#form_comment_text').addClass(options.classes.form_loader).attr('readonly', true);
+        $('#comment-button-submit').attr('disabled', 'disabled');
+
+        var lData = formObj.serializeJSON();
+        var idComment = lData.reply;
+
+        Ajax.ajax(aRouter.ajax + 'editcomment-edit/', lData, function (result) {
+            $('#comment-button-submit').removeAttr('disabled');
+            if (!result) {
+                enableFormComment();
+                Msg.error('Error', 'Please try again later');
+                return;
+            }
+            if (result.bStateError) {
+                enableFormComment();
+                Msg.error(null, result.sMsg);
+            }
+            else {
+                if (result.sMsg)
+                    Msg.notice(null, result.sMsg);
+
+                enableFormComment();
+                setFormText('');
+
+                // Load new comments
+                if (result.bEdited) {
+                    $('#comment_content_id_' + idComment).html(result.sCommentText);
+                }
+                if (!result.bCanEditMore)
+                    $('#comment_id_' + idComment).find('.editcomment_editlink').remove();
+                load(targetId, targetType, idComment, true);
+                if (Blocks) {
+                    var curItemBlock = Blocks.getCurrentItem('stream');
+                    if (curItemBlock.data('type') == 'comment') {
+                        Blocks.load(curItemBlock, 'stream');
+                    }
+                }
+
+                ls.hook.run('ls_comments_edit_after', [ formObj, targetId, targetType, result ]);
+            }
+        }.bind(this));
+    }
+
+ export function showHistory () {
+        var formObj = $('#form_comment');
+
+        $('#form_comment_text').addClass(options.classes.form_loader).attr('readonly', true);
+        $('#comment-button-submit-edit').attr('disabled', 'disabled');
+
+        var lData = formObj.serializeJSON();
+        lData.form_comment_text = '';
+        var idComment = lData.reply;
+
+        Ajax.ajax(aRouter.ajax + 'editcomment-gethistory/', lData, function (result) {
+            $('#comment-button-submit-edit').removeAttr('disabled');
+            if (!result) {
+                enableFormComment();
+                Msg.error('Error', 'Please try again later');
+                return;
+            }
+            if (result.bStateError) {
+                enableFormComment();
+                Msg.error(null, result.sMsg);
+            }
+            else {
+                if (result.sMsg)
+                    Msg.notice(null, result.sMsg);
+
+                enableFormComment();
+                $('#editcomment-history-content').html(result.sContent);
+                $('#modal-editcomment-history').jqmShow();
+            }
+        }.bind(this));
+    }
+
+// export function init_editcomment = function () {
+//        toggleCommentForm = that.superior("toggleCommentForm");
+//        ls.comments.toggleCommentForm = mytoggleCommentForm;
+//    }
+

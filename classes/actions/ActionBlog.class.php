@@ -699,9 +699,9 @@ class ActionBlog extends Action {
 			$iPageDef=1;
 		}
 		$iPage=getRequest('cmtpage',0) ? (int)getRequest('cmtpage',0) : $iPageDef;
-		// $aReturn=$this->Comment_GetCommentsByTargetId($oTopic->getId(),'topic',$iPage,Config::Get('module.comment.nested_per_page'));
-		$iMaxIdComment=0;//$aReturn['iMaxIdComment'];
-		// $aComments=$aReturn['comments'];
+		$aReturn=$this->Comment_GetCommentsByTargetId($oTopic->getId(),'topic',$iPage,Config::Get('module.comment.nested_per_page'));
+		$iMaxIdComment=$aReturn['iMaxIdComment'];
+		$aComments=$aReturn['comments'];
 		/**
 		 * Если используется постраничность для комментариев - формируем ее
 		 */
@@ -747,7 +747,7 @@ class ActionBlog extends Action {
 		//}
 		$this->Viewer_Assign('aVotes',$aVote);
 		$this->Viewer_Assign('oTopic',$oTopic);
-		//$this->Viewer_Assign('aComments',$aComments);
+		$this->Viewer_Assign('aComments',$aComments);
 		$this->Viewer_Assign('iMaxIdComment',$iMaxIdComment);
 		/**
 		 * Устанавливаем title страницы

@@ -1220,6 +1220,31 @@ class ActionProfile extends Action {
 		/**
 		 * Загружаем в шаблон необходимые переменные
 		 */
+
+		$aBlogUsers=$this->Blog_GetBlogUsersByUserId($this->oUserProfile->getId(),ModuleBlog::BLOG_USER_ROLE_USER);
+		$aBlogModerators=$this->Blog_GetBlogUsersByUserId($this->oUserProfile->getId(),ModuleBlog::BLOG_USER_ROLE_MODERATOR);
+		$aBlogAdministrators=$this->Blog_GetBlogUsersByUserId($this->oUserProfile->getId(),ModuleBlog::BLOG_USER_ROLE_ADMINISTRATOR);
+		/**
+		 * Получаем список блогов которые создал юзер
+		 */
+		$aBlogsOwner=$this->Blog_GetBlogsByOwnerId($this->oUserProfile->getId());
+		/**
+		 * Получаем список контактов
+		 */
+		$aUserFields = $this->User_getUserFieldsValues($this->oUserProfile->getId());
+		/**
+		 * Вызов хуков
+		 */
+		$this->Hook_Run('profile_whois_show',array("oUserProfile"=>$this->oUserProfile));
+		/**
+		 * Загружаем переменные в шаблон
+		 */
+		$this->Viewer_Assign('aBlogUsers',$aBlogUsers);
+		$this->Viewer_Assign('aBlogModerators',$aBlogModerators);
+		$this->Viewer_Assign('aBlogAdministrators',$aBlogAdministrators);
+		$this->Viewer_Assign('aBlogsOwner',$aBlogsOwner);
+		$this->Viewer_Assign('aUserFields',$aUserFields);
+
 		$iCountTopicFavourite=$this->Topic_GetCountTopicsFavouriteByUserId($this->oUserProfile->getId());
 		$iCountTopicUser=$this->Topic_GetCountTopicsPersonalByUser($this->oUserProfile->getId(),1);
 		$iCountCommentUser=$this->Comment_GetCountCommentsByUserId($this->oUserProfile->getId(),'topic');

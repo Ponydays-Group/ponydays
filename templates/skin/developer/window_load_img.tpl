@@ -12,7 +12,7 @@
 	
 		<form method="POST" action="" enctype="multipart/form-data" id="block_upload_img_content_pc" onsubmit="return false;" class="tab-content js-block-upload-img-content" data-type="pc">
 			<p><label for="img_file">{$aLang.uploadimg_file}:</label>
-			<input type="file" name="img_file" id="img_file" value="" class="input-text input-width-full" /></p>
+			<input type="file" multiple name="img_file" id="img_file" value="" class="input-text input-width-full" /></p>
 			
 			{hook run="uploadimg_source"}
 			
@@ -31,7 +31,7 @@
 			
 			{hook run="uploadimg_additional"}
 			
-			<button type="submit" class="button button-primary" onclick="ls.ajaxUploadImg('block_upload_img_content_pc','{$sToLoad}');">{$aLang.uploadimg_submit}</button>
+			<button type="submit" class="button button-primary" onclick="ls.ajax.ajaxUploadImg('block_upload_img_content_pc','{$sToLoad}');">{$aLang.uploadimg_submit}</button>
 			<button type="submit" class="button jqmClose">{$aLang.uploadimg_cancel}</button>
 		</form>
 		
@@ -57,7 +57,7 @@
 
 			<button type="submit" class="button button-primary" onclick="ls.topic.insertImageToEditor(jQuery('#img_url').val(),jQuery('#form-image-url-align').val(),jQuery('#form-image-url-title').val());">{$aLang.uploadimg_link_submit_paste}</button>
 			{$aLang.or}
-			<button type="submit" class="button button-primary" onclick="ls.ajaxUploadImg('block_upload_img_content_link','{$sToLoad}');">{$aLang.uploadimg_link_submit_load}</button>
+			<button type="submit" class="button button-primary" onclick="ls.ajax.ajaxUploadImg('block_upload_img_content_link','{$sToLoad}');">{$aLang.uploadimg_link_submit_load}</button>
 			<button type="submit" class="button jqmClose">{$aLang.uploadimg_cancel}</button>
 		</form>
 	</div>

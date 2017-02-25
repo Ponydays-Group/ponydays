@@ -52,6 +52,17 @@ export function load(obj, block, params) {
         let args = [content, result];
         Hook.marker('onLoadBefore');
         onLoad.apply(this, args);
+        if (block == "stream") {
+                $('.js-title-comment, .js-title-topic').poshytip({
+                        className: 'infobox-yellow',
+                        alignTo: 'target',
+                        alignX: 'left',
+                        alignY: 'center',
+                        offsetX: 10,
+                        liveEvents: true,
+                        showTimeout: 500
+                });
+	}
     }.bind(this));
 }
 

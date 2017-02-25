@@ -58,7 +58,7 @@ $config['pagination']['pages']['count'] = 10;                  // количес
  * например, для директории первой вложенности www.site.ru/livestreet/ поставить значение равное 1
  */
 if (isset($_SERVER['HTTP_HOST'])) {
-    $config['path']['root']['web']        = 'http://'.$_SERVER['HTTP_HOST'].'/';     // полный WEB адрес сайта
+    $config['path']['root']['web']        = 'http://'.$_SERVER['HTTP_HOST'];     // полный WEB адрес сайта
 } else {
     // for CLI scripts. or you can append "HTTP_HOST=http://yoursite.url" before script run command
     $config['path']['root']['web']        = null;

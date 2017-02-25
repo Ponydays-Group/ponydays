@@ -1109,6 +1109,7 @@ class ActionAjax extends Action {
                         }
 
                 } else {
+			$arr = array();
 
                         foreach ($_FILES['img_file'] as $k=>$v){
                            if(is_array($v)){

@@ -114,30 +114,6 @@
 
 // Pills
 // -------------------------
-.nav-pills {
-  > li {
-    float: left;
-
-    // Links rendered as pills
-    > a {
-      border-radius: $nav-pills-border-radius;
-    }
-    + li {
-      margin-left: 2px;
-    }
-
-    // Active state
-    &.active > a {
-      &,
-      &:hover,
-      &:focus {
-        color: $nav-pills-active-link-hover-color;
-        background-color: $nav-pills-active-link-hover-bg;
-      }
-    }
-  }
-}
-
 
 // Stacked pills
 .nav-stacked {

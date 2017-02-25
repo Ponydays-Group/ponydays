@@ -77,7 +77,7 @@ export function ajaxSubmit(url, form, callback, more) {
  */
 export function ajaxUploadImg(form, sToLoad) {
     Hook.marker('ajaxUploadImgBefore');
-    debugSubmit('upload/image/', form, function (data) {
+    ajaxSubmit('upload/image/', form, function (data) {
         if (data.bStateError) {
             Msg.error(data.sMsgTitle, data.sMsg);
         } else {

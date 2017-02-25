@@ -40,7 +40,7 @@
 					<input type="password" name="password" id="popup-password" class="input-text input-width-300">
 					<small class="validate-error-hide validate-error-login"></small></p>
 					
-					<p><label><input type="checkbox" name="remember" class="input-checkbox" checked> {$aLang.user_login_remember}</label></p>
+					<p><span class="checkbox"><span><input type="checkbox" name="remember" class="input-checkbox" checked><label for="remeber">{$aLang.user_login_remember}</label></span></span></p>
 
 					{hook run='form_login_popup_end'}
 

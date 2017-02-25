@@ -22,7 +22,8 @@ function showFloatBlock($) {
         if (showFloat) {
             bottomPos += floatBlock.outerHeight() + 20;
         }
-        if (this.pageYOffset > bottomPos) {
+        
+        if (window.pageYOffset > bottomPos) {
             if (! showFloat) {
                 floatBlock.addClass('stream-fixed');
                 //floatBlock.offset({left: Math.min($(window).width - 360, $(window).width / 2 + 1280/2 - 360)});

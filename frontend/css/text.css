@@ -43,3 +43,19 @@
 .text .ls-user { color: #333; }
 .text .ls-user:visited { color: #333; }
 .text .ls-user:hover { color: #555; }
+
+.spoiler-gray {background: #607D8A; color: #607D8A;}
+.spoiler-gray:hover {background: none;}
+
+.spoiler-gray:hover img {
+	filter:inherit;
+	-webkit-filter:inherit;
+}
+.spoiler-gray:not(:hover) img {
+	filter:contrast(0%) brightness(78.5%) sepia(95.30%) hue-rotate(152.5deg);
+	-webkit-filter:contrast(0%) brightness(78.5%) sepia(95.30%) hue-rotate(152.5deg);
+}
+img.gray:not(:hover)  {
+	filter:contrast(0%) brightness(78.5%) sepia(95.30%) hue-rotate(152.5deg);
+	-webkit-filter:contrast(0%) brightness(78.5%) sepia(95.30%) hue-rotate(152.5deg);
+}

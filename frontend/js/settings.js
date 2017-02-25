@@ -89,7 +89,7 @@ export function getMarkitup() {
             {
                 name: Lang.get('panel_user'),
                 className: 'fa fa-user',
-                replaceWith: '<ls user="[![' + Lang.get('panel_user_promt') + ']!]" />'
+                replaceWith: function(m){return '<ls user="' + prompt(Lang.get('panel_user_promt')) + '" />'}
             },
             {separator: '---------------'},
             {
@@ -179,7 +179,7 @@ export function getMarkitupComment() {
             {
                 name: Lang.get('panel_user'),
                 className: 'fa fa-user',
-                replaceWith: '<ls user="[![' + Lang.get('panel_user_promt') + ']!]" />'
+                replaceWith: '<ls user="' + prompt(Lang.get('panel_user_promt')) + '" />'
             },
             {separator: '---------------'},
             {

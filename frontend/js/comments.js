@@ -9,6 +9,9 @@ import * as Ajax from "./ajax"
  * Обработка комментариев
  */
 
+export let sBStyle
+export let cbsclick
+
 /**
  * Опции
  */
@@ -498,11 +501,11 @@ export function editComment(idComment) {
                         Msg.error(null, result.sMsg);
                     }
                     else {
-                        thisObj.toggleCommentForm(idComment);
-                        thisObj.sBStyle = $('#comment-button-submit').css('display');
+                        toggleCommentForm(idComment);
+                        sBStyle = $('#comment-button-submit').css('display');
                         var cbs = $('#comment-button-submit');
                         cbs.css('display', 'none');
-                        thisObj.cbsclick = $('#comment-button-submit').attr('onclick');
+                        cbsclick = $('#comment-button-submit').attr('onclick');
 
                         $('#comment-button-submit').attr('onclick', "");
                         $('#comment-button-submit').bind('click', function () {
@@ -633,4 +636,3 @@ export function edit(formObject, targetId, targetType) {
 //        toggleCommentForm = that.superior("toggleCommentForm");
 //        ls.comments.toggleCommentForm = mytoggleCommentForm;
 //    }
-

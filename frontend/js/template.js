@@ -27,7 +27,6 @@ function showFloatBlock($) {
         if (showFloat) {
             bottomPos += floatBlock.outerHeight() + 20;
         }
-        console.log(window.pageYOffset, bottomPos);
         if (window.pageYOffset > bottomPos) {
             if (! showFloat) {
                 floatBlock.addClass('stream-fixed');

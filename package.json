@@ -31,6 +31,8 @@
     "jquery-ui": "^1.12.1",
     "jquery-ui-bundle": "^1.11.4",
     "node-sass": "^4.1.1",
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2",
     "resolve-url-loader": "^1.6.1",
     "sass-loader": "^4.1.1",
     "style-loader": "^0.13.1",
@@ -39,5 +41,8 @@
   },
   "author": "lunavod",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/lunavod/bunker_stable#readme"
+  "homepage": "https://bitbucket.org/lunavod/bunker_stable#readme",
+  "dependencies": {
+    "classnames": "^2.2.5"
+  }
 }

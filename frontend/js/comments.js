@@ -1,16 +1,16 @@
+import $ from "jquery";
+
 import * as Registry from './registry'
 import * as Blocks from './blocks'
 import * as Hook from './hook'
 import * as Msg from './msg'
-import $ from "jquery";
 import * as Ajax from "./ajax"
+import ReactDOM from 'react-dom'
+import React from 'react'
 
-/**
- * Обработка комментариев
- */
+import CommentsTree from './Tree'
 
-export let sBStyle
-export let cbsclick
+console.log("Comments Tree:", CommentsTree)
 
 /**
  * Опции
@@ -41,10 +41,26 @@ export let options = {
     pageTitle: false // for comment count: original title here
 };
 
+export let sBStyle
+export let cbsclick
 export let iCurrentShowFormComment = 0;
 export let iCurrentViewComment = null;
 export let aCommentNew = [];
 export let aCommentOld = [];
+
+export async function loadComments() {
+  return await Ajax.asyncAjax(window.location.pathname+"/comments", {}, function(result){console.log(result)})
+}
+
+export async function renderComments() {
+  let comments = await loadComments()
+  comments = comments.aComments
+  let ids = []
+  for (let id in comments) {
+    ids.push(id)
+  }
+  ReactDOM.render(<CommentsTree ids={ids} comments={comments}/>, $("#comments-tree")[0])
+}
 
 // Добавляет комментарий
 export function add(formObj, targetId, targetType) {

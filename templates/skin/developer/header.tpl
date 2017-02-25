@@ -9,12 +9,12 @@
 	<meta name="viewport" content="width=device-width; initial-scale=1">
 
 	{hook run='html_head_begin'}
-	
+
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	
+
 	<title>{$sHtmlTitle}</title>
-	
+
 	<meta name="description" content="{$sHtmlDescription}">
 	<meta name="keywords" content="{$sHtmlKeywords}">
 
@@ -28,13 +28,13 @@
 	{if $sHtmlCanonical}
 		<link rel="canonical" href="{$sHtmlCanonical}" />
 	{/if}
-	
+
 	{if $bRefreshToHome}
 		<meta  HTTP-EQUIV="Refresh" CONTENT="3; URL={cfg name='path.root.web'}/">
 	{/if}
 
 	<script src="/static/{cfg name="frontend.version"}/vendor.bundle.js"></script>
-	
+
 	<script type="text/javascript">
 		var DIR_WEB_ROOT 			= '{cfg name="path.root.web"}';
 		var DIR_STATIC_SKIN 		= '{cfg name="path.static.skin"}';
@@ -42,7 +42,12 @@
 		var LIVESTREET_SECURITY_KEY = '{$LIVESTREET_SECURITY_KEY}';
 		var SESSION_ID				= '{$_sPhpSessionId}';
 		var BLOG_USE_TINYMCE		= '{cfg name="view.tinymce"}';
-		
+
+		var LOGGED_IN = {if $oUserCurrent}true{else}false{/if};
+
+		var USERNAME = {if $oUserCurrent}"{$oUserCurrent->getLogin()}"{else}null{/if};
+		var USER_ID = {if $oUserCurrent}{$oUserCurrent->getId()}{else}0{/if};
+
 		var TINYMCE_LANG = 'en';
 		{if $oConfig->GetValue('lang.current') == 'russian'}
 			TINYMCE_LANG = 'ru';
@@ -55,7 +60,7 @@
 	</script>
 
 	<script src="/static/{cfg name="frontend.version"}/main.bundle.js"></script>
-	
+
 	<script type="text/javascript">
 		var tinyMCE = false;
 		ls.lang.load({json var = $aLangJs});
@@ -65,8 +70,8 @@
 
 
 	<link rel="stylesheet" href="/static/{cfg name="frontend.version"}/main.css" type="text/css" />
-	
-	
+
+
 	{hook run='html_head_end'}
 </head>
 
@@ -74,7 +79,7 @@
 
 {if $oUserCurrent}
 	{assign var=body_classes value=$body_classes|cat:' ls-user-role-user'}
-	
+
 	{if $oUserCurrent->isAdministrator()}
 		{assign var=body_classes value=$body_classes|cat:' ls-user-role-admin'}
 	{/if}
@@ -94,15 +99,15 @@
 
 <body class="{$body_classes} width-{cfg name='view.grid.type'}">
 	{hook run='body_begin'}
-	
-	
+
+
 	{if $oUserCurrent}
 		{include file='window_write.tpl'}
 		{include file='window_favourite_form_tags.tpl'}
 	{else}
 		{include file='window_login.tpl'}
 	{/if}
-	
+
 
 	<div id="container" class="{hook run='container_class'}">
 		{include file='header_top.tpl'}
@@ -111,13 +116,13 @@
 			{if !$noSidebar && $sidebarPosition == 'left'}
 				{include file='sidebar.tpl'}
 			{/if}
-		
+
 			<div id="content" role="main"
 				class="col-md-9 {if $noSidebar}content-full-width{/if}
 					   {if $sidebarPosition == 'left'}content-right{/if}"
 				{if $sMenuItemSelect=='profile'}itemscope itemtype="http://data-vocabulary.org/Person"{/if}>
-				
+
 				{include file='nav_content.tpl'}
 				{include file='system_message.tpl'}
-				
+
 				{hook run='content_begin'}

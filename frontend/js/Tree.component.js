@@ -11,6 +11,8 @@ export default class Tree extends React.Component {
     comments: this.props.comments
   }
 
+
+
   componentDidMount() {
     let comments = this.props.comments
     let ids = this.props.ids
@@ -42,9 +44,9 @@ export default class Tree extends React.Component {
         let cmt = new_comments[key]
         if (cmt.parentId) {
           let parent = comments[cmt.parentId]
-          cmt.level = parent.level + 1
+          cmt.level = parseInt(parent.level) + 1
         }
-        console.log(key, cmt)
+        //console.log(key, cmt)
         comments[cmt.id] = cmt
         new_sorted_ids = this.injectComment(cmt, new_sorted_ids, comments)
       }
@@ -54,26 +56,61 @@ export default class Tree extends React.Component {
       })
     }.bind(this))
   }
-
   injectComment(new_comment, sorted_ids, comments) {
-    let search = sorted_ids.slice(sorted_ids.indexOf(new_comment.parentId)+1)
+	      var search = sorted_ids.slice(sorted_ids.indexOf(new_comment.parentId) + 1, sorted_ids.length);
+	      var insert_before = null;
+	      var parent = comments[new_comment.parentId];
+        if (sorted_ids.indexOf(new_comment.id)>0) {
+          return sorted_ids
+        }
+	      if (parent) {
+	        for (var i in search) {
+	          var id = search[i];
+	          var cmt = comments[id];
+	          if (cmt.level <= parent.level && cmt.id != parent.id) {
+	            insert_before = id;
+	            break;
+	          }
+	        }
+	      }
+	      if (insert_before) {
+	        sorted_ids.splice(sorted_ids.indexOf(insert_before), 0, new_comment.id);
+	      } else {
+	        sorted_ids.push(new_comment.id);
+	      }
+        console.log(insert_before, ids, search, search.length+sorted_ids.slice(0, sorted_ids.indexOf(new_comment.parentId)+1).length)
+	      return sorted_ids;
+      }
+
+  _injectComment(comment, ids, comments) {
+    if (!comment.parentId) {
+      ids.push(comment.id)
+      return ids
+    }
+
+    let parent_index = ids.indexOf(comment.parentId)
+    let parent = comments[ids[parent_index]]
+
+    let comments_search = ids.slice(parent_index+1)
+    //comments_search.reverse()
+
     let insert_before = null
-    let parent = comments[new_comment.parentId]
-    console.log(new_comment)
-    for (let i in search) {
-      let id = search[i]
-      let cmt = comments[id]
-      if (cmt.level <= parent.level) {
-		    insert_before = id
-		    break
+    let insert_after = null
+
+    for (let i in comments_search) {
+      let curr = comments[comments_search[i]]
+      if (curr.level <= parent.level && curr != parent) {
+        insert_before = ids.indexOf(curr)
       }
     }
+
     if (insert_before) {
-      sorted_ids.splice(sorted_ids.indexOf(insert_before), 0, new_comment.id)
+      ids.splice(insert_before, 0, comment.id)
     } else {
-      sorted_ids.push(new_comment.id)
+      ids.push(comment.id)
     }
-    return sorted_ids
+    console.log(ids, comments)
+    return ids
   }
 
   render() {

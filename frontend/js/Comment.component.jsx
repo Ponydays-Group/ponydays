@@ -10,6 +10,12 @@ var classNames = require("classnames")
 
 export default class Comment extends React.Component {
 
+  editComment(e) {
+    e.preventDefault()
+    Comments.editComment(this.props.data.id)
+    return
+  }
+
   toggleCommentForm(e) {
     e.preventDefault()
     Comments.toggleCommentForm(this.props.data.id)
@@ -56,7 +62,8 @@ export default class Comment extends React.Component {
         "comment": true,
         "comment-bad": data.rating < -5,
         "comment-deleted": data.isDeleted,
-        "comment-new": data.isNew
+        "comment-self": USERNAME==data.author.login,
+        "comment-new": data.isNew && USERNAME!=data.author.login
       })}>
     		<a name={"comment"+data.id} />
 
@@ -76,8 +83,17 @@ export default class Comment extends React.Component {
     				</li>
 
     					{LOGGED_IN? <li><a href="#" onClick={this.toggleCommentForm.bind(this)} className="reply-link">Ответить</a></li> : "" }
-              {LOGGED_IN && (IS_ADMIN | USERNAME==data.author.login)? <li class="action-hidden"><a href="#" class="editcomment_editlink" title="{$aLang.plugin.editcomment.edit_command_title}" onclick="ls.comments.editComment({$iCommentId}); return false;"><i class="fa fa-pencil" title="{$aLang.plugin.editcomment.edit_command_title}"></i></a></li> : ""}
-    					{LOGGED_IN && IS_ADMIN? <li><a href="#" className="comment-delete action-hidden" onClick={this.toggleDelete.bind(this)}><i className="fa fa-trash" title="Удалить/восстановить комментарий"></i></a></li> : "" }
+              {LOGGED_IN && (IS_ADMIN | USERNAME==data.author.login)? <li className="action-hidden">
+                <a href="#" className="editcomment_editlink" title="Редактировать комментарий" onClick={this.editComment.bind(this)}>
+                  <i className="fa fa-pencil" title="Редактировать комментарий" />
+                </a>
+              </li> : ""}
+
+              {LOGGED_IN && IS_ADMIN? <li>
+                <a href="#" className="comment-delete action-hidden" onClick={this.toggleDelete.bind(this)}>
+                  <i className="fa fa-trash" title="Удалить/восстановить комментарий" />
+                </a>
+              </li> : "" }
 
     					{(LOGGED_IN | data.favouriteCount)>0? <li className="comment-favourite action-hidden">
     						<div onClick={this.toggleFavourite.bind(this)} className={classNames({

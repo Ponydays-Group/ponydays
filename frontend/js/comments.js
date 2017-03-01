@@ -61,6 +61,7 @@ export async function renderComments() {
   }
   ReactDOM.render(<CommentsTree ids={ids} comments={comments}/>, $("#comments-tree")[0])
   calcNewComments()
+  resize_sidebar()
 }
 
 // Добавляет комментарий
@@ -119,6 +120,9 @@ export function _toggleCommentForm(idComment, bNoFocus) {
     let comment = $('#comment_id_' + idComment)
     reply.insertAfter(comment).show();
     reply.css("marginLeft", (comment.data("level")+1)*20)
+    if (!comment) {
+      reply.css("marginLeft", 0)
+    }
     $('#form_comment_text').val('');
     $('#form_comment_reply').val(idComment);
 
@@ -193,14 +197,14 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
                 setCountNewComment(aCmt.length + iCountOld);
             }
 
-            $.each(aCmt, function (index, item) {
-                if (!document.getElementById('comment_id_' + item.id)) {
-                    if (!(selfIdComment && selfIdComment == item.id)) {
-                        aCommentNew.push(item.id);
-                    }
-                    inject(item.idParent, item.id, item.html);
-                }
-            }.bind(this));
+            // $.each(aCmt, function (index, item) {
+            //     if (!document.getElementById('comment_id_' + item.id)) {
+            //         if (!(selfIdComment && selfIdComment == item.id)) {
+            //             aCommentNew.push(item.id);
+            //         }
+            //         inject(item.idParent, item.id, item.html);
+            //     }
+            // }.bind(this));
 
             if (selfIdComment && $('#comment_id_' + selfIdComment).length) {
                 scrollToComment(selfIdComment);

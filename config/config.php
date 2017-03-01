@@ -586,7 +586,7 @@ $config['autosubscribe'] = array(2);
 //Собственно, номер версии сайта
 $config['site_version'] = '2.1';
 
-$config['frontend']['version'] = file_get_contents('/work/config/frontend.ver');
+$config['frontend']['version'] = file_get_contents(dirname(__FILE__).'/frontend.ver');
 
 // точка завершения "старого" периода
 $config['acl']['vote_state']['comment']['oe_end'] = 1470700800;	// 2016-08-09 00:00:00

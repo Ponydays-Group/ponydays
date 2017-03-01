@@ -8,9 +8,9 @@ import * as Ajax from "./ajax"
 import ReactDOM from 'react-dom'
 import React from 'react'
 
-import CommentsTree from './Tree'
+import Emitter from "./emitter"
 
-console.log("Comments Tree:", CommentsTree)
+import CommentsTree from './Tree.component'
 
 /**
  * Опции
@@ -60,6 +60,7 @@ export async function renderComments() {
     ids.push(id)
   }
   ReactDOM.render(<CommentsTree ids={ids} comments={comments}/>, $("#comments-tree")[0])
+  calcNewComments()
 }
 
 // Добавляет комментарий
@@ -115,7 +116,9 @@ export function _toggleCommentForm(idComment, bNoFocus) {
     if (options.wysiwyg) {
         tinyMCE.execCommand('mceRemoveControl', true, 'form_comment_text');
     }
-    reply.insertAfter('#comment_id_' + idComment).show();
+    let comment = $('#comment_id_' + idComment)
+    reply.insertAfter(comment).show();
+    reply.css("marginLeft", (comment.data("level")+1)*20)
     $('#form_comment_text').val('');
     $('#form_comment_reply').val(idComment);
 
@@ -165,6 +168,8 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
             Msg.error(null, result.sMsg);
         } else {
             var aCmt = result.aComments;
+            console.info(result, Emitter, "EMITTER!")
+            Emitter.emit("comments-new-loaded", result.aComments)
             if (aCmt.length > 0 && result.iMaxIdComment) {
                 $("#comment_last_id").val(result.iMaxIdComment);
                 $('#count-comments').text(parseInt($('#count-comments').text()) + aCmt.length);

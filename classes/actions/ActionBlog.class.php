@@ -717,15 +717,6 @@ class ActionBlog extends Action {
 		/**
 		 * Отмечаем дату прочтения топика
 		 */
-		if ($this->oUserCurrent) {
-			$oTopicRead=Engine::GetEntity('Topic_TopicRead');
-			$oTopicRead->setTopicId($oTopic->getId());
-			$oTopicRead->setUserId($this->oUserCurrent->getId());
-			$oTopicRead->setCommentCountLast($oTopic->getCountComment());
-			$oTopicRead->setCommentIdLast($iMaxIdComment);
-			$oTopicRead->setDateRead(date("Y-m-d H:i:s"));
-			$this->Topic_SetTopicRead($oTopicRead);
-		}
 		/**
 		 * Выставляем SEO данные
 		 */
@@ -815,6 +806,8 @@ class ActionBlog extends Action {
 
 		$aResult = array();
 
+		$sReadlast = $oTopic->getDateRead();
+
 		foreach($aComments as $oComment) {
         $aComment = array();
         $aComment['id'] = $oComment->getId();
@@ -838,10 +831,22 @@ class ActionBlog extends Action {
         $aComment['targetId'] = $oComment->getTargetId();
         $aComment['level'] = $oComment->getLevel();
         $aComment['parentId'] = $oComment->getPid();
+				$aComment['isNew'] = $sReadlast <= $oComment->getDate();
 			$aResult[$aComment['id']] = $aComment;
 		}
 
+		if ($this->oUserCurrent) {
+			$oTopicRead=Engine::GetEntity('Topic_TopicRead');
+			$oTopicRead->setTopicId($oTopic->getId());
+			$oTopicRead->setUserId($this->oUserCurrent->getId());
+			$oTopicRead->setCommentCountLast($oTopic->getCountComment());
+			$oTopicRead->setCommentIdLast($iMaxIdComment);
+			$oTopicRead->setDateRead(date("Y-m-d H:i:s"));
+			$this->Topic_SetTopicRead($oTopicRead);
+		}
+
 		$this->Viewer_AssignAjax("aComments", $aResult);
+		$this->Viewer_AssignAjax("sReadlast", $sReadlast);
 		$this->Viewer_DisplayAjax();
 	}
 	function getJsonData(){
@@ -1263,9 +1268,41 @@ class ActionBlog extends Action {
 			$aReturn['comments']=$aCmt;
 			$aReturn['iMaxIdComment']=$selfIdComment;
 		} else {
-			$aReturn=$this->Comment_GetCommentsNewByTargetId($oTopic->getId(),'topic',$idCommentLast);
+			$aReturn=$this->Comment_GetCommentsNewByTargetIdWithoutHtml($oTopic->getId(),'topic',$idCommentLast);
 		}
 		$iMaxIdComment=$aReturn['iMaxIdComment'];
+
+		$sReadlast = $oTopic->getReadLast();
+
+		$aCmts=$aReturn['comments'];
+		if ($aCmts and is_array($aCmts)) {
+			foreach ($aCmts as $oComment) {
+				$aComment = array();
+				$aComment['id'] = $oComment->getId();
+				$aComment['author'] = array("id"=>$oComment->getUserId(), "login"=>$oComment->getUser()->getLogin(), "avatar"=>$oComment->getUser()->getProfileAvatarPath(48));
+				$aComment['date'] = $oComment->getDate();
+				$aComment['text'] = $oComment->getText();
+				$aComment['isFavourite'] = $oComment->getIsFavourite();
+				$aComment['countFavourite'] = $oComment->getCountFavourite();
+				$aComment['rating'] = $oComment->getRating();
+
+				$oVote = $oComment->getVote();
+				if ($oVote) {
+						$aComment['voted'] = true;
+						$aComment['voteDirection'] = $oVote->getDirection();
+				} else {
+						$aComment['voted'] = false;
+						$aComment['voteDirection'] = null;
+				}
+
+				$aComment['targetType'] = $oComment->getTargetType();
+				$aComment['targetId'] = $oComment->getTargetId();
+				$aComment['level'] = $oComment->getLevel();
+				$aComment['parentId'] = $oComment->getPid();
+				$aComment['isNew'] = $sReadlast <= $oComment->getDate();
+			$aComments[$aComment['id']] = $aComment;
+			}
+		}
 
 		$oTopicRead=Engine::GetEntity('Topic_TopicRead');
 		$oTopicRead->setTopicId($oTopic->getId());
@@ -1274,17 +1311,6 @@ class ActionBlog extends Action {
 		$oTopicRead->setCommentIdLast($iMaxIdComment);
 		$oTopicRead->setDateRead(date("Y-m-d H:i:s"));
 		$this->Topic_SetTopicRead($oTopicRead);
-
-		$aCmts=$aReturn['comments'];
-		if ($aCmts and is_array($aCmts)) {
-			foreach ($aCmts as $aCmt) {
-				$aComments[]=array(
-					'html' => $aCmt['html'],
-					'idParent' => $aCmt['obj']->getPid(),
-					'id' => $aCmt['obj']->getId(),
-				);
-			}
-		}
 
 		$this->Viewer_AssignAjax('iMaxIdComment',$iMaxIdComment);
 		$this->Viewer_AssignAjax('aComments',$aComments);

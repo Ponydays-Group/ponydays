@@ -646,6 +646,32 @@ class ModuleComment extends Module {
 		}
 		return array('comments'=>$aCmt,'iMaxIdComment'=>$iMaxIdComment);
 	}
+
+	public function GetCommentsNewByTargetIdWithoutHtml($sId,$sTargetType,$sIdCommentLast) {
+		if (false === ($aComments = $this->Cache_Get("comment_target_{$sId}_{$sTargetType}_{$sIdCommentLast}"))) {
+			$aComments=$this->oMapper->GetCommentsNewByTargetId($sId,$sTargetType,$sIdCommentLast);
+			$this->Cache_Set($aComments, "comment_target_{$sId}_{$sTargetType}_{$sIdCommentLast}", array("comment_new_{$sTargetType}_{$sId}"), 60*60*24*1);
+		}
+		if (count($aComments)==0) {
+			return array('comments'=>array(),'iMaxIdComment'=>0);
+		}
+
+		$iMaxIdComment=max($aComments);
+		$aCmts=$this->GetCommentsAdditionalData($aComments);
+		$oViewerLocal=$this->Viewer_GetLocalViewer();
+		$oViewerLocal->Assign('oUserCurrent',$this->User_GetUserCurrent());
+		$oViewerLocal->Assign('bOneComment',true);
+		if($sTargetType!='topic') {
+			$oViewerLocal->Assign('bNoCommentFavourites',true);
+		}
+		$aCmt=array();
+		foreach ($aCmts as $oComment) {
+			$oViewerLocal->Assign('oComment',$oComment);
+			$sText=$oViewerLocal->Fetch($this->GetTemplateCommentByTarget($sId,$sTargetType));
+			$aCmt[]=$oComment;
+		}
+		return array('comments'=>$aCmt,'iMaxIdComment'=>$iMaxIdComment);
+	}
 	/**
 	 * Возвращает шаблон комментария для рендеринга
 	 * Плагин может переопределить данный метод и вернуть свой шаблон в зависимости от типа

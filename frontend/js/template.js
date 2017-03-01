@@ -52,8 +52,8 @@ export default function init() {
 
         $('html').removeClass('no-js');
 
-        $("#sidebar").css("height", $("#wrapper").height() > $("#sidebar").height() ? $("#wrapper").height() : null)
-        $(window).on('resize', function(){$("#sidebar").css("height", $("#wrapper").height() > $("#sidebar").height() ? $("#wrapper").height() : null)})
+        window.resize_sidebar = function(){$("#sidebar").css("height", $("#wrapper").height() > $("#sidebar").height() ? $("#wrapper").height() : null)}
+        $(window).on('resize', window.resize_sidebar)
 
         // Всплывающие окна
         $('#window_login_form').jqm();

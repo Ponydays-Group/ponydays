@@ -47,6 +47,7 @@
 
 		var USERNAME = {if $oUserCurrent}"{$oUserCurrent->getLogin()}"{else}null{/if};
 		var USER_ID = {if $oUserCurrent}{$oUserCurrent->getId()}{else}0{/if};
+		var IS_ADMIN = {if $oUserCurrent}{$oUserCurrent->getIsAdministrator()}{else}false{/if};
 
 		var TINYMCE_LANG = 'en';
 		{if $oConfig->GetValue('lang.current') == 'russian'}

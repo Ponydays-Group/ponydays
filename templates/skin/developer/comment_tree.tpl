@@ -52,7 +52,7 @@
 	{if $oUserCurrent}
 		{include file='editor.tpl' sImgToLoad='form_comment_text' sSettingsTinymce='ls.settings.getTinymceComment()' sSettingsMarkitup='ls.settings.getMarkitupComment()'}
 
-		<h4 class="reply-header" id="comment_id_0">
+		<h4 class="reply-header" id="comment_id_0" data-level=-1 >
 			<a href="#" class="link-dotted" onclick="ls.comments.toggleCommentForm(0); return false;">{$sNoticeCommentAdd}</a>
 		</h4>
 

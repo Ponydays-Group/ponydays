@@ -49,7 +49,13 @@ export let aCommentNew = [];
 export let aCommentOld = [];
 
 export async function loadComments() {
-  return await Ajax.asyncAjax(window.location.pathname+"/comments", {}, function(result){console.log(result)})
+  let url = ""
+  if (location.href.startsWith(aRouter["talk"])) {
+    url = location.href.replace("read", "readcomments")
+  } else {
+    url = window.location.pathname+"/comments"
+  }
+  return await Ajax.asyncAjax(url, {}, function(result){console.log(result)})
 }
 
 export async function renderComments() {

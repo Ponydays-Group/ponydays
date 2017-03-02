@@ -59,9 +59,9 @@
 .block.block-type-profile .profile-photo-wrapper 	{ position: relative; min-height: 50px; }
 .block.block-type-profile .profile-photo 			{ vertical-align: top; }
 .block.block-type-profile .status 					{ position: absolute; top: 5px; left: 5px; padding: 0 5px; border-radius: 2px; font-size: 11px; }
-.block.block-type-profile .status.status-online 	{ background: #B7BC1C; color: #fff; }
-.block.block-type-profile .status.status-offline 	{ background: #333; color: #fff; opacity: .5; filter: alpha(opacity=50); }
-.block.block-type-profile .upload-photo 			{ padding: 7px 10px 10px; background: #f7f7f7; }
+.block.block-type-profile .status.status-online 	{ background: #B7BC1C; color: $main-color; }
+.block.block-type-profile .status.status-offline 	{ background: #333; color: $main-color; opacity: .5; filter: alpha(opacity=50); }
+.block.block-type-profile .upload-photo 			{ padding: 7px 10px 10px; background: $main-color; }
 
 .block.block-type-profile-note	 			{ background: #F1F7AF; border: 1px solid #E1EA83; padding: 15px; }
 .block.block-type-profile-note p 			{ margin-bottom: 10px; }
@@ -78,14 +78,14 @@
 /* Block Type - Foldable */
 .block.block-type-foldable { background: none; }
 .block.block-type-foldable .block-header { background: none; border: none; padding: 0 0 10px; }
-.block.block-type-foldable .block-content { display: none; background: #fafafa; }
+.block.block-type-foldable .block-content { display: none; background: $main-color; }
 
 .block.block-type-talk-search { margin-bottom: 10px; }
 .block.block-type-talk-friends { margin-bottom: 10px; }
 
 
 .sidebar-quote {
-  //background: #f7f7f7;
+  //background: $main-color;
   border-left: 0px solid #bbb;
   font-size: 1.1em;
   font-style: italic;

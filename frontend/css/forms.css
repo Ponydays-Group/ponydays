@@ -5,7 +5,7 @@
 .input-text {
 	width: 150px;
 	padding: 5px;
-	border: 1px solid #ddd;
+	border: 1px solid $main-accent-third;
 	border-radius: 3px;
 	box-sizing: border-box;
 }
@@ -24,9 +24,9 @@
 
 textarea { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
 
-select 		{ padding: 4px; border: 1px solid #ddd; border-radius: 3px; }
+select 		{ padding: 4px; border: 1px solid $main-accent-third; border-radius: 3px; }
 
-fieldset { margin-bottom: 30px; padding-top: 20px; border-top: 1px solid #eaeaea; }
+fieldset { margin-bottom: 30px; padding-top: 20px; border-top: 1px solid $secondary-accent; }
 fieldset legend { color: #000; font-size: 18px; padding-right: 10px; }
 
 form p { margin-bottom: 20px; }
@@ -43,7 +43,7 @@ dl.form-item dt { float: left; width: 135px; padding-top: 4px; padding-right: 15
 dl.form-item dd { float: left; width: 300px; }
 
 .form-profile { position: relative; }
-.form-profile .avatar-change { position: absolute; top: 40px; right: 0; padding: 10px; background: #f7f7f7; font-size: 11px; }
+.form-profile .avatar-change { position: absolute; top: 40px; right: 0; padding: 10px; background: $main-color; font-size: 11px; }
 
 /* Placeholder */
 :-moz-placeholder { color: #aaa; }

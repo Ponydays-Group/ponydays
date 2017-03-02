@@ -38,7 +38,16 @@
 .text img.image-center { display: block; margin: 0 auto; }
 
 .text object,
-.text img { max-width: 100%; }
+.text img {
+	max-width: 100%;
+	opacity: $image-opacity;
+	transition: opacity .3s;
+}
+
+.text img:hover {
+	max-width: 100%;
+	opacity: $image-opacity-hover;
+}
 
 .text .ls-user { color: #333; }
 .text .ls-user:visited { color: #333; }

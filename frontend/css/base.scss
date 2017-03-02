@@ -11,8 +11,8 @@ body {
 	font-size: 13px;
 	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
 	line-height: 18px;
-	color: #333;
-	background-color: #f7f7f7;
+	color: #a2a2a2;
+	background-color: $background-color;
 }
 
 
@@ -158,11 +158,10 @@ h2.header-table { margin-bottom: 0; border-bottom: 1px solid #eee; padding-botto
 
 .spoiler-title{
 	cursor: pointer;
-	border: 1px solid rgb(218, 218, 218);
 	padding: 5px;
 	border-radius: 5px 5px 0 0 ;
 	display: inline-block;
-	background-color: rgb(247, 247, 247);
+	background-color: $spoiler-background;
 	margin: 3px 2px 0;
 	display: inline-block;
 }

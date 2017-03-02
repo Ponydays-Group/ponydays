@@ -3,8 +3,8 @@
 -------------------------------------------- */
 
 .topic {
-    border: 2px solid #edf1f2;
-    background: #fafafa;
+    border: 2px solid $secondary-accent;
+    background: $accent;
     overflow: hidden;
     zoom: 1;
     margin-bottom: 50px;
@@ -28,7 +28,7 @@
 .topic-header-top {
     padding-left: 80px;
     padding-top: 5px;
-    background: #edf1f2;
+    background: $secondary-accent;
 }
 
 .topic .topic-header .topic-title {
@@ -59,9 +59,9 @@
     .topic-author-avatar {
         top: -50px;
         border-radius: 50%;
-        outline: white;
-        background: white;
-        border: 1px solid #e0e4e6;
+        outline: $main-color;
+        background: $main-color;
+        border: 1px solid $main-color;
         position: absolute;
         left: 5px;
     }
@@ -87,7 +87,7 @@
 
 /* Content */
 .topic .topic-content 		{ margin-bottom: 15px; }
-.topic .topic-content.text 	{ color: #333; padding: 0px 10px; }
+.topic .topic-content.text 	{ color: $text-color; padding: 0px 10px; }
 
 /* Tags */
 .topic .topic-footer .topic-tags 						{ margin: 0 0 15px; padding: 0px 10px; }
@@ -101,7 +101,7 @@
 .topic .topic-footer .topic-info 		{
     overflow: hidden;
     height: 35px;
-    background: #edf1f2;
+    background: $secondary-accent;
     -webkit-border-radius: 3px;
 }
 .topic .topic-footer .topic-info li 	{
@@ -122,7 +122,7 @@
 .topic .topic-footer .topic-info li a .fa	{
     font-size: 1.3em; }
 
-.topic .topic-footer .topic-info li.topic-info-author a 		{ font-weight: bold; color: #333; }
+.topic .topic-footer .topic-info li.topic-info-author a 		{ font-weight: bold; color: $text-color; }
 .topic .topic-footer .topic-info li.topic-info-author a:hover 	{ text-decoration: underline; }
 .topic .topic-footer .topic-info li.topic-info-comments a		{  }
 .topic .topic-footer .topic-info li.topic-info-comments a span 	{ color: #777; }
@@ -175,7 +175,7 @@
 .topic-photo-upload ul li { min-height: 100px; _height: 100px; margin-bottom: 10px; padding-left: 110px; position: relative; }
 .topic-photo-upload ul li img { position: absolute; top: 0; left: 0; }
 .topic-photo-upload ul li label { color: #aaa; }
-.topic-photo-upload ul li textarea { border: 1px solid #ddd; width: 350px; height: 60px; padding: 3px; font-size: 12px; font-family: Arial, sans-serif; color: #333; }
+.topic-photo-upload ul li textarea { border: 1px solid #ddd; width: 350px; height: 60px; padding: 3px; font-size: 12px; font-family: Arial, sans-serif; color: $text-color; }
 .topic-photo-upload ul li .image-delete { text-decoration: none; margin-right: 15px; }
 .topic-photo-upload ul li .image-delete:hover { color: #f00; }
 .topic-photo-upload ul li.marked-as-preview .mark-as-preview { display: inline; color: #43c70f; font-weight: bold; }

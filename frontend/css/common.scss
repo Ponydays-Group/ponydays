@@ -41,9 +41,9 @@
 .pagination ul 					{ overflow: hidden; zoom: 1; line-height: 1em; }
 .pagination ul li 				{ float: left; margin-right: 5px; }
 .pagination ul li span,
-.pagination ul li a 			{ float: left; padding: 7px 10px; background: #eee; color: #333; }
-.pagination ul li a:hover 		{ background: #ddd; }
-.pagination ul li.active span 	{ color: #bbb; background: #fafafa; }
+.pagination ul li a 			{ float: left; padding: 7px 10px; background: $main-accent-second; color: $text-color; }
+.pagination ul li a:hover 		{ background: $main-accent-third; }
+.pagination ul li.active span 	{ color: #bbb; background: $main-color; }
 .pagination ul li i 			{ opacity: .5; filter: alpha(opacity=50); }
 
 
@@ -62,12 +62,12 @@
 /* Toolbar
 ---------------------------------------------------- */
 .toolbar 					{ float: right; position: fixed; top: 220px; right: 10px; z-index: 100; }
-.toolbar section 			{ width: 34px; line-height: 14px; background: #fff; -webkit-box-shadow: 0 0 5px rgba(0,0,0,.05); box-shadow: 0 0 5px rgba(0,0,0,.05); margin-bottom: 10px; }
+.toolbar section 			{ width: 34px; line-height: 14px; background: $main-color; -webkit-box-shadow: 0 0 5px rgba(0,0,0,.05); box-shadow: 0 0 5px rgba(0,0,0,.05); margin-bottom: 10px; }
 .toolbar section a			{     font-size: 14px;
     text-align: center;
     display: block;
     padding: 10px; }
-.toolbar section a:hover	{ background: #fafafa; }
+.toolbar section a:hover	{ background: $main-color; }
 .toolbar section i			{ display: block; }
 
 /* Admin button */
@@ -78,10 +78,10 @@
 .toolbar .toolbar-update .update-comments 			{ padding: 9px; }
 .toolbar .toolbar-update .update-comments i 		{ display: block; width: 16px; height: 16px; }
 .toolbar .toolbar-update .update-comments.active i 	{ background-position: -16px 0; }
-.toolbar .toolbar-update .new-comments 				{ border-top: 1px solid #eee; padding: 10px 0; color: #333; text-align: center; font-size: 11px; }
+.toolbar .toolbar-update .new-comments 				{ border-top: 1px solid $main-accent-second; padding: 10px 0; color: $text-color; text-align: center; font-size: 11px; }
 
 /* Topic navigation */
-.toolbar .toolbar-topic a.toolbar-topic-prev { border-bottom: 1px solid #eee; }
+.toolbar .toolbar-topic a.toolbar-topic-prev { border-bottom: 1px solid $main-accent-second; }
 
 /* Scroll up */
 .toolbar .toolbar-scrollup { }
@@ -148,9 +148,9 @@
 .search.search-item 			{ margin-bottom: 15px; width: 100%; }
 .search.search-item .input-text { width: 100%; padding-right: 5px; }
 
-.search-abc 					{ overflow: hidden; zoom: 1; padding: 10px 15px; background: #fafafa; margin-bottom: 15px; }
+.search-abc 					{ overflow: hidden; zoom: 1; padding: 10px 15px; background: $main-color; margin-bottom: 15px; }
 .search-abc li 					{ float: left; margin-right: 10px; }
-.search-abc li.active a 		{ color: #333; border: none; }
+.search-abc li.active a 		{ color: $text-color; border: none; }
 
 .search-tags 					{ margin-bottom: 15px; }
 
@@ -176,12 +176,12 @@
 
 /* Item List
 ---------------------------------------------------- */
-.item-list 					{ border-top: 1px solid #eee; }
-.item-list li 				{ min-height: 51px; padding: 7px 0 10px 58px; border-bottom: 1px solid #eee; position: relative; zoom: 1; }
+.item-list 					{ border-top: 1px solid $stream-item-border; }
+.item-list li 				{ min-height: 51px; padding: 7px 0 10px 58px; border-bottom: 1px solid $stream-item-border; position: relative; zoom: 1; }
 .item-list li p 			{ padding-top: 2px; font-size: 11px; }
 .item-list li a 			{ text-decoration: none; }
 .item-list li .avatar 		{ position: absolute; top: 3px; left: 0; margin-right: 10px; background: white; border-radius: 50%; border: 1px solid rgba(184, 194, 199, 0.46);}
-.item-list li .author 		{ font-weight: bold; color: #333; }
+.item-list li .author 		{ font-weight: bold; color: $text-color; }
 .item-list li .blog-name 	{ font-weight: bold; }
 
 
@@ -225,8 +225,8 @@
 
 .notice-empty 			{ color: #aaa; }
 
-// .loader { background: #fafafa url(images/loader.gif) 50% 50% no-repeat; }
+// .loader { background: $main-color url(images/loader.gif) 50% 50% no-repeat; }
 
-.user, .ls-user 	{ font-weight: bold; color: #333; }
+.user, .ls-user 	{ font-weight: bold; color: $text-color; }
 .ls-user:before 	{ content: ''; display: inline-block; width: 14px; height: 14px; margin-right: 3px; background: url(images/icons.png) -168px 0 no-repeat; vertical-align: middle; }
 .user.inactive 		{ color: #aaa; }

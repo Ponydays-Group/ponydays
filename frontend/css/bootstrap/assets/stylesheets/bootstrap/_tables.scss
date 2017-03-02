@@ -33,14 +33,14 @@ th {
         padding: $table-cell-padding;
         line-height: $line-height-base;
         vertical-align: top;
-        border-top: 1px solid $table-border-color;
+        border-top: 1px solid $main-accent-second;
       }
     }
   }
   // Bottom align for column headings
   > thead > tr > th {
     vertical-align: bottom;
-    border-bottom: 2px solid $table-border-color;
+    border-bottom: 2px solid $main-accent-third;
   }
   // Remove top border from thead by default
   > caption + thead,
@@ -55,7 +55,7 @@ th {
   }
   // Account for multiple tbody instances
   > tbody + tbody {
-    border-top: 2px solid $table-border-color;
+    border-top: 2px solid $secondary-accent;
   }
 
   // Nesting

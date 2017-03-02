@@ -26,13 +26,13 @@ h6 { font-size: 18px; margin-bottom: 7px; font-weight: bold; }
 p { margin-bottom: 1em; }
 abbr[title] { border-bottom: 1px dotted; }
 b, strong { font-weight: bold; }
-blockquote { margin: 0; background: #fafafa; color: #555; padding: 15px 20px; clear: both; border-left: 5px solid #eee; }
+blockquote { margin: 0; background: $main-color; color: #555; padding: 15px 20px; clear: both; border-left: 5px solid $main-accent-second; }
 dfn { font-style: italic; }
 hr { display: block; height: 1px; border: 0; border-top: 1px solid #ccc; margin: 1em 0; padding: 0; }
 ins { background: #ff9; color: #000; text-decoration: none; }
 mark { background: #ff0; color: #000; font-style: italic; font-weight: bold; }
 
-pre { margin: 0; padding: 10px 15px; border: none; background: #fafafa; font-size: 12px; line-height: 18px; overflow: auto; width: 100%; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; clear: both; }
+pre { margin: 0; padding: 10px 15px; border: none; background: $main-color; font-size: 12px; line-height: 18px; overflow: auto; width: 100%; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; clear: both; }
 q { quotes: none; clear: both; }
 q:before, q:after { content: ""; content: none; }
 small { font-size: 85%; }
@@ -70,7 +70,7 @@ img:-moz-broken {-moz-force-broken-image-icon:1; width:24px; height:24px}
 font[face=mceinline] {font-family:inherit !important}
 *[contentEditable]:focus {outline:0}
 
-.mceItemMedia {border:1px dotted #cc0000; background-position:center; background-repeat:no-repeat; background-color:#ffffcc}
+.mceItemMedia {border:1px dotted #cc0000; background-position:center; background-repeat:no-repeat; background-color:$main-colorfcc}
 .mceItemShockWave {background-image:url(../../img/shockwave.gif)}
 .mceItemFlash {background-image:url(../../img/flash.gif)}
 .mceItemQuickTime {background-image:url(../../img/quicktime.gif)}
@@ -80,4 +80,4 @@ font[face=mceinline] {font-family:inherit !important}
 .mceItemAudio {background-image:url(../../img/video.gif)}
 .mceItemEmbeddedAudio {background-image:url(../../img/video.gif)}
 .mceItemIframe {background-image:url(../../img/iframe.gif)}
-.mcePageBreak {display:block;border:0;width:100%;height:12px;border-top:1px dotted #ccc;margin-top:15px;background:#fff url(../../img/pagebreak.gif) no-repeat center top;}
+.mcePageBreak {display:block;border:0;width:100%;height:12px;border-top:1px dotted #ccc;margin-top:15px;background:$main-color url(../../img/pagebreak.gif) no-repeat center top;}

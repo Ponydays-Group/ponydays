@@ -74,6 +74,7 @@ class ActionTalk extends Action {
 		$this->AddEvent('inbox','EventInbox');
 		$this->AddEvent('add','EventAdd');
 		$this->AddEvent('read','EventRead');
+		$this->AddEvent('readcomments','EventReadComments');
 		$this->AddEvent('delete','EventDelete');
 		$this->AddEvent('ajaxaddcomment','AjaxAddComment');
 		$this->AddEvent('ajaxresponsecomment','AjaxResponseComment');
@@ -405,8 +406,73 @@ class ActionTalk extends Action {
 	/**
 	 * Чтение письма
 	 */
-	protected function EventRead() {
-		$this->sMenuSubItemSelect='read';
+	 protected function EventRead() {
+ 		$this->sMenuSubItemSelect='read';
+ 		/**
+ 		 * Получаем номер сообщения из УРЛ и проверяем существует ли оно
+ 		 */
+ 		$sTalkId=$this->GetParam(0);
+ 		if (!($oTalk=$this->Talk_GetTalkById($sTalkId))) {
+ 			return parent::EventNotFound();
+ 		}
+ 		/**
+ 		 * Пользователь есть в переписке?
+ 		 */
+ 		if (!($oTalkUser=$this->Talk_GetTalkUser($oTalk->getId(),$this->oUserCurrent->getId()))) {
+ 			return parent::EventNotFound();
+ 		}
+ 		/**
+ 		 * Пользователь активен в переписке?
+ 		 */
+ 		if($oTalkUser->getUserActive()!=ModuleTalk::TALK_USER_ACTIVE){
+ 			return parent::EventNotFound();
+ 		}
+ 		/**
+ 		 * Обрабатываем добавление коммента
+ 		 */
+ 		if (isset($_REQUEST['submit_comment'])) {
+ 			$this->SubmitComment();
+ 		}
+ 		/**
+ 		 * Достаём комменты к сообщению
+ 		 */
+ 		$aReturn=$this->Comment_GetCommentsByTargetId($oTalk->getId(),'talk');
+ 		$iMaxIdComment=$aReturn['iMaxIdComment'];
+ 		$aComments=$aReturn['comments'];
+ 		/**
+ 		 * Помечаем дату последнего просмотра
+ 		 */
+ 		$oTalkUser->setDateLast(date("Y-m-d H:i:s"));
+ 		$oTalkUser->setCommentIdLast($iMaxIdComment);
+ 		$oTalkUser->setCommentCountNew(0);
+ 		$this->Talk_UpdateTalkUser($oTalkUser);
+
+ 		$this->Viewer_AddHtmlTitle($oTalk->getTitle());
+ 		$this->Viewer_Assign('oTalk',$oTalk);
+ 		$this->Viewer_Assign('aComments',$aComments);
+ 		$this->Viewer_Assign('iMaxIdComment',$iMaxIdComment);
+ 		/**
+ 		 * Подсчитываем нужно ли отображать комментарии.
+ 		 * Комментарии не отображаются, если у вестки только один читатель
+ 		 * и ранее созданных комментариев нет.
+ 		 */
+ 		if(count($aComments)==0) {
+ 			$iActiveSpeakers=0;
+ 			foreach((array)$oTalk->getTalkUsers() as $oTalkUser) {
+ 				if( ($oTalkUser->getUserId()!=$this->oUserCurrent->getId())
+ 					&& $oTalkUser->getUserActive()==ModuleTalk::TALK_USER_ACTIVE ){
+ 					$iActiveSpeakers++;
+ 					break;
+ 				}
+ 			}
+ 			if($iActiveSpeakers==0) {
+ 				$this->Viewer_Assign('bNoComments',true);
+ 			}
+ 		}
+ 	}
+
+	protected function EventReadComments() {
+		$this->Viewer_SetResponseAjax('json');
 		/**
 		 * Получаем номер сообщения из УРЛ и проверяем существует ли оно
 		 */
@@ -426,18 +492,44 @@ class ActionTalk extends Action {
 		if($oTalkUser->getUserActive()!=ModuleTalk::TALK_USER_ACTIVE){
 			return parent::EventNotFound();
 		}
-		/**
-		 * Обрабатываем добавление коммента
-		 */
-		if (isset($_REQUEST['submit_comment'])) {
-			$this->SubmitComment();
-		}
+
 		/**
 		 * Достаём комменты к сообщению
 		 */
 		$aReturn=$this->Comment_GetCommentsByTargetId($oTalk->getId(),'talk');
 		$iMaxIdComment=$aReturn['iMaxIdComment'];
 		$aComments=$aReturn['comments'];
+
+		$aResult=array();
+		$sReadlast = $oTalkUser->getDateLast();
+
+		foreach($aComments as $oComment) {
+				$aComment = array();
+				$aComment['id'] = $oComment->getId();
+				$aComment['author'] = array("id"=>$oComment->getUserId(), "login"=>$oComment->getUser()->getLogin(), "avatar"=>$oComment->getUser()->getProfileAvatarPath(48));
+				$aComment['date'] = $oComment->getDate();
+				$aComment['text'] = $oComment->getText();
+				$aComment['isFavourite'] = $oComment->getIsFavourite();
+				$aComment['countFavourite'] = $oComment->getCountFavourite();
+				$aComment['rating'] = $oComment->getRating();
+
+				$oVote = $oComment->getVote();
+				if ($oVote) {
+						$aComment['voted'] = true;
+						$aComment['voteDirection'] = $oVote->getDirection();
+				} else {
+						$aComment['voted'] = false;
+						$aComment['voteDirection'] = null;
+				}
+
+				$aComment['targetType'] = $oComment->getTargetType();
+				$aComment['targetId'] = $oComment->getTargetId();
+				$aComment['level'] = $oComment->getLevel();
+				$aComment['parentId'] = $oComment->getPid();
+				$aComment['isNew'] = $sReadlast <= $oComment->getDate();
+			$aResult[$aComment['id']] = $aComment;
+		}
+
 		/**
 		 * Помечаем дату последнего просмотра
 		 */
@@ -446,28 +538,10 @@ class ActionTalk extends Action {
 		$oTalkUser->setCommentCountNew(0);
 		$this->Talk_UpdateTalkUser($oTalkUser);
 
-		$this->Viewer_AddHtmlTitle($oTalk->getTitle());
-		$this->Viewer_Assign('oTalk',$oTalk);
-		$this->Viewer_Assign('aComments',$aComments);
-		$this->Viewer_Assign('iMaxIdComment',$iMaxIdComment);
-		/**
-		 * Подсчитываем нужно ли отображать комментарии.
-		 * Комментарии не отображаются, если у вестки только один читатель
-		 * и ранее созданных комментариев нет.
-		 */
-		if(count($aComments)==0) {
-			$iActiveSpeakers=0;
-			foreach((array)$oTalk->getTalkUsers() as $oTalkUser) {
-				if( ($oTalkUser->getUserId()!=$this->oUserCurrent->getId())
-					&& $oTalkUser->getUserActive()==ModuleTalk::TALK_USER_ACTIVE ){
-					$iActiveSpeakers++;
-					break;
-				}
-			}
-			if($iActiveSpeakers==0) {
-				$this->Viewer_Assign('bNoComments',true);
-			}
-		}
+		$this->Viewer_AssignAjax('aComments',$aResult);
+		$this->Viewer_AssignAjax('sReadlast',$sReadlast);
+		$this->Viewer_AssignAjax('iMaxIdComment',$iMaxIdComment);
+		$this->Viewer_DisplayAjax();
 	}
 	/**
 	 * Проверка полей при создании письма
@@ -577,29 +651,50 @@ class ActionTalk extends Action {
 		/**
 		 * Получаем комментарии
 		 */
-		$aReturn=$this->Comment_GetCommentsNewByTargetId($oTalk->getId(),'talk',$idCommentLast);
+		$aReturn=$this->Comment_GetCommentsNewByTargetIdWithoutHtml($oTalk->getId(),'talk',$idCommentLast);
 		$iMaxIdComment=$aReturn['iMaxIdComment'];
+		$sReadlast = $oTalkUser->getDateLast();
+		$aComments=array();
+		$aCmts=$aReturn['comments'];
+		if ($aCmts and is_array($aCmts)) {
+			foreach ($aCmts as $oComment) {
+				$aComment = array();
+				$aComment['id'] = $oComment->getId();
+				$aComment['author'] = array("id"=>$oComment->getUserId(), "login"=>$oComment->getUser()->getLogin(), "avatar"=>$oComment->getUser()->getProfileAvatarPath(48));
+				$aComment['date'] = $oComment->getDate();
+				$aComment['text'] = $oComment->getText();
+				$aComment['isFavourite'] = $oComment->getIsFavourite();
+				$aComment['countFavourite'] = $oComment->getCountFavourite();
+				$aComment['rating'] = $oComment->getRating();
+
+				$oVote = $oComment->getVote();
+				if ($oVote) {
+						$aComment['voted'] = true;
+						$aComment['voteDirection'] = $oVote->getDirection();
+				} else {
+						$aComment['voted'] = false;
+						$aComment['voteDirection'] = null;
+				}
+
+				$aComment['targetType'] = $oComment->getTargetType();
+				$aComment['targetId'] = $oComment->getTargetId();
+				$aComment['level'] = $oComment->getLevel();
+				$aComment['parentId'] = $oComment->getPid();
+				$aComment['isNew'] = $sReadlast <= $oComment->getDate();
+			$aComments[$aComment['id']] = $aComment;
+			}
+		}
+
 		/**
-		 * Отмечаем дату прочтения письма
-		 */
+		* Отмечаем дату прочтения письма
+		*/
 		$oTalkUser->setDateLast(date("Y-m-d H:i:s"));
 		if ($iMaxIdComment!=0) {
 			$oTalkUser->setCommentIdLast($iMaxIdComment);
 		}
 		$oTalkUser->setCommentCountNew(0);
 		$this->Talk_UpdateTalkUser($oTalkUser);
-
-		$aComments=array();
-		$aCmts=$aReturn['comments'];
-		if ($aCmts and is_array($aCmts)) {
-			foreach ($aCmts as $aCmt) {
-				$aComments[]=array(
-					'html' => $aCmt['html'],
-					'idParent' => $aCmt['obj']->getPid(),
-					'id' => $aCmt['obj']->getId(),
-				);
-			}
-		}
+		
 		$this->Viewer_AssignAjax('aComments',$aComments);
 		$this->Viewer_AssignAjax('iMaxIdComment',$iMaxIdComment);
 		$this->Viewer_AssignAjax('iUserCurrentCountTalkNew',$this->Talk_GetCountTalkNew($this->oUserCurrent->getId()));

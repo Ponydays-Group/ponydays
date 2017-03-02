@@ -6,7 +6,7 @@
     margin: 0;
     box-sizing: border-box;
     width: 201px;
-    background-color: #eee;
+    background-color: $main-accent-second;
     height: 100%;
     top: 0;
     left: -150px;
@@ -20,7 +20,7 @@
 }
 .btn-menu {
     overflow: hidden;
-    color: #fff;
+    color: $main-color;
     padding: 5px;
     position: fixed;
     top: 5px;
@@ -35,7 +35,7 @@
 .btn-menu span {
     display: block;
     height: 5px;
-    background-color: #fff;
+    background-color: $main-color;
     margin: 5px 0 0;
     ftransition: all .1s linear .23s;
     position: relative;

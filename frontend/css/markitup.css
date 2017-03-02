@@ -40,7 +40,7 @@
 }
 
 .markItUpHeader {
-	background: #eee;
+	background: $main-accent-second;
 padding: 5px;
 border-top: 1px solid #c0cad5;
 border-left: 1px solid #c0cad5;

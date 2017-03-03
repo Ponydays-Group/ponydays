@@ -16,6 +16,42 @@ export default class Tree extends React.Component {
   componentDidMount() {
     let comments = this.props.comments
     let ids = this.props.ids
+    let sorted_ids = this.sortTree(ids, comments)
+
+    this.setState({sorted_ids: sorted_ids})
+    window.ids = sorted_ids
+    Emitter.on("comments-new-loaded", function(new_comments){
+
+      console.log("GOTCHA!")
+
+      let new_sorted_ids = this.state.sorted_ids
+      let comments = this.state.comments
+
+      for (let key in new_comments) {
+        let cmt = new_comments[key]
+        if (cmt.parentId) {
+          let parent = comments[cmt.parentId]
+          cmt.level = parseInt(parent.level) + 1
+        }
+        //console.log(key, cmt)
+        comments[cmt.id] = cmt
+        new_sorted_ids.push(cmt.id)
+      }
+      new_sorted_ids = this.sortTree(new_sorted_ids, comments)
+      this.setState({
+        comments: comments,
+        sorted_ids: new_sorted_ids
+      })
+    }.bind(this))
+  }
+  sortTree(r_ids, comments) {
+    let ids = []
+    for (let i in r_ids) {
+      if (ids.indexOf(r_ids[i])>=0) {
+        continue
+      }
+      ids.push(r_ids[i])
+    }
     let sorted_ids = []
     for (let i in ids) {
       if (!comments[ids[i]].parentId) {
@@ -33,30 +69,9 @@ export default class Tree extends React.Component {
         }
       }
     }
-
-    this.setState({sorted_ids: sorted_ids})
-    window.ids = sorted_ids
-    Emitter.on("comments-new-loaded", function(new_comments){
-      console.log("GOTCHA!")
-      let new_sorted_ids = this.state.sorted_ids
-      let comments = this.state.comments
-      for (let key in new_comments) {
-        let cmt = new_comments[key]
-        if (cmt.parentId) {
-          let parent = comments[cmt.parentId]
-          cmt.level = parseInt(parent.level) + 1
-        }
-        //console.log(key, cmt)
-        comments[cmt.id] = cmt
-        new_sorted_ids = this.injectComment(cmt, new_sorted_ids, comments)
-      }
-      this.setState({
-        comments: comments,
-        sorted_ids: new_sorted_ids
-      })
-    }.bind(this))
+    return sorted_ids
   }
-  injectComment(new_comment, sorted_ids, comments) {
+  __injectComment(new_comment, sorted_ids, comments) {
 	      var search = sorted_ids.slice(sorted_ids.indexOf(new_comment.parentId) + 1, sorted_ids.length);
 	      var insert_before = null;
 	      var parent = comments[new_comment.parentId];

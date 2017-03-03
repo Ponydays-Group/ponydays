@@ -39,6 +39,7 @@ input, textarea, select                                     { margin:0; padding:
     -moz-transition:all 0.2s cubic-bezier(0.33, 0, 0.2, 1) 0s;
     -webkit-transition:all 0.2s cubic-bezier(0.33, 0, 0.2, 1) 0s;
     -o-transition:all 0.2s cubic-bezier(0.33, 0, 0.2, 1) 0s;
+    background: $main-accent-fifth;
 }
 textarea                                                    { padding:0 0 0 10px; resize:none; min-height:100px; overflow-y:auto; }
 input[type="search"]                                        { -webkit-padding-start:0;  }

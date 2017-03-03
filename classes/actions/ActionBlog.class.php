@@ -847,6 +847,7 @@ class ActionBlog extends Action {
 
 		$this->Viewer_AssignAjax("aComments", $aResult);
 		$this->Viewer_AssignAjax("sReadlast", $sReadlast);
+		$this->Viewer_AssignAjax("iMaxIdComment", $iMaxIdComment);
 		$this->Viewer_DisplayAjax();
 	}
 	function getJsonData(){

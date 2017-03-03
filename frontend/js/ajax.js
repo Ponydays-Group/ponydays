@@ -93,9 +93,11 @@ export function ajaxSubmit(url, form, callback, more) {
     let options = {
         type: 'POST',
         url: url,
-        dataType: more.dataType || 'json',
         data: {security_ls_key: LIVESTREET_SECURITY_KEY},
-        success: callback || function () {
+        success: function(data){
+          data = JSON.parse(data)
+          callback(data)
+        } || function () {
             Tools.debug("ajax success: ");
             Tools.debug.apply(this, arguments);
         }.bind(this),
@@ -107,23 +109,28 @@ export function ajaxSubmit(url, form, callback, more) {
     };
 
     Hook.run('ls_ajaxsubmit_before', [options], this);
+    console.log("Ajax load")
 
-    form.ajaxSubmit(options);
+    form.ajaxSubmit(options)
 }
 
 /**
  * Загрузка изображения
  */
-export function ajaxUploadImg(form, sToLoad) {
-    Hook.marker('ajaxUploadImgBefore');
-    ajaxSubmit('upload/image/', form, function (data) {
+export async function ajaxUploadImg(form, sToLoad) {
+    console.log('ajaxUploadImgBefore');
+    let result = await ajaxSubmit('upload/image/', form, function (data) {
+      console.log("DATA: ", data)
         if (data.bStateError) {
+          console.log("Not Submit")
             Msg.error(data.sMsgTitle, data.sMsg);
         } else {
+          console.log("STEXT: ", data.sText)
             $.markItUp({replaceWith: data.sText});
             $('#window_upload_img').find('input[type="text"], input[type="file"]').val('');
             $('#window_upload_img').jqmHide();
             Hook.marker('ajaxUploadImgAfter');
         }
     });
+    console.log(result)
 }

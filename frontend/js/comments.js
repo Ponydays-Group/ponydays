@@ -59,12 +59,13 @@ export async function loadComments() {
 }
 
 export async function renderComments() {
-  let comments = await loadComments()
-  comments = comments.aComments
+  let result = await loadComments()
+  let comments = result.aComments
   let ids = []
   for (let id in comments) {
     ids.push(id)
   }
+  $("#comment_last_id").val(result.iMaxIdComment)
   ReactDOM.render(<CommentsTree ids={ids} comments={comments}/>, $("#comments-tree")[0])
   calcNewComments()
   resize_sidebar()

@@ -1060,12 +1060,12 @@ class ActionAjax extends Action {
 	 * Загрузка изображения
 	 *
 	 */
-	protected function EventUploadImage() {
+	protected function _EventUploadImage() {
 		/**
 		 * Т.к. используется обработка отправки формы, то устанавливаем тип ответа 'jsonIframe' (тот же JSON только обернутый в textarea)
 		 * Это позволяет избежать ошибок в некоторых браузерах, например, Opera
 		 */
-		$this->Viewer_SetResponseAjax('jsonIframe',false);
+		$this->Viewer_SetResponseAjax('json',false);
 		/**
 		 * Пользователь авторизован?
 		 */
@@ -1074,8 +1074,8 @@ class ActionAjax extends Action {
 			return;
 		}
 		$sFile=null;
-                
-                
+
+
                 if (isPost('img_url') && $_REQUEST['img_url']!='' && $_REQUEST['img_url']!='http://') {
                         /**
                          * Загрузка файла по URl
@@ -1104,16 +1104,14 @@ class ActionAjax extends Action {
                                         return;
                         }
 
-                        if ($sFile) {                        
+                        if ($sFile) {
                                 $sText=$this->Image_BuildHTML($sFile, $_REQUEST);
                         }
 
                 } else {
-			$arr = array();
-
                         foreach ($_FILES['img_file'] as $k=>$v){
                            if(is_array($v)){
-                               foreach ($v as $sk=>$sv){ 
+                               foreach ($v as $sk=>$sv){
                                         $arr[$sk][$k]=$sv;
                                 }
                                }
@@ -1139,15 +1137,74 @@ class ActionAjax extends Action {
                                                 $sText.=$this->Image_BuildHTML($sFile, $_REQUEST);
                                         }
 
-                                }	
+                                }
 
                         } //foreach
 
                 }
 
-		$this->Viewer_AssignAjax('sText',$sText);		
-		
+		$this->Viewer_AssignAjax('sText',$sText);
+
 	}
+
+	protected function EventUploadImage() {
+	/**
+	 * Т.к. используется обработка отправки формы, то устанавливаем тип ответа 'jsonIframe' (тот же JSON только обернутый в textarea)
+	 * Это позволяет избежать ошибок в некоторых браузерах, например, Opera
+	 */
+	$this->Viewer_SetResponseAjax('json',false);
+	/**
+	 * Пользователь авторизован?
+	 */
+	if (!$this->oUserCurrent) {
+		$this->Message_AddErrorSingle($this->Lang_Get('need_authorization'),$this->Lang_Get('error'));
+		return;
+	}
+	$sFile=null;
+	/**
+	 * Был выбран файл с компьютера и он успешно зугрузился?
+	 */
+	if (is_uploaded_file($_FILES['img_file']['tmp_name'])) {
+		if(!$sFile=$this->Topic_UploadTopicImageFile($_FILES['img_file'],$this->oUserCurrent)) {
+			$this->Message_AddErrorSingle($this->Lang_Get('uploadimg_file_error'),$this->Lang_Get('error'));
+			return;
+		}
+	} elseif (isPost('img_url') && $_REQUEST['img_url']!='' && $_REQUEST['img_url']!='http://') {
+		/**
+		 * Загрузка файла по URl
+		 */
+		$sFile=$this->Topic_UploadTopicImageUrl($_REQUEST['img_url'],$this->oUserCurrent);
+		switch (true) {
+			case is_string($sFile):
+
+				break;
+
+			case ($sFile==ModuleImage::UPLOAD_IMAGE_ERROR_READ):
+				$this->Message_AddErrorSingle($this->Lang_Get('uploadimg_url_error_read'),$this->Lang_Get('error'));
+				return;
+
+			case ($sFile==ModuleImage::UPLOAD_IMAGE_ERROR_SIZE):
+				$this->Message_AddErrorSingle($this->Lang_Get('uploadimg_url_error_size'),$this->Lang_Get('error'));
+				return;
+
+			case ($sFile==ModuleImage::UPLOAD_IMAGE_ERROR_TYPE):
+				$this->Message_AddErrorSingle($this->Lang_Get('uploadimg_url_error_type'),$this->Lang_Get('error'));
+				return;
+
+			default:
+			case ($sFile==ModuleImage::UPLOAD_IMAGE_ERROR):
+				$this->Message_AddErrorSingle($this->Lang_Get('uploadimg_url_error'),$this->Lang_Get('error'));
+				return;
+		}
+	}
+	/**
+	 * Если файл успешно загружен, формируем HTML вставки и возвращаем в ajax ответе
+	 */
+	if ($sFile) {
+		$sText=$this->Image_BuildHTML($sFile, $_REQUEST);
+		$this->Viewer_AssignAjax('sText',$sText);
+	}
+}
 	/**
 	 * Автоподставновка тегов
 	 *
@@ -1271,7 +1328,7 @@ class ActionAjax extends Action {
 			$this->Message_AddErrorSingle($this->Lang_Get('system_error'),$this->Lang_Get('error'));
 			return;
 		}
-		
+
 		$isAllowLockControlTopic = $this->ACL_IsAllowLockTopicControl($oTopic,$this->oUserCurrent);
 		if(!$isAllowLockControlTopic) {
 			$this->Message_AddErrorSingle($this->Lang_Get('not_access'),$this->Lang_Get('error'));
@@ -1289,7 +1346,7 @@ class ActionAjax extends Action {
 			return;
 		}
 	}
-	
+
 	protected function EventGetObjectVotes() {
 		$ne_enable_level = Config::Get('acl.vote_state.comment.ne_enable_level');
 		/**
@@ -1299,7 +1356,7 @@ class ActionAjax extends Action {
 			$this->Message_AddErrorSingle($this->Lang_Get('need_authorization'),$this->Lang_Get('error'));
 			return;
 		}
-		
+
 		$targetId = (int) getRequestStr('targetId',null,'post');
 		$targetType = getRequestStr('targetType',null,'post');
 		switch($targetType) {
@@ -1317,12 +1374,12 @@ class ActionAjax extends Action {
 			$this->Message_AddErrorSingle($this->Lang_Get('system_error'),$this->Lang_Get('error'));
 			return;
 		}
-		
+
 		if(!$this->ACL_CheckSimpleAccessLevel($ne_enable_level, $this->oUserCurrent, $oTarget, $targetType)) {
 			$this->Message_AddErrorSingle($this->Lang_Get('not_access'),$this->Lang_Get('error'));
 			return;
 		}
-		
+
 		$aVotes = $this->Vote_GetVoteById($targetId, $targetType);
 		$aResult = array();
 		foreach($aVotes as $oVote) {

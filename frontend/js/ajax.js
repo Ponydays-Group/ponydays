@@ -95,7 +95,7 @@ export function ajaxSubmit(url, form, callback, more) {
         url: url,
         data: {security_ls_key: LIVESTREET_SECURITY_KEY},
         success: function(data){
-          data = JSON.parse(data)
+          if (typeof(data)=="string"){data = JSON.parse(data)}
           callback(data)
         } || function () {
             Tools.debug("ajax success: ");

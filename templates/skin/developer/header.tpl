@@ -70,7 +70,7 @@
 	</script>
 
 
-	<link rel="stylesheet" href="/static/{cfg name="frontend.version"}/main.css" type="text/css" />
+	<link rel="stylesheet" href="/static/{cfg name="frontend.version"}/{cfg name="theme"}.css" type="text/css" />
 
 
 	{hook run='html_head_end'}

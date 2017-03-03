@@ -135,12 +135,11 @@
 }
 
 .stream-fixed {
-    position: fixed;
-    top: 10px;
-    /*bottom: 10px;*/
-    max-height: 97%;
-    margin-bottom: 0;
-    /*right: 10px;*/
-    width: 350px;
-    overflow-y: auto;
+  position: fixed;
+  top: 0px;
+  height: 100%;
+  max-height: 100%;
+  margin-bottom: 0;
+  overflow-y: auto;
+  background: #edf1f2;
 }

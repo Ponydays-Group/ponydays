@@ -83,7 +83,7 @@
 		height: $userbar-height;
 
 		a:hover {
-			background: lighten($userbar-background, 5%);
+			background: $userbar-hover-background;
 		}
 	}
 }

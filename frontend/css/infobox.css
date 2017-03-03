@@ -12,7 +12,7 @@
 	padding: 15px;
 	min-width: 50px;
 	max-width: 300px;
-	color: $text-color;
+	color: $stream-text-color;
 	background: rgba(0,0,0,.8);
 	border-radius: 5px;
 }

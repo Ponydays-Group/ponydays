@@ -19,7 +19,13 @@
 		<table class="table table-talk">
 			<thead>
 				<tr>
-					<th class="cell-checkbox"><input type="checkbox" name="" class="input-checkbox" onclick="ls.tools.checkAll('form_talks_checkbox', this, true);"></th>
+					<th class="cell-checkbox">{* <span class="checkbox"> <span><label for="select_all"></label><input type="checkbox" name="select_all" class="input-checkbox" onclick="ls.tools.checkAll('form_talks_checkbox', this, true);"></span></span> *}
+						<span class="checkbox">
+											<span>
+													<input id="select_all_talks" type="checkbox" name="select_all_talks" class="input-checkbox" onclick="ls.tools.checkAll('form_talks_checkbox', this, true);" />
+								<label for="select_all_talks"></label>
+											</span>
+										</span></th>
 					<th class="cell-favourite"></th>
 					<th class="cell-recipients">{$aLang.talk_inbox_target}</th>
 					<th class="cell-title">{$aLang.talk_inbox_title}</th>
@@ -31,7 +37,14 @@
 				{foreach from=$aTalks item=oTalk}
 					{assign var="oTalkUserAuthor" value=$oTalk->getTalkUser()}
 					<tr>
-						<td class="cell-checkbox"><input type="checkbox" name="talk_select[{$oTalk->getId()}]" class="form_talks_checkbox input-checkbox" /></td>
+						<td class="cell-checkbox">
+							<span class="checkbox">
+												<span>
+														<input type="checkbox" id="talk_select[{$oTalk->getId()}]" name="talk_select[{$oTalk->getId()}]" class="form_talks_checkbox input-checkbox" />
+									<label for="talk_select[{$oTalk->getId()}]"></label>
+												</span>
+											</span>
+										</td>
 						<td class="cell-favourite">
 							<a href="#" onclick="return ls.favourite.toggle({$oTalk->getId()},this,'talk');" class="favourite {if $oTalk->getIsFavourite()}active{/if}"></a>
 						</td>
@@ -53,7 +66,7 @@
 									{/if}
 								</a>
 							{/strip}
-							
+
 							{if $oTalk->getCountComment()}
 								({$oTalk->getCountComment()}{if $oTalkUserAuthor->getCommentCountNew()} +{$oTalkUserAuthor->getCommentCountNew()}{/if})
 							{/if}
@@ -73,6 +86,6 @@
 	<div class="notice-empty">{$aLang.talk_inbox_empty}</div>
 {/if}
 
-			
+
 {include file='paging.tpl' aPaging=$aPaging}
 {include file='footer.tpl'}

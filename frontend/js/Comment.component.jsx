@@ -116,9 +116,9 @@ export default class Comment extends React.Component {
                   "voted-up": data.voteDirection > 0,
                   "voted-down": data.voteDirection < 0,
                 })}>
-    						{LOGGED_IN? <div className="vote-down fa fa-minus-square-o" onClick={this.voteDown.bind(this)}></div> : ""}
+                {LOGGED_IN? <div className="vote-up fa fa-plus-square-o" onClick={this.voteUp.bind(this)}></div> : "" }
     						<span className="vote-count" id={"vote_total_comment_"+data.id}>{data.rating > 0? "+" : ""}{data.rating}</span>
-    						{LOGGED_IN? <div className="vote-up fa fa-plus-square-o" onClick={this.voteUp.bind(this)}></div> : "" }
+                {LOGGED_IN? <div className="vote-down fa fa-minus-square-o" onClick={this.voteDown.bind(this)}></div> : ""}
     					</li>
     			</ul>
     </section>

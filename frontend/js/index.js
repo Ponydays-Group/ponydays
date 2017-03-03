@@ -1,33 +1,41 @@
-require('../css/index.scss')
+window.getCookie = function(name) {
+    var matches = document.cookie.match(new RegExp(
+        "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+    ));
+    return matches ? decodeURIComponent(matches[1]) : undefined;
+}
 
-// Function.prototype.bind = function(context) {
-//   try {
-//     var fn = this;
-//     if(jQuery.type(fn) != 'function'){
-//         throw new TypeError('Function.prototype.bind: call on non-function');
-//     };
-//     if(jQuery.type(context) == 'null'){
-//         throw new TypeError('Function.prototype.bind: cant be bound to null');
-//     };
-//     return function() {
-//         return fn.apply(context, arguments);
-//     };
-//   } catch(e) {
-//     console.log(e);
-//   }
-// };
-String.prototype.tr = function(a,p) {
+
+window.switchTheme = function() {
+    var date = new Date;
+    date.setDate(date.getDate() + 100);
+    if (getCookie("SiteStyle") == "Dark") {
+        document.cookie = "SiteStyle=Light; path=/; expires=" + date.toUTCString();
+        location.reload();
+    } else {
+        if (getCookie("SiteStyle") == "Light") {
+            document.cookie = "SiteStyle=Dark; path=/; expires=" + date.toUTCString();
+            location.reload();
+        } else {
+            document.cookie = "SiteStyle=Dark; path=/; expires=" + date.toUTCString();
+            location.reload();
+        }
+    }
+}
+
+
+String.prototype.tr = function(a, p) {
     var k;
-    var p = typeof(p)=='string' ? p : '';
+    var p = typeof(p) == 'string' ? p : '';
     var s = this;
-    jQuery.each(a,function(k){
-        var tk = p?p.split('/'):[];
+    jQuery.each(a, function(k) {
+        var tk = p ? p.split('/') : [];
         tk[tk.length] = k;
         var tp = tk.join('/');
-        if(typeof(a[k])=='object'){
-            s = s.tr(a[k],tp);
-        }else{
-            s = s.replace((new RegExp('%%'+tp+'%%', 'g')), a[k]);
+        if (typeof(a[k]) == 'object') {
+            s = s.tr(a[k], tp);
+        } else {
+            s = s.replace((new RegExp('%%' + tp + '%%', 'g')), a[k]);
         };
     });
     return s;

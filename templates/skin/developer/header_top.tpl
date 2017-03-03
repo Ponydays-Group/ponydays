@@ -8,6 +8,11 @@
 	{hook run='userbar_nav'}
 
 	<ul class="nav nav-userbar">
+		<li>
+			<a href="#" onclick="switchTheme()">
+				<i class="fa fa-{cfg name="icon"}-o"></i>
+			</a>
+		</li>
 		{if $oUserCurrent}
 		<li title="{$aLang.block_create}">
         <a href="{router page='topic'}add/" class="write" id="modal_write_show">

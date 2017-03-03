@@ -4,7 +4,7 @@
 
 /* Голосование
 ---------------------------------------------------- */
-.vote .vote-count 							{ display: inline-block; font-weight: bold; color: #aaa; margin-top: -1px; margin-right: 5px;}
+.vote .vote-count 							{ display: inline-block; font-weight: bold; color: #aaa; margin-top: -1px;}
 .vote .vote-count a 						{ text-decoration: none; color: #999; outline: none; }
 
 .vote.vote-count-positive .vote-count 		{ color: #390; }
@@ -13,6 +13,7 @@
 .vote {float: right;}
 
 .vote .vote-up {margin-right: 5px;}
+.vote .vote-down {margin-left: 5px;}
 .vote .vote-up,
 .vote .vote-down 							{ margin-top: 1px; font-size: 14px; display: inline-block; cursor: pointer; vertical-align: text-top; background: url(images/icons.png) no-repeat; opacity: .3; filter: alpha(opacity=30); }
 .vote .vote-up 								{ background-position: -408px -96px; }

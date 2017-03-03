@@ -27,15 +27,24 @@ let config = {
 
     entry: {
         main: './js/index',
-        vendor: vendors
+        vendor: vendors,
+        light: './css/light.scss',
+        dark: './css/dark.scss',
     },
     output: {
         path: path.join(__dirname, 'static', '[hash]'),
         filename: '[name].bundle.js'
     },
     module: {
-        loaders: [
-            {test: /\.jsx?$/, loader: 'babel-loader', exclude: /node_modules/, query: {presets: ['es2015', 'stage-0', 'react']}, compact: true},
+        loaders: [{
+                test: /\.jsx?$/,
+                loader: 'babel-loader',
+                exclude: /node_modules/,
+                query: {
+                    presets: ['es2015', 'stage-0', 'react']
+                },
+                compact: true
+            },
             {
                 test: /\.scss$/,
                 loader: ExtractTextPlugin.extract("style-loader", "css!autoprefixer-loader?browsers=last 15 versions!resolve-url-loader!sass")
@@ -50,7 +59,10 @@ let config = {
                     'file-loader?name=img-[sha512:hash:base64:7].[ext]'
                 ]
             },
-            { test: /\.(png|woff|woff2|eot|ttf|svg)$/, loader: 'url-loader?limit=100000' }
+            {
+                test: /\.(png|woff|woff2|eot|ttf|svg)$/,
+                loader: 'url-loader?limit=100000'
+            }
         ]
     },
     resolve: {
@@ -63,7 +75,9 @@ let config = {
     },
     plugins: [
         new ExtractTextPlugin("[name].css"),
-        new webpack.optimize.CommonsChunkPlugin({name:'vendor'}),
+        new webpack.optimize.CommonsChunkPlugin({
+            name: 'vendor'
+        }),
         new webpack.optimize.DedupePlugin(),
         function() {
             this.plugin('done', function(stats) {
@@ -79,7 +93,7 @@ let config = {
     }
 };
 
-if(isProduction) {
+if (isProduction) {
     config.plugins.push(new webpack.optimize.UglifyJsPlugin())
 }
 module.exports = config;

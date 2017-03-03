@@ -594,6 +594,16 @@ $config['acl']['vote_state']['comment']['oe_end'] = 1470700800;	// 2016-08-09 00
 $config['acl']['vote_state']['comment']['oe_enable_level'] = 1;
 // кому разрешено видеть юзеров оценок за "новый" период
 $config['acl']['vote_state']['comment']['ne_enable_level'] = 1;
+
+$config["theme"] = "light";
+$config["icon"] = "moon";
+
+if (in_array('SiteStyle', array_keys($_COOKIE))){
+  if ($_COOKIE['SiteStyle']=='Dark') {
+    $config["theme"] = "dark";
+    $config["icon"] = "sun";
+  }
+}
 //	0 — никто
 //	1 — администраторы сайта
 //	2 — администраторы сайта, модераторы сайта (с учётом ограничений)

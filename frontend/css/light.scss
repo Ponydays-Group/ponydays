@@ -1,0 +1,74 @@
+@import url(http://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css);
+
+$link-color: #38a6a6;
+
+$userbar-height: 64px;
+
+$search-color: white;
+$search-active-color: rgba(61, 142, 185, 1);
+$search-background: #38a6a6;
+
+$background-color: #f7f7f7;
+$userbar-background: #fff;
+$userbar-hover-background: darken($userbar-background, 5%);
+$content-background: #fff;
+$accent: #fafafa;
+$secondary-accent: #edf1f2;
+$text-color: black;
+$stream-text-color: white;
+$stream-item-border: #eee;
+$comments-border-top: 1px solid #e7e8ec;
+$main-color: white;
+$main-accent: #f3f3f3;
+$main-accent-second: #eee;
+$main-accent-third: #ddd;
+$spoiler-background: #e6e6e6;
+$main-accent-fourth: #fff;
+$main-accent-fifth: #fff;
+$image-opacity: 1;
+$image-opacity-hover: 1;
+$comment-self-background: rgba(197, 247, 234, 0.42);
+$comment-new-background: rgba(251, 251, 168, 0.35);
+$comment-current-background: rgba(165, 231, 250, 0.4);
+$comment-deleted-background: #efd5d5;
+
+@mixin placeholder ($rules) {
+
+  @each $rule in $rules {
+    ::-webkit-input-placeholder,
+    :-moz-placeholder,
+    ::-moz-placeholder,
+    :-ms-input-placeholder {
+      #{nth($rule, 1)}: #{nth($rule, 2)};
+    }
+  }
+}
+
+@import "bootstrap/assets/stylesheets/bootstrap";
+@import "./markitup";
+@import "./base";
+@import "./blocks";
+@import "./blog";
+@import "./buttons";
+@import "./comments";
+@import "./common";
+@import "./grid";
+@import "./icons";
+@import "./infobox";
+@import "./jquery.notifier";
+@import "./menu";
+@import "./modals";
+@import "./navs";
+@import "./print";
+@import "./profile";
+@import "./reset";
+@import "./tables";
+@import "./text";
+@import "./topic";
+@import "./wall";
+@import "./forms";
+@import "./jquery.Jcrop";
+
+@import "./amazium/variables";
+@import "./amazium/form";
+@import "./themes/base/all"

@@ -181,7 +181,7 @@
 .item-list li 				{ min-height: 51px; padding: 7px 0 10px 58px; border-bottom: 1px solid $stream-item-border; position: relative; zoom: 1; }
 .item-list li p 			{ padding-top: 2px; font-size: 11px; }
 .item-list li a 			{ text-decoration: none; }
-.item-list li .avatar 		{ position: absolute; top: 3px; left: 0; margin-right: 10px; background: white; border-radius: 50%; border: 1px solid rgba(184, 194, 199, 0.46);}
+.item-list li .avatar 		{ position: absolute; top: 3px; left: 0; margin-right: 10px; background: $main-color; border-radius: 50%; border: 1px solid $main-color;}
 .item-list li .author 		{ font-weight: bold; color: $text-color; }
 .item-list li .blog-name 	{ font-weight: bold; }
 

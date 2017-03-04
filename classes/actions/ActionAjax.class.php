@@ -1164,6 +1164,9 @@ class ActionAjax extends Action {
 	/**
 	 * Был выбран файл с компьютера и он успешно зугрузился?
 	 */
+	 if (!in_array('img_file', $_FILES)){
+		 $_FILES['img_file'] = array('tmp_name'=>'');
+	 }
 	if (is_uploaded_file($_FILES['img_file']['tmp_name'])) {
 		if(!$sFile=$this->Topic_UploadTopicImageFile($_FILES['img_file'],$this->oUserCurrent)) {
 			$this->Message_AddErrorSingle($this->Lang_Get('uploadimg_file_error'),$this->Lang_Get('error'));

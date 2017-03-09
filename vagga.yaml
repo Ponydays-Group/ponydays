@@ -49,6 +49,7 @@ containers:
       - !AlpineRepo {branch: edge, repo: testing, tag: testing}
       - !AlpineRepo {branch: edge, repo: community, tag: community}
       - !Install
+        - libwebp@main
         - php5-fpm
         - libressl@main
         - php7-fpm@community

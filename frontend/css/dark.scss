@@ -12,25 +12,34 @@ $background-color: #1a1a1a;
 $userbar-background: #131313;
 $userbar-hover-background: lighten($userbar-background, 5%);
 $content-background: #131313;
-$accent: #181818;
-$secondary-accent: #1d2122;
 $text-color: #c9c9c9;
 $stream-text-color: white;
 $stream-item-border: transparent;
 $comments-border-top: 1px solid #27282b;
-$main-color: #131313;
-$main-accent: #131313;
+
+$accent: #181818;
+$secondary-accent: #1d2122;
+
+$main-color: #313131;
+$main-accent: #313131;
 $main-accent-second: #0c0c0c;
 $main-accent-third: #1f1f1f;
 $main-accent-fourth: #212121;
 $main-accent-fifth: #333;
+
 $spoiler-background: #333;
+
 $image-opacity: 0.6;
 $image-opacity-hover: 1;
+
 $comment-self-background: #212121;
 $comment-new-background: rgb(45, 45, 45);
 $comment-current-background: #313851;
 $comment-deleted-background: #621717;
+
+$pre-background: #313131;
+$blockquote-background: #313131;
+$blockquote-border: #212121;
 
 @mixin placeholder ($rules) {
 

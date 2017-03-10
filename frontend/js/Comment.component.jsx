@@ -58,7 +58,9 @@ export default class Comment extends React.Component {
 
   render() {
     let data = this.props.data
-    return <section id={"comment_id_"+data.id} ref={"comment_id_"+data.id} data-level={data.level} style={{marginLeft:data.level*20}} className={classNames({
+    let level = data.level > this.props.maxNesting? this.props.maxNesting : data.level
+    console.log(data.level > this.props.maxNesting)
+    return <section id={"comment_id_"+data.id} ref={"comment_id_"+data.id} data-level={level} style={{marginLeft:level*20}} className={classNames({
         "comment": true,
         "comment-bad": data.rating < -5,
         "comment-deleted": data.isDeleted,

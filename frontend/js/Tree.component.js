@@ -8,12 +8,20 @@ export default class Tree extends React.Component {
 
   state = {
     sorted_ids: this.props.ids,
-    comments: this.props.comments
+    comments: this.props.comments,
+    max_nesting: parseInt (($("#comments").width()-250)/20)
   }
 
-
+  calcNesting() {
+    this.setState({
+      max_nesting: parseInt(($("#comments").width()-250)/20)
+    })
+  }
 
   componentDidMount() {
+
+    $(window).on('resize', this.calcNesting.bind(this))
+
     let comments = this.props.comments
     let ids = this.props.ids
     let sorted_ids = this.sortTree(ids, comments)
@@ -44,6 +52,7 @@ export default class Tree extends React.Component {
       })
     }.bind(this))
   }
+
   sortTree(r_ids, comments) {
     let ids = []
     for (let i in r_ids) {
@@ -71,66 +80,10 @@ export default class Tree extends React.Component {
     }
     return sorted_ids
   }
-  __injectComment(new_comment, sorted_ids, comments) {
-	      var search = sorted_ids.slice(sorted_ids.indexOf(new_comment.parentId) + 1, sorted_ids.length);
-	      var insert_before = null;
-	      var parent = comments[new_comment.parentId];
-        if (sorted_ids.indexOf(new_comment.id)>0) {
-          return sorted_ids
-        }
-	      if (parent) {
-	        for (var i in search) {
-	          var id = search[i];
-	          var cmt = comments[id];
-	          if (cmt.level <= parent.level && cmt.id != parent.id) {
-	            insert_before = id;
-	            break;
-	          }
-	        }
-	      }
-	      if (insert_before) {
-	        sorted_ids.splice(sorted_ids.indexOf(insert_before), 0, new_comment.id);
-	      } else {
-	        sorted_ids.push(new_comment.id);
-	      }
-        console.log(insert_before, ids, search, search.length+sorted_ids.slice(0, sorted_ids.indexOf(new_comment.parentId)+1).length)
-	      return sorted_ids;
-      }
-
-  _injectComment(comment, ids, comments) {
-    if (!comment.parentId) {
-      ids.push(comment.id)
-      return ids
-    }
-
-    let parent_index = ids.indexOf(comment.parentId)
-    let parent = comments[ids[parent_index]]
-
-    let comments_search = ids.slice(parent_index+1)
-    //comments_search.reverse()
-
-    let insert_before = null
-    let insert_after = null
-
-    for (let i in comments_search) {
-      let curr = comments[comments_search[i]]
-      if (curr.level <= parent.level && curr != parent) {
-        insert_before = ids.indexOf(curr)
-      }
-    }
-
-    if (insert_before) {
-      ids.splice(insert_before, 0, comment.id)
-    } else {
-      ids.push(comment.id)
-    }
-    console.log(ids, comments)
-    return ids
-  }
 
   render() {
     return <div>{this.state.sorted_ids.map(function(id){
-      return <Comment key={"comment_"+id} data={this.props.comments[id]} />
+      return <Comment key={"comment_"+id} data={this.props.comments[id]} maxNesting={this.state.max_nesting} />
     }.bind(this))}</div>
   }
 }

@@ -9,7 +9,7 @@
     top: 25%;
     left: 50%;
 
-    width: 300px;
+    width: 100%;
     margin-left: -150px;
 
     color: $text-color;
@@ -41,17 +41,17 @@
 
 
 /* ����� ����� */
-.modal.modal-login { width: 450px; margin-left: -225px; top: 50px; }
+.modal.modal-login { max-width: 450px; margin-left: -225px; top: 50px; }
 .modal.modal-login .nav { margin-bottom: 30px; }
 
 
 /* ���������� ������ */
-.modal.modal-write { width: 740px; margin-left: -370px; top: 50px; }
+.modal.modal-write { max-width: 740px; margin-left: -370px; top: 50px; }
 .modal.modal-write .modal-content { padding: 20px 10px 0; *padding: 20px 10px 15px; }
 .modal.modal-write .write-list { *overflow: hidden; *zoom: 1; }
-.modal.modal-write .write-list li { width: 100px; margin: 0 10px 20px; text-align: center; overflow: hidden; display: inline-table; *float: left; }
+.modal.modal-write .write-list li { max-width: 100px; margin: 0 10px 20px; text-align: center; overflow: hidden; display: inline-table; *float: left; }
 .modal.modal-write .write-list li a { color: #39576B; }
-.modal.modal-write .write-list li .write-item-image { display: block; width: 100px; height: 100px; border-radius: 3px; text-align: center; background: url(images/write.png) no-repeat; margin-bottom: 10px; }
+.modal.modal-write .write-list li .write-item-image { display: block; max-width: 100px; height: 100px; border-radius: 3px; text-align: center; background: url(images/write.png) no-repeat; margin-bottom: 10px; }
 
 .modal.modal-write .write-list li.write-item-type-topic .write-item-image 		{ background-position: 0 0; }
 .modal.modal-write .write-list li.write-item-type-poll .write-item-image 		{ background-position: -100px 0; }
@@ -62,4 +62,15 @@
 
 
 /* Upload Image */
-.modal-image-upload { width: 500px; margin-left: -250px; }
+.modal-image-upload { max-width: 500px; margin-left: -250px; }
+
+@media screen and (max-width: 500px) {
+  .modal {
+    left: 0;
+    top: 50px;
+  }
+
+  .modal.modal-login {
+    margin-left: 0;
+  }
+}

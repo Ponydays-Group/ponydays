@@ -66,7 +66,7 @@ h2.header-table { margin-bottom: 0; border-bottom: 1px solid #eee; padding-botto
 
 /* Stat
 ---------------------------------------------------- */
-.stat-performance { width: 910px; margin: 0 auto 20px; padding: 15px 20px; background: #fff; border-top: 1px solid #eee; border-bottom: 1px solid #eee; }
+.stat-performance { display: none; width: 910px; margin: 0 auto 20px; padding: 15px 20px; background: #fff; border-top: 1px solid #eee; border-bottom: 1px solid #eee; }
 .stat-performance table { }
 .stat-performance table td { width: 200px; vertical-align: top; }
 .stat-performance h4 { font-weight: bold; }

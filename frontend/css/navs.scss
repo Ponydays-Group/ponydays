@@ -76,7 +76,7 @@
 /* Userbar */
 #userbar {
 	position: relative;
-	height: $userbar-height;
+	min-height: $userbar-height;
 	background: $userbar-background;
 	color: #67737a;
 	li {
@@ -99,6 +99,25 @@
 	justify-content: center;
 	align-items: center;
 	font-style: italic;
+}
+
+@media screen and (max-width: 1100px) {
+	#userbar{
+		.site-title {
+			left:0;
+		}
+		.search {
+			display: none;
+		}
+	}
+}
+
+@media screen and (max-width: 500px) {
+	#userbar{
+		.site-title {
+			display: none;
+		}
+	}
 }
 
 
@@ -153,3 +172,7 @@
 .dropdown-create 		{ position: relative; margin-right: 120px; }
 .dropdown-create a 		{ font-weight: normal; }
 .dropdown-create h2 a 	{ text-transform: lowercase; }
+
+.container>.navbar-header,.container>.navbar-collapse,.container-fluid>.navbar-header,.container-fluid>.navbar-collapse {
+    margin-right:0px;
+}

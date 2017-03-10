@@ -60,7 +60,9 @@ export default function init() {
         $('html').removeClass('no-js');
 
         window.resize_sidebar = function() {
+          if ($("#content").offset().top == $("#sidebar").offset().top) {
             $("#sidebar").css("height", $("#wrapper").height() > $("#sidebar").height() ? $("#wrapper").height() : null)
+          }
         }
         $(window).on('resize', window.resize_sidebar)
 

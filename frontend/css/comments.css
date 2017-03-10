@@ -47,9 +47,9 @@
 }
 
 .comments.comment-list .comment-path {
-    background: #eee;
+    background: $main-accent-fourth;
     padding: 5px 10px 6px;
-    border-top: 1px solid #ddd;
+    border-top: 1px solid $main-accent-fourth;
 }
 
 .comments.comment-list .comment-path .blog-name {

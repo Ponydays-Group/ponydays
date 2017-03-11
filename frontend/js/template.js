@@ -57,6 +57,20 @@ export default function init() {
         // Хук начала инициализации javascript-составляющих шаблона
         Hook.run('ls_template_init_start', [], window);
 
+        $("img").each(
+          function(k,v){
+            console.log("Test!")
+            $(v).click(
+              function(){
+                $("#image-modal-img")[0].src = v.src
+                $("#image-modal").css("display", "flex")
+              }.bind(this)
+            )
+          }
+        )
+        $("#image-modal").click(function(){$("#image-modal").css("display", "none")})
+        $("#image-modal-img").click(function(){$("#image-modal").css("display", "none")})
+
         $('html').removeClass('no-js');
 
         window.resize_sidebar = function() {

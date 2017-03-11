@@ -256,3 +256,23 @@ $width: 100px;
     stroke: $yellow;
   }
 }
+
+#image-modal {
+	display: flex;
+	z-index: 1000500;
+	position: fixed;
+	width: 100%;
+	height: 100%;
+	background: rgba(0, 0, 0, 0.62);
+	top: 0;
+	left: 0;
+	display: none;
+
+	img {
+		margin: auto;
+	}
+}
+
+img {
+	cursor: pointer;
+}

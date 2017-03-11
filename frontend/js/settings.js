@@ -76,13 +76,13 @@ export function getMarkitup() {
             {
                 name: Lang.get('panel_video'),
                 className: 'fa fa-video-camera',
-                replaceWith: '<video>[![' + Lang.get('panel_video_promt') + ':!:http://]!]</video>'
+                replaceWith: function(m){return '<video>' + prompt(Lang.get('panel_video_promt')) + '</video>'}
             },
             {
                 name: Lang.get('panel_url'),
                 className: 'fa fa-link',
                 key: 'L',
-                openWith: '<a target="_blank" href="[![' + Lang.get('panel_url_promt') + ':!:http://]!]"(!( title="[![Title]!]")!)>',
+                openWith: function(m){return '<a target="_blank" href="' + prompt(Lang.get('panel_url_promt')) + '" title="">'},
                 closeWith: '</a>',
                 placeHolder: 'Your text to link...'
             },
@@ -167,14 +167,14 @@ export function getMarkitupComment() {
                 name: Lang.get('panel_url'),
                 className: 'fa fa-link',
                 key: 'L',
-                openWith: '<a target="_blank" href="[![' + Lang.get('panel_url_promt') + ':!:http://]!]"(!( title="[![Title]!]")!)>',
+                openWith: function(m){return '<a target="_blank" href="' + prompt(Lang.get('panel_url_promt')) + '" title="">'},
                 closeWith: '</a>',
                 placeHolder: 'Your text to link...'
             },
             {
                 name: Lang.get('panel_video'),
                 className: 'fa fa-video-camera',
-                replaceWith: '<video>[![' + Lang.get('panel_video_promt') + ':!:http://]!]</video>'
+                replaceWith: function(m){return '<video>' + prompt(Lang.get('panel_video_promt')) + '</video>'}
             },
             {
                 name: Lang.get('panel_user'),

@@ -52,22 +52,26 @@ function showFloatBlock($) {
     reinit();
 }
 
+export function updateImgs(){
+  $("img").each(
+    function(k,v){
+      console.log("Test!")
+      $(v).click(
+        function(){
+          $("#image-modal-img")[0].src = v.src
+          $("#image-modal").css("display", "flex")
+        }.bind(this)
+      )
+    }
+  )
+}
+
 export default function init() {
     jQuery(document).ready(function($) {
         // Хук начала инициализации javascript-составляющих шаблона
         Hook.run('ls_template_init_start', [], window);
 
-        $("img").each(
-          function(k,v){
-            console.log("Test!")
-            $(v).click(
-              function(){
-                $("#image-modal-img")[0].src = v.src
-                $("#image-modal").css("display", "flex")
-              }.bind(this)
-            )
-          }
-        )
+        // updateImgs()
         $("#image-modal").click(function(){$("#image-modal").css("display", "none")})
         $("#image-modal-img").click(function(){$("#image-modal").css("display", "none")})
 
@@ -328,6 +332,10 @@ export default function init() {
             if (event.button != 0) return;
             var target = event.target || event.srcElement;
             if (!target) return;
+            if (target.tagName=="IMG") {
+              $("#image-modal-img")[0].src = target.src
+              $("#image-modal").css("display", "flex")
+            }
             while (!target.classList.contains("spoiler-title")) {
                 target = target.parentNode || target.parentElement;
                 if (!target || target == document.body) return;

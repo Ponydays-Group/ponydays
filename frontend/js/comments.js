@@ -69,6 +69,9 @@ export async function renderComments() {
   ReactDOM.render(<CommentsTree ids={ids} comments={comments}/>, $("#comments-tree")[0])
   calcNewComments()
   resize_sidebar()
+  if (location.hash.startsWith('#comment')) {
+    setTimeout(scrollToComment(location.hash.replace('#comment', '')), 2000)
+  }
 }
 
 // Добавляет комментарий

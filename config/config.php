@@ -578,7 +578,7 @@ $config['jevix']=require(dirname(__FILE__).'/jevix.php');
 
 $config['module']['comment']['mobile']['max_tree'] = 15;
 //айдишники пользователей - глобальных модераторов
-$config['moderator'] = array(1, 4, 6, 14, 15, 19, 21, 22, 23, 24, 25, 27);
+$config['moderator'] = array();
 
 //айдишники блогов, к которым пользователь подписывается при регистрации
 $config['autosubscribe'] = array(2);

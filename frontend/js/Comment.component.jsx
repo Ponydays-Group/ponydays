@@ -56,6 +56,13 @@ export default class Comment extends React.Component {
     return
   }
 
+  scrollToCurrentComment(e) {
+    e.preventDefault()
+    Comments.scrollToComment(this.props.data.id)
+    history.replaceState({}, '', location.origin+location.pathname+"#comment"+this.props.data.id)
+    return
+  }
+
   render() {
     let data = this.props.data
     let level = data.level > this.props.maxNesting? this.props.maxNesting : data.level
@@ -79,7 +86,7 @@ export default class Comment extends React.Component {
 
     			<ul className="comment-actions">
     				<li className="comment-date">
-    					<a href={"#comment"+data.id} title="Ссылка на комментарий">
+    					<a href={"#comment"+data.id} onClick={this.scrollToCurrentComment.bind(this)} title="Ссылка на комментарий">
     						<time dateTime={data.date}>{data.date}</time>
     					</a>
     				</li>

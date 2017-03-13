@@ -1,5 +1,5 @@
 import * as Msg from './msg'
-import * as Hook from './hook'
+import Emitter from './emitter'
 import $ from 'jquery'
 import * as Ajax from './ajax'
 
@@ -55,7 +55,7 @@ export function vote(idTarget, objVote, value, type) {
     params['value'] = value;
     params[this.options.type[type].targetName] = idTarget;
 
-    Hook.marker('voteBefore');
+    Emitter.emit('voteBefore');
     Ajax.ajax(this.options.type[type].url, params, function (result) {
         var args = [idTarget, objVote, value, type, result];
         this.onVote.apply(this, args);

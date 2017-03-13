@@ -1,4 +1,4 @@
-import * as Hook from './hook'
+import Emitter from './emitter'
 import * as Msg from './msg'
 import $ from "jquery"
 import * as Ajax from './ajax'
@@ -132,7 +132,7 @@ export function showInfoBlog(oLink, iBlogId) {
             this.hide(oLink);
         } else {
             this.show(oLink, result.sText);
-            Hook.run('ls_infobox_show_info_blog_after', [oLink, iBlogId, result]);
+            Emitter.emit('ls_infobox_show_info_blog_after', [oLink, iBlogId, result]);
         }
     }.bind(this));
     return false;

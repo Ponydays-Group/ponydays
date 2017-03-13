@@ -1,5 +1,5 @@
 import * as Msg from './msg'
-import * as Hook from './hook'
+import Emitter from './emitter'
 import $ from 'jquery'
 import * as Ajax from './ajax'
 
@@ -9,11 +9,11 @@ export function subscribe(sType, iId) {
     var url = aRouter['feed'] + 'subscribe/';
     var params = {'type': sType, 'id': iId};
 
-    Hook.marker('subscribeBefore');
+    Emitter.emit('subscribeBefore');
     Ajax.ajax(url, params, function (data) {
         if (!data.bStateError) {
             Msg.notice(data.sMsgTitle, data.sMsg);
-            Hook.run('ls_userfeed_subscribe_after', [sType, iId, data]);
+            Emitter.emit('ls_userfeed_subscribe_after', [sType, iId, data]);
         }
     });
 }
@@ -22,11 +22,11 @@ export function subscribeAll() {
     var url = aRouter['feed'] + 'subscribe_all/';
     var params = {};
 
-    Hook.marker('subscribeBefore');
+    Emitter.emit('subscribeBefore');
     Ajax.ajax(url, params, function (data) {
         if (!data.bStateError) {
             Msg.notice(data.sMsgTitle, data.sMsg);
-            Hook.run('ls_userfeed_subscribe_all_after', [data]);
+            Emitter.emit('ls_userfeed_subscribe_all_after', [data]);
             location.reload();
         }
     });
@@ -36,11 +36,11 @@ export function unsubscribe(sType, iId) {
     var url = aRouter['feed'] + 'unsubscribe/';
     var params = {'type': sType, 'id': iId};
 
-    Hook.marker('unsubscribeAllBefore');
+    Emitter.emit('unsubscribeAllBefore');
     Ajax.ajax(url, params, function (data) {
         if (!data.bStateError) {
             Msg.notice(data.sMsgTitle, data.sMsg);
-            Hook.run('ls_userfeed_unsubscribe_after', [sType, iId, data]);
+            Emitter.emit('ls_userfeed_unsubscribe_after', [sType, iId, data]);
         }
     });
 }
@@ -49,11 +49,11 @@ export function unsubscribeAll() {
     var url = aRouter['feed'] + 'unsubscribe_all/';
     var params = {};
 
-    Hook.marker('unsubscribeAllBefore');
+    Emitter.emit('unsubscribeAllBefore');
     Ajax.ajax(url, params, function (data) {
         if (!data.bStateError) {
             Msg.notice(data.sMsgTitle, data.sMsg);
-            Hook.run('ls_userfeed_unsubscribe_all_after', [data]);
+            Emitter.emit('ls_userfeed_unsubscribe_all_after', [data]);
             location.reload();
         }
     });
@@ -66,7 +66,7 @@ export function appendUser() {
     var url = aRouter['feed'] + 'subscribeByLogin/';
     var params = {'login': sLogin};
 
-    Hook.marker('appendUserBefore');
+    Emitter.emit('appendUserBefore');
     Ajax.ajax(url, params, function (data) {
         if (data.bStateError) {
             Msg.error(data.sMsgTitle, data.sMsg);
@@ -102,7 +102,7 @@ export function getMore() {
     var url = aRouter['feed'] + 'get_more/';
     var params = {'last_id': lastId};
 
-    Hook.marker('getMoreBefore');
+    Emitter.emit('getMoreBefore');
     Ajax.ajax(url, params, function (data) {
         if (!data.bStateError && data.topics_count) {
             $('#userfeed_loaded_topics').append(data.result);
@@ -112,7 +112,7 @@ export function getMore() {
             $('#userfeed_get_more').hide();
         }
         $('#userfeed_get_more').removeClass('userfeed_loading');
-        Hook.run('ls_userfeed_get_more_after', [lastId, data]);
+        Emitter.emit('ls_userfeed_get_more_after', [lastId, data]);
         this.isBusy = false;
     }.bind(this));
 }

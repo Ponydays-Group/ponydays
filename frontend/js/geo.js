@@ -1,5 +1,5 @@
 import * as Msg from './msg'
-import * as Hook from './hook'
+import Emitter from './emitter'
 import * as Lang from './lang'
 import $ from "jquery";
 import * as Ajax from "./ajax"
@@ -38,7 +38,7 @@ export function loadRegions($country) {
 
     var url = aRouter['ajax'] + 'geo/get/regions/';
     var params = {country: $country.val()};
-    Hook.marker('loadRegionsBefore');
+    Emitter.emit('loadRegionsBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             Msg.error(null, result.sMsg);
@@ -47,7 +47,7 @@ export function loadRegions($country) {
                 $region.append('<option value="' + v.id + '">' + v.name + '</option>');
             });
             $region.show();
-            Hook.run('ls_geo_load_regions_after', [$country, result]);
+            Emitter.emit('ls_geo_load_regions_after', [$country, result]);
         }
     });
 };
@@ -64,7 +64,7 @@ export function loadCities($region) {
 
     var url = aRouter['ajax'] + 'geo/get/cities/';
     var params = {region: $region.val()};
-    Hook.marker('loadCitiesBefore');
+    Emitter.emit('loadCitiesBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             Msg.error(null, result.sMsg);
@@ -73,7 +73,7 @@ export function loadCities($region) {
                 $city.append('<option value="' + v.id + '">' + v.name + '</option>');
             });
             $city.show();
-            Hook.run('ls_geo_load_cities_after', [$region, result]);
+            Emitter.emit('ls_geo_load_cities_after', [$region, result]);
         }
     });
 };

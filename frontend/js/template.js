@@ -4,7 +4,7 @@ import * as Registry from './registry'
 import * as Toolbar from './toolbar'
 import * as Autocomplete from './autocomplete'
 import * as Blocks from './blocks'
-import * as Hook from './hook'
+import Emitter from './emitter'
 
 function showFloatBlock($) {
     $.browser.isMobileDevice = /android|webos|iphone|ipad|ipod|blackberry/i.test(navigator.userAgent.toLowerCase());
@@ -67,7 +67,7 @@ export function updateImgs(){
 export default function init() {
     jQuery(document).ready(function($) {
         // Хук начала инициализации javascript-составляющих шаблона
-        Hook.run('ls_template_init_start', [], window);
+        Emitter.emit('ls_template_init_start', [], window);
 
         // updateImgs()
         $("#image-modal").click(function(){$("#image-modal").css("display", "none")})
@@ -226,7 +226,7 @@ export default function init() {
         Comments.init();
 
         // избранное
-        Hook.add('ls_favourite_toggle_after', function(idTarget, objFavourite, type, params, result) {
+        Emitter.on('ls_favourite_toggle_after', function(idTarget, objFavourite, type, params, result) {
             $('#fav_count_' + type + '_' + idTarget).text((result.iCount > 0) ? result.iCount : '');
         });
 
@@ -310,7 +310,7 @@ export default function init() {
 
 
         // Хук конца инициализации javascript-составляющих шаблона
-        Hook.run('ls_template_init_end', [], window);
+        Emitter.emit('ls_template_init_end', [], window);
 
         function spoiler(b) {
             if (b.style.display != "block") {

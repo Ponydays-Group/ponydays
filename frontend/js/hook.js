@@ -1,5 +1,5 @@
 /**
- * JavaScript-hooks
+ * JavaScript-emitters
  *
  * Examples:
  *
@@ -7,12 +7,12 @@
  * inject([ls.lang,'get'], function(){ls.msg.notice('lang debug');})});
  * inject([ls,'ajax'], 'alert(url)');
  *
- * - add and call hooks
- * add('somefunc_hook1_name', function(param1, param2){ ... });
+ * - add and call emitters
+ * add('somefunc_emitter1_name', function(param1, param2){ ... });
  *
  * function someFunc(..params..){
  * 	//code
- * 	run('somefunc_hook1_name', [param1,param2], thisArg);
+ * 	run('somefunc_emitter1_name', [param1,param2], thisArg);
  * 	//code
  * }
  *
@@ -20,7 +20,7 @@
  * @link http://livestreet.ru/profile/1d10t
  */
 
-export let hooks = {}
+export let emitters = {}
 
 export function cloneFunc(func, as_text, no_def) {
     var f;
@@ -58,7 +58,7 @@ export function inject(func, funcInj, marker) {
     var replaceTo = '{ ';
     if ($.type(marker) == 'string') {
         //replaceFrom = new RegExp('(\'\\*'+marker+'\\*\'[\r\n\t ]*;?)', 'm');
-        replaceFrom = new RegExp('(ls\\.hook\\.marker\\(([\'"])' + marker + '(\\2)\\)[\\r\\n\\t ]*;?)', 'm');
+        replaceFrom = new RegExp('(ls\\.emitter\\.marker\\(([\'"])' + marker + '(\\2)\\)[\\r\\n\\t ]*;?)', 'm');
         replaceTo = '$1';
     }
     if ($.type(funcInj) == 'function') {
@@ -72,10 +72,10 @@ export function inject(func, funcInj, marker) {
 
 export function add(name, callback, priority) {
     var priority = priority || 0;
-    if (typeof hooks[name] == 'undefined') {
-        hooks[name] = [];
+    if (typeof emitters[name] == 'undefined') {
+        emitters[name] = [];
     }
-    hooks[name].push({
+    emitters[name].push({
         'callback': callback,
         'priority': priority
     });
@@ -84,16 +84,16 @@ export function add(name, callback, priority) {
 export function run(name, params, o) {
   console.info(name)
     var params = params || [];
-    //var hooks = hooks;
-    if (typeof hooks[name] != 'undefined') {
-        hooks[name].sort(function (a, b) {
+    //var emitters = emitters;
+    if (typeof emitters[name] != 'undefined') {
+        emitters[name].sort(function (a, b) {
             return a.priority > b.priority ?
                 1
                 : (a.priority < b.priority ? -1 : 0)
                 ;
         });
-        $.each(hooks[name], function (i) {
-            var callback = hooks[name][i].callback;
+        $.each(emitters[name], function (i) {
+            var callback = emitters[name][i].callback;
             if ($.type(callback) == 'function') {
                 callback.apply(o, params);
             } else if ($.type(callback) == 'array') {
@@ -102,7 +102,7 @@ export function run(name, params, o) {
             } else if ($.type(callback) == 'string') {
                 eval('(function(){' + callback + '}).apply(o, params);');
             } else {
-                ls.debug('cant call hook "' + name + '"[' + i + ']');
+                ls.debug('cant call emitter "' + name + '"[' + i + ']');
             }
         });
     }

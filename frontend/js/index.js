@@ -77,7 +77,7 @@ import * as Geo from './geo'
 import * as Registry from './registry'
 import * as Blocks from './blocks'
 import * as Autocomplete from './autocomplete'
-import * as Hook from './hook'
+import Emitter from './emitter'
 import * as Msg from './msg'
 
 let ls = {
@@ -105,7 +105,7 @@ let ls = {
     registry: Registry,
     blocks: Blocks,
     autocomplete: Autocomplete,
-    hook: Hook,
+    emitter: Emitter,
     msg: Msg,
 }
 

@@ -47,7 +47,7 @@
 			this.$elm.data('title.poshytip', title !== undefined ? title : null)
 				.data('poshytip', this);
 
-			// hook element events
+			// emitter element events
 			if (this.opts.showOn != 'none') {
 				this.$elm.bind({
 					'mouseenter.poshytip': $.proxy(this.mouseenter, this),
@@ -396,7 +396,7 @@
 			var args = arguments,
 				method = options;
 			Array.prototype.shift.call(args);
-			// unhook on events if 'destroy' is called
+			// unemitter on events if 'destroy' is called
 			if (method == 'destroy')
 				this.die('mouseenter.poshytip').die('focus.poshytip');
 			return this.each(function() {
@@ -421,7 +421,7 @@
 				'div.',opts.className,' div.tip-arrow{visibility:hidden;position:absolute;overflow:hidden;font:1px/1px sans-serif;}',
 			'</style>'].join('')).appendTo('head');
 
-		// check if we need to hook on events
+		// check if we need to emitter on events
 		if (opts.onEvents && opts.showOn != 'none') {
 			var deadOpts = $.extend({}, opts, { onEvents: false });
 			switch (opts.showOn) {

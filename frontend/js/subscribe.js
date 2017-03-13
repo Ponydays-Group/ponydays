@@ -1,5 +1,5 @@
 import * as Msg from './msg'
-import * as Hook from './hook'
+import Emitter from './emitter'
 import * as Ajax from './ajax'
 
 /**
@@ -12,13 +12,13 @@ import * as Ajax from './ajax'
 	export function toggle(sTargetType, iTargetId, sMail, iValue) {
 		var url = aRouter['subscribe']+'ajax-subscribe-toggle/';
 		var params = {target_type: sTargetType, target_id: iTargetId, mail: sMail, value: iValue};
-		Hook.marker('toggleBefore');
+		Emitter.emit('toggleBefore');
 		Ajax.ajax(url, params, function(result) {
 			if (result.bStateError) {
 				Msg.error(null, result.sMsg);
 			} else {
 				Msg.notice(null, result.sMsg);
-				Hook.run('ls_subscribe_toggle_after',[sTargetType, iTargetId, sMail, iValue, result]);
+				Emitter.emit('ls_subscribe_toggle_after',[sTargetType, iTargetId, sMail, iValue, result]);
 			}
 		});
 		return false;

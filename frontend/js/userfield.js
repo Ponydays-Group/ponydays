@@ -1,6 +1,6 @@
 import * as Lang from './lang'
 import * as Msg from './msg'
-import * as Hook from './hook'
+import Emitter from './emitter'
 import $ from 'jquery'
 import * as Ajax from './ajax'
 
@@ -48,7 +48,7 @@ export function addUserfield() {
     var url = aRouter['admin'] + 'userfields';
     var params = {'action': 'add', 'name': name, 'title': title, 'pattern': pattern, 'type': type};
 
-    Hook.marker('addUserfieldBefore');
+    Emitter.emit('addUserfieldBefore');
     Ajax.ajax(url, params, function (data) {
         if (!data.bStateError) {
             liElement = $('<li id="field_' + data.id + '"><span class="userfield_admin_name"></span > / <span class="userfield_admin_title"></span> / <span class="userfield_admin_pattern"></span> / <span class="userfield_admin_type"></span>'
@@ -61,7 +61,7 @@ export function addUserfield() {
             $('#field_' + data.id + ' .userfield_admin_pattern').text(pattern);
             $('#field_' + data.id + ' .userfield_admin_type').text(type);
             Msg.notice(data.sMsgTitle, data.sMsg);
-            Hook.run('ls_userfield_add_userfield_after', [params, data], liElement);
+            Emitter.emit('ls_userfield_add_userfield_after', [params, data], liElement);
         } else {
             Msg.error(data.sMsgTitle, data.sMsg);
         }
@@ -78,7 +78,7 @@ export function updateUserfield() {
     var url = aRouter['admin'] + 'userfields';
     var params = {'action': 'update', 'id': id, 'name': name, 'title': title, 'pattern': pattern, 'type': type};
 
-    Hook.marker('updateUserfieldBefore');
+    Emitter.emit('updateUserfieldBefore');
     Ajax.ajax(url, params, function (data) {
         if (!data.bStateError) {
             $('#field_' + id + ' .userfield_admin_name').text(name);
@@ -86,7 +86,7 @@ export function updateUserfield() {
             $('#field_' + id + ' .userfield_admin_pattern').text(pattern);
             $('#field_' + id + ' .userfield_admin_type').text(type);
             Msg.notice(data.sMsgTitle, data.sMsg);
-            Hook.run('ls_userfield_update_userfield_after', [params, data]);
+            Emitter.emit('ls_userfield_update_userfield_after', [params, data]);
         } else {
             Msg.error(data.sMsgTitle, data.sMsg);
         }
@@ -101,12 +101,12 @@ export function deleteUserfield(id) {
     var url = aRouter['admin'] + 'userfields';
     var params = {'action': 'delete', 'id': id};
 
-    Hook.marker('deleteUserfieldBefore');
+    Emitter.emit('deleteUserfieldBefore');
     Ajax.ajax(url, params, function (data) {
         if (!data.bStateError) {
             $('#field_' + id).remove();
             Msg.notice(data.sMsgTitle, data.sMsg);
-            Hook.run('ls_userfield_update_userfield_after', [params, data]);
+            Emitter.emit('ls_userfield_update_userfield_after', [params, data]);
         } else {
             Msg.error(data.sMsgTitle, data.sMsg);
         }

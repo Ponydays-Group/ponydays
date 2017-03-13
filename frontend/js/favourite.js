@@ -1,5 +1,5 @@
 import * as Msg from './msg'
-import * as Hook from './hook'
+import Emitter from './emitter'
 import $ from "jquery"
 import * as Ajax from './ajax'
 
@@ -42,7 +42,7 @@ export function toggle(idTarget, objFavourite, type) {
     params['type'] = !this.objFavourite.hasClass(this.options.active);
     params[this.options.type[type].targetName] = idTarget;
 
-    Hook.marker('toggleBefore');
+    Emitter.emit('toggleBefore');
     Ajax.ajax(this.options.type[type].url, params, function (result) {
         $(this).trigger('toggle', [idTarget, objFavourite, type, params, result]);
         if (result.bStateError) {
@@ -56,7 +56,7 @@ export function toggle(idTarget, objFavourite, type) {
             } else {
                 this.hideTags(type, idTarget);
             }
-            Hook.run('ls_favourite_toggle_after', [idTarget, objFavourite, type, params, result], this);
+            Emitter.emit('ls_favourite_toggle_after', [idTarget, objFavourite, type, params, result], this);
         }
     }.bind(this));
     return false;
@@ -89,7 +89,7 @@ export function hideEditTags() {
 
 export function saveTags(form) {
     var url = aRouter['ajax'] + 'favourite/save-tags/';
-    Hook.marker('saveTagsBefore');
+    Emitter.emit('saveTagsBefore');
     Ajax.ajaxSubmit(url, $(form), function (result) {
         if (result.bStateError) {
             Msg.error(null, result.sMsg);
@@ -103,7 +103,7 @@ export function saveTags(form) {
                 edit.before('<li class="' + type + '-tags-user js-favourite-tag-user">, <a rel="tag" href="' + v.url + '">' + v.tag + '</a></li>');
             });
 
-            Hook.run('ls_favourite_save_tags_after', [form, result], this);
+            Emitter.emit('ls_favourite_save_tags_after', [form, result], this);
         }
     }.bind(this));
     return false;

@@ -1,6 +1,6 @@
 import * as Lang from './lang'
 import * as Msg from './msg'
-import * as Hook from './hook'
+import Emitter from './emitter'
 import $ from "jquery"
 import * as Ajax from './ajax'
 
@@ -15,7 +15,7 @@ export function toggleJoin(obj, idBlog) {
     let url = aRouter['blog'] + 'ajaxblogjoin/';
     let params = {idBlog: idBlog};
 
-    Hook.marker('toggleJoinBefore');
+    Emitter.emit('toggleJoinBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             Msg.error(null, result.sMsg);
@@ -32,7 +32,7 @@ export function toggleJoin(obj, idBlog) {
             obj.toggleClass('active');
 
             $('#blog_user_count_' + idBlog).text(result.iCountUser);
-            Hook.run('ls_blog_toggle_join_after', [idBlog, result], obj);
+            Emitter.emit('ls_blog_toggle_join_after', [idBlog, result], obj);
         }
     });
 }
@@ -49,7 +49,7 @@ export function addInvite(idBlog) {
     let url = aRouter['blog'] + 'ajaxaddbloginvite/';
     let params = {users: sUsers, idBlog: idBlog};
 
-    Hook.marker('addInviteBefore');
+    Emitter.emit('addInviteBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             Msg.error(null, result.sMsg);
@@ -64,10 +64,10 @@ export function addInvite(idBlog) {
                     let listItem = $('<li><a href="' + item.sUserWebPath + '" class="user">' + item.sUserLogin + '</a></li>');
                     $('#invited_list').append(listItem);
                     $('#blog-invite-empty').hide();
-                    Hook.run('ls_blog_add_invite_user_after', [idBlog, item], listItem);
+                    Emitter.emit('ls_blog_add_invite_user_after', [idBlog, item], listItem);
                 }
             });
-            Hook.run('ls_blog_add_invite_after', [idBlog, sUsers, result]);
+            Emitter.emit('ls_blog_add_invite_after', [idBlog, sUsers, result]);
         }
     });
 
@@ -82,13 +82,13 @@ export function repeatInvite(idUser, idBlog) {
     let url = aRouter['blog'] + 'ajaxrebloginvite/';
     let params = {idUser: idUser, idBlog: idBlog};
 
-    Hook.marker('repeatInviteBefore');
+    Emitter.emit('repeatInviteBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             Msg.error(null, result.sMsg);
         } else {
             Msg.notice(null, result.sMsg);
-            Hook.run('ls_blog_repeat_invite_after', [idUser, idBlog, result]);
+            Emitter.emit('ls_blog_repeat_invite_after', [idUser, idBlog, result]);
         }
     });
 
@@ -103,7 +103,7 @@ export function removeInvite(idUser, idBlog) {
     let url = aRouter['blog'] + 'ajaxremovebloginvite/';
     let params = {idUser: idUser, idBlog: idBlog};
 
-    Hook.marker('removeInviteBefore');
+    Emitter.emit('removeInviteBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             Msg.error(null, result.sMsg);
@@ -111,7 +111,7 @@ export function removeInvite(idUser, idBlog) {
             $('#blog-invite-remove-item-' + idBlog + '-' + idUser).remove();
             Msg.notice(null, result.sMsg);
             if ($('#invited_list li').length == 0) $('#blog-invite-empty').show();
-            Hook.run('ls_blog_remove_invite_after', [idUser, idBlog, result]);
+            Emitter.emit('ls_blog_remove_invite_after', [idUser, idBlog, result]);
         }
     });
 
@@ -126,14 +126,14 @@ export function loadInfo(idBlog) {
     let url = aRouter['blog'] + 'ajaxbloginfo/';
     let params = {idBlog: idBlog};
 
-    Hook.marker('loadInfoBefore');
+    Emitter.emit('loadInfoBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             Msg.error(null, result.sMsg);
         } else {
             let block = $('#block_blog_info');
             block.html(result.sText);
-            Hook.run('ls_blog_load_info_after', [idBlog, result], block);
+            Emitter.emit('ls_blog_load_info_after', [idBlog, result], block);
         }
     });
 }
@@ -155,7 +155,7 @@ export function searchBlogs(form) {
     let inputSearch = $('#' + form).find('input');
     inputSearch.addClass('loader');
 
-    Hook.marker('searchBlogsBefore');
+    Emitter.emit('searchBlogsBefore');
     Ajax.ajaxSubmit(url, form, function (result) {
         inputSearch.removeClass('loader');
         if (result.bStateError) {
@@ -164,7 +164,7 @@ export function searchBlogs(form) {
         } else {
             $('#blogs-list-original').hide();
             $('#blogs-list-search').html(result.sText).show();
-            Hook.run('ls_blog_search_blogs_after', [form, result]);
+            Emitter.emit('ls_blog_search_blogs_after', [form, result]);
         }
     });
 }

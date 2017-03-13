@@ -2,13 +2,11 @@ import $ from "jquery";
 
 import * as Registry from './registry'
 import * as Blocks from './blocks'
-import * as Hook from './hook'
+import Emitter from './emitter'
 import * as Msg from './msg'
 import * as Ajax from "./ajax"
 import ReactDOM from 'react-dom'
 import React from 'react'
-
-import Emitter from "./emitter"
 
 import CommentsTree from './Tree.component'
 
@@ -100,7 +98,7 @@ export function add(formObj, targetId, targetType) {
 
             // Load new comments
             load(targetId, targetType, result.sCommentId, true);
-            Hook.run('ls_comments_add_after', [formObj, targetId, targetType, result]);
+            Emitter.emit('ls_comments_add_after', [formObj, targetId, targetType, result]);
         }
     }.bind(this));
 }
@@ -222,7 +220,7 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
             checkFolding();
             aCommentNew = [];
             calcNewComments();
-            Hook.run('ls_comments_load_after', [idTarget, typeTarget, selfIdComment, bNotFlushNew, result]);
+            Emitter.emit('ls_comments_load_after', [idTarget, typeTarget, selfIdComment, bNotFlushNew, result]);
 
             try {
                 var new_messages = document.getElementById("new_messages");
@@ -267,7 +265,7 @@ export function inject(idCommentParent, idComment, sHtml) {
     } else {
         $('#comments').append(newComment);
     }
-    Hook.run('ls_comment_inject_after', arguments, newComment);
+    Emitter.emit('ls_comment_inject_after', arguments, newComment);
 }
 
 
@@ -276,7 +274,7 @@ export function toggle(obj, commentId) {
     var url = aRouter['ajax'] + 'comment/delete/';
     var params = {idComment: commentId};
 
-    Hook.marker('toggleBefore');
+    Emitter.emit('toggleBefore');
     Ajax.ajax(url, params, function (result) {
         if (!result) {
             Msg.error('Error', 'Please try again later');
@@ -291,7 +289,7 @@ export function toggle(obj, commentId) {
                 $('#comment_id_' + commentId).addClass(options.classes.comment_deleted);
             }
             $(obj).text(result.sTextToggle);
-            Hook.run('ls_comments_toggle_after', [obj, commentId, result]);
+            Emitter.emit('ls_comments_toggle_after', [obj, commentId, result]);
         }
     }.bind(this));
 }
@@ -457,7 +455,7 @@ export function init() {
     if (typeof(options.wysiwyg) != 'number') {
         options.wysiwyg = Boolean(BLOG_USE_TINYMCE && tinyMCE);
     }
-    //Hook.run('ls_comments_init_after',[],this);
+    //Emitter.emit('ls_comments_init_after',[],this);
 }
 
 
@@ -630,7 +628,7 @@ export function edit(formObject, targetId, targetType) {
                     }
                 }
 
-                ls.hook.run('ls_comments_edit_after', [ formObj, targetId, targetType, result ]);
+                Emitter.emit('ls_comments_edit_after', [ formObj, targetId, targetType, result ]);
             }
         }.bind(this));
     }

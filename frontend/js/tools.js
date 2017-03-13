@@ -1,5 +1,5 @@
 import * as Msg from './msg'
-import * as Hook from './hook'
+import Emitter from './emitter'
 import $ from 'jquery'
 import * as Ajax from './ajax'
 
@@ -40,7 +40,7 @@ export function textPreview(textId, save, divPreview)
     let text = (BLOG_USE_TINYMCE) ? tinyMCE.activeEditor.getContent() : $('#' + textId).val();
     let ajaxUrl = aRouter['ajax'] + 'preview/text/';
     let ajaxOptions = {text: text, save: save};
-    Hook.marker('textPreviewAjaxBefore');
+    Emitter.emit('textPreviewAjaxBefore');
     Ajax.ajax(ajaxUrl, ajaxOptions, function (result) {
         if (!result) {
             Msg.error('Error', 'Please try again later');
@@ -52,10 +52,10 @@ export function textPreview(textId, save, divPreview)
                 divPreview = 'text_preview';
             }
             let elementPreview = $('#' + divPreview);
-            Hook.marker('textPreviewDisplayBefore');
+            Emitter.emit('textPreviewDisplayBefore');
             if (elementPreview.length) {
                 elementPreview.html(result.sText);
-                Hook.marker('textPreviewDisplayAfter');
+                Emitter.emit('textPreviewDisplayAfter');
             }
         }
     });

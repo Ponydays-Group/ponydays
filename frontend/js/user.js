@@ -1,7 +1,7 @@
 import * as Lang from './lang'
 import * as Stream from './stream'
 import * as Msg from './msg'
-import * as Hook from './hook'
+import Emitter from './emitter'
 import $ from 'jquery'
 import * as Ajax from './ajax' 
 
@@ -29,7 +29,7 @@ export function addFriend(obj, idUser, sAction) {
 
     var params = {idUser: idUser, userText: sText};
 
-    Hook.marker('addFriendBefore');
+    Emitter.emit('addFriendBefore');
     Ajax.ajax(url, params, function (result) {
         $('#add_friend_form').children().each(function (i, item) {
             $(item).removeAttr('disabled')
@@ -44,7 +44,7 @@ export function addFriend(obj, idUser, sAction) {
             $('#add_friend_form').jqmHide();
             $('#add_friend_item').remove();
             $('#profile_actions').prepend($(result.sToggleText));
-            Hook.run('ls_user_add_friend_after', [idUser, sAction, result], obj);
+            Emitter.emit('ls_user_add_friend_after', [idUser, sAction, result], obj);
         }
     });
     return false;
@@ -57,7 +57,7 @@ export function removeFriend(obj, idUser, sAction) {
     var url = aRouter.profile + 'ajaxfrienddelete/';
     var params = {idUser: idUser, sAction: sAction};
 
-    Hook.marker('removeFriendBefore');
+    Emitter.emit('removeFriendBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             Msg.error(null, result.sMsg);
@@ -65,7 +65,7 @@ export function removeFriend(obj, idUser, sAction) {
             Msg.notice(null, result.sMsg);
             $('#delete_friend_item').remove();
             $('#profile_actions').prepend($(result.sToggleText));
-            Hook.run('ls_user_remove_friend_after', [idUser, sAction, result], obj);
+            Emitter.emit('ls_user_remove_friend_after', [idUser, sAction, result], obj);
         }
     });
     return false;
@@ -126,7 +126,7 @@ export function resizeAvatar() {
     var url = aRouter.settings + 'profile/resize-avatar/';
     var params = {size: this.jcropAvatar.tellSelect()};
 
-    Hook.marker('resizeAvatarBefore');
+    Emitter.emit('resizeAvatarBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             Msg.error(null, result.sMsg);
@@ -135,7 +135,7 @@ export function resizeAvatar() {
             $('#avatar-resize').jqmHide();
             $('#avatar-remove').show();
             $('#avatar-upload').text(result.sTitleUpload);
-            Hook.run('ls_user_resize_avatar_after', [params, result]);
+            Emitter.emit('ls_user_resize_avatar_after', [params, result]);
         }
     });
 
@@ -149,7 +149,7 @@ export function removeAvatar() {
     var url = aRouter.settings + 'profile/remove-avatar/';
     var params = {};
 
-    Hook.marker('removeAvatarBefore');
+    Emitter.emit('removeAvatarBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             Msg.error(null, result.sMsg);
@@ -157,7 +157,7 @@ export function removeAvatar() {
             $('#avatar-img').attr('src', result.sFile + '?' + Math.random());
             $('#avatar-remove').hide();
             $('#avatar-upload').text(result.sTitleUpload);
-            Hook.run('ls_user_remove_avatar_after', [params, result]);
+            Emitter.emit('ls_user_remove_avatar_after', [params, result]);
         }
     });
 
@@ -171,13 +171,13 @@ export function cancelAvatar() {
     var url = aRouter.settings + 'profile/cancel-avatar/';
     var params = {};
 
-    Hook.marker('cancelAvatarBefore');
+    Emitter.emit('cancelAvatarBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             Msg.error(null, result.sMsg);
         } else {
             $('#avatar-resize').jqmHide();
-            Hook.run('ls_user_cancel_avatar_after', [params, result]);
+            Emitter.emit('ls_user_cancel_avatar_after', [params, result]);
         }
     });
 
@@ -238,7 +238,7 @@ export function resizeFoto() {
     var url = aRouter.settings + 'profile/resize-foto/';
     var params = {size: this.jcropFoto.tellSelect()};
 
-    Hook.marker('resizeFotoBefore');
+    Emitter.emit('resizeFotoBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             Msg.error(null, result.sMsg);
@@ -247,7 +247,7 @@ export function resizeFoto() {
             $('#foto-resize').jqmHide();
             $('#foto-remove').show();
             $('#foto-upload').text(result.sTitleUpload);
-            Hook.run('ls_user_resize_foto_after', [params, result]);
+            Emitter.emit('ls_user_resize_foto_after', [params, result]);
         }
     });
 
@@ -261,7 +261,7 @@ export function removeFoto() {
     var url = aRouter.settings + 'profile/remove-foto/';
     var params = {};
 
-    Hook.marker('removeFotoBefore');
+    Emitter.emit('removeFotoBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             Msg.error(null, result.sMsg);
@@ -269,7 +269,7 @@ export function removeFoto() {
             $('#foto-img').attr('src', result.sFile + '?' + Math.random());
             $('#foto-remove').hide();
             $('#foto-upload').text(result.sTitleUpload);
-            Hook.run('ls_user_remove_foto_after', [params, result]);
+            Emitter.emit('ls_user_remove_foto_after', [params, result]);
         }
     });
 
@@ -283,13 +283,13 @@ export function cancelFoto() {
     var url = aRouter.settings + 'profile/cancel-foto/';
     var params = {};
 
-    Hook.marker('cancelFotoBefore');
+    Emitter.emit('cancelFotoBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             Msg.error(null, result.sMsg);
         } else {
             $('#foto-resize').jqmHide();
-            Hook.run('ls_user_cancel_foto_after', [params, result]);
+            Emitter.emit('ls_user_cancel_foto_after', [params, result]);
         }
     });
 
@@ -307,7 +307,7 @@ export function validateRegistrationFields(aFields, sForm) {
         sForm = $('#' + sForm);
     }
 
-    //Hook.marker('validateRegistrationFieldsBefore');
+    //Emitter.emit('validateRegistrationFieldsBefore');
     Ajax.ajax(url, params, function (result) {
         if (!sForm) {
             sForm = $('body'); // поиск полей по всей странице
@@ -321,7 +321,7 @@ export function validateRegistrationFields(aFields, sForm) {
                 sForm.find('.validate-ok-field-' + aField.field).show();
             }
         });
-        Hook.run('ls_user_validate_registration_fields_after', [aFields, sForm, result]);
+        Emitter.emit('ls_user_validate_registration_fields_after', [aFields, sForm, result]);
     });
 };
 
@@ -345,7 +345,7 @@ export function registration(form) {
     var url = aRouter.registration + 'ajax-registration/';
 
     this.formLoader(form);
-    Hook.marker('registrationBefore');
+    Emitter.emit('registrationBefore');
     Ajax.ajaxSubmit(url, form, function (result) {
         this.formLoader(form, true);
         if (result.bStateError) {
@@ -369,7 +369,7 @@ export function registration(form) {
                     window.location = result.sUrlRedirect;
                 }
             }
-            Hook.run('ls_user_registration_after', [form, result]);
+            Emitter.emit('ls_user_registration_after', [form, result]);
         }
     }.bind(this));
 };
@@ -382,7 +382,7 @@ export function login(form) {
     var url = aRouter.login + 'ajax-login/';
 
     this.formLoader(form);
-    Hook.marker('loginBefore');
+    Emitter.emit('loginBefore');
     Ajax.ajaxSubmit(url, form, function (result) {
         this.formLoader(form, true);
         if (typeof(form) == 'string') {
@@ -399,7 +399,7 @@ export function login(form) {
             if (result.sUrlRedirect) {
                 window.location = result.sUrlRedirect;
             }
-            Hook.run('ls_user_login_after', [form, result]);
+            Emitter.emit('ls_user_login_after', [form, result]);
         }
     }.bind(this));
 };
@@ -430,7 +430,7 @@ export function reminder(form) {
     var url = aRouter.login + 'ajax-reminder/';
 
     this.formLoader(form);
-    Hook.marker('reminderBefore');
+    Emitter.emit('reminderBefore');
     Ajax.ajaxSubmit(url, form, function (result) {
         this.formLoader(form, true);
         if (typeof(form) == 'string') {
@@ -448,7 +448,7 @@ export function reminder(form) {
             if (result.sUrlRedirect) {
                 window.location = result.sUrlRedirect;
             }
-            Hook.run('ls_user_reminder_after', [form, result]);
+            Emitter.emit('ls_user_reminder_after', [form, result]);
         }
     }.bind(this));
 };
@@ -460,7 +460,7 @@ export function reminder(form) {
 export function reactivation(form) {
     var url = aRouter.login + 'ajax-reactivation/';
 
-    Hook.marker('reactivationBefore');
+    Emitter.emit('reactivationBefore');
     Ajax.ajaxSubmit(url, form, function (result) {
         if (typeof(form) == 'string') {
             form = $('#' + form);
@@ -474,7 +474,7 @@ export function reactivation(form) {
             if (result.sMsg) {
                 Msg.notice(null, result.sMsg);
             }
-            Hook.run('ls_user_reactivation_after', [form, result]);
+            Emitter.emit('ls_user_reactivation_after', [form, result]);
         }
     });
 };
@@ -487,7 +487,7 @@ export function searchUsers(form) {
     var inputSearch = $('#' + form).find('input');
     inputSearch.addClass('loader');
 
-    Hook.marker('searchUsersBefore');
+    Emitter.emit('searchUsersBefore');
     Ajax.ajaxSubmit(url, form, function (result) {
         inputSearch.removeClass('loader');
         if (result.bStateError) {
@@ -496,7 +496,7 @@ export function searchUsers(form) {
         } else {
             $('#users-list-original').hide();
             $('#users-list-search').html(result.sText).show();
-            Hook.run('ls_user_search_users_after', [form, result]);
+            Emitter.emit('ls_user_search_users_after', [form, result]);
         }
     });
 };
@@ -510,7 +510,7 @@ export function searchUsersByPrefix(sPrefix, obj) {
     var params = {user_login: sPrefix, isPrefix: 1};
     $('#search-user-login').addClass('loader');
 
-    Hook.marker('searchUsersByPrefixBefore');
+    Emitter.emit('searchUsersByPrefixBefore');
     Ajax.ajax(url, params, function (result) {
         $('#search-user-login').removeClass('loader');
         $('#user-prefix-filter').find('.active').removeClass('active');
@@ -521,7 +521,7 @@ export function searchUsersByPrefix(sPrefix, obj) {
         } else {
             $('#users-list-original').hide();
             $('#users-list-search').html(result.sText).show();
-            Hook.run('ls_user_search_users_by_prefix_after', [sPrefix, obj, result]);
+            Emitter.emit('ls_user_search_users_by_prefix_after', [sPrefix, obj, result]);
         }
     });
     return false;

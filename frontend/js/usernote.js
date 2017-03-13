@@ -1,5 +1,5 @@
 import * as Msg from './msg'
-import * as Hook from './hook'
+import Emitter from './emitter'
 import $ from 'jquery'
 import * as Ajax from './ajax'
 
@@ -31,14 +31,14 @@ export function hideForm() {
 export function save(iUserId) {
     var url = aRouter['profile'] + 'ajax-note-save/';
     var params = {iUserId: iUserId, text: $('#usernote-form-text').val()};
-    Hook.marker('saveBefore');
+    Emitter.emit('saveBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             Msg.error(null, result.sMsg);
         } else {
             this.sText = result.sText;
             this.showNote();
-            Hook.run('ls_usernote_save_after', [params, result]);
+            Emitter.emit('ls_usernote_save_after', [params, result]);
         }
     }.bind(this));
     return false;
@@ -53,7 +53,7 @@ export function showNote() {
 export function remove(iUserId) {
     var url = aRouter['profile'] + 'ajax-note-remove/';
     var params = {iUserId: iUserId};
-    Hook.marker('removeBefore');
+    Emitter.emit('removeBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             Msg.error(null, result.sMsg);
@@ -61,7 +61,7 @@ export function remove(iUserId) {
             $('#usernote-note').hide();
             $('#usernote-button-add').show();
             this.sText = '';
-            Hook.run('ls_usernote_remove_after', [params, result]);
+            Emitter.emit('ls_usernote_remove_after', [params, result]);
         }
     }.bind(this));
     return false;

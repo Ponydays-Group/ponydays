@@ -1,6 +1,6 @@
 import * as Lang from './lang'
 import * as Msg from './msg'
-import * as Hook from './hook'
+import Emitter from './emitter'
 import $ from 'jquery'
 import * as Ajax from './ajax'
 
@@ -14,16 +14,16 @@ import * as Ajax from './ajax'
 export function vote(idTopic, idAnswer) {
     var url = aRouter['ajax'] + 'vote/question/';
     var params = {idTopic: idTopic, idAnswer: idAnswer};
-    Hook.marker('voteBefore');
+    Emitter.emit('voteBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             Msg.error(null, result.sMsg);
         } else {
             Msg.notice(null, result.sMsg);
             var area = $('#topic_question_area_' + idTopic);
-            Hook.marker('voteDisplayBefore');
+            Emitter.emit('voteDisplayBefore');
             area.html(result.sText);
-            Hook.run('ls_pool_vote_after', [idTopic, idAnswer, result], area);
+            Emitter.emit('ls_pool_vote_after', [idTopic, idAnswer, result], area);
         }
     });
 };
@@ -44,7 +44,7 @@ export function addAnswer() {
     }.bind(this));
     newItem.appendTo("#question_list").append(removeAnchor);
     newItem.find('input').val('');
-    Hook.run('ls_pool_add_answer_after', [removeAnchor], newItem);
+    Emitter.emit('ls_pool_add_answer_after', [removeAnchor], newItem);
 };
 
 /**

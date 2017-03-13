@@ -1,5 +1,5 @@
 import * as Msg from './msg'
-import * as Hook from './hook'
+import Emitter from './emitter'
 import $ from 'jquery'
 import * as Ajax from './ajax'
 
@@ -20,7 +20,7 @@ export function add(sText, iPid) {
     var url = aRouter['profile'] + this.options.login + '/wall/add/';
     var params = {sText: sText, iPid: iPid};
 
-    Hook.marker('addBefore');
+    Emitter.emit('addBefore');
     $('#wall-text').addClass('loader');
     Ajax.ajax(url, params, function (result) {
         $('.js-button-wall-submit').attr('disabled', false);
@@ -30,7 +30,7 @@ export function add(sText, iPid) {
             $('.js-wall-reply-parent-text').val('');
             $('#wall-note-list-empty').hide();
             this.loadNew();
-            Hook.run('ls_wall_add_after', [sText, iPid, result]);
+            Emitter.emit('ls_wall_add_after', [sText, iPid, result]);
         }
         $('#wall-text').removeClass('loader');
     }.bind(this));
@@ -42,7 +42,7 @@ export function addReply(sText, iPid) {
     var url = aRouter['profile'] + this.options.login + '/wall/add/';
     var params = {sText: sText, iPid: iPid};
 
-    Hook.marker('addReplyBefore');
+    Emitter.emit('addReplyBefore');
     $('#wall-reply-text-' + iPid).addClass('loader');
     Ajax.ajax(url, params, function (result) {
         $('.js-button-wall-submit').attr('disabled', false);
@@ -51,7 +51,7 @@ export function addReply(sText, iPid) {
         } else {
             $('.js-wall-reply-text').val('');
             this.loadReplyNew(iPid);
-            Hook.run('ls_wall_addreply_after', [sText, iPid, result]);
+            Emitter.emit('ls_wall_addreply_after', [sText, iPid, result]);
         }
         $('#wall-reply-text-' + iPid).removeClass('loader');
     }.bind(this));
@@ -61,7 +61,7 @@ export function addReply(sText, iPid) {
 export function load(iIdLess, iIdMore, callback) {
     var url = aRouter['profile'] + this.options.login + '/wall/load/';
     var params = {iIdLess: iIdLess ? iIdLess : '', iIdMore: iIdMore ? iIdMore : ''};
-    Hook.marker('loadBefore');
+    Emitter.emit('loadBefore');
     Ajax.ajax(url, params, callback);
     return false;
 };
@@ -69,7 +69,7 @@ export function load(iIdLess, iIdMore, callback) {
 export function loadReply(iIdLess, iIdMore, iPid, callback) {
     var url = aRouter['profile'] + this.options.login + '/wall/load-reply/';
     var params = {iIdLess: iIdLess ? iIdLess : '', iIdMore: iIdMore ? iIdMore : '', iPid: iPid};
-    Hook.marker('loadReplyBefore');
+    Emitter.emit('loadReplyBefore');
     Ajax.ajax(url, params, callback);
     return false;
 };
@@ -95,7 +95,7 @@ export function loadNext() {
             } else {
                 $('#wall-button-next').detach();
             }
-            Hook.run('ls_wall_loadnext_after', [idLess, result]);
+            Emitter.emit('ls_wall_loadnext_after', [idLess, result]);
         }
         $('#wall-button-next').removeClass('loader');
     }.bind(this));
@@ -116,7 +116,7 @@ export function loadNew() {
             if (result.iCountWall) {
                 $('#wall-container').prepend(result.sText);
             }
-            Hook.run('ls_wall_loadnew_after', [idMore, result]);
+            Emitter.emit('ls_wall_loadnew_after', [idMore, result]);
         }
     }.bind(this));
     return false;
@@ -136,7 +136,7 @@ export function loadReplyNew(iPid) {
             if (result.iCountWall) {
                 $('#wall-reply-container-' + iPid).append(result.sText);
             }
-            Hook.run('ls_wall_loadreplynew_after', [iPid, idMore, result]);
+            Emitter.emit('ls_wall_loadreplynew_after', [iPid, idMore, result]);
         }
     }.bind(this));
     return false;
@@ -163,7 +163,7 @@ export function loadReplyNext(iPid) {
             } else {
                 $('#wall-reply-button-next-' + iPid).detach();
             }
-            Hook.run('ls_wall_loadreplynext_after', [iPid, idLess, result]);
+            Emitter.emit('ls_wall_loadreplynext_after', [iPid, idLess, result]);
         }
         $('#wall-reply-button-next-' + iPid).removeClass('loader');
     }.bind(this));
@@ -220,18 +220,18 @@ export function init(opt) {
 export function remove(iId) {
     var url = aRouter['profile'] + this.options.login + '/wall/remove/';
     var params = {iId: iId};
-    Hook.marker('removeBefore');
+    Emitter.emit('removeBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             Msg.error(null, result.sMsg);
         } else {
             $('#wall-item-' + iId).fadeOut('slow', function () {
-                Hook.run('ls_wall_remove_item_fade', [iId, result], this);
+                Emitter.emit('ls_wall_remove_item_fade', [iId, result], this);
             });
             $('#wall-reply-item-' + iId).fadeOut('slow', function () {
-                Hook.run('ls_wall_remove_reply_item_fade', [iId, result], this);
+                Emitter.emit('ls_wall_remove_reply_item_fade', [iId, result], this);
             });
-            Hook.run('ls_wall_remove_after', [iId, result]);
+            Emitter.emit('ls_wall_remove_after', [iId, result]);
         }
     });
     return false;

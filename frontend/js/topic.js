@@ -1,5 +1,5 @@
 import * as Msg from './msg'
-import * as Hook from './hook'
+import Emitter from './emitter'
 import $ from 'jquery'
 import * as Ajax from './ajax'
 
@@ -11,13 +11,13 @@ export function preview(form, preview) {
     form = $('#' + form);
     preview = $('#' + preview);
     var url = aRouter['ajax'] + 'preview/topic/';
-    Hook.marker('previewBefore');
+    Emitter.emit('previewBefore');
     Ajax.ajaxSubmit(url, form, function (result) {
         if (result.bStateError) {
             Msg.error(null, result.sMsg);
         } else {
             preview.show().html(result.sText);
-            Hook.run('ls_topic_preview_after', [form, preview, result]);
+            Emitter.emit('ls_topic_preview_after', [form, preview, result]);
         }
     });
 };
@@ -48,7 +48,7 @@ export function lockControl(idTopic, obj) {
     params['bState'] = state ? "1" : "0";
 
     var url = aRouter['ajax'] + 'topic-lock-control';
-    Hook.marker('topicLockControlBefore');
+    Emitter.emit('topicLockControlBefore');
     Ajax.ajax(url, params, this.onControlLocked.bind(obj));
     return true;
 };

@@ -1,5 +1,5 @@
 import * as Msg from './msg'
-import * as Hook from './hook'
+import Emitter from './emitter'
 import $ from "jquery"
 import * as Ajax from './ajax'
 
@@ -35,7 +35,7 @@ export function load(obj, block, params) {
   console.log(obj)
     let type = $(obj).data('type') || "comment";
     console.log(type)
-    Hook.marker('loadBefore');
+    Emitter.emit('loadBefore');
 
     if (!type) return;
     type = block + '_' + type;
@@ -50,7 +50,7 @@ export function load(obj, block, params) {
 
     Ajax.ajax(options.type[type].url, params, function (result) {
         let args = [content, result];
-        Hook.marker('onLoadBefore');
+        Emitter.emit('onLoadBefore');
         onLoad.apply(this, args);
         if (block == "stream") {
                 $('.js-title-comment, .js-title-topic').poshytip({
@@ -99,7 +99,7 @@ export function switchTab(obj, block) {
             $(v).show();
         }
     });
-    Hook.run('ls_blocks_switch_tab_after', [obj, block], this);
+    Emitter.emit('ls_blocks_switch_tab_after', [obj, block], this);
     return true;
 }
 
@@ -121,7 +121,7 @@ export function onLoad(content, result) {
         Msg.error(null, result.sMsg);
     } else {
         content.html(result.sText);
-        Hook.run('ls_block_onload_html_after', arguments, this);
+        Emitter.emit('ls_block_onload_html_after', arguments, this);
     }
 }
 
@@ -201,5 +201,5 @@ export function initNavigation(block, count) {
         $('.js-block-' + block + '-nav').show();
         $('.js-block-' + block + '-dropdown').hide();
     }
-    //Hook.run('ls_blocks_init_navigation_after',[block,count],this);
+    //Emitter.emit('ls_blocks_init_navigation_after',[block,count],this);
 }

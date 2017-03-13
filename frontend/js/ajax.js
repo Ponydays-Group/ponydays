@@ -1,7 +1,7 @@
 import * as Msg from './msg'
 import $ from 'jquery'
 import * as Tools from './tools'
-import * as Hook from './hook'
+import Emitter from './emitter'
 
 export function ajax(url, params, callback, more) {
     more = more || {};
@@ -37,7 +37,7 @@ export function ajax(url, params, callback, more) {
         }.bind(this)
     };
 
-    Hook.run('ls_ajax_before', [ajaxOptions], this);
+    Emitter.emit('ls_ajax_before', [ajaxOptions], this);
 
     return $.ajax(ajaxOptions);
 }
@@ -76,7 +76,7 @@ export async function asyncAjax(url, params, callback, more) {
         }.bind(this)
     };
 
-    Hook.run('ls_ajax_before', [ajaxOptions], this);
+    Emitter.emit('ls_ajax_before', [ajaxOptions], this);
 
     return $.ajax(ajaxOptions);
 }
@@ -108,7 +108,7 @@ export function ajaxSubmit(url, form, callback, more) {
 
     };
 
-    Hook.run('ls_ajaxsubmit_before', [options], this);
+    Emitter.emit('ls_ajaxsubmit_before', [options], this);
     console.log("Ajax load")
 
     form.ajaxSubmit(options)
@@ -129,7 +129,7 @@ export async function ajaxUploadImg(form, sToLoad) {
             $.markItUp({replaceWith: data.sText});
             $('#window_upload_img').find('input[type="text"], input[type="file"]').val('');
             $('#window_upload_img').jqmHide();
-            Hook.marker('ajaxUploadImgAfter');
+            Emitter.emit('ajaxUploadImgAfter');
         }
     });
     console.log(result)

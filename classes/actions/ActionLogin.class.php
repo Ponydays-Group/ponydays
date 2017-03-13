@@ -73,7 +73,12 @@ class ActionLogin extends Action {
 			 * Сверяем хеши паролей и проверяем активен ли юзер
 			 */
 
-			if ($oUser->getPassword()==func_encrypt(getRequest('password'))) {
+            // ежели пароль - несолёный md5, но совпадает, обновим его, и сделаем вид, что так и было
+            if ( strlen($oUser->getPassword()) < 64 && $oUser->getPassword() == func_encrypt(getRequest('password')) )  {
+                $oUser->setPassword(encryptPassword(getRequest('password')));
+                $this->User_Update($oUser);
+            }
+			if (checkPassword($oUser->getPassword(), getRequest('password'))) {
 				if (!$oUser->getActivate()) {
 					$this->Message_AddErrorSingle($this->Lang_Get('user_not_activated', array('reactivation_path' => Router::GetPath('login') . 'reactivation')));
 					return;
@@ -200,7 +205,7 @@ class ActionLogin extends Action {
 			if ($oReminder=$this->User_GetReminderByCode($this->GetParam(0))) {
 				if (!$oReminder->getIsUsed() and strtotime($oReminder->getDateExpire())>time() and $oUser=$this->User_GetUserById($oReminder->getUserId())) {
 					$sNewPassword=func_generator(7);
-					$oUser->setPassword(func_encrypt($sNewPassword));
+					$oUser->setPassword(encryptPassword($sNewPassword));
 					if ($this->User_Update($oUser)) {
 						$oReminder->setDateUsed(date("Y-m-d H:i:s"));
 						$oReminder->setIsUsed(1);

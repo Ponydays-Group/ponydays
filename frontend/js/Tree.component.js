@@ -4,6 +4,8 @@ import Comment from "./Comment.component"
 
 import Emitter from "./emitter"
 
+import {updateImgs} from "./template"
+
 export default class Tree extends React.Component {
 
   state = {
@@ -18,7 +20,7 @@ export default class Tree extends React.Component {
     })
   }
 
-  componentDidMount() {
+  componentWillMount() {
 
     $(window).on('resize', this.calcNesting.bind(this))
 
@@ -51,6 +53,14 @@ export default class Tree extends React.Component {
         sorted_ids: new_sorted_ids
       })
     }.bind(this))
+  }
+
+  componentDidMount() {
+    updateImgs()
+  }
+
+  componentDidUpdate() {
+    updateImgs()
   }
 
   sortTree(r_ids, comments) {

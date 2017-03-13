@@ -53,15 +53,13 @@ function showFloatBlock($) {
 }
 
 export function updateImgs(){
-  $("img").each(
+  $(".spoiler-body img").each(
     function(k,v){
-      console.log("Test!")
-      $(v).click(
-        function(){
-          $("#image-modal-img")[0].src = v.src
-          $("#image-modal").css("display", "flex")
-        }.bind(this)
-      )
+      if(!v.getAttribute("data-src")){
+        console.log(v.src, v)
+        v.setAttribute("data-src", v.src)
+        v.src="#"
+      }
     }
   )
 }
@@ -318,6 +316,7 @@ export default function init() {
             if (b.style.display != "block") {
                 jQuery(b).show(300);
                 b.style.display = "block";
+                $(b).find("img").each(function(k,v){v.src=v.getAttribute("data-src")})
                 b.parentElement.getElementsByClassName("spoiler-title")[0].className = "spoiler-title spoiler-open";
             } else {
                 jQuery(b).hide(300);
@@ -386,5 +385,7 @@ export default function init() {
                 allNew[idx].className = "spoiler-title spoiler-close"
             }
         }
+
+        updateImgs()
     });
 }

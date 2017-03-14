@@ -116,6 +116,7 @@ export default class Comment extends React.Component {
     					</li> : ""}
 
     					{data.level>0? <li className="goto-comment-parent action-hidden"><a href="#" onClick={this.goToParentComment.bind(this)} title="Перейти к родительскому комментарию">↑</a></li>:""}
+                        <li style={{"display": "none"}} className="goto-comment-child action-hidden"><a href="#" title="{$aLang.comment_goto_child}">↓</a></li>
 
     					<li id={"vote_area_comment_"+data.id} className={classNames({
                   vote: true,

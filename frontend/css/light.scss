@@ -58,25 +58,25 @@ $blockquote-border: #eee;
   }
 }
 
-@import "bootstrap/assets/stylesheets/bootstrap";
-@import "./markitup";
+@import "./reset";
 @import "./base";
+@import "bootstrap/assets/stylesheets/bootstrap";
+@import "./grid";
+@import "./text";
+@import "./common";
+@import "./navs";
+@import "./markitup";
 @import "./blocks";
 @import "./blog";
 @import "./buttons";
-@import "./common";
-@import "./grid";
 @import "./icons";
 @import "./infobox";
 @import "./jquery.notifier";
 @import "./menu";
 @import "./modals";
-@import "./navs";
 @import "./print";
 @import "./profile";
-@import "./reset";
 @import "./tables";
-@import "./text";
 @import "./topic";
 @import "./wall";
 @import "./forms";

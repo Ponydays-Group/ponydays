@@ -336,6 +336,9 @@ export default function init() {
             var target = event.target || event.srcElement;
             if (!target) return;
             if (target.tagName=="IMG") {
+                if (target.id == "image-modal-img") {
+                    return
+                }
               $("#image-modal-img")[0].src = target.src
               $("#image-modal").css("display", "flex")
             }

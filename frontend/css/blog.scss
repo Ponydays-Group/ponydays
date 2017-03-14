@@ -42,6 +42,7 @@
         }
 
         .blog-desc-checkbox, .blog-desc-checkbox-label {
+            background: transparent;
             justify-content: center;
             font-size: 30px;
             display: flex;
@@ -61,7 +62,7 @@
         }
 
         .blog-desc-checkbox-label {
-            background: rgba(0, 0, 0, 0.19);
+            background: rgba(0, 0, 0, 0.3);
         }
 
         .hidden-desc {

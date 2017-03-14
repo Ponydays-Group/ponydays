@@ -31,9 +31,6 @@ export default class Tree extends React.Component {
     this.setState({sorted_ids: sorted_ids})
     window.ids = sorted_ids
     Emitter.on("comments-new-loaded", function(new_comments){
-
-      console.log("GOTCHA!")
-
       let new_sorted_ids = this.state.sorted_ids
       let comments = this.state.comments
 

@@ -28,8 +28,8 @@
 			</tr>
 		</thead>
 	{/if}
-	
-	
+
+
 	<tbody>
 		{if $aBlogs}
 			{foreach from=$aBlogs item=oBlog}
@@ -40,14 +40,11 @@
 						<a href="{$oBlog->getUrlFull()}">
 							<img src="{$oBlog->getAvatarPath(48)}" width="48" height="48" alt="avatar" class="avatar" />
 						</a>
-						
+
 						<p>
 							<a href="#" onclick="return ls.infobox.showInfoBlog(this,{$oBlog->getId()});" class="icon-question-sign"></a>
 
-							{if $oBlog->getType() == 'close'}
-								<i title="{$aLang.blog_closed}" class="icon-lock"></i>
-							{/if}
-
+							<i class="blog-type-icon fa fa-{if $oBlog->getType() == 'close'}lock{/if}{if $oBlog->getType() == 'invite'}unlock-alt{/if}{if $oBlog->getType() == 'open'}unlock{/if}"></i>
 							<a href="{$oBlog->getUrlFull()}">{$oBlog->getTitle()|escape:'html'}</a>
 						</p>
 					</td>

@@ -1,0 +1,192 @@
+/* --------------------------------------------
+	СТРАНИЦА ПОЛЬЗОВАТЕЛЯ
+-------------------------------------------- */
+.profile {
+    min-height: 48px;
+    margin-bottom: 0;
+    padding: 0 300px 20px 65px;
+    position: relative;
+}
+
+.profile .avatar {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.profile .vote-label {
+    text-transform: uppercase;
+    text-align: right;
+    font-size: 11px;
+    color: #aaa;
+}
+
+.profile .count {
+    font-size: 34px;
+    line-height: 1em;
+    font-weight: bold;
+    text-align: right;
+}
+
+.profile .vote {
+    position: absolute;
+    top: 0;
+    right: 140px;
+    background: $main-color;
+}
+
+.profile .vote .vote-count {
+    padding-left: 25px;
+    display: block;
+}
+
+.profile .vote .vote-up {
+    position: absolute;
+    top: 22px;
+    left: 0;
+    display: none;
+}
+
+.profile .vote .vote-down {
+    position: absolute;
+    top: 35px;
+    left: 0;
+    display: none;
+}
+
+.profile .vote.voted .vote-down,
+.profile .vote.voted .vote-up,
+.profile .vote:hover .vote-down,
+.profile .vote:hover .vote-up {
+    display: inline-block;
+}
+
+.profile .vote.vote-count-positive .vote-count {
+    color: #5055B2;
+}
+
+.profile .strength {
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.profile .user-login {
+    width: 270px;
+    font-size: 27px;
+    line-height: 26px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.profile .user-login.no-user-name {
+    position: relative;
+    top: 9px;
+}
+
+.profile .user-name {
+    color: #777;
+}
+
+.profile-page-header {
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    background: $main-accent-third;
+    border-top: 1px solid $main-accent-second;
+    color: #555;
+    padding: 5px 10px 6px;
+}
+
+.profile-info-about {
+    padding: 13px 20px 20px;
+    background: #F1F9F1;
+    border-radius: 5px;
+    margin-bottom: 30px;
+    color: #000;
+}
+
+.profile-info-about h3 {
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+
+.profile-tabs {
+    padding: 0 20px;
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    background: $secondary-accent;
+    margin-bottom: 20px;
+    margin-top: -20px;
+    margin-left: -15px;
+    width: calc(100% + 30px);
+}
+
+.profile-tabs li {
+    border-bottom: 2px solid rgba(165, 165, 165, 0.38);
+}
+
+.profile-tabs li.active {
+    border-bottom: 2px solid #38a6a6;
+}
+
+.profile-tabs li a {
+    display: inline-block;
+    padding: 15px;
+    color: #67737a;
+}
+
+.profile-main {
+    background: url("http://7428.net/wp-content/uploads/2015/01/Waves-Geometric-Background-Design-Vector-.jpg");
+    height: 374px;
+
+    .vote-up, .vote-down {
+        margin: 0;
+        margin-top: 0px;
+        transition: all .3s;
+    }
+
+    .vote-up:hover, .vote-down:hover {
+
+    }
+}
+
+.user-avatar-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 70%;
+    width: 100%;
+}
+
+.user-avatar {
+    border: 1px solid rgba(158, 158, 158, 0.65);
+    background: $secondary-accent;
+    border-radius: 100px;
+    box-shadow: 0 4px 23px 0 rgba(0, 0, 0, 0.35);
+}
+
+.user-info {
+    background: rgba(0, 0, 0, 0.12);
+    height: 30%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.user-info .user-login {
+    color: rgba(0, 0, 0, 0.67);
+    font-size: 30px;
+}
+
+.user-info .user-rating {
+    margin-top: 30px;
+    display: flex;
+    justify-content: space-around;
+    width: 70%;
+    font-size: 1.2em;
+}

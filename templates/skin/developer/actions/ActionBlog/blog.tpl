@@ -5,7 +5,7 @@
 <div class="modal modal-description" id="window_blog_description">
 	<header class="modal-header">
 		<h3>Описание блога "{$oBlog->getTitle()}"</h3>
-		<a href="#" class="close jqmClose"></a>
+		<a href="#" class="close jqmClose fa fa-close"></a>
 	</header>
 
 	<div class="modal-content">

@@ -17,6 +17,7 @@
 
 .modal .close {
     position: absolute;
+    font-size: 14px;
     top: 14px;
     right: 14px;
     width: 14px;
@@ -24,6 +25,7 @@
     background: url(images/icons.png) -312px 0 no-repeat;
     opacity: .3;
     filter: alpha(opacity=30);
+    transition: filter .2s;
 }
 
 .modal .close:hover {

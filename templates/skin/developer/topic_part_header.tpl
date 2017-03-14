@@ -6,7 +6,7 @@
 <article class="topic topic-type-{$oTopic->getType()} js-topic">
 	<header class="topic-header">
 		<div class="topic-header-top">
-			<a href="{$oTopic->getUrl()}" class="topic-title">{$oTopic->getTitle()}</a>
+			<span class="topic-title"><a href="{$oTopic->getUrl()}">{$oTopic->getTitle()}</a></span>
 			<a href="{$oUser->getUserWebPath()}" class="topic-author-login"><i class="fa fa-user-o"></i>{$oUser->getLogin()}</a>
 			<time class="topic-time" datetime="{date_format date=$oTopic->getDateAdd() format='c'}" title="{date_format date=$oTopic->getDateAdd() format='j F Y, H:i'}">
 				<i class="fa fa-clock-o"></i> {date_format date=$oTopic->getDateAdd() format="j F Y, H:i"}

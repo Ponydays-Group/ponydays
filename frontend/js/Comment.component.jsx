@@ -7,6 +7,7 @@ import * as Msg from './msg'
 import Emitter from "./emitter"
 
 var classNames = require("classnames")
+var dateFormat = require('dateformat');
 
 export default class Comment extends React.Component {
 
@@ -87,7 +88,7 @@ export default class Comment extends React.Component {
     			<ul className="comment-actions">
     				<li className="comment-date">
     					<a href={"#comment"+data.id} onClick={this.scrollToCurrentComment.bind(this)} title="Ссылка на комментарий">
-    						<time dateTime={data.date}>{data.date}</time>
+    						<time dateTime={data.date}>{dateFormat(new Date(data.date), "dd.mm.yy HH:MM:ss")}</time>
     					</a>
     				</li>
 

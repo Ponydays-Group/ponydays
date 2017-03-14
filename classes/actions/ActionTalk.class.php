@@ -507,7 +507,7 @@ class ActionTalk extends Action {
 				$aComment = array();
 				$aComment['id'] = $oComment->getId();
 				$aComment['author'] = array("id"=>$oComment->getUserId(), "login"=>$oComment->getUser()->getLogin(), "avatar"=>$oComment->getUser()->getProfileAvatarPath(48));
-				$aComment['date'] = $oComment->getDate();
+				$aComment['date'] = date(DateTime::ISO8601, strtotime($oComment->getDate()));
 				$aComment['text'] = $oComment->getText();
 				$aComment['isFavourite'] = $oComment->getIsFavourite();
 				$aComment['countFavourite'] = $oComment->getCountFavourite();
@@ -694,7 +694,7 @@ class ActionTalk extends Action {
 		}
 		$oTalkUser->setCommentCountNew(0);
 		$this->Talk_UpdateTalkUser($oTalkUser);
-		
+
 		$this->Viewer_AssignAjax('aComments',$aComments);
 		$this->Viewer_AssignAjax('iMaxIdComment',$iMaxIdComment);
 		$this->Viewer_AssignAjax('iUserCurrentCountTalkNew',$this->Talk_GetCountTalkNew($this->oUserCurrent->getId()));

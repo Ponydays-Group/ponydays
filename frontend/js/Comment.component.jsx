@@ -11,6 +11,10 @@ var dateFormat = require('dateformat');
 
 export default class Comment extends React.Component {
 
+    state = {
+        data: this.props.data
+    }
+
   editComment(e) {
     e.preventDefault()
     Comments.editComment(this.props.data.id)
@@ -35,7 +39,21 @@ export default class Comment extends React.Component {
       return
     }
     e.preventDefault()
-    Favourite.toggle(this.props.data.id,this.refs["comment_id_"+this.props.data.id],'comment')
+    let data = this.state.data
+    Favourite.toggle(this.props.data.id,$("#comment_favourite_"+data.id),'comment')
+    if (typeof(data.countFavourite) == "string") {
+        data.countFavourite = parseInt(data.countFavourite)
+    }
+    console.log(data)
+    if (this.state.data.isFavourite) {
+        data.isFavourite=false
+        data.countFavourite-=1
+    } else {
+        data.isFavourite=true
+        data.countFavourite+=1
+    }
+    console.log(data)
+    this.setState({data: data})
     return
   }
 
@@ -65,7 +83,7 @@ export default class Comment extends React.Component {
   }
 
   render() {
-    let data = this.props.data
+    let data = this.state.data
     let level = data.level > this.props.maxNesting? this.props.maxNesting : data.level
     console.log(data.level > this.props.maxNesting)
     return <section id={"comment_id_"+data.id} ref={"comment_id_"+data.id} data-level={level} style={{marginLeft:level*20}} className={classNames({
@@ -105,14 +123,14 @@ export default class Comment extends React.Component {
                 </a>
               </li> : "" }
 
-    					{(LOGGED_IN | data.favouriteCount)>0? <li className="comment-favourite action-hidden">
-    						<div onClick={this.toggleFavourite.bind(this)} className={classNames({
+    					{(LOGGED_IN | data.countFavourite)>0? <li className="comment-favourite action-hidden">
+    						<div id={"comment_favourite_"+data.id} onClick={this.toggleFavourite.bind(this)} className={classNames({
                     fa: true,
                     "fa-heart-o": true,
                     "favourite": true,
                     "active": data.isFavourite
                   })} />
-                <span className="favourite-count" id={"fav_count_comment_"+data.id}>{data.favouriteCount? data.favouriteCount : ""}</span>
+              <span className="favourite-count" id={"fav_count_comment_"+data.id}>{data.countFavourite>0? " "+data.countFavourite : ""}</span>
     					</li> : ""}
 
     					{data.level>0? <li className="goto-comment-parent action-hidden"><a href="#" onClick={this.goToParentComment.bind(this)} title="Перейти к родительскому комментарию">↑</a></li>:""}

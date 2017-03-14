@@ -276,5 +276,7 @@ $width: 100px;
 }
 
 img {
+	height: auto;
+	max-width: 100%;
 	cursor: pointer;
 }

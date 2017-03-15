@@ -4,8 +4,6 @@ import Comment from "./Comment.component"
 
 import Emitter from "./emitter"
 
-import {updateImgs} from "./template"
-
 export default class Tree extends React.Component {
 
   state = {
@@ -53,11 +51,11 @@ export default class Tree extends React.Component {
   }
 
   componentDidMount() {
-    updateImgs()
+    // updateImgs()
   }
 
   componentDidUpdate() {
-    updateImgs()
+    // updateImgs()
   }
 
   sortTree(r_ids, comments) {

@@ -77,7 +77,7 @@
 /* Update comments button */
 .toolbar .toolbar-update {  }
 .toolbar .toolbar-update .update-comments 			{ padding: 9px; }
-.toolbar .toolbar-update .update-comments i 		{ display: block; width: 16px; height: 16px; }
+.toolbar .toolbar-update .update-comments i 		{ display: block; width: 16px; height: 16px; line-height: 16px; }
 .toolbar .toolbar-update .update-comments.active i 	{ background-position: -16px 0; }
 .toolbar .toolbar-update .new-comments 				{ border-top: 1px solid $main-accent-second; padding: 10px 0; color: $text-color; text-align: center; font-size: 11px; }
 

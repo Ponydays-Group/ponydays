@@ -320,7 +320,7 @@ export default function init() {
             if (b.style.display != "block") {
                 jQuery(b).show(300);
                 b.style.display = "block";
-                $(b).find("img").each(function(k,v){v.src=v.getAttribute("data-src")})
+                $(b).find("img").each(function(k,v){if(v.getAttribute("data-src")){v.src=v.getAttribute("data-src")}})
                 b.parentElement.getElementsByClassName("spoiler-title")[0].className = "spoiler-title spoiler-open";
             } else {
                 jQuery(b).hide(300);

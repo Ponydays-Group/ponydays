@@ -308,7 +308,7 @@ export default function init() {
             }
         });
 
-        // showFloatBlock($);
+        showFloatBlock($);
 
 
 

@@ -56,3 +56,10 @@ dl.form-item dd { float: left; width: 300px; }
 ---------------------------------------------------------------*/
 .validate-error-hide { display: none; }
 .validate-error-show { display: block; color: #f00; font-weight: bold; font-size: 12px; }
+
+input[type="file"] {
+	height: 34px;
+	justify-content: center;
+	align-items: center;
+	display: flex;
+}

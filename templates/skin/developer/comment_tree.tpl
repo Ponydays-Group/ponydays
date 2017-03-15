@@ -35,6 +35,11 @@
   </div>
 </div>
 	<script>
+		{if $oUserCurrent}
+		{if ($oUserCurrent->isGlobalModerator() and $oTopic->getBlog()->getType() == "open") or $oUserCurrent->isAdministrator() or $oBlog->getUserIsAdministrator() or $oBlog->getUserIsModerator() or ($oTopic->getUserId() === $oUserCurrent->getId() and !$oTopic->isControlLocked()) or $oBlog->getOwnerId()==$oUserCurrent->getId()}
+		IS_ADMIN = true;
+		{/if}
+		{/if}
 	{literal}
 		$(document).ready(ls.comments.renderComments)
 	{/literal}

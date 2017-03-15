@@ -185,12 +185,6 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
             if (aCmt.length > 0 && result.iMaxIdComment) {
                 $("#comment_last_id").val(result.iMaxIdComment);
                 $('#count-comments').text(parseInt($('#count-comments').text()) + aCmt.length);
-                if (ls.blocks) {
-                    var curItemBlock = Blocks.getCurrentItem('stream');
-                    if (curItemBlock.data('type') == 'comment') {
-                        Blocks.load(curItemBlock, 'stream');
-                    }
-                }
             }
             var iCountOld = 0;
             if (bNotFlushNew) {
@@ -204,15 +198,6 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
             } else {
                 setCountNewComment(aCmt.length + iCountOld);
             }
-
-            // $.each(aCmt, function (index, item) {
-            //     if (!document.getElementById('comment_id_' + item.id)) {
-            //         if (!(selfIdComment && selfIdComment == item.id)) {
-            //             aCommentNew.push(item.id);
-            //         }
-            //         inject(item.idParent, item.id, item.html);
-            //     }
-            // }.bind(this));
 
             if (selfIdComment && $('#comment_id_' + selfIdComment).length) {
                 scrollToComment(selfIdComment);
@@ -237,6 +222,9 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
                 throw err;
             }
         }
+        var curItemBlock = Blocks.getCurrentItem('stream');
+        console.log(curItemBlock)
+        Blocks.load(curItemBlock, 'stream');
     }.bind(this));
 }
 

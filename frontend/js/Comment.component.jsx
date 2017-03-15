@@ -9,134 +9,59 @@ import Emitter from "./emitter"
 var classNames = require("classnames")
 var dateFormat = require('dateformat');
 
-export default class Comment extends React.Component {
-
-    state = {
-        data: this.props.data
-    }
-
-  editComment(e) {
-    e.preventDefault()
-    Comments.editComment(this.props.data.id)
-    return
-  }
-
-  toggleCommentForm(e) {
-    e.preventDefault()
-    Comments.toggleCommentForm(this.props.data.id)
-    return
-  }
-
-  toggleDelete(e) {
-    e.preventDefault()
-    Comments.toggle({}, this.props.data.id)
-    return
-  }
-
-  toggleFavourite(e) {
-    if (!LOGGED_IN) {
-      Msg.error("Ошибка", "Войдите, чтобы добавить в избранное")
-      return
-    }
-    e.preventDefault()
-    let data = this.state.data
-    Favourite.toggle(this.props.data.id,$("#comment_favourite_"+data.id),'comment')
-    if (typeof(data.countFavourite) == "string") {
-        data.countFavourite = parseInt(data.countFavourite)
-    }
-    console.log(data)
-    if (this.state.data.isFavourite) {
-        data.isFavourite=false
-        data.countFavourite-=1
-    } else {
-        data.isFavourite=true
-        data.countFavourite+=1
-    }
-    console.log(data)
-    this.setState({data: data})
-    return
-  }
-
-  goToParentComment(e) {
-    e.preventDefault()
-    Comments.goToParentComment(this.props.data.id, this.props.data.parentId)
-    return
-  }
-
-  voteUp(e) {
-    e.preventDefault()
-    Vote.vote(this.props.data.id, {}, 1, "comment")
-    return
-  }
-
-  voteDown(e) {
-    e.preventDefault()
-    Vote.vote(this.props.data.id, {}, -1, "comment")
-    return
-  }
-
-  scrollToCurrentComment(e) {
-    e.preventDefault()
-    Comments.scrollToComment(this.props.data.id)
-    history.replaceState({}, '', location.origin+location.pathname+"#comment"+this.props.data.id)
-    return
-  }
-
-  render() {
-    let data = this.state.data
-    let level = data.level > this.props.maxNesting? this.props.maxNesting : data.level
-    console.log(data.level > this.props.maxNesting)
-    return <section id={"comment_id_"+data.id} ref={"comment_id_"+data.id} data-level={level} style={{marginLeft:level*20}} className={classNames({
+export default function render_comment(data, maxNesting) {
+    let level = data.level > maxNesting? maxNesting : data.level
+    return `<section id=${"comment_id_"+data.id} data-level=${level} style="margin-left: ${level*20}px" class="${classNames({
         "comment": true,
         "comment-bad": data.rating < -5,
         "comment-deleted": data.isDeleted,
         "comment-self": USERNAME==data.author.login,
         "comment-new": data.isNew && USERNAME!=data.author.login
-      })}>
-    		<a name={"comment"+data.id} />
+    })}">
+    		<a name=${"comment"+data.id} />
 
-    		<a href={"/profile/"+data.author.login}><img src={data.author.avatar} alt="avatar" className="comment-avatar" /></a>
+    		<a href=${"/profile/"+data.author.login}><img src=${data.author.avatar} alt="avatar" class="comment-avatar" /></a>
 
-    		<ul className="comment-info">
-    			<li className="comment-author"><a href={"/profile/"+data.author.login}>{data.author.login}</a></li>
+    		<ul class="comment-info">
+    			<li class="comment-author"><a href=${"/profile/"+data.author.login}>${data.author.login}</a></li>
     		</ul>
 
-    		<div id={"comment_content_id_"+data.id} className="comment-content text" dangerouslySetInnerHTML={{__html: data.text}} />
+    		<div id=${"comment_content_id_"+data.id} class="comment-content text">${data.text}</div>
 
-    			<ul className="comment-actions">
-    				<li className="comment-date">
-    					<a href={"#comment"+data.id} onClick={this.scrollToCurrentComment.bind(this)} title="Ссылка на комментарий">
-    						<time dateTime={data.date}>{dateFormat(new Date(data.date), "dd.mm.yy HH:MM:ss")}</time>
+    			<ul class="comment-actions">
+    				<li class="comment-date">
+    					<a href=${"#comment"+data.id} onclick="ls.comments.scrollToComment(${data.id}); return false;" title="Ссылка на комментарий">
+    						<time dateTime=${data.date}>${dateFormat(new Date(data.date), "dd.mm.yy HH:MM:ss")}</time>
     					</a>
     				</li>
 
-    					{LOGGED_IN? <li><a href="#" onClick={this.toggleCommentForm.bind(this)} className="reply-link">Ответить</a></li> : "" }
-              {LOGGED_IN && (IS_ADMIN | USERNAME==data.author.login)? <li className="action-hidden">
-                <a href="#" className="editcomment_editlink" title="Редактировать комментарий" onClick={this.editComment.bind(this)}>
-                  <i className="fa fa-pencil" title="Редактировать комментарий" />
+    					${LOGGED_IN? `<li><a href="#" onclick="ls.comments.toggleCommentForm(${data.id}); return false;" class="reply-link">Ответить</a></li>` : "" }
+              ${LOGGED_IN && (IS_ADMIN | USERNAME==data.author.login)? `<li class="action-hidden">
+                <a href="#" class="editcomment_editlink" title="Редактировать комментарий" onclick="ls.comments.editComment(${data.id}); return false;">
+                  <i class="fa fa-pencil" title="Редактировать комментарий"></i>
                 </a>
-              </li> : ""}
+              </li>` : ""}
 
-              {LOGGED_IN && IS_ADMIN? <li>
-                <a href="#" className="comment-delete action-hidden" onClick={this.toggleDelete.bind(this)}>
-                  <i className="fa fa-trash" title="Удалить/восстановить комментарий" />
+              ${LOGGED_IN && IS_ADMIN? `<li>
+                <a onclick="ls.comments.toggle(this,${data.id}); return false;" href="#" class="comment-delete action-hidden">
+                  <i class="fa fa-trash" title="Удалить/восстановить комментарий"></i>
                 </a>
-              </li> : "" }
+              </li>` : "" }
 
-    					{(LOGGED_IN | data.countFavourite)>0? <li className="comment-favourite action-hidden">
-    						<div id={"comment_favourite_"+data.id} onClick={this.toggleFavourite.bind(this)} className={classNames({
+    					${(LOGGED_IN | data.countFavourite)>0? `<li class="comment-favourite action-hidden">
+    						<div onclick="return ls.favourite.toggle(${data.id},this,'comment');" id=${"comment_favourite_"+data.id} class="${classNames({
                     fa: true,
                     "fa-heart-o": true,
                     "favourite": true,
                     "active": data.isFavourite
-                  })} />
-              <span className="favourite-count" id={"fav_count_comment_"+data.id}>{data.countFavourite>0? " "+data.countFavourite : ""}</span>
-    					</li> : ""}
+                })}" />
+              <span class="favourite-count" id=${"fav_count_comment_"+data.id}>${data.countFavourite>0? " "+data.countFavourite : ""}</span>
+          </li>` : ""}
 
-    					{data.level>0? <li className="goto-comment-parent action-hidden"><a href="#" onClick={this.goToParentComment.bind(this)} title="Перейти к родительскому комментарию">↑</a></li>:""}
-                        <li style={{"display": "none"}} className="goto-comment-child action-hidden"><a href="#" title="{$aLang.comment_goto_child}">↓</a></li>
+    					${data.level>0? `<li class="goto-comment-parent action-hidden"><a href="#" onclick="ls.comments.goToParentComment(${data.id},${data.parentId}); return false;" title="Перейти к родительскому комментарию">↑</a></li>`:""}
+                        <li style="display: none" class="goto-comment-child action-hidden"><a href="#" title="Вернуться к дочернему">↓</a></li>
 
-    					<li id={"vote_area_comment_"+data.id} className={classNames({
+    					<li id=${"vote_area_comment_"+data.id} class="${classNames({
                   vote: true,
                   "action-hidden": data.rating == 0,
                   "vote-count-positive": data.rating > 0,
@@ -144,12 +69,11 @@ export default class Comment extends React.Component {
                   "voted": data.voted,
                   "voted-up": data.voteDirection > 0,
                   "voted-down": data.voteDirection < 0,
-                })}>
-                {LOGGED_IN? <div className="vote-up fa fa-plus-square-o" onClick={this.voteUp.bind(this)}></div> : "" }
-    						<span className="vote-count" id={"vote_total_comment_"+data.id}>{data.rating > 0? "+" : ""}{data.rating}</span>
-                {LOGGED_IN? <div className="vote-down fa fa-minus-square-o" onClick={this.voteDown.bind(this)}></div> : ""}
+              })}">
+                ${LOGGED_IN? `<div class="vote-up fa fa-plus-square-o" onclick="return ls.vote.vote(${data.id},this,1,'comment');"></div>` : "" }
+    						<span class="vote-count" id=${"vote_total_comment_"+data.id}>${data.rating > 0? "+" : ""}${data.rating}</span>
+                ${LOGGED_IN? `<div class="vote-down fa fa-minus-square-o" onclick="return ls.vote.vote(${data.id},this,-1,'comment');"` : ""}
     					</li>
     			</ul>
-    </section>
-  }
+    </section>`
 }

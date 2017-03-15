@@ -205,7 +205,9 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
             checkFolding();
             aCommentNew = [];
             calcNewComments();
-            Emitter.emit('ls_comments_load_after', [idTarget, typeTarget, selfIdComment, bNotFlushNew, result]);
+            //if (aCmt.length>0) {
+                Emitter.emit('ls_comments_load_after', [idTarget, typeTarget, selfIdComment, bNotFlushNew, result]);
+            //}
 
             try {
                 var new_messages = document.getElementById("new_messages");

@@ -5,6 +5,8 @@
 	iMaxIdComment=$iMaxIdComment
 }
 
+{assign var="oBlog" value=$oTopic->getBlog()}
+
 {hook run='comment_tree_begin' iTargetId=$iTargetId sTargetType=$sTargetType}
 
 <div class="comments" id="comments">
@@ -36,8 +38,8 @@
 </div>
 	<script>
 		{if $oUserCurrent}
-		{if ($oUserCurrent->isGlobalModerator() and $oTopic->getBlog()->getType() == "open") or $oUserCurrent->isAdministrator() or $oBlog->getUserIsAdministrator() or $oBlog->getUserIsModerator() or ($oTopic->getUserId() === $oUserCurrent->getId() and !$oTopic->isControlLocked()) or $oBlog->getOwnerId()==$oUserCurrent->getId()}
-		IS_ADMIN = true;
+		{if (($oUserCurrent->isGlobalModerator() and $oBlog->getType() == "open") or $oBlog->getUserIsAdministrator() or $oBlog->getUserIsModerator() or $oBlog->getOwnerId()==$oUserCurrent->getId()) }
+		IS_ADMIN = 1;
 		{/if}
 		{/if}
 	{literal}

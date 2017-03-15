@@ -1,6 +1,6 @@
 import React from "react"
 
-import Comment from "./Comment.component"
+import render_comment from "./Comment.component"
 
 import Emitter from "./emitter"
 
@@ -19,6 +19,9 @@ export default class Tree extends React.Component {
   }
 
   componentWillMount() {
+
+      console.log(Comment)
+      console.log(Comment.render)
 
     $(window).on('resize', this.calcNesting.bind(this))
 
@@ -88,7 +91,7 @@ export default class Tree extends React.Component {
 
   render() {
     return <div>{this.state.sorted_ids.map(function(id){
-      return <Comment key={"comment_"+id} data={this.props.comments[id]} maxNesting={this.state.max_nesting} />
+      return <div dangerouslySetInnerHTML={{__html: render_comment(this.props.comments[id], this.state.max_nesting)}}/>
     }.bind(this))}</div>
   }
 }

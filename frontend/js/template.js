@@ -335,7 +335,8 @@ export default function init() {
             if (event.button != 0) return;
             var target = event.target || event.srcElement;
             if (!target) return;
-            if (target.tagName=="IMG") {
+            var parent = target.parentNode || target.parentElement;
+            if (target.tagName=="IMG"  && !parent.classList.contains("spoiler-title")) {
                 if (target.id == "image-modal-img") {
                     return
                 }
@@ -347,7 +348,7 @@ export default function init() {
                 if (!target || target == document.body) return;
             }
 
-            var parent = target.parentNode || target.parentElement;
+            parent = target.parentNode || target.parentElement;
             if (!parent || parent.lastElementChild == target) return true;
             var b = parent.querySelector(".spoiler-body");
             if (!b) return;

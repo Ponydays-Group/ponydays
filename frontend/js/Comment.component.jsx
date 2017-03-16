@@ -40,8 +40,8 @@ export default function render_comment(data, maxNesting) {
                           </a>
                         </li>` : ""}
                         ${LOGGED_IN && (IS_ADMIN | USERNAME==data.author.login)? `<li class="action-hidden">
-                          <a href="#" class="editcomment_editlink" title="Редактировать комментарий" onclick="ls.comments.showHistory(${data.id}); return false;">
-                            <i class="fa fa-history" title="Редактировать комментарий"></i>
+                          <a href="#" class="editcomment_editlink" title="История редактирования" onclick="ls.comments.showHistory(${data.id}); return false;">
+                            <i class="fa fa-history" title="История редактирования"></i>
                           </a>
                         </li>` : ""}
 

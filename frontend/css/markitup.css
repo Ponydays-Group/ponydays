@@ -19,6 +19,8 @@
 	font:11px Verdana, Arial, Helvetica, sans-serif;
 }
 .markItUpEditor {
+	resize: vertical;
+	transition: none;
 	font: 12px "Courier New",Courier,monospace;
     padding: 5px;
     height: 200px;

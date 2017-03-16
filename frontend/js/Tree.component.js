@@ -95,6 +95,7 @@ export default class Tree {
         }
       }
     }
+    window.ids = sorted_ids
     return sorted_ids
   }
 
@@ -105,7 +106,7 @@ export default class Tree {
   }
 
   insertComment(obj, id) {
-      if ($("#comment_id_"+id).length != 0) {
+      if ($(`[data-id=${id}]`).length != 0) {
           return
       }
       console.log(this.state.comments[id], id)

@@ -92,8 +92,8 @@
 /* ���������� ������ */
 
 .modal.modal-write {
-    max-width: 740px;
-    margin-left: -370px;
+    max-width: 620px;
+    margin-left: -300px;
     top: 50px;
 }
 
@@ -121,12 +121,15 @@
 }
 
 .modal.modal-write .write-list li .write-item-image {
-    display: block;
-    max-width: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: $secondary-accent;
+    width: 100px;
     height: 100px;
+    font-size: 25px;
     border-radius: 3px;
     text-align: center;
-    background: url(images/write.png) no-repeat;
     margin-bottom: 10px;
 }
 

@@ -8,7 +8,7 @@ import * as Ajax from "./ajax"
 import ReactDOM from 'react-dom'
 import React from 'react'
 
-import CommentsTree from './Tree.component'
+import Tree from './Tree.component'
 
 /**
  * Опции
@@ -47,29 +47,34 @@ export let aCommentNew = [];
 export let aCommentOld = [];
 
 export async function loadComments() {
-  let url = ""
-  if (location.href.startsWith(aRouter["talk"])) {
-    url = location.href.replace("read", "readcomments")
-  } else {
-    url = window.location.pathname+"/comments"
-  }
-  return await Ajax.asyncAjax(url, {}, function(result){console.log(result)})
+    let url = ""
+    if (location.href.startsWith(aRouter["talk"])) {
+        url = location.href.replace("read", "readcomments")
+    } else {
+        url = window.location.pathname + "/comments"
+    }
+    return await Ajax.asyncAjax(url, {}, function(result) {
+        console.log(result)
+    })
 }
 
 export async function renderComments() {
-  let result = await loadComments()
-  let comments = result.aComments
-  let ids = []
-  for (let id in comments) {
-    ids.push(id)
-  }
-  $("#comment_last_id").val(result.iMaxIdComment)
-  ReactDOM.render(<CommentsTree ids={ids} comments={comments}/>, $("#comments-tree")[0])
-  calcNewComments()
-  resize_sidebar()
-  if (location.hash.startsWith('#comment')) {
-    setTimeout(scrollToComment(location.hash.replace('#comment', '')), 2000)
-  }
+    let result = await loadComments()
+    let comments = result.aComments
+    let ids = []
+    for (let id in comments) {
+        ids.push(id)
+    }
+    $("#comment_last_id").val(result.iMaxIdComment)
+    let CommentsTree = new Tree()
+    console.log(CommentsTree.mount, Tree)
+    CommentsTree.mount($("#comments-tree")[0], comments, ids)
+    //ReactDOM.render(<CommentsTree ids={ids} comments={comments}/>, $("#comments-tree")[0])
+    calcNewComments()
+    resize_sidebar()
+    if (location.hash.startsWith('#comment')) {
+        setTimeout(scrollToComment(location.hash.replace('#comment', '')), 2000)
+    }
 }
 
 // Добавляет комментарий
@@ -82,7 +87,7 @@ export function add(formObj, targetId, targetType) {
     $('#form_comment_text').addClass(options.classes.form_loader).attr('readonly', true);
     $('#comment-button-submit').attr('disabled', 'disabled');
 
-    Ajax.ajax(options.type[targetType].url_add, formObj.serializeJSON(), function (result) {
+    Ajax.ajax(options.type[targetType].url_add, formObj.serializeJSON(), function(result) {
         $('#comment-button-submit').removeAttr('disabled');
         if (!result) {
             enableFormComment();
@@ -103,12 +108,10 @@ export function add(formObj, targetId, targetType) {
     }.bind(this));
 }
 
-
 // Активирует форму
 export function enableFormComment() {
     $('#form_comment_text').removeClass(options.classes.form_loader).attr('readonly', false);
 }
-
 
 // Показывает/скрывает форму комментирования
 export function _toggleCommentForm(idComment, bNoFocus) {
@@ -127,9 +130,9 @@ export function _toggleCommentForm(idComment, bNoFocus) {
     }
     let comment = $('#comment_id_' + idComment)
     reply.insertAfter(comment).show();
-    reply.css("marginLeft", (comment.data("level")+1)*20)
+    reply.css("marginLeft", (comment.data("level") + 1) * 20)
     if (!comment) {
-      reply.css("marginLeft", 0)
+        reply.css("marginLeft", 0)
     }
     $('#form_comment_text').val('');
     $('#form_comment_reply').val(idComment);
@@ -138,9 +141,9 @@ export function _toggleCommentForm(idComment, bNoFocus) {
     if (options.wysiwyg) {
         tinyMCE.execCommand('mceAddControl', true, 'form_comment_text');
     }
-    if (!bNoFocus) $('#form_comment_text').focus();
-}
-
+    if (!bNoFocus)
+        $('#form_comment_text').focus();
+    }
 
 // Подгружает новые комментарии
 export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
@@ -154,7 +157,7 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
 
     // Удаляем подсветку у комментариев
     if (!bNotFlushNew) {
-        $('.comment').each(function (index, item) {
+        $('.comment').each(function(index, item) {
             $(item).removeClass(options.classes.comment_new + ' ' + options.classes.comment_current);
         }.bind(this));
     }
@@ -162,7 +165,11 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
     let objImg = $('#update-comments');
     objImg.addClass('fa-pulse');
 
-    var params = {idCommentLast: idCommentLast, idTarget: idTarget, typeTarget: typeTarget};
+    var params = {
+        idCommentLast: idCommentLast,
+        idTarget: idTarget,
+        typeTarget: typeTarget
+    };
     if (selfIdComment) {
         params.selfIdComment = selfIdComment;
     }
@@ -170,7 +177,7 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
         params.bUsePaging = 1;
     }
 
-    Ajax.ajax(options.type[typeTarget].url_response, params, function (result) {
+    Ajax.ajax(options.type[typeTarget].url_response, params, function(result) {
         objImg.removeClass('fa-pulse');
 
         if (!result) {
@@ -206,7 +213,7 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
             aCommentNew = [];
             calcNewComments();
             //if (aCmt.length>0) {
-                Emitter.emit('ls_comments_load_after', [idTarget, typeTarget, selfIdComment, bNotFlushNew, result]);
+            Emitter.emit('ls_comments_load_after', [idTarget, typeTarget, selfIdComment, bNotFlushNew, result]);
             //}
 
             try {
@@ -232,17 +239,19 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
 
 export function turnBack() {
     aCommentNew += aCommentOld;
-    aCommentNew.forEach(function (item, i) {
+    aCommentNew.forEach(function(item, i) {
         item.addClass(options.comment_new)
     })
     setCountNewComment(aCommentNew.length);
 
 }
 
-
 // Вставка комментария
 export function inject(idCommentParent, idComment, sHtml) {
-    var newComment = $('<div>', {'class': 'comment-wrapper', id: 'comment_wrapper_id_' + idComment}).html(sHtml);
+    var newComment = $('<div>', {
+        'class': 'comment-wrapper',
+        id: 'comment_wrapper_id_' + idComment
+    }).html(sHtml);
     if (idCommentParent) {
         // Уровень вложенности родителя
         var iCurrentTree = $('#comment_wrapper_id_' + idCommentParent).parentsUntil('#comments').length;
@@ -258,14 +267,15 @@ export function inject(idCommentParent, idComment, sHtml) {
     Emitter.emit('ls_comment_inject_after', arguments, newComment);
 }
 
-
 // Удалить/восстановить комментарий
 export function toggle(obj, commentId) {
     var url = aRouter['ajax'] + 'comment/delete/';
-    var params = {idComment: commentId};
+    var params = {
+        idComment: commentId
+    };
 
     Emitter.emit('toggleBefore');
-    Ajax.ajax(url, params, function (result) {
+    Ajax.ajax(url, params, function(result) {
         if (!result) {
             Msg.error('Error', 'Please try again later');
         }
@@ -282,21 +292,19 @@ export function toggle(obj, commentId) {
             Emitter.emit('ls_comments_toggle_after', [obj, commentId, result]);
         }
     }.bind(this));
-}
-;
-
+};
 
 // Предпросмотр комментария
 export function preview(divPreview) {
     if (options.wysiwyg) {
         $("#form_comment_text").val(tinyMCE.activeEditor.getContent());
     }
-    if ($("#form_comment_text").val() == '') return;
+    if ($("#form_comment_text").val() == '')
+        return;
     $("#comment_preview_" + iCurrentShowFormComment).remove();
     $('#reply').before('<div id="comment_preview_' + iCurrentShowFormComment + '" class="comment-preview text"></div>');
     ls.tools.textPreview('form_comment_text', false, 'comment_preview_' + iCurrentShowFormComment);
 }
-
 
 export function isCollapsed(el) {
     if (el.closest(".collapsed")) {
@@ -305,11 +313,11 @@ export function isCollapsed(el) {
     return false;
 }
 
-
 // Устанавливает число новых комментариев
 export function setCountNewComment(count) {
     // TODO that will work good only if there are no any other title modificators!
-    if (!options.pageTitle) options.pageTitle = document.title;
+    if (!options.pageTitle)
+        options.pageTitle = document.title;
     if (count > 0) {
         $('#new_comments_counter').show().text(count);
         if (document.getElementById('autoload').checked) {
@@ -321,17 +329,15 @@ export function setCountNewComment(count) {
     }
 }
 
-
-
 // Вычисляет кол-во новых комментариев
 export function calcNewComments() {
     var aCommentsNew = $('.' + options.classes.comment + '.' + options.classes.comment_new);
-    $.each(aCommentsNew, function (k, v) {
+    $.each(aCommentsNew, function(k, v) {
         console.log(isCollapsed(v));
     }.bind(this));
 
     let count = aCommentsNew.length;
-    $.each(aCommentsNew, function (k, v) {
+    $.each(aCommentsNew, function(k, v) {
         if (!isCollapsed(v)) {
             aCommentNew.push(parseInt($(v).attr('id').replace('comment_id_', '')));
         } else {
@@ -340,8 +346,6 @@ export function calcNewComments() {
     }.bind(this));
     setCountNewComment(count);
 }
-
-
 
 // Переход к следующему комментарию
 export function goToNextComment() {
@@ -354,8 +358,6 @@ export function goToNextComment() {
     }
     setCountNewComment(aCommentNew.length);
 }
-
-
 
 // Прокрутка к комментарию
 export function scrollToComment(idComment) {
@@ -371,14 +373,12 @@ export function scrollToComment(idComment) {
     iCurrentViewComment = idComment;
 }
 
-
-
 // Прокрутка к родительскому комментарию
 export function goToParentComment(id, pid) {
     let thisObj = this;
     $('.' + options.classes.comment_goto_child).hide().find('a').unbind();
 
-    $("#comment_id_" + pid).find('.' + options.classes.comment_goto_child).show().find("a").bind("click", function () {
+    $("#comment_id_" + pid).find('.' + options.classes.comment_goto_child).show().find("a").bind("click", function() {
         $(this).parent('.' + thisObj.options.classes.comment_goto_child).hide();
         thisObj.scrollToComment(id);
         return false;
@@ -387,20 +387,18 @@ export function goToParentComment(id, pid) {
     return false;
 }
 
-
-
 // Сворачивание комментариев
 export function checkFolding() {
     //if(!options.folding){
     //	return false;
     //}
-    $(".folding").each(function (index, element) {
+    $(".folding").each(function(index, element) {
         if ($(element).parent(".comment").next(".comment-wrapper").length == 0) {
             $(element).hide();
         } else {
             $(element).show();
         }
-    }).off("click").click(function (x) {
+    }).off("click").click(function(x) {
         if (x.target.className == "folding fa fa-minus-square") {
             collapseComment(x.target)
         } else {
@@ -410,31 +408,25 @@ export function checkFolding() {
     return false;
 }
 
-
 export function expandComment(folding) {
     $(folding).removeClass("fa-plus-square").addClass("fa-minus-square").parent().nextAll(".comment-wrapper").show().removeClass("collapsed");
 }
-
 
 export function collapseComment(folding) {
     $(folding).removeClass("fa-minus-square").addClass("fa-plus-square").parent().nextAll(".comment-wrapper").hide().addClass("collapsed");
 }
 
-
 export function expandCommentAll() {
-    $.each($(".folding"), function (k, v) {
+    $.each($(".folding"), function(k, v) {
         expandComment(v);
     }.bind(this));
 }
 
-
 export function collapseCommentAll() {
-    $.each($(".folding"), function (k, v) {
+    $.each($(".folding"), function(k, v) {
         collapseComment(v);
     }.bind(this));
 }
-
-
 
 export function init() {
     initEvent();
@@ -448,9 +440,8 @@ export function init() {
     //Emitter.emit('ls_comments_init_after',[],this);
 }
 
-
 export function initEvent() {
-    $('#form_comment_text').bind('keyup', function (e) {
+    $('#form_comment_text').bind('keyup', function(e) {
         var key = e.keyCode || e.which;
         if (e.ctrlKey && (key == 13)) {
             $('#comment-button-submit').click();
@@ -459,7 +450,7 @@ export function initEvent() {
     });
 
     if (options.folding) {
-        $(".folding").click(function (e) {
+        $(".folding").click(function(e) {
             if ($(e.target).hasClass("folded")) {
                 expandComment(e.target);
             } else {
@@ -470,160 +461,148 @@ export function initEvent() {
 }
 
 export function toggleCommentForm(idComment, bNoFocus) {
-        if (typeof (sBStyle) != 'undefined')
-            $('#comment-button-submit').css('display', sBStyle);
-        if (typeof (cbsclick) != 'undefined') {
-            $('#comment-button-submit').unbind('click');
-            $('#comment-button-submit').attr('onclick', cbsclick);
-        }
-
-        var b = $('#comment-button-submit-edit');
-        if (b.length)
-            b.remove();
-
-        b = $('#comment-button-history');
-        if (b.length)
-            b.remove();
-
-        b = $('#comment-button-cancel');
-        if (b.length)
-            b.remove();
-
-        _toggleCommentForm(idComment, bNoFocus);
+    if (typeof(sBStyle) != 'undefined')
+        $('#comment-button-submit').css('display', sBStyle);
+    if (typeof(cbsclick) != 'undefined') {
+        $('#comment-button-submit').unbind('click');
+        $('#comment-button-submit').attr('onclick', cbsclick);
     }
+
+    var b = $('#comment-button-submit-edit');
+    if (b.length)
+        b.remove();
+
+    b = $('#comment-button-history');
+    if (b.length)
+        b.remove();
+
+    b = $('#comment-button-cancel');
+    if (b.length)
+        b.remove();
+
+    _toggleCommentForm(idComment, bNoFocus);
+}
 
 export function cancelEditComment(idComment) {
-        var reply = $('#reply');
-        if (!reply.length) {
-            return;
-        }
-
-        reply.hide();
-        setFormText('');
+    var reply = $('#reply');
+    if (!reply.length) {
+        return;
     }
+
+    reply.hide();
+    setFormText('');
+}
 
 export function editComment(idComment) {
-        var reply = $('#reply');
-        if (!reply.length) {
-            return;
-        }
-
-        if (!(iCurrentShowFormComment == idComment && reply.is(':visible'))) {
-            var thisObj = this;
-            $('#comment_content_id_' + idComment).addClass(thisObj.options.classes.form_loader);
-            Ajax.ajax(aRouter.ajax + 'editcomment-getsource/',
-                {
-                    'idComment':idComment
-                }, function (result) {
-                    $('#comment_content_id_' + idComment).removeClass(thisObj.options.classes.form_loader);
-                    if (!result) {
-                        Msg.error('Error', 'Please try again later');
-                        return;
-                    }
-                    if (result.bStateError) {
-                        Msg.error(null, result.sMsg);
-                    }
-                    else {
-                        toggleCommentForm(idComment);
-                        sBStyle = $('#comment-button-submit').css('display');
-                        var cbs = $('#comment-button-submit');
-                        cbs.css('display', 'none');
-                        cbsclick = $('#comment-button-submit').attr('onclick');
-
-                        $('#comment-button-submit').attr('onclick', "");
-                        $('#comment-button-submit').bind('click', function () {
-                            $('#comment-button-submit-edit').click();
-                            return false;
-                        });
-                        if (result.bHasHistory)
-                            cbs.after($(thisObj.options.history_button_code));
-
-                        cbs.after($(thisObj.options.cancel_button_code));
-
-                        cbs.after($(thisObj.options.edit_button_code));
-                        ls.comments.setFormText(result.sCommentSource);
-
-                        thisObj.enableFormComment();
-                    }
-                });
-        }
-        else {
-            reply.hide();
-            return;
-        }
+    var reply = $('#reply');
+    if (!reply.length) {
+        return;
     }
 
-export function setFormText(sText)
-    {
-        if (options.wysiwyg) {
-            tinyMCE.execCommand('mceRemoveControl', false, 'form_comment_text');
-            $('#form_comment_text').val(sText);
-            tinyMCE.execCommand('mceAddControl', true, 'form_comment_text');
-        }
-        else if (typeof($('#form_comment_text').getObject) == 'function') {
-            $('#form_comment_text').destroyEditor();
-            $('#form_comment_text').val(sText);
-            $('#form_comment_text').redactor();
-        }
-        else
-            $('#form_comment_text').val(sText);
-    }
-
-export function edit(formObject, targetId, targetType) {
-        if (options.wysiwyg) {
-            $('#' + formObj + ' textarea').val(tinyMCE.activeEditor.getContent());
-        }
-        else
-            if (typeof($('#form_comment_text').getObject) == 'function')
-            {
-                $('#' + formObj + ' textarea').val($('#form_comment_text').getCode());
-            }
-        var formObj = $('#' + formObject);
-
-        $('#form_comment_text').addClass(options.classes.form_loader).attr('readonly', true);
-        $('#comment-button-submit').attr('disabled', 'disabled');
-
-        var lData = formObj.serializeJSON();
-        var idComment = lData.reply;
-
-        Ajax.ajax(aRouter.ajax + 'editcomment-edit/', lData, function (result) {
-            $('#comment-button-submit').removeAttr('disabled');
+    if (!(iCurrentShowFormComment == idComment && reply.is(':visible'))) {
+        var thisObj = this;
+        $('#comment_content_id_' + idComment).addClass(thisObj.options.classes.form_loader);
+        Ajax.ajax(aRouter.ajax + 'editcomment-getsource/', {
+            'idComment': idComment
+        }, function(result) {
+            $('#comment_content_id_' + idComment).removeClass(thisObj.options.classes.form_loader);
             if (!result) {
-                enableFormComment();
                 Msg.error('Error', 'Please try again later');
                 return;
             }
             if (result.bStateError) {
-                enableFormComment();
                 Msg.error(null, result.sMsg);
+            } else {
+                toggleCommentForm(idComment);
+                sBStyle = $('#comment-button-submit').css('display');
+                var cbs = $('#comment-button-submit');
+                cbs.css('display', 'none');
+                cbsclick = $('#comment-button-submit').attr('onclick');
+
+                $('#comment-button-submit').attr('onclick', "");
+                $('#comment-button-submit').bind('click', function() {
+                    $('#comment-button-submit-edit').click();
+                    return false;
+                });
+
+                cbs.after($(thisObj.options.cancel_button_code));
+
+                cbs.after($(thisObj.options.edit_button_code));
+                ls.comments.setFormText(result.sCommentSource);
+
+                thisObj.enableFormComment();
             }
-            else {
-                if (result.sMsg)
-                    Msg.notice(null, result.sMsg);
+        });
+    } else {
+        reply.hide();
+        return;
+    }
+}
 
-                enableFormComment();
-                setFormText('');
-
-                // Load new comments
-                if (result.bEdited) {
-                    $('#comment_content_id_' + idComment).html(result.sCommentText);
-                }
-                if (!result.bCanEditMore)
-                    $('#comment_id_' + idComment).find('.editcomment_editlink').remove();
-                load(targetId, targetType, idComment, true);
-                if (Blocks) {
-                    var curItemBlock = Blocks.getCurrentItem('stream');
-                    if (curItemBlock.data('type') == 'comment') {
-                        Blocks.load(curItemBlock, 'stream');
-                    }
-                }
-
-                Emitter.emit('ls_comments_edit_after', [ formObj, targetId, targetType, result ]);
-            }
-        }.bind(this));
+export function setFormText(sText) {
+    if (options.wysiwyg) {
+        tinyMCE.execCommand('mceRemoveControl', false, 'form_comment_text');
+        $('#form_comment_text').val(sText);
+        tinyMCE.execCommand('mceAddControl', true, 'form_comment_text');
+    } else if (typeof($('#form_comment_text').getObject) == 'function') {
+        $('#form_comment_text').destroyEditor();
+        $('#form_comment_text').val(sText);
+        $('#form_comment_text').redactor();
+    } else
+        $('#form_comment_text').val(sText);
     }
 
- export function showHistory () {
+export function edit(formObject, targetId, targetType) {
+    if (options.wysiwyg) {
+        $('#' + formObj + ' textarea').val(tinyMCE.activeEditor.getContent());
+    } else if (typeof($('#form_comment_text').getObject) == 'function') {
+        $('#' + formObj + ' textarea').val($('#form_comment_text').getCode());
+    }
+    var formObj = $('#' + formObject);
+
+    $('#form_comment_text').addClass(options.classes.form_loader).attr('readonly', true);
+    $('#comment-button-submit').attr('disabled', 'disabled');
+
+    var lData = formObj.serializeJSON();
+    var idComment = lData.reply;
+
+    Ajax.ajax(aRouter.ajax + 'editcomment-edit/', lData, function(result) {
+        $('#comment-button-submit').removeAttr('disabled');
+        if (!result) {
+            enableFormComment();
+            Msg.error('Error', 'Please try again later');
+            return;
+        }
+        if (result.bStateError) {
+            enableFormComment();
+            Msg.error(null, result.sMsg);
+        } else {
+            if (result.sMsg)
+                Msg.notice(null, result.sMsg);
+
+            enableFormComment();
+            setFormText('');
+
+            // Load new comments
+            if (result.bEdited) {
+                $('#comment_content_id_' + idComment).html(result.sCommentText);
+            }
+            if (!result.bCanEditMore)
+                $('#comment_id_' + idComment).find('.editcomment_editlink').remove();
+            load(targetId, targetType, idComment, true);
+            if (Blocks) {
+                var curItemBlock = Blocks.getCurrentItem('stream');
+                if (curItemBlock.data('type') == 'comment') {
+                    Blocks.load(curItemBlock, 'stream');
+                }
+            }
+
+            Emitter.emit('ls_comments_edit_after', [formObj, targetId, targetType, result]);
+        }
+    }.bind(this));
+}
+
+export function showHistory(cId) {
         var formObj = $('#form_comment');
 
         $('#form_comment_text').addClass(options.classes.form_loader).attr('readonly', true);
@@ -631,29 +610,28 @@ export function edit(formObject, targetId, targetType) {
 
         var lData = formObj.serializeJSON();
         lData.form_comment_text = '';
-        var idComment = lData.reply;
+        lData.reply = cId || lData.reply;
+        var idComment = cId || lData.reply;
+    Ajax.ajax(aRouter.ajax + 'editcomment-gethistory/', lData, function(result) {
+        $('#comment-button-submit-edit').removeAttr('disabled');
+        if (!result) {
+            enableFormComment();
+            Msg.error('Error', 'Please try again later');
+            return;
+        }
+        if (result.bStateError) {
+            enableFormComment();
+            Msg.error(null, result.sMsg);
+        } else {
+            if (result.sMsg)
+                Msg.notice(null, result.sMsg);
 
-        Ajax.ajax(aRouter.ajax + 'editcomment-gethistory/', lData, function (result) {
-            $('#comment-button-submit-edit').removeAttr('disabled');
-            if (!result) {
-                enableFormComment();
-                Msg.error('Error', 'Please try again later');
-                return;
-            }
-            if (result.bStateError) {
-                enableFormComment();
-                Msg.error(null, result.sMsg);
-            }
-            else {
-                if (result.sMsg)
-                    Msg.notice(null, result.sMsg);
-
-                enableFormComment();
-                $('#editcomment-history-content').html(result.sContent);
-                $('#modal-editcomment-history').jqmShow();
-            }
-        }.bind(this));
-    }
+            enableFormComment();
+            $('#editcomment-history-content').html(result.sContent);
+            $('#modal-editcomment-history').jqmShow();
+        }
+    }.bind(this));
+}
 
 // export function init_editcomment = function () {
 //        toggleCommentForm = that.superior("toggleCommentForm");

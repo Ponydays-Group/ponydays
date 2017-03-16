@@ -1,14 +1,12 @@
-import React from "react"
-
 import render_comment from "./Comment.component"
 
 import Emitter from "./emitter"
 
-export default class Tree extends React.Component {
+export default class Tree {
 
   state = {
-    sorted_ids: this.props.ids,
-    comments: this.props.comments,
+    sorted_ids: [],
+    comments: [],
     max_nesting: parseInt (($("#comments").width()-250)/20)
   }
 
@@ -18,19 +16,37 @@ export default class Tree extends React.Component {
     })
   }
 
-  componentWillMount() {
+  renderNewComments(new_comments){
+    let new_sorted_ids = this.state.sorted_ids
+    let comments = this.state.comments
 
-      console.log(Comment)
-      console.log(Comment.render)
+    for (let key in new_comments) {
+      let cmt = new_comments[key]
+      if (cmt.parentId) {
+        let parent = comments[cmt.parentId]
+        cmt.level = parseInt(parent.level) + 1
+      }
+      comments[cmt.id] = cmt
+      new_sorted_ids.push(cmt.id)
+    }
+    new_sorted_ids = this.sortTree(new_sorted_ids, comments)
+    this.state.comments = comments
+    this.state.sorted_ids = new_sorted_ids
+    for (let key in new_comments) {
+        this.insertComment(obj, new_comments[key].id)
+    }
+  }
 
+  mount(obj, comments, ids) {
     $(window).on('resize', this.calcNesting.bind(this))
 
-    let comments = this.props.comments
-    let ids = this.props.ids
     let sorted_ids = this.sortTree(ids, comments)
 
-    this.setState({sorted_ids: sorted_ids})
-    window.ids = sorted_ids
+    this.state.sorted_ids =  sorted_ids
+    this.state.comments =  comments
+
+    this.render(obj)
+
     Emitter.on("comments-new-loaded", function(new_comments){
       let new_sorted_ids = this.state.sorted_ids
       let comments = this.state.comments
@@ -46,19 +62,12 @@ export default class Tree extends React.Component {
         new_sorted_ids.push(cmt.id)
       }
       new_sorted_ids = this.sortTree(new_sorted_ids, comments)
-      this.setState({
-        comments: comments,
-        sorted_ids: new_sorted_ids
-      })
+      this.state.comments = comments
+      this.state.sorted_ids = new_sorted_ids
+      for (let key in new_comments) {
+          this.insertComment(obj, new_comments[key].id)
+      }
     }.bind(this))
-  }
-
-  componentDidMount() {
-    // updateImgs()
-  }
-
-  componentDidUpdate() {
-    // updateImgs()
   }
 
   sortTree(r_ids, comments) {
@@ -89,9 +98,19 @@ export default class Tree extends React.Component {
     return sorted_ids
   }
 
-  render() {
-    return <div>{this.state.sorted_ids.map(function(id){
-      return <div dangerouslySetInnerHTML={{__html: render_comment(this.props.comments[id], this.state.max_nesting)}}/>
-    }.bind(this))}</div>
+  render(obj) {
+    obj.innerHTML = `<div>${this.state.sorted_ids.map(function(id){
+      return render_comment(this.state.comments[id], this.state.max_nesting)
+    }.bind(this)).join("")}</div>`
+  }
+
+  insertComment(obj, id) {
+      if ($("#comment_id_"+id).length != 0) {
+          return
+      }
+      console.log(this.state.comments[id], id)
+      $(
+          render_comment(this.state.comments[id], this.state.max_nesting)
+      ).insertAfter("#comment_id_"+this.state.sorted_ids[this.state.sorted_ids.indexOf(id)-1])
   }
 }

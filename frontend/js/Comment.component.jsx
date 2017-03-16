@@ -1,5 +1,3 @@
-import React from "react"
-
 import * as Comments from './comments'
 import * as Favourite from './favourite'
 import * as Vote from './vote'
@@ -36,11 +34,16 @@ export default function render_comment(data, maxNesting) {
     				</li>
 
     					${LOGGED_IN? `<li><a href="#" onclick="ls.comments.toggleCommentForm(${data.id}); return false;" class="reply-link">Ответить</a></li>` : "" }
-              ${LOGGED_IN && (IS_ADMIN | USERNAME==data.author.login)? `<li class="action-hidden">
-                <a href="#" class="editcomment_editlink" title="Редактировать комментарий" onclick="ls.comments.editComment(${data.id}); return false;">
-                  <i class="fa fa-pencil" title="Редактировать комментарий"></i>
-                </a>
-              </li>` : ""}
+                        ${LOGGED_IN && (IS_ADMIN | USERNAME==data.author.login)? `<li class="action-hidden">
+                          <a href="#" class="editcomment_editlink" title="Редактировать комментарий" onclick="ls.comments.editComment(${data.id}); return false;">
+                            <i class="fa fa-pencil" title="Редактировать комментарий"></i>
+                          </a>
+                        </li>` : ""}
+                        ${LOGGED_IN && (IS_ADMIN | USERNAME==data.author.login)? `<li class="action-hidden">
+                          <a href="#" class="editcomment_editlink" title="Редактировать комментарий" onclick="ls.comments.showHistory(${data.id}); return false;">
+                            <i class="fa fa-history" title="Редактировать комментарий"></i>
+                          </a>
+                        </li>` : ""}
 
               ${LOGGED_IN && IS_ADMIN? `<li>
                 <a onclick="ls.comments.toggle(this,${data.id}); return false;" href="#" class="comment-delete action-hidden">

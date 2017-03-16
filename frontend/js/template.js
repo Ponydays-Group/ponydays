@@ -25,7 +25,7 @@ function showFloatBlock($) {
         var last_block = $($(".block")[$(".block").length - 1])
         var bottomPos = last_block.offset().top + last_block.outerHeight();
         if (showFloat) {
-            bottomPos += floatBlock.outerHeight() + 20;
+            //bottomPos += floatBlock.outerHeight();
         }
         if (window.pageYOffset > bottomPos) {
             if (!showFloat) {

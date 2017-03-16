@@ -43,7 +43,7 @@ export function load(obj, block, params) {
     params = $.extend(true, {}, options.type[type].params || {}, params || {});
 
     let content = $('.js-block-' + block + '-content');
-    showProgress(content);
+    // showProgress(content);
 
     $('.js-block-' + block + '-item').removeClass(options.active);
     $(obj).addClass(options.active);

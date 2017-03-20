@@ -188,9 +188,9 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
             var aCmt = result.aComments;
             console.log("Ajax OK", dateFormat(new Date(), "HH:MM:ss"))
             Emitter.emit("comments-new-loaded", result.aComments)
-            if (aCmt.length > 0 && result.iMaxIdComment) {
+            if (Object.keys(aCmt).length > 0 && result.iMaxIdComment) {
                 $("#comment_last_id").val(result.iMaxIdComment);
-                $('#count-comments').text(parseInt($('#count-comments').text()) + aCmt.length);
+                $('#count-comments').text(parseInt($('#count-comments').text()) + Object.keys(aCmt).length);
             }
             var iCountOld = 0;
             if (bNotFlushNew) {

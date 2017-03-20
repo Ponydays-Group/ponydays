@@ -32,9 +32,7 @@ export let options = {
  * Метод загрузки содержимого блока
  */
 export function load(obj, block, params) {
-  console.log(obj)
     let type = $(obj).data('type') || "comment";
-    console.log(type)
     Emitter.emit('loadBefore');
 
     if (!type) return;
@@ -52,17 +50,17 @@ export function load(obj, block, params) {
         let args = [content, result];
         Emitter.emit('onLoadBefore');
         onLoad.apply(this, args);
-        if (block == "stream") {
-                $('.js-title-comment, .js-title-topic').poshytip({
-                        className: 'infobox-yellow',
-                        alignTo: 'target',
-                        alignX: 'left',
-                        alignY: 'center',
-                        offsetX: 10,
-                        liveEvents: true,
-                        showTimeout: 500
-                });
-	}
+    //     if (block == "stream") {
+    //             $('.js-title-comment, .js-title-topic').poshytip({
+    //                     className: 'infobox-yellow',
+    //                     alignTo: 'target',
+    //                     alignX: 'left',
+    //                     alignY: 'center',
+    //                     offsetX: 10,
+    //                     liveEvents: true,
+    //                     showTimeout: 500
+    //             });
+	// }
     }.bind(this));
 }
 
@@ -156,7 +154,7 @@ export function init(block, params) {
     let $this = this;
     $('.js-block-' + block + '-update').click(function () {
         $(this).addClass('fa-spin');
-        console.log(load(getCurrentItem(block), block));
+        load(getCurrentItem(block), block)
         setTimeout(function () {
             $(this).removeClass('fa-spin');
         }.bind(this), 600);

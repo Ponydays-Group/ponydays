@@ -4,9 +4,6 @@
 	sTargetType=$sTargetType
 	iMaxIdComment=$iMaxIdComment
 }
-
-{assign var="oBlog" value=$oTopic->getBlog()}
-
 {hook run='comment_tree_begin' iTargetId=$iTargetId sTargetType=$sTargetType}
 
 <div class="comments" id="comments">
@@ -37,9 +34,12 @@
   </div>
 </div>
 	<script>
+	{if $sTargetType!="talk"}
+	{assign var="oBlog" value=$oTopic->getBlog()}
 		{if $oUserCurrent}
 		{if (($oUserCurrent->isGlobalModerator() and $oBlog->getType() == "open") or $oBlog->getUserIsAdministrator() or $oBlog->getUserIsModerator() or $oBlog->getOwnerId()==$oUserCurrent->getId()) }
 		IS_ADMIN = 1;
+		{/if}
 		{/if}
 		{/if}
 	{literal}

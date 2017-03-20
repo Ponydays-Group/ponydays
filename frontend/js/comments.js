@@ -10,6 +10,8 @@ import React from 'react'
 
 import Tree from './Tree.component'
 
+var dateFormat = require('dateformat');
+
 /**
  * Опции
  */
@@ -53,9 +55,7 @@ export async function loadComments() {
     } else {
         url = window.location.pathname + "/comments"
     }
-    return await Ajax.asyncAjax(url, {}, function(result) {
-        console.log(result)
-    })
+    return await Ajax.asyncAjax(url, {})
 }
 
 export async function renderComments() {
@@ -67,7 +67,6 @@ export async function renderComments() {
     }
     $("#comment_last_id").val(result.iMaxIdComment)
     let CommentsTree = new Tree()
-    console.log(CommentsTree.mount, Tree)
     CommentsTree.mount($("#comments-tree")[0], comments, ids)
     //ReactDOM.render(<CommentsTree ids={ids} comments={comments}/>, $("#comments-tree")[0])
     calcNewComments()
@@ -149,6 +148,7 @@ export function _toggleCommentForm(idComment, bNoFocus) {
 export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
     //if (options.loadMutex) return;
     //options.loadMutex = true;
+    console.log("Start load", dateFormat(new Date(), "HH:MM:ss"))
 
     var idCommentLast = $("#comment_last_id").val();
     if (aCommentNew != []) {
@@ -173,11 +173,10 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
     if (selfIdComment) {
         params.selfIdComment = selfIdComment;
     }
-    if ($('#comment_use_paging').val()) {
-        params.bUsePaging = 1;
-    }
 
+    console.log("Before ajax", dateFormat(new Date(), "HH:MM:ss"))
     Ajax.ajax(options.type[typeTarget].url_response, params, function(result) {
+        console.log("Ajax catched", dateFormat(new Date(), "HH:MM:ss"))
         objImg.removeClass('fa-pulse');
 
         if (!result) {
@@ -187,7 +186,7 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
             Msg.error(null, result.sMsg);
         } else {
             var aCmt = result.aComments;
-            console.info(result, Emitter, "EMITTER!")
+            console.log("Ajax OK", dateFormat(new Date(), "HH:MM:ss"))
             Emitter.emit("comments-new-loaded", result.aComments)
             if (aCmt.length > 0 && result.iMaxIdComment) {
                 $("#comment_last_id").val(result.iMaxIdComment);
@@ -209,31 +208,30 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
             if (selfIdComment && $('#comment_id_' + selfIdComment).length) {
                 scrollToComment(selfIdComment);
             }
-            checkFolding();
+            // checkFolding();
             aCommentNew = [];
             calcNewComments();
             //if (aCmt.length>0) {
-            Emitter.emit('ls_comments_load_after', [idTarget, typeTarget, selfIdComment, bNotFlushNew, result]);
+            // Emitter.emit('ls_comments_load_after', [idTarget, typeTarget, selfIdComment, bNotFlushNew, result]);
             //}
 
-            try {
-                var new_messages = document.getElementById("new_messages");
-                var pm_title = "";
-                if (result.iUserCurrentCountTalkNew > 0) {
-                    new_messages.classList.add("new-messages");
-                    pm_title = " (" + result.iUserCurrentCountTalkNew.toString() + ")";
-                } else {
-                    new_messages.classList.remove("new-messages");
-                }
-                new_messages.childNodes[0].textContent = pm_title;
-                new_messages.parentNode.title = pm_title;
-            } catch (err) {
-                throw err;
+            var new_messages = document.getElementById("new_messages");
+            var pm_title = "";
+            if (result.iUserCurrentCountTalkNew > 0) {
+                new_messages.classList.add("new-messages");
+                pm_title = " (" + result.iUserCurrentCountTalkNew.toString() + ")";
+            } else {
+                new_messages.classList.remove("new-messages");
             }
+            new_messages.childNodes[0].textContent = pm_title;
+            new_messages.parentNode.title = pm_title;
+            console.log("Ajax done", dateFormat(new Date(), "HH:MM:ss"))
         }
         var curItemBlock = Blocks.getCurrentItem('stream');
-        console.log(curItemBlock)
-        Blocks.load(curItemBlock, 'stream');
+        if (aCmt.length > 0) {
+            Blocks.load(curItemBlock, 'stream');
+            console.log("Load done", dateFormat(new Date(), "HH:MM:ss"))
+        }
     }.bind(this));
 }
 
@@ -333,7 +331,7 @@ export function setCountNewComment(count) {
 export function calcNewComments() {
     var aCommentsNew = $('.' + options.classes.comment + '.' + options.classes.comment_new);
     $.each(aCommentsNew, function(k, v) {
-        console.log(isCollapsed(v));
+        //console.log(isCollapsed(v));
     }.bind(this));
 
     let count = aCommentsNew.length;
@@ -603,15 +601,15 @@ export function edit(formObject, targetId, targetType) {
 }
 
 export function showHistory(cId) {
-        var formObj = $('#form_comment');
+    var formObj = $('#form_comment');
 
-        $('#form_comment_text').addClass(options.classes.form_loader).attr('readonly', true);
-        $('#comment-button-submit-edit').attr('disabled', 'disabled');
+    $('#form_comment_text').addClass(options.classes.form_loader).attr('readonly', true);
+    $('#comment-button-submit-edit').attr('disabled', 'disabled');
 
-        var lData = formObj.serializeJSON();
-        lData.form_comment_text = '';
-        lData.reply = cId || lData.reply;
-        var idComment = cId || lData.reply;
+    var lData = formObj.serializeJSON();
+    lData.form_comment_text = '';
+    lData.reply = cId || lData.reply;
+    var idComment = cId || lData.reply;
     Ajax.ajax(aRouter.ajax + 'editcomment-gethistory/', lData, function(result) {
         $('#comment-button-submit-edit').removeAttr('disabled');
         if (!result) {

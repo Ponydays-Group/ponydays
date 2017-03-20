@@ -159,17 +159,17 @@ export default function init() {
 
 
         // Всплывающие сообщения
-        if (Registry.get('block_stream_show_tip')) {
-            $('.js-title-comment, .js-title-topic').poshytip({
-                className: 'infobox-yellow',
-                alignTo: 'target',
-                alignX: 'left',
-                alignY: 'center',
-                offsetX: 10,
-                liveEvents: true,
-                showTimeout: 500
-            });
-        }
+        // if (Registry.get('block_stream_show_tip')) {
+        //     $('.js-title-comment, .js-title-topic').poshytip({
+        //         className: 'infobox-yellow',
+        //         alignTo: 'target',
+        //         alignX: 'left',
+        //         alignY: 'center',
+        //         offsetX: 10,
+        //         liveEvents: true,
+        //         showTimeout: 500
+        //     });
+        // }
 
         $('.js-title-talk').poshytip({
             className: 'infobox-yellow',

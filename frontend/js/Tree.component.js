@@ -1,3 +1,4 @@
+var dateFormat = require('dateformat');
 import render_comment from "./Comment.component"
 
 import Emitter from "./emitter"
@@ -48,6 +49,7 @@ export default class Tree {
     this.render(obj)
 
     Emitter.on("comments-new-loaded", function(new_comments){
+        console.log("New comments catched", dateFormat(new Date(), "HH:MM:ss"))
       let new_sorted_ids = this.state.sorted_ids
       let comments = this.state.comments
 
@@ -64,9 +66,11 @@ export default class Tree {
       new_sorted_ids = this.sortTree(new_sorted_ids, comments)
       this.state.comments = comments
       this.state.sorted_ids = new_sorted_ids
+      console.log("Before insert", dateFormat(new Date(), "HH:MM:ss"))
       for (let key in new_comments) {
           this.insertComment(obj, new_comments[key].id)
       }
+      console.log("After insert", dateFormat(new Date(), "HH:MM:ss"))
     }.bind(this))
   }
 
@@ -106,12 +110,19 @@ export default class Tree {
   }
 
   insertComment(obj, id) {
-      if ($(`[data-id=${id}]`).length != 0) {
+      console.log("Insert!", id, this.state.comments[id].parentId, dateFormat(new Date(), "HH:MM:ss"))
+      if (parseInt(this.state.comments[id].parentId) == 0) {
+          console.log("Root comment")
+          $(obj).append(render_comment(this.state.comments[id], this.state.max_nesting))
           return
       }
-      console.log(this.state.comments[id], id)
+      if ($(`[data-id=${id}]`).length != 0) {
+          console.log("Comment exists")
+          return
+      }
       $(
           render_comment(this.state.comments[id], this.state.max_nesting)
       ).insertAfter("#comment_id_"+this.state.sorted_ids[this.state.sorted_ids.indexOf(id)-1])
+      console.log("Comment inserted!", id, dateFormat(new Date(), "HH:MM:ss"))
   }
 }

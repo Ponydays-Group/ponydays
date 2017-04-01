@@ -148,7 +148,7 @@ export function _toggleCommentForm(idComment, bNoFocus) {
 export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
     //if (options.loadMutex) return;
     //options.loadMutex = true;
-    console.log("Start load", dateFormat(new Date(), "HH:MM:ss"))
+    console.log("Start load", dateFormat(new Date(), "HH:MM:ss:l"))
 
     var idCommentLast = $("#comment_last_id").val();
     if (aCommentNew != []) {
@@ -174,9 +174,9 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
         params.selfIdComment = selfIdComment;
     }
 
-    console.log("Before ajax", dateFormat(new Date(), "HH:MM:ss"))
+    console.log("Before ajax", dateFormat(new Date(), "HH:MM:ss:l"))
     Ajax.ajax(options.type[typeTarget].url_response, params, function(result) {
-        console.log("Ajax catched", dateFormat(new Date(), "HH:MM:ss"))
+        console.log("Ajax catched", dateFormat(new Date(), "HH:MM:ss:l"))
         objImg.removeClass('fa-pulse');
 
         if (!result) {
@@ -186,9 +186,9 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
             Msg.error(null, result.sMsg);
         } else {
             var aCmt = result.aComments;
-            console.log("Ajax OK", dateFormat(new Date(), "HH:MM:ss"))
-            Emitter.emit("comments-new-loaded", result.aComments)
+            console.log("Ajax OK", dateFormat(new Date(), "HH:MM:ss:l"))
             if (Object.keys(aCmt).length > 0 && result.iMaxIdComment) {
+                Emitter.emit("comments-new-loaded", result.aComments)
                 $("#comment_last_id").val(result.iMaxIdComment);
                 $('#count-comments').text(parseInt($('#count-comments').text()) + Object.keys(aCmt).length);
             }
@@ -225,12 +225,12 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
             }
             new_messages.childNodes[0].textContent = pm_title;
             new_messages.parentNode.title = pm_title;
-            console.log("Ajax done", dateFormat(new Date(), "HH:MM:ss"))
+            console.log("Ajax done", dateFormat(new Date(), "HH:MM:ss:l"))
         }
         var curItemBlock = Blocks.getCurrentItem('stream');
         if (aCmt.length > 0) {
             Blocks.load(curItemBlock, 'stream');
-            console.log("Load done", dateFormat(new Date(), "HH:MM:ss"))
+            console.log("Load done", dateFormat(new Date(), "HH:MM:ss:l"))
         }
     }.bind(this));
 }

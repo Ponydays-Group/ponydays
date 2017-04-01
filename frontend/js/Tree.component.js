@@ -25,7 +25,11 @@ export default class Tree {
     function sortByTree(a,b) {
       let a_index = this.state.sorted_ids.indexOf(a)
       let b_index = this.state.sorted_ids.indexOf(b)
-      return a_index > b_index
+      if (a_index < b_index) {
+        return -1
+      } else {
+        return 1
+      }
     }
     let new_comments_ids = Object.keys(new_comments)
     console.log(new_comments)

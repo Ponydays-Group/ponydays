@@ -439,13 +439,6 @@ class ActionTalk extends Action {
  		$aReturn=$this->Comment_GetCommentsByTargetId($oTalk->getId(),'talk');
  		$iMaxIdComment=$aReturn['iMaxIdComment'];
  		$aComments=$aReturn['comments'];
- 		/**
- 		 * Помечаем дату последнего просмотра
- 		 */
- 		$oTalkUser->setDateLast(date("Y-m-d H:i:s"));
- 		$oTalkUser->setCommentIdLast($iMaxIdComment);
- 		$oTalkUser->setCommentCountNew(0);
- 		$this->Talk_UpdateTalkUser($oTalkUser);
 
  		$this->Viewer_AddHtmlTitle($oTalk->getTitle());
  		$this->Viewer_Assign('oTalk',$oTalk);

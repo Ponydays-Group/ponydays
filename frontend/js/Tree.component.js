@@ -22,13 +22,22 @@ export default class Tree {
 
   renderNewComments(new_comments){
     console.log("start render")
-    for (let key in new_comments) {
-      let cmt = new_comments[key]
+    function sortByTree(a,b) {
+      let a_index = this.state.sorted_ids.indexOf(a)
+      let b_index = this.state.sorted_ids.indexOf(b)
+      return a_index < b_index
+    }
+    let new_comments_ids = Object.keys(new_comments)
+    console.log(new_comments)
+    new_comments_ids.sort(sortByTree.bind(this))
+    for (let key in new_comments_ids) {
+      let cmt = new_comments[new_comments_ids[key]]
       if ($(`[data-id=${cmt.id}]`).length == 0) {
         let cmt_html = render_comment(cmt, this.state.max_nesting)
         console.log("Inserting comment", cmt, this.state.sorted_ids[this.state.sorted_ids.indexOf(cmt.id)-1]) 
         if ($(`[data-id=${this.state.sorted_ids[this.state.sorted_ids.indexOf(cmt.id)-1]}]`).length != 1) {
-          console.error("No parent comment in DOM!", cmt, this.state.sorted_ids)
+          console.info("No parent comment in DOM!", cmt, this.state.sorted_ids)
+          $(this.obj).append($(cmt_html))
         }
         $(cmt_html).insertAfter(`[data-id=${this.state.sorted_ids[this.state.sorted_ids.indexOf(cmt.id)-1]}]`)
         if ($(`[data-id=${cmt.id}]`).length != 1) {

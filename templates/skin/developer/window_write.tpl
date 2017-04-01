@@ -1,7 +1,7 @@
 <div class="modal modal-write" id="modal_write">
 	<header class="modal-header">
 		<h3>{$aLang.block_create}</h3>
-		<a href="#" class="close jqmClose"></a>
+		<a href="#" class="close jqmClose fa fa-close"></a>
 	</header>
 
 	{strip}

@@ -58,21 +58,21 @@
 		<dl class="form-item">
 			<dt><label for="">{$aLang.settings_profile_birthday}:</label></dt>
 			<dd>
-				<select name="profile_birthday_day">
+				<select name="profile_birthday_day" style="width: 165px; float: left; margin-right: 15px;">
 					<option value="">{$aLang.date_day}</option>
 					{section name=date_day start=1 loop=32 step=1}
 						<option value="{$smarty.section.date_day.index}" {if $smarty.section.date_day.index==$oUserCurrent->getProfileBirthday()|date_format:"%d"}selected{/if}>{$smarty.section.date_day.index}</option>
 					{/section}
 				</select>
 
-				<select name="profile_birthday_month" style="width: 165px">
+				<select name="profile_birthday_month" style="width: 165px; float: left; margin-right: 15px;">
 					<option value="">{$aLang.date_month}</option>
 					{section name=date_month start=1 loop=13 step=1}
 						<option value="{$smarty.section.date_month.index}" {if $smarty.section.date_month.index==$oUserCurrent->getProfileBirthday()|date_format:"%m"}selected{/if}>{$aLang.month_array[$smarty.section.date_month.index][0]}</option>
 					{/section}
 				</select>
 
-				<select name="profile_birthday_year">
+				<select name="profile_birthday_year" style="width: 165px; float: left; margin-right: 15px;">
 					<option value="">{$aLang.date_year}</option>
 					{section name=date_year loop=$smarty.now|date_format:"%Y"+1 max=$smarty.now|date_format:"%Y"-2012+130 step=-1}
 						<option value="{$smarty.section.date_year.index}" {if $smarty.section.date_year.index==$oUserCurrent->getProfileBirthday()|date_format:"%Y"}selected{/if}>{$smarty.section.date_year.index}</option>
@@ -120,7 +120,7 @@
 
 		<dl class="form-item">
 			<dt><label for="profile_about">{$aLang.settings_profile_about}:</label></dt>
-			<dd><textarea name="profile_about" id="profile_about" class="input-text input-width-300" rows="5">{$oUserCurrent->getProfileAbout()|escape:'html'}</textarea></dd>
+			<dd><textarea name="profile_about" id="profile_about" class="input-text" style="width: 100%;" rows="5">{$oUserCurrent->getProfileAbout()|escape:'html'}</textarea></dd>
 		</dl>
 
 		{assign var="aUserFieldValues" value=$oUserCurrent->getUserFieldValues(false,'')}

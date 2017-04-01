@@ -40,7 +40,7 @@ form .icon-question-sign { cursor: help; }
 
 dl.form-item { overflow: hidden; zoom: 1; margin-bottom: 20px; }
 dl.form-item dt { float: left; width: 135px; padding-top: 4px; padding-right: 15px; overflow: hidden; }
-dl.form-item dd { float: left; width: 300px; }
+dl.form-item dd { float: left; max-width: 800px; width:100%; }
 
 .form-profile { position: relative; }
 .form-profile .avatar-change { position: absolute; top: 40px; right: 0; padding: 10px; background: $main-color; font-size: 11px; }

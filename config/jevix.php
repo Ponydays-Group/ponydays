@@ -48,7 +48,7 @@ return array(
 			),
 			array(
 				'object',
-				array('width' => '#int', 'height' => '#int', 'data' => array('#domain'=>array('youtube.com','rutube.ru','vimeo.com')),  'type' => '#text')
+				array('width' => '#int', 'height' => '#int', 'data' => array('#domain'=>array('youtube.com', 'm.youtube.com','rutube.ru','vimeo.com')),  'type' => '#text')
 			),
 			array(
 				'param',
@@ -56,7 +56,7 @@ return array(
 			),
 			array(
 				'embed',
-				array('src' => array('#domain'=>array('youtube.com','rutube.ru','vimeo.com', 'embed.pleer.com', "dl.dropbox.com")), 'type' => '#text','allowscriptaccess' => '#text', 'allowfullscreen' => '#text','width' => '#int', 'height' => '#int', 'flashvars'=> '#text', 'wmode'=> '#text')
+				array('src' => array('#domain'=>array('youtube.com', 'm.youtube.com','rutube.ru','vimeo.com', 'embed.pleer.com', "dl.dropbox.com")), 'type' => '#text','allowscriptaccess' => '#text', 'allowfullscreen' => '#text','width' => '#int', 'height' => '#int', 'flashvars'=> '#text', 'wmode'=> '#text')
 			),
 			array(
 				'acronym',
@@ -68,7 +68,7 @@ return array(
 			),
 			array(
 				'iframe',
-				array('width' => '#int', 'height' => '#int', 'src' => array('#domain'=>array('music.yandex.ru', 'music.yandex.kz', 'youtube.com','rutube.ru','vimeo.com', 'soundcloud.com')))
+				array('width' => '#int', 'height' => '#int', 'src' => array('#domain'=>array('music.yandex.ru', 'music.yandex.kz', 'youtube.com', 'm.youtube.com','rutube.ru','vimeo.com', 'soundcloud.com')))
 			),
 			array(
 				'ls',
@@ -93,7 +93,7 @@ return array(
 						'value'=>array('sameDomain'),
 					),
 					'movie' => array(
-						'value'=>array('#domain'=>array('youtube.com','rutube.ru','vimeo.com', 'embed.pleer.com')),
+						'value'=>array('#domain'=>array('youtube.com', 'm.youtube.com','rutube.ru','vimeo.com', 'embed.pleer.com')),
 					),
 					'align' => array(
 						'value'=>array('bottom','middle','top','left','right'),

@@ -56,7 +56,7 @@
 
 	<p><span class="checkbox">
 						<span><input type="checkbox" id="topic_forbid_comment" name="topic_forbid_comment" class="input-checkbox" value="1" {if $_aRequest.topic_forbid_comment==1}checked{/if} />
-	<label>{$aLang.topic_create_forbid_comment}</label></span></span>
+	<label for="topic_forbid_comment">{$aLang.topic_create_forbid_comment}</label></span></span>
 	<small class="note">{$aLang.topic_create_forbid_comment_notice}</small></p>
 
 

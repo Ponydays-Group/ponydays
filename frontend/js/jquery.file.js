@@ -55,8 +55,8 @@
             reset();
 
             function placer(e) {
-                form.css('margin-left', e.pageX - pos.left - offset.width);
-                form.css('margin-top', e.pageY - pos.top - offset.height + 3);
+                // form.css('margin-left', e.pageX - pos.left - offset.width);
+                // form.css('margin-top', e.pageY - pos.top - offset.height + 3);
             }
 
             function redirect(name) {

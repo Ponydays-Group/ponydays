@@ -31,7 +31,7 @@
 (function ($) {
 
   $.Jcrop = function (obj, opt) {
-    var h;
+    var h, w, x, y;
     var options = $.extend({}, $.Jcrop.defaults),
         docOffset, lastcurs, ie6mode = false;
 

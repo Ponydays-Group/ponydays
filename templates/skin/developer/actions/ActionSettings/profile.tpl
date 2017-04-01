@@ -165,6 +165,7 @@
 			$('#avatar-upload').file({ name:'avatar' }).choose(function(e, input) {
 				ls.user.uploadAvatar(null,input);
 			});
+			$('#profile_about').markItUp(ls.settings.getMarkitupComment())
 		});
 	</script>
 

@@ -22,6 +22,10 @@
 					<li><span class="checkbox"><span style="padding: 0;"><input name="topic_{$oTopic->getId()}_lock" id="topic_{$oTopic->getId()}_lock" type="checkbox" onclick="if(!!this.checked || confirm('{$aLang.topic_lock_control_un}')) return ls.topic.lockControl({$oTopic->getId()},this); else return false;" {if $oTopic->isControlLocked()}checked="checked"{/if} /><label for="topic_{$oTopic->getId()}_lock" title="{$aLang.topic_lock_control_title}" class="actions-topic_lock_control" style="padding: 0px 0px 0px 25px;">{$aLang.topic_lock_control}</label></span></span></li>
 				{/if}
 			</ul>
+			{if $oTopic->getPublish() == 0}
+				<i class="fa fa-tag" title="{$aLang.topic_unpublish}"></i>
+			{/if}
+
 			<a href="{$oUser->getUserWebPath()}" class="topic-author-login"><i class="fa fa-user-o"></i>{$oUser->getLogin()}</a>
 			<time class="topic-time" datetime="{date_format date=$oTopic->getDateAdd() format='c'}" title="{date_format date=$oTopic->getDateAdd() format='j F Y, H:i'}">
 				<i class="fa fa-clock-o"></i> {date_format date=$oTopic->getDateAdd() format="j F Y, H:i"}

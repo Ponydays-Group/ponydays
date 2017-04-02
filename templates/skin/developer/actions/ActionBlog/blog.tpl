@@ -62,6 +62,15 @@
 	        {/foreach}
 	        {/if}
 		</div>
+		<div class="blog-subscribe">
+						{if $oUserCurrent and $oUserCurrent->getId()!=$oBlog->getOwnerId()}
+			{if $oBlog->getType()!="close"}
+				<span><a href="#" class="blog-join" onclick="ls.blog.toggleJoin(this,{$oBlog->getId()}); return false;" class="link-dotted">{if $oBlog->getUserIsJoin()}{$aLang.blog_leave}{else}{$aLang.blog_join}{/if}</a></span>
+			{else}
+				<span class="blog-join"><a href="#" class="blog-join" onclick="ls.blog.toggleJoin(this,{$oBlog->getId()}); return false;" class="link-dotted">{if $oBlog->getUserIsJoin()}{$aLang.blog_leave}{/if}</a></span>
+			{/if}
+			{/if}
+		</div>
 		<div class="blog-stat">
 			<div class="blog-readers">
 				<span class="title">{$aLang.blog_user_readers}:</span>

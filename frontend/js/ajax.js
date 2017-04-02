@@ -118,14 +118,13 @@ export function ajaxSubmit(url, form, callback, more) {
  * Загрузка изображения
  */
 export async function ajaxUploadImg(form, sToLoad) {
-    console.log('ajaxUploadImgBefore');
     let result = await ajaxSubmit('upload/image/', form, function (data) {
-      console.log("DATA: ", data)
         if (data.bStateError) {
-          console.log("Not Submit")
             Msg.error(data.sMsgTitle, data.sMsg);
         } else {
-          console.log("STEXT: ", data.sText)
+            if (!data.sText.length) {
+                Msg.error("Ошибка", "Сервер не отдал картинку");
+            }
             $.markItUp({replaceWith: data.sText});
             $('#window_upload_img').find('input[type="text"], input[type="file"]').val('');
             $('#window_upload_img').jqmHide();

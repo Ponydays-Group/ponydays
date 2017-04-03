@@ -368,11 +368,11 @@ export default function init() {
             allNew[idx].className = "spoiler-title spoiler-close"
         }
 
-        var despoil = function() {
+        window.despoil = function() {
             var allBody = document.querySelectorAll('.spoiler-body');
             idx = 0
             for (idx = 0; idx < allBody.length; idx++) {
-                allBody[idx].style.display = "block"
+                spoiler(allBody[idx])
             }
             var allNew = document.querySelectorAll('.spoiler-title');
             idx = 0

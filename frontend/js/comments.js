@@ -50,7 +50,7 @@ export let aCommentOld = [];
 
 export async function loadComments() {
     let url = ""
-    if (location.href.startsWith(aRouter["talk"])) {
+    if (location.pathname.startsWith(aRouter["talk"])) {
         url = location.href.replace("read", "readcomments")
     } else {
         url = window.location.pathname + "/comments"
@@ -218,9 +218,12 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
             var new_messages = document.getElementById("new_messages");
             var pm_title = "";
             if (result.iUserCurrentCountTalkNew > 0) {
+                $(".toolbar-talk").css("display", "block")
+                $(".toolbar-talk a")[0].title = `+${result.iUserCurrentCountTalkNew}`
                 new_messages.classList.add("new-messages");
                 pm_title = " (" + result.iUserCurrentCountTalkNew.toString() + ")";
             } else {
+                $(".toolbar-talk").css("display", "none")
                 new_messages.classList.remove("new-messages");
             }
             new_messages.childNodes[0].textContent = pm_title;

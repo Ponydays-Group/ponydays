@@ -34,6 +34,8 @@
   </div>
 </div>
 	<script>
+	var targetType = "{$sTargetType}";
+	var targetId = {$iTargetId};
 	{if $sTargetType!="talk"}
 	{assign var="oBlog" value=$oTopic->getBlog()}
 		{if $oUserCurrent}

@@ -88,8 +88,83 @@ export default class Tree {
       console.log("After insert", dateFormat(new Date(), "HH:MM:ss:l"))
     }.bind(this))
     
+    function goToPrevComment(){
+      Comments.scrollToComment($('.comment-current').prev().data('id'))
+    }
+    function goToNextComment(){
+      Comments.scrollToComment($('.comment-current').next().data('id'))
+    }
+    
+    function goToLastComment(){
+      Comments.scrollToComment(this.state.sorted_ids[this.state.sorted_ids.length-1])
+    }
+    
+    function goToFirstComment(){
+      Comments.scrollToComment(this.state.sorted_ids[0])
+    }
+    
+    function goToNextBranch(){
+      let cur_id = $('.comment-current').data("id")
+      let cur_cmt = this.state.comments[cur_id]
+      let data = this.state.sorted_ids.slice(this.state.sorted_ids.indexOf(""+cur_id)+1)
+      let prev_branch = this.state.sorted_ids[0]
+      console.log(cur_id,this.state.sorted_ids.indexOf(cur_id),data)
+      for (let key in data) {
+        let id = data[key]
+        let cmt = this.state.comments[id]
+        console.log(cmt)
+        if (cmt.level == 0) {
+          prev_branch = cmt.id
+          console.log(cmt.id)
+          break
+        }
+      }
+      Comments.scrollToComment(prev_branch)
+    }
+    
+    function goToPrevBranch(){
+      let cur_id = $('.comment-current').data("id")
+      let cur_cmt = this.state.comments[cur_id]
+      let data = this.state.sorted_ids.slice(0, this.state.sorted_ids.indexOf(""+cur_id)).reverse()
+      let prev_branch = this.state.sorted_ids[0]
+      console.log(cur_id,this.state.sorted_ids.indexOf(cur_id),data)
+      for (let key in data) {
+        let id = data[key]
+        let cmt = this.state.comments[id]
+        console.log(cmt)
+        if (cmt.level == 0) {
+          prev_branch = cmt.id
+          console.log(cmt.id)
+          break
+        }
+      }
+      Comments.scrollToComment(prev_branch)
+    }
+    
+    function toggleReplyOnCurrent(){
+      Comments.toggleCommentForm($('.comment-current').data("id"))
+    }
+    
+    function updateComments(){
+      Comments.load(window.targetId, window.targetType)
+    }
+    
+    function updateCommentsSoft(){
+      Comments.load(window.targetId, window.targetType)
+    }
+    
     $(document).on('keydown', null, 'ctrl+space', Comments.goToNextComment);
+    $(document).on('keydown', null, 'ctrl+up', goToPrevComment)
+    $(document).on('keydown', null, 'ctrl+down', goToNextComment)
+    $(document).on('keydown', null, 'ctrl+end', goToLastComment.bind(this))
+    $(document).on('keydown', null, 'ctrl+home', goToFirstComment.bind(this))
+    $(document).on('keydown', null, 'alt+pagedown', goToNextBranch.bind(this))
+    $(document).on('keydown', null, 'alt+pageup', goToPrevBranch.bind(this))
+    $(document).on('keydown', null, 'alt+r', toggleReplyOnCurrent.bind(this))
+    $(document).on('keydown', null, 'alt+u', updateComments)
+    $(document).on('keydown', null, 'alt+shift+u', updateCommentsSoft)
   }
+
 
   sortTree(r_ids, comments) {
     let ids = []

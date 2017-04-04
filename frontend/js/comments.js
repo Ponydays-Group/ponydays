@@ -364,7 +364,7 @@ export function goToNextComment() {
 export function scrollToComment(idComment) {
     $('html, body').animate({
         scrollTop: $('#comment_id_' + idComment).offset().top - 250
-    }, 350);
+    }, 150);
 
     if (iCurrentViewComment) {
         $('#comment_id_' + iCurrentViewComment).removeClass(options.classes.comment_current);

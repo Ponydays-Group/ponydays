@@ -120,16 +120,18 @@ class ModuleText extends Module {
 		/**
 		 * youtube.com
 		 */
-$sText = preg_replace(
-    '/<video>(?:http(?:s|):|)(?:\/\/|)(?:www\.|)youtu(?:\.|)be(?:-nocookie|)(?:\.com|)\/(?:e(?:mbed|)\/|v\/|watch\?(?:.+&|)v=|)([a-zA-Z0-9_\-]+?)(&.+)?<\/video>/Ui',
-    '<iframe width="560" height="315" src="https://www.youtube.com/embed/$1" frameborder="0" allowfullscreen></iframe>',
-    $sText
-);	
-$sText = preg_replace(
-    '/<video>(?:http(?:s|):|)(?:\/\/|)(?:www\.|)m\.youtu(?:\.|)be(?:-nocookie|)(?:\.com|)\/(?:e(?:mbed|)\/|v\/|watch\?(?:.+&|)v=|)([a-zA-Z0-9_\-]+?)(&.+)?<\/video>/Ui',
-    '<iframe width="560" height="315" src="https://www.youtube.com/embed/$1" frameborder="0" allowfullscreen></iframe>',
-    $sText
-);	/**
+		$sText = preg_replace(
+		    '/<video>(?:http(?:s|):|)(?:\/\/|)(?:www\.|)youtu(?:\.|)be(?:-nocookie|)(?:\.com|)\/(?:e(?:mbed|)\/|v\/|watch\?(?:.+&|)v=|)([a-zA-Z0-9_\-]+?)(&.+)?<\/video>/Ui',
+    		'<iframe width="560" height="315" src="https://www.youtube.com/embed/$1" frameborder="0" allowfullscreen></iframe>',
+		    $sText
+		);	
+		$sText = preg_replace(
+    		'/<video>(?:http(?:s|):|)(?:\/\/|)(?:www\.|)m\.youtu(?:\.|)be(?:-nocookie|)(?:\.com|)\/(?:e(?:mbed|)\/|v\/|watch\?(?:.+&|)v=|)([a-zA-Z0-9_\-]+?)(&.+)?<\/video>/Ui',
+		    '<iframe width="560" height="315" src="https://www.youtube.com/embed/$1" frameborder="0" allowfullscreen></iframe>',
+    		$sText
+		);
+		$sText = preg_replace('/<video>(?:http(?:s|):|)\/\/coub\.com\/view\/(.*)<\/video>/Ui', '<iframe src="https://coub.com/embed/$1" allowfullscreen="true" frameborder="0" width="480" height="270"></iframe>', $sText);
+		/**
 		 * vimeo.com
 		 */
 		$sText = preg_replace('/<video>http:\/\/(?:www\.|)vimeo\.com\/(\d+).*<\/video>/i', '<iframe src="http://player.vimeo.com/video/$1" width="500" height="281" frameborder="0" webkitAllowFullScreen mozallowfullscreen allowFullScreen></iframe>', $sText);
@@ -144,7 +146,7 @@ $sText = preg_replace(
 		/**
 		 * vk.com
 		 */		
-		$sText = preg_replace('/<video>http:\/\/vk\.com\/(.*)<\/video>/Ui', '<iframe src="http://vk.com/$1" width="607" height="360" frameborder="0"></iframe>', $sText);
+		$sText = preg_replace('/<video>http:\/\/vk\.com\/(.*)<\/video>/Ui', '<iframe src="https://vk.com/$1" width="607" height="360" frameborder="0"></iframe>', $sText);
 		return $sText;
 	}
 	/**

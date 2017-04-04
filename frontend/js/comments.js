@@ -235,7 +235,7 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
             console.log("Ajax done", dateFormat(new Date(), "HH:MM:ss:l"))
         }
         var curItemBlock = Blocks.getCurrentItem('stream');
-        if (aCmt.length > 0) {
+        if (Object.keys(aCmt).length > 0) {
             Blocks.load(curItemBlock, 'stream');
             console.log("Load done", dateFormat(new Date(), "HH:MM:ss:l"))
         }

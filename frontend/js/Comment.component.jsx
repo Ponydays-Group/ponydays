@@ -18,10 +18,10 @@ export default function render_comment(data, maxNesting) {
     })}">
     		<a name=${"comment"+data.id} />
 
-    		<a href=${"/profile/"+data.author.login}><img src=${data.author.avatar} alt="avatar" class="comment-avatar" /></a>
+    		<a href="/profile/${data.author.login}"><img src="${data.author.avatar}"" alt="avatar" class="comment-avatar" /></a>
 
     		<ul class="comment-info">
-    			<li class="comment-author"><a href=${"/profile/"+data.author.login}>${data.author.login}</a></li>
+    			<li class="comment-author"><a href="/profile/${data.author.login}">${data.author.login}</a></li>
     		</ul>
 
     		<div id=${"comment_content_id_"+data.id} class="comment-content text">${data.text}</div>

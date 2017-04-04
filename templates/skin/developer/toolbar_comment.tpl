@@ -1,5 +1,8 @@
 {if $oUserCurrent}
 	{assign var=aPagingCmt value=$params.aPagingCmt}
+	<section class="toolbar-prevcomment" id="prevcomment">
+		<a href="#" class="update-comments" onclick="ls.comments.goToPrevComment(); return false;" title="Прошлый новый комментарий"><i id="go-back" class="fa fa-arrow-left"></i></a>
+	</section>
 	<section class="toolbar-update" id="update" style="{if $aPagingCmt and $aPagingCmt.iCountPage > 1}display: none;{/if}">
 		<a href="#" class="update-comments" onclick="ls.comments.load({$params.iTargetId},'{$params.sTargetType}'); return false;"><i id="update-comments" class="fa fa-refresh"></i></a>
 		<a href="#" class="new-comments" id="new_comments_counter" style="display: none;" title="{$aLang.comment_count_new}" onclick="ls.comments.goToNextComment(); return false;"></a>

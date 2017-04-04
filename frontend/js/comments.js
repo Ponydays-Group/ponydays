@@ -47,6 +47,7 @@ export let iCurrentShowFormComment = 0;
 export let iCurrentViewComment = null;
 export let aCommentNew = [];
 export let aCommentOld = [];
+export let lastNewComment = 0;
 
 export async function loadComments() {
     let url = ""
@@ -238,15 +239,6 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
     }.bind(this));
 }
 
-export function turnBack() {
-    aCommentNew += aCommentOld;
-    aCommentNew.forEach(function(item, i) {
-        item.addClass(options.comment_new)
-    })
-    setCountNewComment(aCommentNew.length);
-
-}
-
 // Вставка комментария
 export function inject(idCommentParent, idComment, sHtml) {
     var newComment = $('<div>', {
@@ -350,14 +342,24 @@ export function calcNewComments() {
 
 // Переход к следующему комментарию
 export function goToNextComment() {
+    if (lastNewComment>0) {
+        aCommentOld.push(lastNewComment)
+    }
     if (aCommentNew[0]) {
         if ($('#comment_id_' + aCommentNew[0]).length) {
             scrollToComment(aCommentNew[0]);
             $('#comment_id_' + aCommentNew[0]).removeClass(options.classes.comment_new);
         }
-        aCommentNew.shift();
+        lastNewComment = aCommentNew.shift();
     }
     setCountNewComment(aCommentNew.length);
+}
+
+export function goToPrevComment() {
+    if (!aCommentOld.length) {
+        return
+    }
+    scrollToComment(aCommentOld.pop())
 }
 
 // Прокрутка к комментарию

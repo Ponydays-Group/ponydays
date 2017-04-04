@@ -5,7 +5,8 @@
     <div class="placeholder"></div>
     <div id="comment-shortcuts-description">
         <ul>
-            <li><span class="shortcut">ctrl+space</span>: Перейти к соедующему новому комментарию</li>
+            <li><span class="shortcut">ctrl+space</span>: Перейти к следующему новому комментарию</li>
+            <li><span class="shortcut">ctrl+shift+space</span>: Перейти к предыдущему новому комментарию</li>
             <li><span class="shortcut">ctrl+up</span>: Перейти к комментарию сверху</li>
             <li><span class="shortcut">ctrl+down</span>: Перейти к комментарию снизу</li>
             <li><span class="shortcut">ctrl+home</span>: Перейти к первому комментарию</li>

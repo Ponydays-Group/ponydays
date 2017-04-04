@@ -257,3 +257,16 @@
     vertical-align: middle; 
 }
 .user.inactive 		{ color: #aaa; }
+
+.ls-user.has-avatar img {
+    width: 14px;
+    height: 14px;
+    margin-right: 3px;
+    vertical-align: text-bottom;
+}
+
+.ls-user.has-avatar:before {
+    content: '';
+    width: 0;
+    height: 0;
+}

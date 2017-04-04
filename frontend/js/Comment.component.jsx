@@ -74,7 +74,7 @@ export default function render_comment(data, maxNesting) {
                   "voted-down": data.voteDirection < 0,
               })}">
                 ${LOGGED_IN? `<div class="vote-up fa fa-plus-square-o" onclick="return ls.vote.vote(${data.id},this,1,'comment');"></div>` : "" }
-    						<span class="vote-count" id=${"vote_total_comment_"+data.id}>${data.rating > 0? "+" : ""}${data.rating}</span>
+    						<span class="vote-count" onclick="ls.vote.getVotes(${data.id},'comment',this); return false;" id=${"vote_total_comment_"+data.id}>${data.rating > 0? "+" : ""}${data.rating}</span>
                 ${LOGGED_IN? `<div class="vote-down fa fa-minus-square-o" onclick="return ls.vote.vote(${data.id},this,-1,'comment');"` : ""}
     					</li>
     			</ul>

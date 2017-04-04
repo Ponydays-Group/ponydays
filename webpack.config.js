@@ -1,11 +1,11 @@
-path = require('path');
-fs = require('fs');
-webpack = require('webpack');
-ExtractTextPlugin = require('extract-text-webpack-plugin');
+let path = require('path');
+let fs = require('fs');
+let webpack = require('webpack');
+let ExtractTextPlugin = require('extract-text-webpack-plugin');
 
-isProduction = process.env.NODE_ENV == 'production';
+let isProduction = process.env.NODE_ENV == 'production';
 
-vendors = [
+let vendors = [
     'babel-polyfill',
     './js/jquery',
     './js/jquery.file.js',
@@ -15,6 +15,7 @@ vendors = [
     './js/jquery.serialize.js',
     './js/jquery.poshytip.js',
     './js/jquery.Jcrop.js',
+    'jquery.hotkeys',
     'jquery-form',
     './css/bootstrap/assets/javascripts/bootstrap',
     'jquery-ui-bundle',

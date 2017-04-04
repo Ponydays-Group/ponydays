@@ -1,7 +1,7 @@
 var dateFormat = require('dateformat');
 import render_comment from "./Comment.component"
 import $ from "jquery"
-
+import * as Comments from './comments'
 import Emitter from "./emitter"
 
 export default class Tree {
@@ -87,6 +87,8 @@ export default class Tree {
       this.renderNewComments(new_comments)
       console.log("After insert", dateFormat(new Date(), "HH:MM:ss:l"))
     }.bind(this))
+    
+    $(document).on('keydown', null, 'ctrl+space', Comments.goToNextComment);
   }
 
   sortTree(r_ids, comments) {

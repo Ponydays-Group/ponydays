@@ -163,6 +163,7 @@ export default class Tree {
     $(document).on('keydown', null, 'alt+r', toggleReplyOnCurrent.bind(this))
     $(document).on('keydown', null, 'alt+u', updateComments)
     $(document).on('keydown', null, 'alt+shift+u', updateCommentsSoft)
+    $(document).on('keydown', null, 'alt+d', window.despoil)
   }
 
 

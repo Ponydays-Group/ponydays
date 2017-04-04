@@ -16,5 +16,6 @@
 	oSubscribeComment=$oTopic->getSubscribeNewComment()
 	aPagingCmt=$aPagingCmt}
 
+{include file='comment_shortcuts.tpl'}
 
 {include file='footer.tpl'}

@@ -154,6 +154,10 @@ export default class Tree {
       Comments.load(window.targetId, window.targetType)
     }
     
+    function toggleReplyOnRoot() {
+      Comments.toggleCommentForm(0)
+    }
+    
     $(document).on('keydown', null, 'ctrl+space', Comments.goToNextComment);
     $(document).on('keydown', null, 'ctrl+up', goToPrevComment.bind(this))
     $(document).on('keydown', null, 'ctrl+down', goToNextComment.bind(this))
@@ -165,6 +169,7 @@ export default class Tree {
     $(document).on('keydown', null, 'alt+u', updateComments)
     $(document).on('keydown', null, 'alt+shift+u', updateCommentsSoft)
     $(document).on('keydown', null, 'alt+shift+d', window.despoil)
+    $(document).on('keydown', null, 'alt+n', toggleReplyOnRoot);
   }
 
 

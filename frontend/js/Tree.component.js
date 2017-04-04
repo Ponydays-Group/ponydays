@@ -89,10 +89,11 @@ export default class Tree {
     }.bind(this))
     
     function goToPrevComment(){
-      Comments.scrollToComment($('.comment-current').prev().data('id'))
+      console.log(this.state.sorted_ids[this.state.sorted_ids.indexOf(""+$('.comment-current').data('id'))-1])
+      Comments.scrollToComment(this.state.sorted_ids[this.state.sorted_ids.indexOf(""+$('.comment-current').data('id'))-1])
     }
     function goToNextComment(){
-      Comments.scrollToComment($('.comment-current').next().data('id'))
+      Comments.scrollToComment(this.state.sorted_ids[this.state.sorted_ids.indexOf(""+$('.comment-current').data('id'))+1])
     }
     
     function goToLastComment(){
@@ -154,8 +155,8 @@ export default class Tree {
     }
     
     $(document).on('keydown', null, 'ctrl+space', Comments.goToNextComment);
-    $(document).on('keydown', null, 'ctrl+up', goToPrevComment)
-    $(document).on('keydown', null, 'ctrl+down', goToNextComment)
+    $(document).on('keydown', null, 'ctrl+up', goToPrevComment.bind(this))
+    $(document).on('keydown', null, 'ctrl+down', goToNextComment.bind(this))
     $(document).on('keydown', null, 'ctrl+end', goToLastComment.bind(this))
     $(document).on('keydown', null, 'ctrl+home', goToFirstComment.bind(this))
     $(document).on('keydown', null, 'alt+pagedown', goToNextBranch.bind(this))

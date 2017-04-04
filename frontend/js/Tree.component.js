@@ -158,19 +158,46 @@ export default class Tree {
       Comments.toggleCommentForm(0)
     }
     
-    $(document).on('keydown', null, 'ctrl+space', Comments.goToNextComment);
-    $(document).on('keydown', null, 'ctrl+shift+space', Comments.goToPrevComment);
-    $(document).on('keydown', null, 'ctrl+up', goToPrevComment.bind(this))
-    $(document).on('keydown', null, 'ctrl+down', goToNextComment.bind(this))
-    $(document).on('keydown', null, 'ctrl+end', goToLastComment.bind(this))
-    $(document).on('keydown', null, 'ctrl+home', goToFirstComment.bind(this))
-    $(document).on('keydown', null, 'alt+pagedown', goToNextBranch.bind(this))
-    $(document).on('keydown', null, 'alt+pageup', goToPrevBranch.bind(this))
-    $(document).on('keydown', null, 'alt+r', toggleReplyOnCurrent.bind(this))
-    $(document).on('keydown', null, 'alt+u', updateComments)
-    $(document).on('keydown', null, 'alt+shift+u', updateCommentsSoft)
-    $(document).on('keydown', null, 'alt+shift+d', window.despoil)
-    $(document).on('keydown', null, 'alt+n', toggleReplyOnRoot);
+    function editComment() {
+      Comments.editComment($('.comment-current').data('id'))
+    }
+
+    let shortcuts = {
+      'ctrl+space': Comments.goToNextComment,
+      'ctrl+shift+space': Comments.goToPrevComment,
+      'ctrl+up': goToPrevComment.bind(this),
+      'ctrl+down': goToNextComment.bind(this),
+      'ctrl+end': goToLastComment.bind(this),
+      'ctrl+home': goToFirstComment.bind(this),
+      'alt+pagedown': goToNextBranch.bind(this),
+      'alt+pageup': goToPrevBranch.bind(this),
+      'alt+r': toggleReplyOnCurrent.bind(this),
+      'alt+u': updateComments,
+      'alt+shift+u': updateCommentsSoft,
+      'alt+shift+d': window.despoil,
+      'alt+n': toggleReplyOnRoot,
+      'alt+shift+e': editComment
+    }
+    
+    for (let i in shortcuts) {
+      $(document).on('keydown', null, i, shortcuts[i])
+      $('#form_comment_text').on('keydown', null, i, shortcuts[i])
+    }
+    
+    // $(document).on('keydown', null, 'ctrl+space', Comments.goToNextComment);
+    // $(document).on('keydown', null, 'ctrl+shift+space', Comments.goToPrevComment);
+    // $(document).on('keydown', null, 'ctrl+up', goToPrevComment.bind(this))
+    // $(document).on('keydown', null, 'ctrl+down', goToNextComment.bind(this))
+    // $(document).on('keydown', null, 'ctrl+end', goToLastComment.bind(this))
+    // $(document).on('keydown', null, 'ctrl+home', goToFirstComment.bind(this))
+    // $(document).on('keydown', null, 'alt+pagedown', goToNextBranch.bind(this))
+    // $(document).on('keydown', null, 'alt+pageup', goToPrevBranch.bind(this))
+    // $(document).on('keydown', null, 'alt+r', toggleReplyOnCurrent.bind(this))
+    // $(document).on('keydown', null, 'alt+u', updateComments)
+    // $(document).on('keydown', null, 'alt+shift+u', updateCommentsSoft)
+    // $(document).on('keydown', null, 'alt+shift+d', window.despoil)
+    // $(document).on('keydown', null, 'alt+n', toggleReplyOnRoot);
+    // $(document).on('keydown', null, 'alt+shift+e', editComment);
   }
 
 

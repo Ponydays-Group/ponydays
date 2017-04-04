@@ -15,6 +15,7 @@
             <li><span class="shortcut">alt+pageDown</span>: Перейти к следующей ветке</li>
             <li><span class="shortcut">alt+r</span>: Открыть форму ответа</li>
             <li><span class="shortcut">alt+n</span>: Открыть форму ответа в корне</li>
+            <li><span class="shortcut">alt+shift+e</span>: Открыть форму редактирования</li>
             <li><span class="shortcut">alt+u</span>: Обновление комментариев</li>
             <li><span class="shortcut">alt+shift+u</span>: Мягкое обновление комментариев</li>
             <li><span class="shortcut">alt+shift+d</span>: Деспойл</li>

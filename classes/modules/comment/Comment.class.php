@@ -233,6 +233,9 @@ class ModuleComment extends Module {
 		$aComments=func_array_sort_by_keys($aComments,$aCommentId);
 		return $aComments;
 	}
+	public function GetCommentsOlderThenEdited($sTargetType, $iTargetId, $iCommentId) {
+		return $this->GetCommentsByArrayId($this->oMapper->GetCommentsOlderThenEdited($sTargetType, $iTargetId, $iCommentId));
+	}
 	/**
 	 * Получает список комментариев по ID используя единый кеш
 	 *

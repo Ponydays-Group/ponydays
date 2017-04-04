@@ -134,6 +134,16 @@ class ModuleComment_MapperComment extends Mapper {
 		}
 		return $aComments;
 	}
+	public function GetCommentsOlderThenEdited($sTargetType, $iTargetId, $iEditedCommentId ) {
+		$sql = "SELECT comment_id from " . Config::Get('db.table.comment') . " WHERE target_type = ? AND target_id = ?d AND comment_edit_date > (SELECT comment_date FROM " . Config::Get('db.table.comment') . " WHERE comment_id=?d)";
+		$aComments=array();
+		if ($aRows=$this->oDb->select($sql,$sTargetType,$iTargetId,$iEditedCommentId)) {
+			foreach ($aRows as $aRow) {
+				$aComments[]=$aRow['comment_id'];
+			}
+		}
+		return $aComments;
+	}
 	/**
 	 * Список комментов по ID
 	 *

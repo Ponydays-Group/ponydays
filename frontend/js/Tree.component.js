@@ -51,6 +51,19 @@ export default class Tree {
     }
     console.log("finished render")
   }
+  
+  checkEdited(edited_comments) {
+    console.log(edited_comments)
+    for (let id in edited_comments) {
+      if (this.state.comments[id].text != edited_comments[id].text && !$(`[data-id=${id}]`).hasClass('comment-self')) {
+        console.log(this.state.comments[id].text, edited_comments[id].text)
+        $(`#comment_content_id_${id}`)[0].innerHTML = edited_comments[id].text
+        this.state.comments[id].text = edited_comments[id].text
+        $(`[data-id=${id}]`).addClass('comment-new')
+      }
+    }
+    Comments.calcNewComments()
+  }
 
   mount(obj, comments, ids) {
     this.obj = obj
@@ -87,6 +100,8 @@ export default class Tree {
       this.renderNewComments(new_comments)
       console.log("After insert", dateFormat(new Date(), "HH:MM:ss:l"))
     }.bind(this))
+    
+    Emitter.on("comments-edited-loaded", this.checkEdited.bind(this))
     
     function goToPrevComment(){
       console.log(this.state.sorted_ids[this.state.sorted_ids.indexOf(""+$('.comment-current').data('id'))-1])

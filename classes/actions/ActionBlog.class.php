@@ -1312,9 +1312,19 @@ class ActionBlog extends Action {
 		$oTopicRead->setCommentIdLast($iMaxIdComment);
 		$oTopicRead->setDateRead(date("Y-m-d H:i:s"));
 		$this->Topic_SetTopicRead($oTopicRead);
+		
+		$aEditedComments = [];
+		$aEditedCommentsRaw = $this->Comment_GetCommentsOlderThenEdited('topic', $oTopic->getId(), $idCommentLast);
+		foreach ($aEditedCommentsRaw as $oComment) {
+			$aEditedComments[$oComment->getId()] = [
+					'id'=>$oComment->getId(),
+					'text'=>$oComment->getText(),
+				];
+		}
 
 		$this->Viewer_AssignAjax('iMaxIdComment',$iMaxIdComment);
 		$this->Viewer_AssignAjax('aComments',$aComments);
+		$this->Viewer_AssignAjax('aEditedComments',$aEditedComments);
 		$this->Viewer_AssignAjax('iUserCurrentCountTalkNew',$this->Talk_GetCountTalkNew($this->oUserCurrent->getId()));
 	}
 	/**

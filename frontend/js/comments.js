@@ -193,6 +193,9 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
                 $("#comment_last_id").val(result.iMaxIdComment);
                 $('#count-comments').text(parseInt($('#count-comments').text()) + Object.keys(aCmt).length);
             }
+            if (Object.keys(result.aEditedComments).length > 0) {
+                Emitter.emit("comments-edited-loaded", result.aEditedComments)
+            }
             var iCountOld = 0;
             if (bNotFlushNew) {
                 iCountOld = aCommentNew.length;

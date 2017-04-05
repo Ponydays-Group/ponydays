@@ -142,4 +142,8 @@
   margin-bottom: 0;
   overflow-y: auto;
   background: $secondary-accent;
+  
+  .js-block-stream-content {
+    padding-right: 20px;
+  }
 }

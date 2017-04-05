@@ -72,8 +72,8 @@ export async function renderComments() {
     //ReactDOM.render(<CommentsTree ids={ids} comments={comments}/>, $("#comments-tree")[0])
     calcNewComments()
     resize_sidebar()
-    if (location.hash.startsWith('#comment')) {
-        setTimeout(scrollToComment(location.hash.replace('#comment', '')), 2000)
+    if (location.hash.startsWith('#comment') && location.hash != '#comments') {
+        setTimeout(scrollToComment(location.hash.replace('#comment', ''), 0, 350), 2000)
     }
 }
 
@@ -366,10 +366,12 @@ export function goToPrevComment() {
 }
 
 // Прокрутка к комментарию
-export function scrollToComment(idComment) {
+export function scrollToComment(idComment, offset, speed) {
+    offset = offset || 250
+    speed = speed || 150
     $('html, body').animate({
-        scrollTop: $('#comment_id_' + idComment).offset().top - 250
-    }, 150);
+        scrollTop: $('#comment_id_' + idComment).offset().top - offset
+    }, speed);
 
     if (iCurrentViewComment) {
         $('#comment_id_' + iCurrentViewComment).removeClass(options.classes.comment_current);

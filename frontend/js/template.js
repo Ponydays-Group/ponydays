@@ -41,7 +41,8 @@ function showFloatBlock($) {
                 });
                 showFloat = true;
             }
-        } else {
+        }
+        else {
             if (showFloat) {
                 floatBlock.removeClass('stream-fixed');
                 showFloat = false;
@@ -52,33 +53,37 @@ function showFloatBlock($) {
     reinit();
 }
 
-export function updateImgs(){
-  $(".spoiler-body img").each(
-    function(k,v){
-      if(!v.getAttribute("data-src")){
-        console.log(v.src, v)
-        v.setAttribute("data-src", v.src)
-        v.src="#"
-      }
-    }
-  )
+export function updateImgs() {
+    $(".spoiler-body img").each(
+        function(k, v) {
+            if (!v.getAttribute("data-src")) {
+                console.log(v.src, v)
+                v.setAttribute("data-src", v.src)
+                v.src = "#"
+            }
+        }
+    )
 }
 
 export default function init() {
-    jQuery(document).ready(function($) {
+    $(document).ready(function($) {
         // Хук начала инициализации javascript-составляющих шаблона
         Hook.run('ls_template_init_start', [], window);
 
         // updateImgs()
-        $("#image-modal").click(function(){$("#image-modal").css("display", "none")})
-        $("#image-modal-img").click(function(){$("#image-modal").css("display", "none")})
+        $("#image-modal").click(function() {
+            $("#image-modal").css("display", "none")
+        })
+        $("#image-modal-img").click(function() {
+            $("#image-modal").css("display", "none")
+        })
 
         $('html').removeClass('no-js');
 
         window.resize_sidebar = function() {
-          if ($("#content").offset().top == $("#sidebar").offset().top) {
-            $("#sidebar").css("height", $("#wrapper").height() > $("#sidebar").height() ? $("#wrapper").height() : null)
-          }
+            if ($("#content").offset().top == $("#sidebar").offset().top) {
+                $("#sidebar").css("height", $("#wrapper").height() > $("#sidebar").height() ? $("#wrapper").height() : null)
+            }
         }
         $(window).on('resize', window.resize_sidebar)
 
@@ -113,7 +118,8 @@ export default function init() {
         $('.js-registration-form-show').click(function() {
             if (Blocks.switchTab('registration', 'popup-login')) {
                 $('#window_login_form').jqmShow();
-            } else {
+            }
+            else {
                 window.location = aRouter.registration;
             }
             return false;
@@ -126,7 +132,8 @@ export default function init() {
         $('.js-login-form-show').click(function() {
             if (Blocks.switchTab('login', 'popup-login')) {
                 $('#window_login_form').jqmShow();
-            } else {
+            }
+            else {
                 window.location = aRouter.login;
             }
             return false;
@@ -283,7 +290,8 @@ export default function init() {
             target = $('#' + target);
             if ($(this).data('insert')) {
                 var s = $(this).data('insert');
-            } else {
+            }
+            else {
                 var s = $(this).text();
             }
             $.markItUp({
@@ -318,17 +326,21 @@ export default function init() {
 
         function spoiler(b) {
             if (b.style.display != "block") {
-                jQuery(b).show(300);
+                $(b).show(300);
                 b.style.display = "block";
-                $(b).find("img").each(function(k,v){if(v.getAttribute("data-src")){v.src=v.getAttribute("data-src")}})
+                $(b).find("img").each(function(k, v) {
+                    if (v.getAttribute("data-src")) {
+                        v.src = v.getAttribute("data-src")
+                    }
+                })
                 b.parentElement.getElementsByClassName("spoiler-title")[0].className = "spoiler-title spoiler-open";
-            } else {
-                jQuery(b).hide(300);
+            }
+            else {
+                $(b).hide(300);
                 b.parentElement.getElementsByClassName("spoiler-title")[0].className = "spoiler-title spoiler-close";
 
             }
         }
-        console.log('now')
 
         function spoiler_click(event) {
             var event = event || window.event;
@@ -336,12 +348,12 @@ export default function init() {
             var target = event.target || event.srcElement;
             if (!target) return;
             var parent = target.parentNode || target.parentElement;
-            if (target.tagName=="IMG"  && !parent.classList.contains("spoiler-title")) {
+            if (target.tagName == "IMG" && !parent.classList.contains("spoiler-title")) {
                 if (target.id == "image-modal-img") {
                     return
                 }
-              $("#image-modal-img")[0].src = target.src
-              $("#image-modal").css("display", "flex")
+                $("#image-modal-img")[0].src = target.src
+                $("#image-modal").css("display", "flex")
             }
             while (!target.classList.contains("spoiler-title")) {
                 target = target.parentNode || target.parentElement;
@@ -368,31 +380,15 @@ export default function init() {
             allNew[idx].className = "spoiler-title spoiler-close"
         }
 
-        window.despoil = function() {
-            var allBody = document.querySelectorAll('.spoiler-body');
-            idx = 0
-            for (idx = 0; idx < allBody.length; idx++) {
-                spoiler(allBody[idx])
-            }
-            var allNew = document.querySelectorAll('.spoiler-title');
-            idx = 0
-            for (idx = 0; idx < allNew.length; idx++) {
-                allNew[idx].className = "spoiler-title spoiler-open"
-            }
-        }
+        let closed = true
 
-        var spoil = function() {
-            var allBody = document.querySelectorAll('.spoiler-body');
-            idx = 0
-            for (idx = 0; idx < allBody.length; idx++) {
-                allBody[idx].style.display = "none"
-            }
-            var allNew = document.querySelectorAll('.spoiler-title');
-            idx = 0
-            for (idx = 0; idx < allNew.length; idx++) {
-                allNew[idx].className = "spoiler-title spoiler-close"
-            }
-        }
+        window.despoil = function() {
+            $(".spoiler-body").each(function(k, v) {
+                v.style.display = closed ? "none" : "block"
+                spoiler(v)
+            })
+            closed = closed ? false : true
+        }.bind(this)
 
         updateImgs()
     });

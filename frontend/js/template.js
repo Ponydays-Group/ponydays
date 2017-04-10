@@ -324,7 +324,7 @@ export default function init() {
         // Хук конца инициализации javascript-составляющих шаблона
         Hook.run('ls_template_init_end', [], window);
 
-        function spoiler(b) {
+        window.spoiler = function(b) {
             if (b.style.display != "block") {
                 $(b).show(300);
                 b.style.display = "block";

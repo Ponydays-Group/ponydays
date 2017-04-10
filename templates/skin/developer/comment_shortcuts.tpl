@@ -21,6 +21,7 @@
             <li><span class="shortcut">alt+u</span>: Обновление комментариев</li>
             <li><span class="shortcut">alt+shift+u</span>: Мягкое обновление комментариев</li>
             <li><span class="shortcut">alt+shift+d</span>: Деспойл</li>
+            <li><span class="shortcut">alt+shift+s</span>: Деспойл активного комментария</li>
         </ul>
     </div>
 </div>

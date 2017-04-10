@@ -185,6 +185,16 @@ export default class Tree {
       $('.comment-current').find('.' + Comments.options.classes.comment_goto_child).hide()
       Comments.scrollToComment($('.comment-current').data('cid'))
     }
+    
+    let closed = true
+
+    let despoilComment = function() {
+      $('.comment-current').find(".spoiler-body").each(function(k, v) {
+          v.style.display = closed ? "none" : "block"
+          window.spoiler(v)
+      })
+      closed = closed ? false : true
+    }.bind(this)
 
     let shortcuts = {
       'ctrl+space': Comments.goToNextComment,
@@ -199,6 +209,7 @@ export default class Tree {
       'alt+u': updateComments,
       'alt+shift+u': updateCommentsSoft,
       'alt+shift+d': window.despoil,
+      'alt+shift+s': despoilComment,
       'alt+n': toggleReplyOnRoot,
       'alt+shift+e': editComment,
       'alt+shift+p': goToParent,

@@ -130,6 +130,8 @@ export async function ajaxUploadImg(form, sToLoad) {
             $('#window_upload_img').jqmHide();
             Emitter.emit('ajaxUploadImgAfter');
         }
-    });
+    }, {error: function() {
+        Msg.error("Ошибка", "Изображение слишком тяжелое")
+    }});
     console.log(result)
 }

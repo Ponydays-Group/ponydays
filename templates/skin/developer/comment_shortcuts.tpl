@@ -22,6 +22,7 @@
             <li><span class="shortcut">alt+shift+u</span>: Мягкое обновление комментариев</li>
             <li><span class="shortcut">alt+shift+d</span>: Деспойл</li>
             <li><span class="shortcut">alt+shift+s</span>: Деспойл активного комментария</li>
+            <li><span class="shortcut">alt+shift+m</span>: Пометить все дочерние комментарии прочитанными</li>
         </ul>
     </div>
 </div>

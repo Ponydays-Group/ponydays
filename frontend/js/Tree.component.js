@@ -32,13 +32,11 @@ export default class Tree {
       }
     }
     let new_comments_ids = Object.keys(new_comments)
-    console.log(new_comments)
     new_comments_ids.sort(sortByTree.bind(this))
     for (let key in new_comments_ids) {
       let cmt = new_comments[new_comments_ids[key]]
       if ($(`[data-id=${cmt.id}]`).length == 0) {
         let cmt_html = render_comment(cmt, this.state.max_nesting)
-        console.log("Inserting comment", cmt, this.state.sorted_ids[this.state.sorted_ids.indexOf(cmt.id)-1]) 
         if ($(`[data-id=${this.state.sorted_ids[this.state.sorted_ids.indexOf(cmt.id)-1]}]`).length != 1) {
           console.info("No parent comment in DOM!", cmt, this.state.sorted_ids)
           $(this.obj).append($(cmt_html))
@@ -53,10 +51,8 @@ export default class Tree {
   }
   
   checkEdited(edited_comments) {
-    console.log(edited_comments)
     for (let id in edited_comments) {
       if (this.state.comments[id].text != edited_comments[id].text && !$(`[data-id=${id}]`).hasClass('comment-self')) {
-        console.log(this.state.comments[id].text, edited_comments[id].text)
         $(`#comment_content_id_${id}`)[0].innerHTML = edited_comments[id].text
         this.state.comments[id].text = edited_comments[id].text
         $(`[data-id=${id}]`).addClass('comment-new')
@@ -77,7 +73,6 @@ export default class Tree {
     this.render(this.obj)
 
     Emitter.on("comments-new-loaded", function(new_comments){
-        console.log("New comments catched", dateFormat(new Date(), "HH:MM:ss:l"))
       let new_sorted_ids = this.state.sorted_ids
       let comments = this.state.comments
 
@@ -89,22 +84,18 @@ export default class Tree {
         } else {
           cmt.level = 0
         }
-        //console.log(key, cmt)
         comments[cmt.id] = cmt
         new_sorted_ids.push(cmt.id)
       }
       new_sorted_ids = this.sortTree(new_sorted_ids, comments)
       this.state.comments = comments
       this.state.sorted_ids = new_sorted_ids
-      console.log("Before insert", dateFormat(new Date(), "HH:MM:ss:l"))
       this.renderNewComments(new_comments)
-      console.log("After insert", dateFormat(new Date(), "HH:MM:ss:l"))
     }.bind(this))
     
     Emitter.on("comments-edited-loaded", this.checkEdited.bind(this))
     
     function goToPrevComment(){
-      console.log(this.state.sorted_ids[this.state.sorted_ids.indexOf(""+$('.comment-current').data('id'))-1])
       Comments.scrollToComment(this.state.sorted_ids[this.state.sorted_ids.indexOf(""+$('.comment-current').data('id'))-1])
     }
     function goToNextComment(){
@@ -124,14 +115,11 @@ export default class Tree {
       let cur_cmt = this.state.comments[cur_id]
       let data = this.state.sorted_ids.slice(this.state.sorted_ids.indexOf(""+cur_id)+1)
       let prev_branch = this.state.sorted_ids[0]
-      console.log(cur_id,this.state.sorted_ids.indexOf(cur_id),data)
       for (let key in data) {
         let id = data[key]
         let cmt = this.state.comments[id]
-        console.log(cmt)
         if (cmt.level == 0) {
           prev_branch = cmt.id
-          console.log(cmt.id)
           break
         }
       }
@@ -143,14 +131,11 @@ export default class Tree {
       let cur_cmt = this.state.comments[cur_id]
       let data = this.state.sorted_ids.slice(0, this.state.sorted_ids.indexOf(""+cur_id)).reverse()
       let prev_branch = this.state.sorted_ids[0]
-      console.log(cur_id,this.state.sorted_ids.indexOf(cur_id),data)
       for (let key in data) {
         let id = data[key]
         let cmt = this.state.comments[id]
-        console.log(cmt)
         if (cmt.level == 0) {
           prev_branch = cmt.id
-          console.log(cmt.id)
           break
         }
       }
@@ -166,7 +151,7 @@ export default class Tree {
     }
     
     function updateCommentsSoft(){
-      Comments.load(window.targetId, window.targetType)
+      Comments.load(window.targetId, window.targetType, null, true)
     }
     
     function toggleReplyOnRoot() {
@@ -195,6 +180,20 @@ export default class Tree {
       })
       closed = closed ? false : true
     }.bind(this)
+    
+    function markAllChildAsRead() {
+      let ids = this.state.sorted_ids.slice(this.state.sorted_ids.indexOf(""+$('.comment-current').data("id"))+1)
+      let level = $('.comment-current').data("level")
+      for (let i in ids) {
+        let id = ids[i]
+        let cmt = this.state.comments[id]
+        if (cmt.level <= level) {
+          break
+        }
+        $(`[data-id=${id}]`).removeClass('comment-new')
+      }
+      Comments.calcNewComments()
+    }
 
     let shortcuts = {
       'ctrl+space': Comments.goToNextComment,
@@ -213,7 +212,8 @@ export default class Tree {
       'alt+n': toggleReplyOnRoot,
       'alt+shift+e': editComment,
       'alt+shift+p': goToParent,
-      'alt+shift+c': goToChild
+      'alt+shift+c': goToChild,
+      'alt+shift+m': markAllChildAsRead.bind(this)
     }
     
     for (let i in shortcuts) {

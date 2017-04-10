@@ -194,6 +194,15 @@
 
 
 /* Actions */
+.comment .comment-actions-wrapper {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap:wrap;
+}
+
+.comment .comment-actions {
+    display: inline-block;
+}
 
 .comment .comment-actions li {
     display: inline;

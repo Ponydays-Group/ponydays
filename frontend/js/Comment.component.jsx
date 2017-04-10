@@ -26,7 +26,7 @@ export default function render_comment(data, maxNesting) {
 
     		<div id=${"comment_content_id_"+data.id} class="comment-content text">${data.text}</div>
 
-    			<ul class="comment-actions">
+    			<div class="comment-actions-wrapper"><ul class="comment-actions">
     				<li class="comment-date">
     					<a href=${"#comment"+data.id} onclick="ls.comments.scrollToComment(${data.id}); return false;" title="Ссылка на комментарий">
     						<time dateTime=${data.date}>${dateFormat(new Date(data.date), "dd.mm.yy HH:MM:ss")}</time>
@@ -63,7 +63,7 @@ export default function render_comment(data, maxNesting) {
 
     					${data.level>0? `<li class="goto-comment-parent action-hidden"><a href="#" onclick="ls.comments.goToParentComment(${data.id},${data.parentId}); return false;" title="Перейти к родительскому комментарию">↑</a></li>`:""}
                         <li style="display: none" class="goto-comment-child action-hidden"><a href="#" title="Вернуться к дочернему">↓</a></li>
-
+            </ul><ul class="comment-actions">
     					<li id=${"vote_area_comment_"+data.id} class="${classNames({
                   vote: true,
                   "action-hidden": data.rating == 0,
@@ -77,6 +77,6 @@ export default function render_comment(data, maxNesting) {
     						<span class="vote-count" onclick="ls.vote.getVotes(${data.id},'comment',this); return false;" id=${"vote_total_comment_"+data.id}>${data.rating > 0? "+" : ""}${data.rating}</span>
                 ${LOGGED_IN? `<div class="vote-down fa fa-minus-square-o" onclick="return ls.vote.vote(${data.id},this,-1,'comment');"` : ""}
     					</li>
-    			</ul>
+    			</ul></div>
     </section>`
 }

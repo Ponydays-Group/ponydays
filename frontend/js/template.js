@@ -98,7 +98,25 @@ export default function init() {
         $('#add_friend_form').jqm({
             trigger: '#add_friend_show'
         });
-        $('#window_upload_img').jqm();
+        $('#window_upload_img').jqm({
+            onShow:  function(hash) {
+                hash.w.show()
+                console.log("Is visible",$("#img_file").is(":visible"),$("#img_file"))
+                if ($("#img_file").is(":visible")) {
+                    setTimeout(function(){$("#img_file").focus()}, 100);
+                } else {
+                    setTimeout(function(){$("#img_url").focus()}, 100);
+                }
+            },
+            onHide:  function(hash) {
+                hash.w.hide() && hash.o && hash.o.remove();
+                if ($("#reply").is(":visible")) {
+                    $("#reply").focus()
+                } else {
+                    $("#topic_text").focus()
+                }
+            }
+        });
         $('#userfield_form').jqm();
         $('#favourite-form-tags').jqm();
         $('#modal_write').jqm({

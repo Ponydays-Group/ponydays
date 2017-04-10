@@ -164,18 +164,6 @@
     opacity: $image-opacity-hover;
 }
 
-.text .ls-user {
-    color: #333;
-}
-
-.text .ls-user:visited {
-    color: #333;
-}
-
-.text .ls-user:hover {
-    color: #555;
-}
-
 .spoiler-gray {
     background: #607D8A;
     color: #607D8A;

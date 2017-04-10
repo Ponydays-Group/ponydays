@@ -14,6 +14,8 @@
             <li><span class="shortcut">alt+pageUp</span>: Перейти к предыдущей ветке</li>
             <li><span class="shortcut">alt+pageDown</span>: Перейти к следующей ветке</li>
             <li><span class="shortcut">alt+r</span>: Открыть форму ответа</li>
+            <li><span class="shortcut">alt+shift+p</span>: Перейти к родителю</li>
+            <li><span class="shortcut">alt+shift+c</span>: Перейти обратно к дочернему</li>
             <li><span class="shortcut">alt+n</span>: Открыть форму ответа в корне</li>
             <li><span class="shortcut">alt+shift+e</span>: Открыть форму редактирования</li>
             <li><span class="shortcut">alt+u</span>: Обновление комментариев</li>

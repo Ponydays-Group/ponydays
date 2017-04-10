@@ -209,6 +209,8 @@ export default class Tree {
       $(document).on('keydown', null, i, shortcuts[i])
       $('#form_comment_text').on('keydown', null, i, shortcuts[i])
     }
+    $('#form_comment_text').off('keydown', shortcuts['ctrl+end'])
+    $('#form_comment_text').off('keydown', shortcuts['ctrl+home'])
   }
 
 

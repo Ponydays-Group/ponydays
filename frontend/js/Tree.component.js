@@ -176,6 +176,15 @@ export default class Tree {
     function editComment() {
       Comments.editComment($('.comment-current').data('id'))
     }
+    
+    function goToParent() {
+      Comments.goToParentComment($('.comment-current').data('id'),$('.comment-current').data('pid'))
+    }
+    
+    function goToChild() {
+      $('.comment-current').find('.' + Comments.options.classes.comment_goto_child).hide()
+      Comments.scrollToComment($('.comment-current').data('cid'))
+    }
 
     let shortcuts = {
       'ctrl+space': Comments.goToNextComment,
@@ -191,7 +200,9 @@ export default class Tree {
       'alt+shift+u': updateCommentsSoft,
       'alt+shift+d': window.despoil,
       'alt+n': toggleReplyOnRoot,
-      'alt+shift+e': editComment
+      'alt+shift+e': editComment,
+      'alt+shift+p': goToParent,
+      'alt+shift+c': goToChild
     }
     
     for (let i in shortcuts) {

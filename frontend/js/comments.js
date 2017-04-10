@@ -391,6 +391,7 @@ export function goToParentComment(id, pid) {
         thisObj.scrollToComment(id);
         return false;
     });
+    $("#comment_id_" + pid).data("cid", id)
     scrollToComment(pid);
     return false;
 }

@@ -7,7 +7,7 @@ import * as Blocks from './blocks'
 import * as Hook from './hook'
 
 function showFloatBlock($) {
-    if (!$("#sidebar").length) {
+    if (!$('.block-type-stream').length) {
         return
     }
     $.browser.isMobileDevice = /android|webos|iphone|ipad|ipod|blackberry/i.test(navigator.userAgent.toLowerCase());

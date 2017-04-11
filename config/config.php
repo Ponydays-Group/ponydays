@@ -330,6 +330,12 @@ $config['change_online']=true;
 // Я подтверждаю, что хочу убрать ссылку на спонсора и, как честный человек, сделал пожертвование по ссылке http://livestreetcms.ru/profile/kerby/donate/ 
 $config['donated']=true;
 
+$config['sitemap'] = array (
+    'cache_lifetime' => 60 * 60 * 24, // 24 hours
+    'sitemap_priority' => '0.8',
+    'sitemap_changefreq' => 'monthly'
+);
+
 /**
  * Настройка топика-фотосета
  */
@@ -429,6 +435,8 @@ $config['db']['tables']['engine'] = 'InnoDB';  // InnoDB или MyISAM
 
 $config['db']['table']['actions'] 	= '___db.table.prefix___feedback_actions';
 $config['db']['table']['views'] 		= '___db.table.prefix___feedback_views';
+
+$config['db']['table']['page']                = '___db.table.prefix___page';
 /**
  * Настройка memcache
  */
@@ -472,6 +480,7 @@ $config['router']['page']['stream']        = 'ActionStream';
 $config['router']['page']['photoset']      = 'ActionPhotoset';
 $config['router']['page']['subscribe']     = 'ActionSubscribe';
 $config['router']['page']['feedbacks']     = 'ActionFeedbacks';
+$config['router']['page']['page']          = 'ActionPage';
 // Глобальные настройки роутинга
 $config['router']['config']['action_default']   = 'index';
 $config['router']['config']['action_not_found'] = 'error';

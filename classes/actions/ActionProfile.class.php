@@ -1276,7 +1276,6 @@ class ActionProfile extends Action {
 		$iCountCommentFavourite=$this->Comment_GetCountCommentsFavouriteByUserId($this->oUserProfile->getId());
 		$iCountNoteUser=$this->User_GetCountUserNotesByUserId($this->oUserProfile->getId());
 
-		$this->Viewer_Assign('oAceUserProfile', $this->PluginAceadminpanel_Admin_GetUserByLogin($this->oUserProfile->getLogin()));
 		$this->Viewer_Assign('oUserProfile',$this->oUserProfile);
 		$this->Viewer_Assign('iCountTopicUser',$iCountTopicUser);
 		$this->Viewer_Assign('iCountCommentUser', $iCountCommentUser);

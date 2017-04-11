@@ -1156,6 +1156,7 @@ class ActionBlog extends Action {
 		$this->Hook_Run('comment_add_before', array('oCommentNew'=>$oCommentNew,'oCommentParent'=>$oCommentParent,'oTopic'=>$oTopic));
 		if ($this->Comment_AddComment($oCommentNew)) {
 			$this->Hook_Run('comment_add_after', array('oCommentNew'=>$oCommentNew,'oCommentParent'=>$oCommentParent,'oTopic'=>$oTopic));
+			$this->Cast_sendCastNotify('comment',$oCommentNew, $oTopic,$oCommentNew->getText());
 
 			$this->Viewer_AssignAjax('sCommentId',$oCommentNew->getId());
 			if ($oTopic->getPublish()) {

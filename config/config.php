@@ -72,6 +72,15 @@ $config['path']['root']['engine']     = '___path.root.server___/engine';  // п�
 $config['path']['root']['engine_lib'] = '___path.root.web___/engine/lib'; // полный путь до сайта в файловой системе
 $config['path']['static']['root']     = '___path.root.web___';            // чтоб можно было статику засунуть на отдельный сервер
 $config['path']['static']['skin']     = '___path.static.root___/templates/skin/___view.skin___';
+
+
+// Домен для статики
+$config['static_web']='//static.lunavod.ru/';
+
+// Путь к каталогу для статических файлов
+$config['static_server']='/var/www/static';
+
+
 $config['path']['uploads']['root']    = '/uploads';                          // директория для загрузки файлов
 $config['path']['uploads']['images']  ='/img';
 $config['path']['offset_request_url'] = 0;                                   // иногда помогает если сервер использует внутренние реврайты
@@ -368,6 +377,8 @@ $config['db']['table']['user_changemail']     = '___db.table.prefix___user_chang
 
 $config['db']['table']['user_ignore'] = '___db.table.prefix___user_ignore';
 $config['db']['table']['user_forbid_ignore'] = '___db.table.prefix___user_forbid_ignore';
+
+$config['db']['table']['user_cast_history'] = '___db.table.prefix___user_cast_history';
 
 $config['db']['tables']['engine'] = 'InnoDB';  // InnoDB или MyISAM
 /**

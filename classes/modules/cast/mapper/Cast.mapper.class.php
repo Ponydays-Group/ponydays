@@ -10,7 +10,7 @@ class ModuleCast_MapperCast extends Mapper
 		$sql = "SELECT 
 					COUNT(*) as cast_count	 
 				FROM 
-	 				".Config::Get('plugin.castuser.db.table.user_cast_history')." AS tc
+	 				".Config::Get('db.table.user_cast_history')." AS tc
 	 			WHERE
 	 				target = ?
 	 			AND 
@@ -33,7 +33,7 @@ class ModuleCast_MapperCast extends Mapper
 	public function saveExist($sTarget,$iTargerId,$iUserId){
 		$sql="
 			INSERT INTO 
-				".Config::Get('plugin.castuser.db.table.user_cast_history')."
+				".Config::Get('db.table.user_cast_history')."
 			VALUES (NULL,?,?d,?d);
 		";
 		

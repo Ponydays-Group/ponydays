@@ -80,7 +80,6 @@ class ActionAjax extends Action
         $this->AddEvent('topic-lock-control', 'EventTopicLockControl');
         $this->AddEvent('get-object-votes', 'EventGetObjectVotes');
         $this->AddEventPreg('/^ignore$/i', 'EventIgnoreUser');
-        $this->AddEvent('ignore-blog', 'EventIgnoreBlog');
         $this->AddEventPreg('/^forbid-ignore$/i', 'EventForbidIgnoreUser');
     }
 

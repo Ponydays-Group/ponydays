@@ -81,7 +81,7 @@ class ModuleCast extends Module
 
 			$sText = $oViewerLocal->Fetch($sPath);
 
-			$aTitles = $this->Lang_Get('plugin.castuser.notify_title');
+			$aTitles = $this->Lang_Get('notify_title');
 			$sTitle = $aTitles[$sTarget];
 			
 			$oTalk = $this->Talk_SendTalk($sTitle, $sText, $this->oUserCurrent, array($oUser), false, false);

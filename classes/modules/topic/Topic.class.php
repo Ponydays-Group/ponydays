@@ -1855,7 +1855,12 @@ class ModuleTopic extends Module {
 			}
 			$this->Image_Resize($sFile,$sPath,$sNewFileName,Config::Get('view.img_max_width'),Config::Get('view.img_max_height'),$aSize['w'],$aSize['h'],true,$aParams,$oImage);
 		}
-		return $this->Image_GetWebPath($sFile);
+		$sFilePathOld = $this->Image_GetServerPath($sFile);
+        $sServer = rtrim(str_replace(DIRECTORY_SEPARATOR,'/',Config::Get('path.root.server')),'/');
+        $sStatic = rtrim(str_replace(DIRECTORY_SEPARATOR,'/',Config::Get('static_server')),'/');
+        $sFilePathNew = str_replace($sServer . '/', $sStatic . '/', $sFilePathOld);
+        @rename(str_replace('/', DIRECTORY_SEPARATOR, $sFilePathOld), str_replace('/', DIRECTORY_SEPARATOR, $sFilePathNew));
+		return $this->Image_GetWebPath($sFilePathNew);
 	}
 	/**
 	 * Пересчитывает счетчик избранных топиков

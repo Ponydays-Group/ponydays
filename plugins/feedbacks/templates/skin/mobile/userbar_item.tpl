@@ -1,1 +1,0 @@
-{if $iUnreadActionsCount > 0}<a href="{router page='feedbacks'}"><i class="glyphicon glyphicon-bullhorn rupor"></i></a>{/if}

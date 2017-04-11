@@ -88,7 +88,7 @@ export default function init() {
                 $("#sidebar").css("height", $("#wrapper").height() > $("#sidebar").height() ? $("#wrapper").height() : null)
             }
         }
-        $(window).on('resize', window.resize_sidebar)
+        resize_sidebar()
 
         // Всплывающие окна
         $('#window_login_form').jqm();

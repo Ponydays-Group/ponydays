@@ -381,6 +381,9 @@ $config['db']['table']['user_forbid_ignore'] = '___db.table.prefix___user_forbid
 $config['db']['table']['user_cast_history'] = '___db.table.prefix___user_cast_history';
 
 $config['db']['tables']['engine'] = 'InnoDB';  // InnoDB или MyISAM
+
+$config['db']['table']['actions'] 	= '___db.table.prefix___feedback_actions';
+$config['db']['table']['views'] 		= '___db.table.prefix___feedback_views';
 /**
  * Настройка memcache
  */
@@ -423,6 +426,7 @@ $config['router']['page']['feed']          = 'ActionUserfeed';
 $config['router']['page']['stream']        = 'ActionStream';
 $config['router']['page']['photoset']      = 'ActionPhotoset';
 $config['router']['page']['subscribe']     = 'ActionSubscribe';
+$config['router']['page']['feedbacks']     = 'ActionFeedbacks';
 // Глобальные настройки роутинга
 $config['router']['config']['action_default']   = 'index';
 $config['router']['config']['action_not_found'] = 'error';
@@ -488,6 +492,14 @@ $config['block']['rule_blog_info'] = array(
 		),
 	'blocks'  => array(
 			'right' => array('blocks/block.blog.tpl'=>array('priority'=>300))
+		),
+	'clear' => false,
+);
+
+$config['block']['feedbacks'] = array(
+	'action'  => array('feedbacks'),
+	'blocks'  => array(
+			'right' => array('stream'=>array('priority'=>100),'tags'=>array('priority'=>50))
 		),
 	'clear' => false,
 );

@@ -21,9 +21,7 @@
     </li>
 		<li title="{$aLang.user_privat_messages}{if $iUserCurrentCountTalkNew} ({$iUserCurrentCountTalkNew}){/if}">
         <a data-title="{$aLang.user_privat_messages}" href="{router page='talk'}" {if $iUserCurrentCountTalkNew}class="new-messages"{/if} id="new_messages">
-            {if $iUserCurrentCountTalkNew} ({$iUserCurrentCountTalkNew}){/if}
-            <i class="fa fa-envelope-o"></i>
-            <i class="fa fa-envelope"></i>
+            <i class="fa fa-envelope{if !$iUserCurrentCountTalkNew}-o{/if}"></i>
         </a>
     </li>
 			<li class="nav-userbar-username" title="Профиль">

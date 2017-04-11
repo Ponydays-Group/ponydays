@@ -189,7 +189,7 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
             var aCmt = result.aComments;
             console.log("Ajax OK", dateFormat(new Date(), "HH:MM:ss:l"))
             if (Object.keys(aCmt).length > 0 && result.iMaxIdComment) {
-                Emitter.emit("comments-new-loaded", result.aComments)
+                Emitter.emit("comments-new-loaded", result.aComments, bNotFlushNew)
                 $("#comment_last_id").val(result.iMaxIdComment);
                 $('#count-comments').text(parseInt($('#count-comments').text()) + Object.keys(aCmt).length);
             }
@@ -204,9 +204,9 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
             }
             if (selfIdComment) {
                 toggleCommentForm(iCurrentShowFormComment, true);
-                setCountNewComment(aCmt.length - 1 + iCountOld);
+                // setCountNewComment(aCmt.length - 1 + iCountOld);
             } else {
-                setCountNewComment(aCmt.length + iCountOld);
+                // setCountNewComment(aCmt.length + iCountOld);
             }
 
             if (selfIdComment && $('#comment_id_' + selfIdComment).length) {
@@ -214,10 +214,10 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
             }
             // checkFolding();
             aCommentNew = [];
-            calcNewComments();
-            //if (aCmt.length>0) {
-            // Emitter.emit('ls_comments_load_after', [idTarget, typeTarget, selfIdComment, bNotFlushNew, result]);
-            //}
+            // calcNewComments();
+            // if (aCmt.length>0) {
+            //  Emitter.emit('ls_comments_load_after', [idTarget, typeTarget, selfIdComment, bNotFlushNew, result]);
+            // }
 
             var new_messages = document.getElementById("new_messages");
             var pm_title = "";
@@ -311,18 +311,17 @@ export function isCollapsed(el) {
 
 // Устанавливает число новых комментариев
 export function setCountNewComment(count) {
-    // TODO that will work good only if there are no any other title modificators!
-    if (!options.pageTitle)
-        options.pageTitle = document.title;
-    if (count > 0) {
-        $('#new_comments_counter').show().text(count);
-        if (document.getElementById('autoload').checked) {
-            document.title = '(' + count + ') ' + options.pageTitle;
-        }
-    } else {
-        $('#new_comments_counter').text(0).hide();
-        document.title = options.pageTitle;
-    }
+    // // TODO that will work good only if there are no any other title modificators!
+    // if (!options.pageTitle)
+    //     options.pageTitle = document.title;
+    // if (count > 0) {
+    //     $('#new_comments_counter').show().text(count);
+    //     if (document.getElementById('autoload').checked) {
+    //         document.title = '(' + count + ') ' + options.pageTitle;
+    //     }
+    // } else {
+    //     $('#new_comments_counter').text(0).hide();
+    //     document.title = options.pageTitle;
 }
 
 // Вычисляет кол-во новых комментариев
@@ -345,24 +344,22 @@ export function calcNewComments() {
 
 // Переход к следующему комментарию
 export function goToNextComment() {
-    if (lastNewComment>0) {
-        aCommentOld.push(lastNewComment)
-    }
-    if (aCommentNew[0]) {
-        if ($('#comment_id_' + aCommentNew[0]).length) {
-            scrollToComment(aCommentNew[0]);
-            $('#comment_id_' + aCommentNew[0]).removeClass(options.classes.comment_new);
-        }
-        lastNewComment = aCommentNew.shift();
-    }
-    setCountNewComment(aCommentNew.length);
+    Emitter.emit("go-to-next-comment")
+    // if (lastNewComment>0) {
+    //     aCommentOld.push(lastNewComment)
+    // }
+    // if (aCommentNew[0]) {
+    //     if ($('#comment_id_' + aCommentNew[0]).length) {
+    //         scrollToComment(aCommentNew[0]);
+    //         $('#comment_id_' + aCommentNew[0]).removeClass(options.classes.comment_new);
+    //     }
+    //     lastNewComment = aCommentNew.shift();
+    // }
+    // setCountNewComment(aCommentNew.length);
 }
 
 export function goToPrevComment() {
-    if (!aCommentOld.length) {
-        return
-    }
-    scrollToComment(aCommentOld.pop())
+    Emitter.emit("go-to-prev-comment")
 }
 
 // Прокрутка к комментарию

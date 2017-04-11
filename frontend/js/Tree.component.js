@@ -11,7 +11,10 @@ export default class Tree {
   state = {
     sorted_ids: [],
     comments: [],
-    max_nesting: parseInt (($("#comments").width()-250)/20)
+    max_nesting: parseInt (($("#comments").width()-250)/20),
+    commentsNew: [],
+    commentsOld: [],
+    lastNewComment: 0,
   }
 
   calcNesting() {
@@ -20,19 +23,8 @@ export default class Tree {
     })
   }
 
-  renderNewComments(new_comments){
+  renderNewComments(new_comments, new_comments_ids){
     console.log("start render")
-    function sortByTree(a,b) {
-      let a_index = this.state.sorted_ids.indexOf(a)
-      let b_index = this.state.sorted_ids.indexOf(b)
-      if (a_index < b_index) {
-        return -1
-      } else {
-        return 1
-      }
-    }
-    let new_comments_ids = Object.keys(new_comments)
-    new_comments_ids.sort(sortByTree.bind(this))
     for (let key in new_comments_ids) {
       let cmt = new_comments[new_comments_ids[key]]
       if ($(`[data-id=${cmt.id}]`).length == 0) {
@@ -60,6 +52,72 @@ export default class Tree {
     }
     Comments.calcNewComments()
   }
+  
+  handleNewComments(new_comments,soft) {
+    let new_sorted_ids = this.state.sorted_ids
+    let comments = this.state.comments
+
+    for (let key in new_comments) {
+      let cmt = new_comments[key]
+      if (cmt.parentId) {
+        let parent = comments[cmt.parentId]
+        cmt.level = parseInt(parent.level) + 1
+      }
+      else {
+        cmt.level = 0
+      }
+      comments[cmt.id] = cmt
+      new_sorted_ids.push(cmt.id)
+    }
+    new_sorted_ids = this.sortTree(new_sorted_ids, comments)
+    this.state.comments = comments
+    this.state.sorted_ids = new_sorted_ids
+    function sortByTree(a,b) {
+      let a_index = this.state.sorted_ids.indexOf(a)
+      let b_index = this.state.sorted_ids.indexOf(b)
+      if (a_index < b_index) {
+        return -1
+      } else {
+        return 1
+      }
+    }
+    let new_comments_ids = Object.keys(new_comments)
+    new_comments_ids.sort(sortByTree.bind(this))
+    if (!soft) {
+      this.state.commentsNew = []
+    } 
+    this.state.commentsNew.push.apply(this.state.commentsNew, new_comments_ids)
+    console.log(this.state.commentsNew)
+    this.renderNewComments(new_comments, new_comments_ids)
+    this.updateCommentsNewCount()
+  }
+  
+  updateCommentsNewCount() {
+    let len = this.state.commentsNew.length
+    console.log("Comments new length", len)
+    $("#new_comments_counter")[0].innerText = len
+    if (len==0) {
+      $("#new_comments_counter").hide()
+    } else if (!$("#new_comments_counter").is(':visible')) {
+      $("#new_comments_counter").show()
+    }
+  }
+  
+  goToNextComment() {
+    if (this.state.lastNewComment>0) {
+      this.state.commentsOld.push(this.state.lastNewComment)
+    }
+    Comments.scrollToComment(this.state.commentsNew[0])
+    this.state.lastNewComment = this.state.commentsNew.shift();
+    this.updateCommentsNewCount()
+  }
+  
+  goToPrevComment() {
+    if (!this.state.commentsOld.length) {
+        return
+    }
+    Comments.scrollToComment(this.state.commentsOld.pop())
+}
 
   mount(obj, comments, ids) {
     this.obj = obj
@@ -72,30 +130,16 @@ export default class Tree {
 
     this.render(this.obj)
 
-    Emitter.on("comments-new-loaded", function(new_comments){
-      let new_sorted_ids = this.state.sorted_ids
-      let comments = this.state.comments
-
-      for (let key in new_comments) {
-        let cmt = new_comments[key]
-        if (cmt.parentId) {
-          let parent = comments[cmt.parentId]
-          cmt.level = parseInt(parent.level) + 1
-        } else {
-          cmt.level = 0
-        }
-        comments[cmt.id] = cmt
-        new_sorted_ids.push(cmt.id)
-      }
-      new_sorted_ids = this.sortTree(new_sorted_ids, comments)
-      this.state.comments = comments
-      this.state.sorted_ids = new_sorted_ids
-      this.renderNewComments(new_comments)
-    }.bind(this))
-    
+    Emitter.on("comments-new-loaded", this.handleNewComments.bind(this))
     Emitter.on("comments-edited-loaded", this.checkEdited.bind(this))
+    Emitter.on("go-to-next-comment", this.goToNextComment.bind(this))
+    Emitter.on("go-to-prev-comment", this.goToPrevComment.bind(this))
     
-    function goToPrevComment(){
+    this.initShortcuts()
+  }
+  
+  initShortcuts() {
+        function goToPrevComment(){
       Comments.scrollToComment(this.state.sorted_ids[this.state.sorted_ids.indexOf(""+$('.comment-current').data('id'))-1])
     }
     function goToNextComment(){

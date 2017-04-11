@@ -73,21 +73,3 @@
 .logo { margin-left: -12px;  margin-top: 15px; transition: left .2s; max-width: 100500%; }
 .woona {height: 100%; position: fixed; z-index: 9999999999999999; margin-left: 300px; display: none;}
 .userbar_info {bottom: 0px;position: absolute;width: 100%;}
-
-#new_messages>.fa-envelope-o::before { position: relative; right: 0px; }
-#new_messages>.fa-envelope::before { position: absolute; }
-#new_messages>.fa-envelope::before,
-#new_messages>.fa-envelope-o::before {
-	transition-duration: 1.2s;
-	transition-property: opacity,filter,color;
-}
-#new_messages.new-messages>.fa-envelope-o::before,
-#new_messages:not(.new-messages)>.fa-envelope::before {
-	opacity: 0;
-	filter: alpha(opacity=0);
-}
-#new_messages.new-messages>.fa-envelope::before,
-#new_messages:not(.new-messages)>.fa-envelope-o::before {
-	opacity: 1;
-	filter: alpha(opacity=100);
-}

@@ -460,6 +460,11 @@ class ActionTalk extends Action {
  			}
  			if($iActiveSpeakers==0) {
  				$this->Viewer_Assign('bNoComments',true);
+ 				$oTalkUser=$this->Talk_GetTalkUser($oTalk->getId(),$this->oUserCurrent->getId());
+ 				$oTalkUser->setDateLast(date("Y-m-d H:i:s"));
+				$oTalkUser->setCommentIdLast($iMaxIdComment);
+				$oTalkUser->setCommentCountNew(0);
+				$this->Talk_UpdateTalkUser($oTalkUser);
  			}
  		}
  	}

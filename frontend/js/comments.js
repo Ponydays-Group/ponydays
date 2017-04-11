@@ -362,18 +362,19 @@ export function goToPrevComment() {
 
 // Прокрутка к комментарию
 export function scrollToComment(idComment, offset, speed) {
-    offset = offset || 250
-    speed = speed || 150
-    $('html, body').animate({
-        scrollTop: $('#comment_id_' + idComment).offset().top - offset
-    }, speed);
+    // offset = offset || 250
+    // speed = speed || 150
+    // $('html, body').animate({
+    //     scrollTop: $('#comment_id_' + idComment).offset().top - offset
+    // }, speed);
 
-    if (iCurrentViewComment) {
-        $('#comment_id_' + iCurrentViewComment).removeClass(options.classes.comment_current);
-        $('#comment_id_' + iCurrentViewComment).removeClass(options.classes.comment_new);
-    }
-    $('#comment_id_' + idComment).addClass(options.classes.comment_current);
-    iCurrentViewComment = idComment;
+    // if (iCurrentViewComment) {
+    //     $('#comment_id_' + iCurrentViewComment).removeClass(options.classes.comment_current);
+    //     $('#comment_id_' + iCurrentViewComment).removeClass(options.classes.comment_new);
+    // }
+    // $('#comment_id_' + idComment).addClass(options.classes.comment_current);
+    // iCurrentViewComment = idComment;
+    Emitter.emit("go-to-comment", idComment)
 }
 
 // Прокрутка к родительскому комментарию

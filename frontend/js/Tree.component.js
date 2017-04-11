@@ -89,11 +89,19 @@ export default class Tree {
     this.state.commentsNew.push.apply(this.state.commentsNew, new_comments_ids)
     console.log(this.state.commentsNew)
     this.renderNewComments(new_comments, new_comments_ids)
-    if (selfIdComment && $('#comment_id_' + selfIdComment).length) {
-      Comments.scrollToComment(selfIdComment);
-      this.state.commentsNew.splice(this.state.commentsNew.indexOf(""+selfIdComment),1)
+    let ids = []
+    ids.push.apply(ids, this.state.commentsNew)
+    for (let key in ids) {
+      let id = ids[key]
+      let cmt = this.state.comments[id]
+      if (cmt.author.login == USERNAME) {
+        this.state.commentsNew.splice(this.state.commentsNew.indexOf(""+cmt.id),1)
+      }
     }
     this.updateCommentsNewCount()
+    if (selfIdComment && $('#comment_id_' + selfIdComment).length) {
+      Comments.scrollToComment(selfIdComment);
+    } 
   }
   
   updateCommentsNewCount() {
@@ -121,7 +129,26 @@ export default class Tree {
         return
     }
     Comments.scrollToComment(this.state.commentsOld.pop())
-}
+  }
+  
+  goToComment(id) {
+    if (!$(`[data-id=${id}]`).length) {
+      return false
+    }
+    $('html, body').animate({
+        scrollTop: $(`[data-id=${id}]`).offset().top - 250
+    }, 150);
+    if ($('.comment-current').length){
+      $('.comment-current').removeClass('comment-current')
+    }
+    $(`[data-id=${id}]`).addClass('comment-current')
+    $(`[data-id=${id}]`).removeClass('comment-new')
+    if (this.state.commentsNew.indexOf(""+id)>0) {
+      this.state.commentsNewt.splice(this.state.commentsNew.indexOf(""+id), 1)
+    }
+    this.updateCommentsNewCount()
+    Comments.iCurrentViewComment = id;
+  }
 
   mount(obj, comments, ids) {
     this.obj = obj
@@ -144,6 +171,7 @@ export default class Tree {
     Emitter.on("comments-edited-loaded", this.checkEdited.bind(this))
     Emitter.on("go-to-next-comment", this.goToNextComment.bind(this))
     Emitter.on("go-to-prev-comment", this.goToPrevComment.bind(this))
+    Emitter.on("go-to-comment", this.goToComment.bind(this))
     
     this.initShortcuts()
   }

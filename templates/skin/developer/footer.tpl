@@ -14,7 +14,8 @@
 			{hook run='copyright'}
 		</div>
 
-		Автор шаблона &mdash; <a href="http://deniart.ru">deniart</a>
+		Версия фронтэнда: {cfg name='frontend.version'}<br>
+		<a target="_blank" href="https://github.com/lunavod/ponydays/issues">Сообщить об ошибке / Отправить предложение</a>
 
 		{hook run='footer_end'}
 	</footer>

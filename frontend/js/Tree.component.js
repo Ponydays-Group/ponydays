@@ -276,7 +276,7 @@ export default class Tree {
           break
         }
         $(`[data-id=${id}]`).removeClass('comment-new')
-        this.state.commentsNewt.splice(this.state.commentsNew.indexOf(""+id), 1)
+        this.state.commentsNew.splice(this.state.commentsNew.indexOf(""+id), 1)
       }
       this.updateCommentsNewCount()
     }

@@ -256,6 +256,9 @@ $config['module']['image']['foto']['round_corner']   = false;
 
 $config['module']['image']['topic']['watermark_use']  = false;
 $config['module']['image']['topic']['round_corner']   = false;
+
+$config['module']['image']['use_anon'] = false;
+$config['module']['image']['anon_url'] = 'http://cameleo.xyz/r?url=';
 // Модуль Security
 $config['module']['security']['hash']  = "livestreet_security_key"; // "примесь" к строке, хешируемой в качестве security-кода
 

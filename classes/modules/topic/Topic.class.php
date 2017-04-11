@@ -1604,17 +1604,21 @@ class ModuleTopic extends Module {
 	 * @return string|int
 	 */
 	public function UploadTopicImageUrl($sUrl, $oUser) {
+		$anon = "";
+		if (Config::Get("module.image.use_anon")) {
+			$anon = Config::Get("module.image.anon_url");
+		}
 		/**
 		 * Проверяем, является ли файл изображением
 		 */
-		if(!@getimagesize($sUrl)) {
+		if(!@getimagesize($anon.$sUrl)) {
 			return ModuleImage::UPLOAD_IMAGE_ERROR_TYPE;
 		}
 		/**
 		 * Открываем файловый поток и считываем файл поблочно,
 		 * контролируя максимальный размер изображения
 		 */
-		$oFile=fopen($sUrl,'r');
+		$oFile=fopen($anon.$sUrl,'r');
 		if(!$oFile) {
 			return ModuleImage::UPLOAD_IMAGE_ERROR_READ;
 		}

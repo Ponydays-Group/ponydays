@@ -379,6 +379,7 @@ class ActionAjax extends Action
         $iValueOld = $iValue;
         if ($oTopicVote = $this->Vote_GetVote($oTopic->getId() , 'topic', $this->oUserCurrent->getId())) {
             if ($iValue == $oTopicVote->getDirection()) {
+                $this->Message_AddErrorSingle($this->Lang_Get('comment_vote_error_value') , $this->Lang_Get('attention'));
                 return;
             }
 
@@ -465,6 +466,7 @@ class ActionAjax extends Action
         $iValueOld = $iValue;
         if ($oBlogVote = $this->Vote_GetVote($oBlog->getId() , 'blog', $this->oUserCurrent->getId())) {
             if ($iValue == $oBlogVote->getDirection()) {
+                $this->Message_AddErrorSingle($this->Lang_Get('comment_vote_error_value') , $this->Lang_Get('attention'));
                 return;
             }
 
@@ -588,6 +590,7 @@ class ActionAjax extends Action
         $iValueOld = $iValue;
         if ($oUserVote = $this->Vote_GetVote($oUser->getId() , 'user', $this->oUserCurrent->getId())) {
             if ($iValue == $oUserVote->getDirection()) {
+                $this->Message_AddErrorSingle($this->Lang_Get('comment_vote_error_value') , $this->Lang_Get('attention'));
                 return;
             }
 

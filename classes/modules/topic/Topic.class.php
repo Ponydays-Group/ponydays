@@ -1611,14 +1611,14 @@ class ModuleTopic extends Module {
 		/**
 		 * Проверяем, является ли файл изображением
 		 */
-		if(!@getimagesize($anon.$sUrl)) {
+		if(!@getimagesize($anon.urlencode($sUrl))) {
 			return ModuleImage::UPLOAD_IMAGE_ERROR_TYPE;
 		}
 		/**
 		 * Открываем файловый поток и считываем файл поблочно,
 		 * контролируя максимальный размер изображения
 		 */
-		$oFile=fopen($anon.$sUrl,'r');
+		$oFile=fopen($anon.urlencode($sUrl),'r');
 		if(!$oFile) {
 			return ModuleImage::UPLOAD_IMAGE_ERROR_READ;
 		}

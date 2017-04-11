@@ -682,6 +682,17 @@ class ActionTalk extends Action {
 			$aComments[$aComment['id']] = $aComment;
 			}
 		}
+		
+		$idCommentLast=getRequestStr('idCommentLast',null,'post');
+		
+		$aEditedComments = [];
+		$aEditedCommentsRaw = $this->Comment_GetCommentsOlderThenEdited('talk', $oTalk->getId(), $idCommentLast);
+		foreach ($aEditedCommentsRaw as $oComment) {
+			$aEditedComments[$oComment->getId()] = [
+					'id'=>$oComment->getId(),
+					'text'=>$oComment->getText(),
+				];
+		}
 
 		/**
 		* Отмечаем дату прочтения письма
@@ -690,11 +701,15 @@ class ActionTalk extends Action {
 		if ($iMaxIdComment!=0) {
 			$oTalkUser->setCommentIdLast($iMaxIdComment);
 		}
+		
+		
 		$oTalkUser->setCommentCountNew(0);
 		$this->Talk_UpdateTalkUser($oTalkUser);
 
 		$this->Viewer_AssignAjax('aComments',$aComments);
+		$this->Viewer_AssignAjax('aComments',$aComments);
 		$this->Viewer_AssignAjax('iMaxIdComment',$iMaxIdComment);
+		$this->Viewer_AssignAjax('aEditedComments',$aEditedComments);
 		$this->Viewer_AssignAjax('iUserCurrentCountTalkNew',$this->Talk_GetCountTalkNew($this->oUserCurrent->getId()));
 	}
 	/**

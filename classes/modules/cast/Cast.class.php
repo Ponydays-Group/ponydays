@@ -72,11 +72,11 @@ class ModuleCast extends Module
 			
 			$sTemplateName = 'notify.'.$sTarget.'.tpl';
 			
-			$sLangDir = Plugin::GetTemplatePath('castuser') . 'notify/' . $this->Lang_GetLang();
+			$sLangDir = 'notify/' . $this->Lang_GetLang();
 			if (is_dir($sLangDir)) {
 				$sPath = $sLangDir.'/'.$sTemplateName;
 			} else {
-				$sPath = Plugin::GetTemplatePath('castuser') . 'notify/' . $this->Lang_GetLangDefault() .'/'. $sTemplateName;
+				$sPath = 'notify/' . $this->Lang_GetLangDefault() .'/'. $sTemplateName;
 			}
 
 			$sText = $oViewerLocal->Fetch($sPath);

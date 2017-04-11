@@ -15,7 +15,7 @@
 ---------------------------------------------------------
 */
 
-class ActionPage extends ActionPlugin {
+class ActionPage extends Action {
 	protected $sUserLogin=null;
 	protected $aBadPageUrl=array('admin');
 

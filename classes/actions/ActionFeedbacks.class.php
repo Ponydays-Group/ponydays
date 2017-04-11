@@ -85,7 +85,7 @@
 			$oViewerLocal = $this->Viewer_GetLocalViewer();
 			$oViewerLocal->Assign('aActions', $aActions);
 
-			$aResult['Text']	= $oViewerLocal->Fetch(Plugin::GetTemplatePath(__CLASS__).'actions.tpl');
+			$aResult['Text']	= $oViewerLocal->Fetch('actions.tpl');
 
 			$this->Viewer_SetResponseAjax('json');
 			$this->Viewer_AssignAjax('aResult', $aResult);
@@ -98,9 +98,6 @@
 
 		//***************************************************************************************
 		public function EventShutdown(){
-			$this->Viewer_AppendScript(Plugin::GetTemplateWebPath(__CLASS__) . "js/main.js");
-
-			$this->Viewer_Assign('sTemplatePath', Plugin::GetTemplatePath(__CLASS__));
 		}
 	}
 ?>

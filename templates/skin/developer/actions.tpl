@@ -96,7 +96,7 @@
 
 	<div class="show-more-box">
 		<div class="show-more loading">
-			<a class="show-more-button" id="LoadMoreButton" href="javascript:void(0);" onclick="LoadMoreActions('{$oAction->getId()}')">{$aLang.plugin.feedbacks.moreee}</a>
+			<a class="show-more-button" id="LoadMoreButton" href="javascript:void(0);" onclick="ls.ajax.LoadMoreActions('{$oAction->getId()}')">{$aLang.feedbacks.moreee}</a>
 		</div>
 	</div>
 {/if}

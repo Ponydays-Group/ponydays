@@ -43,13 +43,6 @@ class HookFeedbacks extends Hook{
 			if($oTopic->getUserId() == $oComment->getUserId()) return false;
 
 			$oAction->setActionType('TopicComment');
-
-			if( in_array('qatopic', $this->Plugin_GetActivePlugins()) ){
-				if($oTopic->getBlog()->getUrl() == Config::Get('plugin.qatopic.qatopic_blog_url')){
-					$oAction->setActionType('QaReply');
-				}
-			}
-
 			$oAction->setUserIdTo($oTopic->getUserId());
 			$oAction->setDestinationObjectId($oTopic->getId());
 
@@ -59,12 +52,6 @@ class HookFeedbacks extends Hook{
 			if($oTopic->getUserId() == $oComment->getUserId()) return false;
 
 			$oAction->setActionType('TopicCommentTree');
-
-			if( in_array('qatopic', $this->Plugin_GetActivePlugins()) ){
-				if($oTopic->getBlog()->getUrl() == Config::Get('plugin.qatopic.qatopic_blog_url')){
-					$oAction->setActionType('QaReplyTree');
-				}
-			}
 
 			$oAction->setUserIdTo($oTopic->getUserId());
 			$oAction->setDestinationObjectId($oTopic->getId());

@@ -1684,7 +1684,7 @@ class ActionAjax extends Action
         
         $oViewerLocal=$this->Viewer_GetLocalViewer();
         $oViewerLocal->Assign('aHistory', $aData);
-        $this->Viewer_AssignAjax('sContent', $oViewerLocal->Fetch($this->Editcomment_GetTemplateFilePath(__CLASS__, 'history.tpl')));
+        $this->Viewer_AssignAjax('sContent', $oViewerLocal->Fetch('history.tpl'));
     }
 
     protected function EventGetSource()

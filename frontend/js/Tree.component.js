@@ -53,7 +53,7 @@ export default class Tree {
     Comments.calcNewComments()
   }
   
-  handleNewComments(new_comments,soft) {
+  handleNewComments(new_comments,selfIdComment,soft) {
     let new_sorted_ids = this.state.sorted_ids
     let comments = this.state.comments
 
@@ -89,6 +89,10 @@ export default class Tree {
     this.state.commentsNew.push.apply(this.state.commentsNew, new_comments_ids)
     console.log(this.state.commentsNew)
     this.renderNewComments(new_comments, new_comments_ids)
+    if (selfIdComment && $('#comment_id_' + selfIdComment).length) {
+      Comments.scrollToComment(selfIdComment);
+      this.state.commentsNew.splice(this.state.commentsNew.indexOf(""+selfIdComment),1)
+    }
     this.updateCommentsNewCount()
   }
   
@@ -129,6 +133,12 @@ export default class Tree {
     this.state.comments =  comments
 
     this.render(this.obj)
+    
+    $(".comment-new").each(function(k,v){
+      this.state.commentsNew.push(""+$(v).data('id'))
+    }.bind(this))
+    
+    this.updateCommentsNewCount()
 
     Emitter.on("comments-new-loaded", this.handleNewComments.bind(this))
     Emitter.on("comments-edited-loaded", this.checkEdited.bind(this))

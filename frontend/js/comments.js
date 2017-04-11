@@ -189,7 +189,7 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
             var aCmt = result.aComments;
             console.log("Ajax OK", dateFormat(new Date(), "HH:MM:ss:l"))
             if (Object.keys(aCmt).length > 0 && result.iMaxIdComment) {
-                Emitter.emit("comments-new-loaded", result.aComments, bNotFlushNew)
+                Emitter.emit("comments-new-loaded", result.aComments, selfIdComment, bNotFlushNew)
                 $("#comment_last_id").val(result.iMaxIdComment);
                 $('#count-comments').text(parseInt($('#count-comments').text()) + Object.keys(aCmt).length);
             }
@@ -209,9 +209,6 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
                 // setCountNewComment(aCmt.length + iCountOld);
             }
 
-            if (selfIdComment && $('#comment_id_' + selfIdComment).length) {
-                scrollToComment(selfIdComment);
-            }
             // checkFolding();
             aCommentNew = [];
             // calcNewComments();

@@ -12,7 +12,7 @@
 ---------------------------------------------------------
 */
 
-class PluginEditcomment_ModuleACL extends PluginEditcomment_Inherit_ModuleACL
+class ModuleACL extends Inherit_ModuleACL
 {
     // Ничего не проверять
     const ACL_EC_NO_CHECK=0;
@@ -44,7 +44,7 @@ class PluginEditcomment_ModuleACL extends PluginEditcomment_Inherit_ModuleACL
         if ($oUser->isAdministrator())
             return true;
         
-        $aUsers=Config::Get('plugin.editcomment.comment_editors');
+        $aUsers=Config::Get('comment_editors');
         if (is_array($aUsers) && in_array($oUser->getId(),$aUsers))
             return true;
         if ($oComment->getTargetType() != 'talk') {
@@ -70,28 +70,28 @@ class PluginEditcomment_ModuleACL extends PluginEditcomment_Inherit_ModuleACL
         if ($oUser->getUserId() != $oComment->getUserId() && !$oUser->isAdministrator())
             return $this->Lang_Get('not_access');
         
-        if ($iCheckMask & PluginEditcomment_ModuleACL::ACL_EC_CHECK_MAX_EDIT_COUNT != 0 && Config::Get('plugin.editcomment.max_edit_count'))
+        if ($iCheckMask & ModuleACL::ACL_EC_CHECK_MAX_EDIT_COUNT != 0 && Config::Get('max_edit_count'))
         {
-            if ($oComment->getEditCount() > Config::Get('plugin.editcomment.max_edit_count'))
-                return $this->Lang_Get('plugin.editcomment.err_max_edit_count');
+            if ($oComment->getEditCount() > Config::Get('max_edit_count'))
+                return $this->Lang_Get('err_max_edit_count');
         }
         
-        if ($iCheckMask & PluginEditcomment_ModuleACL::ACL_EC_CHECK_MAX_EDIT_PERIOD != 0 && Config::Get('plugin.editcomment.max_edit_period'))
+        if ($iCheckMask & ModuleACL::ACL_EC_CHECK_MAX_EDIT_PERIOD != 0 && Config::Get('max_edit_period'))
         {
-            if (strtotime('+' . Config::Get('plugin.editcomment.max_edit_period') . ' second', strtotime($oComment->getEditDate())) < time())
-                return $this->Lang_Get('plugin.editcomment.err_max_edit_period');
+            if (strtotime('+' . Config::Get('max_edit_period') . ' second', strtotime($oComment->getEditDate())) < time())
+                return $this->Lang_Get('err_max_edit_period');
         }
         
-        if ($iCheckMask & PluginEditcomment_ModuleACL::ACL_EC_CHECK_DENY_WITH_ANSWERS != 0 && Config::Get('plugin.editcomment.deny_with_answers'))
+        if ($iCheckMask & ModuleACL::ACL_EC_CHECK_DENY_WITH_ANSWERS != 0 && Config::Get('deny_with_answers'))
         {
-            if ($this->PluginEditcomment_Editcomment_HasAnswers($oComment->getId()))
-                return $this->Lang_Get('plugin.editcomment.err_deny_with_asnwers');
+            if ($this->Editcomment_HasAnswers($oComment->getId()))
+                return $this->Lang_Get('err_deny_with_asnwers');
         }
         
-        if ($iCheckMask & PluginEditcomment_ModuleACL::ACL_EC_CHECK_USER_RATING != 0)
+        if ($iCheckMask & ModuleACL::ACL_EC_CHECK_USER_RATING != 0)
         {
-            if ($oUser->getRating() < Config::Get('plugin.editcomment.min_user_rating'))
-                return $this->Lang_Get('plugin.editcomment.err_min_user_rating');
+            if ($oUser->getRating() < Config::Get('min_user_rating'))
+                return $this->Lang_Get('err_min_user_rating');
         }
         
         return true;

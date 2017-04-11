@@ -528,7 +528,23 @@ class ModuleComment_MapperComment extends Mapper {
 		";
 		if ($iId=$this->oDb->query($sql,$oComment->getPid(),$oComment->getTargetId(),$oComment->getTargetType(),$oComment->getTargetParentId(),$oComment->getUserId(),$oComment->getText(),$oComment->getDate(),$oComment->getUserIp(),$oComment->getPublish(),$oComment->getTextHash()))
 		{
-			return $iId;
+            $oComment->setId($iId);
+            $oComment->setEditDate($oComment->getDate());
+            
+            $this->UpdateEditCommentData($oComment);
+            
+            $oData=Engine::GetEntity('ModuleEditcomment_EntityData');
+            if (isset($_REQUEST['comment_text']))
+                $oData->setCommentTextSource(getRequest('comment_text'));
+            else
+                $oData->setCommentTextSource($oComment->getText());
+            
+            $oData->setCommentId($oComment->getId());
+            $oData->setUserId($oComment->getUserId());
+            $oData->setDateAdd($oComment->getDate());
+            
+            $oData->save();
+        	return $iId;
 		}
 		return false;
 	}
@@ -646,7 +662,7 @@ class ModuleComment_MapperComment extends Mapper {
 				comment_id = ?d
 		";
 		if ($this->oDb->query($sql,$oComment->getText(),$oComment->getRating(),$oComment->getCountVote(),$oComment->getCountFavourite(),$oComment->getDelete(),$oComment->getPublish(),$oComment->getTextHash(),$oComment->getId())) {
-			return true;
+			return $this->UpdateEditCommentData($oComment);
 		}
 		return false;
 	}
@@ -954,5 +970,20 @@ class ModuleComment_MapperComment extends Mapper {
 		}
 		return $aResult;
 	}
+	public function UpdateEditCommentData(ModuleComment_EntityComment $oComment)
+    {
+        $sql="UPDATE " . Config::Get('db.table.comment') . "
+        SET
+        comment_edit_count= ?d,
+        comment_edit_date=?
+        WHERE
+        comment_id = ?d
+        ";
+        if ($this->oDb->query($sql, $oComment->getEditCount(), $oComment->getEditDate(), $oComment->getId()) !== false)
+        {
+            return true;
+        }
+        return false;
+    }
 }
 ?>

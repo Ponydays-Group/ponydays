@@ -12,7 +12,7 @@
 ---------------------------------------------------------
 */
 
-class PluginEditcomment_ActionAjax extends PluginEditcomment_Inherit_ActionAjax
+class ActionAjax extends Inherit_ActionAjax
 {
 
     protected function RegisterEvent()
@@ -51,14 +51,14 @@ class PluginEditcomment_ActionAjax extends PluginEditcomment_Inherit_ActionAjax
             return;
         }
         
-        $aData=$this->PluginEditcomment_Editcomment_GetDataItemsByCommentId($oComment->getId(), array('#order'=>array('date_add'=>'desc')));
+        $aData=$this->Editcomment_GetDataItemsByCommentId($oComment->getId(), array('#order'=>array('date_add'=>'desc')));
         
         foreach ($aData as $oData)
             $oData->setText($this->Text_Parser($oData->getCommentTextSource()));
         
         $oViewerLocal=$this->Viewer_GetLocalViewer();
         $oViewerLocal->Assign('aHistory', $aData);
-        $this->Viewer_AssignAjax('sContent', $oViewerLocal->Fetch($this->PluginEditcomment_Editcomment_GetTemplateFilePath(__CLASS__, 'history.tpl')));
+        $this->Viewer_AssignAjax('sContent', $oViewerLocal->Fetch($this->Editcomment_GetTemplateFilePath(__CLASS__, 'history.tpl')));
     }
 
     protected function EventGetSource()
@@ -89,7 +89,7 @@ class PluginEditcomment_ActionAjax extends PluginEditcomment_Inherit_ActionAjax
             return;
         }
         
-        $oEditData=$this->PluginEditcomment_Editcomment_GetLastEditData($oComment->getId());
+        $oEditData=$this->Editcomment_GetLastEditData($oComment->getId());
         
         if ($oEditData)
             $sCommentSource=$oEditData->getCommentTextSource();
@@ -136,22 +136,22 @@ class PluginEditcomment_ActionAjax extends PluginEditcomment_Inherit_ActionAjax
         
         if (mb_strlen($sText, 'utf-8') > Config::Get('module.comment.max_length'))
         {
-            $this->Message_AddErrorSingle($this->Lang_Get('plugin.editcomment.err_max_comment_length', array('maxlength'=>Config::Get('plugin.editcomment.max_comment_length'))));
+            $this->Message_AddErrorSingle($this->Lang_Get('editcomment.err_max_comment_length', array('maxlength'=>Config::Get('editcomment.max_comment_length'))));
             return;
         }
         
         $sDE=date("Y-m-d H:i:s");
         
-        $oOldData=$this->PluginEditcomment_Editcomment_GetLastEditData($oComment->getId());
+        $oOldData=$this->Editcomment_GetLastEditData($oComment->getId());
         
         if ($oOldData && $oOldData->getCommentTextSource() == getRequest('comment_text'))
         {
-            $this->Message_AddNoticeSingle($this->Lang_Get('plugin.editcomment.notice_nothing_changed'));
+            $this->Message_AddNoticeSingle($this->Lang_Get('editcomment.notice_nothing_changed'));
             $this->Viewer_AssignAjax('bEdited', false);
         }
         else
         {
-            if (Config::Get('plugin.editcomment.change_online'))
+            if (Config::Get('editcomment.change_online'))
                 $oComment->setDate($sDE);
             $oComment->setEditCount($oComment->getEditCount() + 1);
             $oComment->setEditDate($sDE);
@@ -159,15 +159,15 @@ class PluginEditcomment_ActionAjax extends PluginEditcomment_Inherit_ActionAjax
             $oViewerLocal->Assign('oComment', $oComment);
             $oViewerLocal->Assign('oUserCurrent', $this->oUserCurrent);
             
-            if (Config::Get('plugin.editcomment.add_edit_date'))
-                $oComment->setText($sText . $oViewerLocal->Fetch($this->PluginEditcomment_Editcomment_GetTemplateFilePath(__CLASS__, 'inject_comment_edited.tpl')));
+            if (Config::Get('editcomment.add_edit_date'))
+                $oComment->setText($sText . $oViewerLocal->Fetch($this->Editcomment_GetTemplateFilePath(__CLASS__, 'inject_comment_edited.tpl')));
             else
                 $oComment->setText($sText);
             $oComment->setTextHash(md5($sText));
             
             if ($this->Comment_UpdateComment($oComment))
             {
-                if (Config::Get('plugin.editcomment.change_online'))
+                if (Config::Get('editcomment.change_online'))
                 {
                     $oCommentOnline=Engine::GetEntity('Comment_CommentOnline');
                     $oCommentOnline->setTargetId($oComment->getTargetId());
@@ -181,7 +181,7 @@ class PluginEditcomment_ActionAjax extends PluginEditcomment_Inherit_ActionAjax
                 $this->oUserCurrent->setDateCommentLast($sDE);
                 $this->User_Update($this->oUserCurrent);
                 
-                $oData=Engine::GetEntity('PluginEditcomment_ModuleEditcomment_EntityData');
+                $oData=Engine::GetEntity('ModuleEditcomment_EntityData');
                 $oData->setCommentTextSource(getRequest('comment_text'));
                 $oData->setCommentId($oComment->getId());
                 $oData->setUserId($this->oUserCurrent->getId());
@@ -192,12 +192,12 @@ class PluginEditcomment_ActionAjax extends PluginEditcomment_Inherit_ActionAjax
                     $this->Message_AddErrorSingle($this->Lang_Get('error'));
                     return;
                 }
-                elseif (Config::Get('plugin.editcomment.max_history_depth') > 0)
+                elseif (Config::Get('editcomment.max_history_depth') > 0)
                 {
-                    $aTemp=$this->PluginEditcomment_Editcomment_GetDataItemsByFilter(array('comment_id'=>$oComment->getId(), '#page'=>array(1, 0)));
-                    if ($aTemp['count'] > Config::Get('plugin.editcomment.max_history_depth'))
+                    $aTemp=$this->Editcomment_GetDataItemsByFilter(array('comment_id'=>$oComment->getId(), '#page'=>array(1, 0)));
+                    if ($aTemp['count'] > Config::Get('editcomment.max_history_depth'))
                     {
-                        $aOldData=$this->PluginEditcomment_Editcomment_GetDataItemsByFilter(array('comment_id'=>$oComment->getId(), '#order'=>array('date_add'=>'asc'), '#limit'=>array(0, $aTemp['count'] - Config::Get('plugin.editcomment.max_history_depth'))));
+                        $aOldData=$this->Editcomment_GetDataItemsByFilter(array('comment_id'=>$oComment->getId(), '#order'=>array('date_add'=>'asc'), '#limit'=>array(0, $aTemp['count'] - Config::Get('editcomment.max_history_depth'))));
                         foreach ($aOldData as $oOldData)
                             $oOldData->delete();
                     }

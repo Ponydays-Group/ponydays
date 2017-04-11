@@ -12,7 +12,7 @@
 ---------------------------------------------------------
 */
 
-class PluginEditcomment_ModuleComment_MapperComment extends PluginEditcomment_Inherit_ModuleComment_MapperComment
+class ModuleComment_MapperComment extends Inherit_ModuleComment_MapperComment
 {
 
     public function UpdateEditCommentData(ModuleComment_EntityComment $oComment)
@@ -41,7 +41,7 @@ class PluginEditcomment_ModuleComment_MapperComment extends PluginEditcomment_In
             
             $this->UpdateEditCommentData($oComment);
             
-            $oData=Engine::GetEntity('PluginEditcomment_ModuleEditcomment_EntityData');
+            $oData=Engine::GetEntity('ModuleEditcomment_EntityData');
             if (isset($_REQUEST['comment_text']))
                 $oData->setCommentTextSource(getRequest('comment_text'));
             else

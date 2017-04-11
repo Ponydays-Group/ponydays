@@ -118,6 +118,8 @@ export function ajaxSubmit(url, form, callback, more) {
  * Загрузка изображения
  */
 export async function ajaxUploadImg(form, sToLoad) {
+    $("#"+form+"_submit").attr("disabled", true)
+    $("#"+form+"_submit").toggleClass("hovered")
     let result = await ajaxSubmit('upload/image/', form, function (data) {
         if (data.bStateError) {
             Msg.error(data.sMsgTitle, data.sMsg);
@@ -129,12 +131,17 @@ export async function ajaxUploadImg(form, sToLoad) {
             $('#window_upload_img').find('input[type="text"], input[type="file"]').val('');
             $('#window_upload_img').jqmHide();
             Emitter.emit('ajaxUploadImgAfter');
+            $("#"+form+"_submit").toggleClass("hovered")
+            $("#"+form+"_submit").attr("disabled", false)
         }
     }, {error: function() {
         Msg.error("Ошибка", "Изображение слишком тяжелое")
+        $("#"+form+"_submit").toggleClass("hovered")
+        $("#"+form+"_submit").attr("disabled", false)
     }});
     console.log(result)
 }
+
 export function LoadMoreActions(LastActionId){
 
 	var params = {};

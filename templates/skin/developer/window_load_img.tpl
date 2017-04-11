@@ -31,7 +31,7 @@
 			
 			{hook run="uploadimg_additional"}
 			
-			<button type="submit" class="button button-primary" onclick="ls.ajax.ajaxUploadImg('block_upload_img_content_pc','{$sToLoad}');">{$aLang.uploadimg_submit}</button>
+			<button type="submit" id="block_upload_img_content_pc_submit" class="button button-primary" onclick="ls.ajax.ajaxUploadImg('block_upload_img_content_pc','{$sToLoad}');">{$aLang.uploadimg_submit}</button>
 			<button type="submit" class="button jqmClose">{$aLang.uploadimg_cancel}</button>
 		</form>
 		
@@ -55,7 +55,7 @@
 
 			{hook run="uploadimg_link_additional"}
 
-			<button type="submit" class="button button-primary" onclick="ls.ajax.ajaxUploadImg('block_upload_img_content_link','{$sToLoad}');">{$aLang.uploadimg_link_submit_load}</button>
+			<button type="submit" id="block_upload_img_content_link_submit" class="button button-primary" onclick="ls.ajax.ajaxUploadImg('block_upload_img_content_link','{$sToLoad}');">{$aLang.uploadimg_link_submit_load}</button>
 			{$aLang.or}
 			<button type="submit" class="button button-primary" onclick="ls.topic.insertImageToEditor(jQuery('#img_url').val(),jQuery('#form-image-url-align').val(),jQuery('#form-image-url-title').val());">{$aLang.uploadimg_link_submit_paste}</button>
 			<button type="submit" class="button jqmClose">{$aLang.uploadimg_cancel}</button>

@@ -40,7 +40,7 @@ $button-primary-border-color: #d44545;
 	*margin-right: 5px;
 	transition: background .2s;
 }
-.button:hover { text-decoration: none; color: $main-color; background: $button-border-color; }
+.button:hover, .button.hovered { text-decoration: none; color: $main-color; background: $button-border-color; }
 .button:active {
 	-moz-box-shadow: 	0 0 7px rgba(0, 0, 0, .5) inset;
 	-webkit-box-shadow: 0 0 7px rgba(0, 0, 0, .5) inset;
@@ -54,7 +54,7 @@ $button-primary-border-color: #d44545;
 	background: $button-primary-background;
 	border-color: $button-primary-border-color;
 }
-.button.button-primary:hover 	{ background: $button-primary-border-color; }
+.button.button-primary:hover, .button.button-primary.hovered 	{ background: $button-primary-border-color; }
 .button.button-primary.active { background: $button-primary-border-color; }
 
 /* Button Icon (Without text) */

@@ -188,11 +188,12 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
         } else {
             var aCmt = result.aComments;
             console.log("Ajax OK", dateFormat(new Date(), "HH:MM:ss:l"))
+            
             if (Object.keys(aCmt).length > 0 && result.iMaxIdComment) {
-                Emitter.emit("comments-new-loaded", result.aComments, selfIdComment, bNotFlushNew)
                 $("#comment_last_id").val(result.iMaxIdComment);
                 $('#count-comments').text(parseInt($('#count-comments').text()) + Object.keys(aCmt).length);
             }
+            Emitter.emit("comments-new-loaded", result.aComments, selfIdComment, bNotFlushNew)
             if (Object.keys(result.aEditedComments).length > 0) {
                 Emitter.emit("comments-edited-loaded", result.aEditedComments)
             }

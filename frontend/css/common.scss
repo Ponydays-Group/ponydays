@@ -80,6 +80,7 @@
 .toolbar .toolbar-update .update-comments i 		{ display: block; width: 16px; height: 16px; line-height: 16px; }
 .toolbar .toolbar-update .update-comments.active i 	{ background-position: -16px 0; }
 .toolbar .toolbar-update .new-comments 				{ border-top: 1px solid $main-accent-second; padding: 10px 0; color: $text-color; text-align: center; font-size: 11px; }
+.toolbar .toolbar-talk a { color: #29b765; }
 
 /* Topic navigation */
 .toolbar .toolbar-topic a.toolbar-topic-prev { border-bottom: 1px solid $main-accent-second; }

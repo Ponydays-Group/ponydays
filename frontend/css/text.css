@@ -187,3 +187,19 @@ img.gray:not(:hover) {
     filter: contrast(0%) brightness(78.5%) sepia(95.30%) hue-rotate(152.5deg);
     -webkit-filter: contrast(0%) brightness(78.5%) sepia(95.30%) hue-rotate(152.5deg);
 }
+
+.text .left {
+    display: inline-block;
+    width: 100%;
+    text-align: left;
+}
+.text .center {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+}
+.text .right {
+    display: inline-block;
+    width: 100%;
+    text-align: right;
+}

@@ -9,3 +9,5 @@ config/frontend.ver
 node_modules/*
 .idea/*
 static/*
+.c9/*
+img/*

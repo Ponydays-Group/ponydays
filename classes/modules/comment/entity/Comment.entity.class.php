@@ -168,6 +168,14 @@ class ModuleComment_EntityComment extends Entity {
 		if ($this->getRating()<=Config::Get('module.comment.bad')) {
 			return true;
 		}
+		if ($this->User_IsAuthorization()) {
+            $oUserCurrent = $this->User_GetUserCurrent();
+            $aIgnoredUser = $this->User_GetIgnoredUsersByUser($oUserCurrent->getId(), ModuleUser::TYPE_IGNORE_COMMENTS);
+            //is comment user in current user ignore list
+            if (in_array($this->getUserId(), $aIgnoredUser)) {
+                return true;
+            }
+        }
 		return false;
 	}
 	/**

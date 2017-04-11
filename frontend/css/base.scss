@@ -279,3 +279,36 @@ img {
 	max-width: 100%;
 	cursor: pointer;
 }
+
+.doanswer {
+	float: right;
+	margin-top: 10px;
+}
+
+.new-ansli {
+	color: #1F26A9!important;
+	font-weight: bold;
+}
+
+.new-answer {
+	position: absolute;
+	top: 0;
+	right: 255px;
+	color: #f9de7e;
+	font-size: 11px;
+	margin-right: 11px;
+	margin-top: 18px;
+	line-height: 1em;
+	text-decoration: none;
+}
+.new-answer:hover {
+	position: absolute;
+	top: 0;
+	right: 255px;
+	color: #f9de7e;
+	font-size: 11px;
+	margin-right: 11px;
+	margin-top: 18px;
+	line-height: 1em;
+	text-decoration: none;
+}

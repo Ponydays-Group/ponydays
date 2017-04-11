@@ -591,6 +591,9 @@ class ModuleTopic_MapperTopic extends Mapper {
 			}
 			$sWhere.=" AND t.topic_type IN ('".join("','",array_map('mysql_real_escape_string',$aFilter['topic_type']))."')";
 		}
+		if (isset($aFilter['not_user_id'])) {
+            $sWhere .= " AND t.user_id NOT IN(" . implode(', ', $aFilter['not_user_id']) . ")";
+        }
 		return $sWhere;
 	}
 	/**

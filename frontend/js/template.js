@@ -7,7 +7,7 @@ import * as Blocks from './blocks'
 import * as Hook from './hook'
 
 function showFloatBlock($) {
-    if (!$("#sidebar").length) {
+    if (!$('.block-type-stream').length) {
         return
     }
     $.browser.isMobileDevice = /android|webos|iphone|ipad|ipod|blackberry/i.test(navigator.userAgent.toLowerCase());
@@ -88,7 +88,7 @@ export default function init() {
                 $("#sidebar").css("height", $("#wrapper").height() > $("#sidebar").height() ? $("#wrapper").height() : null)
             }
         }
-        $(window).on('resize', window.resize_sidebar)
+        resize_sidebar()
 
         // Всплывающие окна
         $('#window_login_form').jqm();

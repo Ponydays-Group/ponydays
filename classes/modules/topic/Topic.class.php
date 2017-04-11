@@ -525,6 +525,7 @@ class ModuleTopic extends Module {
 		if (!is_numeric($iPage) or $iPage<=0) {
 			$iPage=1;
 		}
+		$aFilter = $this->_getModifiedFilter($aFilter);
 		$s=serialize($aFilter);
 		if (false === ($data = $this->Cache_Get("topic_filter_{$s}_{$iPage}_{$iPerPage}"))) {
 			$data = array(
@@ -543,6 +544,7 @@ class ModuleTopic extends Module {
 	 * @return int
 	 */
 	public function GetCountTopicsByFilter($aFilter) {
+		$aFilter = $this->_getModifiedFilter($aFilter);
 		$s=serialize($aFilter);
 		if (false === ($data = $this->Cache_Get("topic_count_{$s}"))) {
 			$data = $this->oMapperTopic->GetCountTopics($aFilter);
@@ -1853,7 +1855,12 @@ class ModuleTopic extends Module {
 			}
 			$this->Image_Resize($sFile,$sPath,$sNewFileName,Config::Get('view.img_max_width'),Config::Get('view.img_max_height'),$aSize['w'],$aSize['h'],true,$aParams,$oImage);
 		}
-		return $this->Image_GetWebPath($sFile);
+		$sFilePathOld = $this->Image_GetServerPath($sFile);
+        $sServer = rtrim(str_replace(DIRECTORY_SEPARATOR,'/',Config::Get('path.root.server')),'/');
+        $sStatic = rtrim(str_replace(DIRECTORY_SEPARATOR,'/',Config::Get('static_server')),'/');
+        $sFilePathNew = str_replace($sServer . '/', $sStatic . '/', $sFilePathOld);
+        @rename(str_replace('/', DIRECTORY_SEPARATOR, $sFilePathOld), str_replace('/', DIRECTORY_SEPARATOR, $sFilePathNew));
+		return $this->Image_GetWebPath($sFilePathNew);
 	}
 	/**
 	 * Пересчитывает счетчик избранных топиков
@@ -1889,5 +1896,31 @@ class ModuleTopic extends Module {
 		}
 		return false;
 	}
+	
+	/**
+     * Modify filter with ignored users
+     * @param array $aFilter
+     * @return array
+     */
+    protected function _getModifiedFilter(array $aFilter)
+    {
+        if ($this->oUserCurrent) {
+            $aIgnoredUser = $this->User_GetIgnoredUsersByUser($this->oUserCurrent->getId(), ModuleUser::TYPE_IGNORE_TOPICS);
+            if (count($aIgnoredUser)) {
+                if (isset($aFilter['user_id'])) {
+                    //leave posibility view topics throu profile
+                    if (is_array($aFilter['user_id'])) {
+                        $aFilter['user_id'] = array_diff($aFilter['user_id'], $aIgnoredUser);
+                        if (!count($aFilter['user_id'])) {
+                            $aFilter['not_user_id'] = $aIgnoredUser;
+                        }
+                    }
+                } else {
+                    $aFilter['not_user_id'] = $aIgnoredUser;
+                }
+            }
+        }
+        return $aFilter;
+    }
 }
 ?>

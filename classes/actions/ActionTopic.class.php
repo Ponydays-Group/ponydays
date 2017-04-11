@@ -346,6 +346,10 @@ class ActionTopic extends Action {
 		 */
 		if ($this->Topic_AddTopic($oTopic)) {
 			$this->Hook_Run('topic_add_after', array('oTopic'=>$oTopic,'oBlog'=>$oBlog));
+			if ($oTopic->getPublish()==1 ){    		
+    			$oTopic->setBlog($this->Blog_GetBlogById($oTopic->getBlogId()));
+    			$this->Cast_sendCastNotify('topic',$oTopic,null,$oTopic->getTextSource());
+    		}
 			/**
 			 * Получаем топик, чтоб подцепить связанные данные
 			 */
@@ -499,6 +503,10 @@ class ActionTopic extends Action {
 		 */
 		if ($this->Topic_UpdateTopic($oTopic)) {
 			$this->Hook_Run('topic_edit_after', array('oTopic'=>$oTopic,'oBlog'=>$oBlog,'bSendNotify'=>&$bSendNotify));
+			if ($oTopic->getPublish()==1 ){    		
+    			$oTopic->setBlog($this->Blog_GetBlogById($oTopic->getBlogId()));
+	    		$this->Cast_sendCastNotify('topic',$oTopic,null,$oTopic->getTextSource());
+    		}
 			/**
 			 * Обновляем данные в комментариях, если топик был перенесен в новый блог
 			 */

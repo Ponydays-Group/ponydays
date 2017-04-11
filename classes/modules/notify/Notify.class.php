@@ -416,7 +416,7 @@ class ModuleNotify extends Module {
 		/**
 		 * Формируем шаблон
 		 */
-		$sBody=$this->oViewerLocal->Fetch($this->GetTemplatePath($sTemplate,$sPluginName));
+		$sBody=$this->oViewerLocal->Fetch('notify/russian/'.$sTemplate);
 		/**
 		 * Если в конфигураторе указан отложенный метод отправки,
 		 * то добавляем задание в массив. В противном случае,
@@ -501,36 +501,6 @@ class ModuleNotify extends Module {
 	 */
 	public function DeleteTaskByArrayId($aArrayId) {
 		return $this->oMapper->DeleteTaskByArrayId($aArrayId);
-	}
-	/**
-	 * Возвращает путь к шаблону по переданному имени
-	 *
-	 * @param  string $sName	Название шаблона
-	 * @param  string $sPluginName	Название или класс плагина
-	 * @return string
-	 */
-	public function GetTemplatePath($sName,$sPluginName=null) {
-		if ($sPluginName) {
-			$sPluginName = preg_match('/^Plugin([\w]+)(_[\w]+)?$/Ui',$sPluginName,$aMatches)
-				? strtolower($aMatches[1])
-				: strtolower($sPluginName);
-
-			$sLangDir=Plugin::GetTemplatePath($sPluginName).'notify/'.$this->Lang_GetLang();
-			if(is_dir($sLangDir)) {
-				return $sLangDir.'/'.$sName;
-			}
-			return Plugin::GetTemplatePath($sPluginName).'notify/'.$this->Lang_GetLangDefault().'/'.$sName;
-		} else {
-			$sLangDir = 'notify/'.$this->Lang_GetLang();
-			/**
-			 * Если директория с сообщениями на текущем языке отсутствует,
-			 * используем язык по умолчанию
-			 */
-			if(is_dir(rtrim(Config::Get('path.smarty.template'),'/').'/'.$sLangDir)) {
-				return $sLangDir.'/'.$sName;
-			}
-			return 'notify/'.$this->Lang_GetLangDefault().'/'.$sName;
-		}
 	}
 }
 ?>

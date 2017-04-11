@@ -1,1 +1,0 @@
-<li {if $sAction=='feedbacks'}class="active"{/if}><a href="{router page='feedbacks'}">{$aLang.plugin.feedbacks.answers_menu}</a></li>

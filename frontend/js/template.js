@@ -72,6 +72,8 @@ export default function init() {
     $(document).ready(function($) {
         // Хук начала инициализации javascript-составляющих шаблона
         Hook.run('ls_template_init_start', [], window);
+        
+        $("title").data("title", document.title)
 
         // updateImgs()
         $("#image-modal").click(function() {

@@ -109,8 +109,10 @@ export default class Tree {
     let len = this.state.commentsNew.length
     console.log("Comments new length", len)
     $("#new_comments_counter")[0].innerText = len
+    document.title = `(${len}) `+$("title").data("title")
     if (len==0) {
       $("#new_comments_counter").hide()
+      document.title = $("title").data("title")
     } else if (!$("#new_comments_counter").is(':visible')) {
       $("#new_comments_counter").show()
     }
@@ -274,8 +276,9 @@ export default class Tree {
           break
         }
         $(`[data-id=${id}]`).removeClass('comment-new')
+        this.state.commentsNewt.splice(this.state.commentsNew.indexOf(""+id), 1)
       }
-      Comments.calcNewComments()
+      this.updateCommentsNewCount()
     }
 
     let shortcuts = {

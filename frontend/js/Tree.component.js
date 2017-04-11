@@ -87,6 +87,7 @@ export default class Tree {
       this.state.commentsNew = []
     } 
     this.state.commentsNew.push.apply(this.state.commentsNew, new_comments_ids)
+    this.state.commentsNew.sort(sortByTree.bind(this))
     console.log(this.state.commentsNew)
     this.renderNewComments(new_comments, new_comments_ids)
     let ids = []

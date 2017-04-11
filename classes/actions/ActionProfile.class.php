@@ -1220,6 +1220,31 @@ class ActionProfile extends Action {
 		/**
 		 * Загружаем в шаблон необходимые переменные
 		 */
+		$this->Lang_AddLangJs(array(
+            'ignore_user_talks', 'disignore_user_talks',
+            'ignore_user_ok_talk', 'disignore_user_ok_talk'
+        ));
+		$oUserCurrent = $this->User_GetUserCurrent();
+		if ($oUserCurrent) {
+            $aForbidIgnore = $this->User_GetForbidIgnoredUsers();
+            if (in_array($this->oUserProfile->getId(), $aForbidIgnore)) {
+                $this->Viewer_Assign('bForbidIgnore', true);
+            } else if ($oUserCurrent->getId() != $this->oUserProfile->getId()) {
+                $bIgnoredTopics = $this->User_IsUserIgnoredByUser($oUserCurrent->getId(), $this->oUserProfile->getId(), ModuleUser::TYPE_IGNORE_TOPICS);
+                $bIgnoredComments = $this->User_IsUserIgnoredByUser($oUserCurrent->getId(), $this->oUserProfile->getId(), ModuleUser::TYPE_IGNORE_COMMENTS);
+
+                $this->Viewer_Assign('bIgnoredTopics', $bIgnoredTopics);
+                $this->Viewer_Assign('bIgnoredComments', $bIgnoredComments);
+            }
+
+            $aUserBlacklist = $this->Talk_GetBlacklistByUserId($oUserCurrent->getId());
+            if (isset($aUserBlacklist[$this->oUserProfile->getId()])) {
+                $bIgnoredTalks = 1;
+            } else {
+                $bIgnoredTalks = 0;
+            }
+            $this->Viewer_Assign('bIgnoredTalks', $bIgnoredTalks);
+        }
 
 		$aBlogUsers=$this->Blog_GetBlogUsersByUserId($this->oUserProfile->getId(),ModuleBlog::BLOG_USER_ROLE_USER);
 		$aBlogModerators=$this->Blog_GetBlogUsersByUserId($this->oUserProfile->getId(),ModuleBlog::BLOG_USER_ROLE_MODERATOR);

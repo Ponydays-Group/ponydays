@@ -366,6 +366,9 @@ $config['db']['table']['geo_city']            = '___db.table.prefix___geo_city';
 $config['db']['table']['geo_target']          = '___db.table.prefix___geo_target';
 $config['db']['table']['user_changemail']     = '___db.table.prefix___user_changemail';
 
+$config['db']['table']['user_ignore'] = '___db.table.prefix___user_ignore';
+$config['db']['table']['user_forbid_ignore'] = '___db.table.prefix___user_forbid_ignore';
+
 $config['db']['tables']['engine'] = 'InnoDB';  // InnoDB или MyISAM
 /**
  * Настройка memcache

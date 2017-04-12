@@ -48,9 +48,22 @@ export default class Tree {
         $(`#comment_content_id_${id}`)[0].innerHTML = edited_comments[id].text
         this.state.comments[id].text = edited_comments[id].text
         $(`[data-id=${id}]`).addClass('comment-new')
+        this.state.commentsNew.push(id)
+        this.state.commentsNew.sort(this.sortByTree.bind(this))
+        this.updateCommentsNewCount()
       }
     }
     Comments.calcNewComments()
+  }
+  
+  sortByTree(a,b) {
+    let a_index = this.state.sorted_ids.indexOf(a)
+    let b_index = this.state.sorted_ids.indexOf(b)
+    if (a_index < b_index) {
+      return -1
+    } else {
+      return 1
+    }
   }
   
   handleNewComments(new_comments,selfIdComment,soft) {
@@ -72,22 +85,14 @@ export default class Tree {
     new_sorted_ids = this.sortTree(new_sorted_ids, comments)
     this.state.comments = comments
     this.state.sorted_ids = new_sorted_ids
-    function sortByTree(a,b) {
-      let a_index = this.state.sorted_ids.indexOf(a)
-      let b_index = this.state.sorted_ids.indexOf(b)
-      if (a_index < b_index) {
-        return -1
-      } else {
-        return 1
-      }
-    }
+
     let new_comments_ids = Object.keys(new_comments)
-    new_comments_ids.sort(sortByTree.bind(this))
+    new_comments_ids.sort(this.sortByTree.bind(this))
     if (!soft) {
       this.state.commentsNew = []
     } 
     this.state.commentsNew.push.apply(this.state.commentsNew, new_comments_ids)
-    this.state.commentsNew.sort(sortByTree.bind(this))
+    this.state.commentsNew.sort(this.sortByTree.bind(this))
     console.log(this.state.commentsNew)
     this.renderNewComments(new_comments, new_comments_ids)
     let ids = []
@@ -109,12 +114,12 @@ export default class Tree {
     let len = this.state.commentsNew.length
     console.log("Comments new length", len)
     $("#new_comments_counter")[0].innerText = len
-    document.title = `(${len}) `+$("title").data("title")
     if (len==0) {
       $("#new_comments_counter").hide()
       document.title = $("title").data("title")
     } else if (!$("#new_comments_counter").is(':visible')) {
       $("#new_comments_counter").show()
+      document.title = `(${len}) `+$("title").data("title")
     }
   }
   

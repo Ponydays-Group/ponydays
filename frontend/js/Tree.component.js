@@ -100,7 +100,7 @@ export default class Tree {
     for (let key in ids) {
       let id = ids[key]
       let cmt = this.state.comments[id]
-      if (cmt.author.login == USERNAME) {
+      if (cmt.author.login == USERNAME || cmt.isBad) {
         this.state.commentsNew.splice(this.state.commentsNew.indexOf(""+cmt.id),1)
       }
     }
@@ -119,6 +119,8 @@ export default class Tree {
       document.title = $("title").data("title")
     } else if (!$("#new_comments_counter").is(':visible')) {
       $("#new_comments_counter").show()
+      document.title = `(${len}) `+$("title").data("title")
+    } else {
       document.title = `(${len}) `+$("title").data("title")
     }
   }
@@ -140,6 +142,9 @@ export default class Tree {
   }
   
   goToComment(id) {
+    if (this.state.comments[id].isBad) {
+      return
+    }
     if (!$(`[data-id=${id}]`).length) {
       return false
     }

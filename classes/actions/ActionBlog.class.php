@@ -814,6 +814,7 @@ class ActionBlog extends Action {
         $aComment['author'] = array("id"=>$oComment->getUserId(), "login"=>$oComment->getUser()->getLogin(), "avatar"=>$oComment->getUser()->getProfileAvatarPath(48));
         $aComment['date'] = date(DateTime::ISO8601, strtotime($oComment->getDate()));
         $aComment['text'] = $oComment->getText();
+        $aComment['isBad'] = $oComment->isBad();
         $aComment['isFavourite'] = $oComment->getIsFavourite();
         $aComment['countFavourite'] = $oComment->getCountFavourite();
         $aComment['rating'] = $oComment->getRating();
@@ -1276,6 +1277,7 @@ class ActionBlog extends Action {
 				$aComment['author'] = array("id"=>$oComment->getUserId(), "login"=>$oComment->getUser()->getLogin(), "avatar"=>$oComment->getUser()->getProfileAvatarPath(48));
 				$aComment['date'] = $oComment->getDate();
 				$aComment['text'] = $oComment->getText();
+				$aComment['isBad'] = $oComment->isBad();
 				$aComment['isFavourite'] = $oComment->getIsFavourite();
 				$aComment['countFavourite'] = $oComment->getCountFavourite();
 				$aComment['rating'] = $oComment->getRating();

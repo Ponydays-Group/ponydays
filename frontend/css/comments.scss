@@ -416,3 +416,14 @@ button#comment-button-history {
 .ls-user-role-admin .comment .vote .vote-count {
     cursor: help;
 }
+
+.bad-placeholder {
+    color: rgba(255, 0, 0, 0.61);
+    height: 1.9em;
+    display: flex;
+    width: 100%;
+    background: rgba(255, 0, 0, 0.03);
+    border-bottom: 1px solid rgba(255, 0, 0, 0.08);
+    justify-content: center;
+    
+}

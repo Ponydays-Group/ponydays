@@ -356,10 +356,17 @@ export default function init() {
                         v.src = v.getAttribute("data-src")
                     }
                 })
+                console.log(b.parentElement.getElementsByClassName("spoiler-title").length)
+                if (!b.parentElement.getElementsByClassName("spoiler-title").length) {
+                    return
+                }
                 b.parentElement.getElementsByClassName("spoiler-title")[0].className = "spoiler-title spoiler-open";
             }
             else {
                 $(b).hide(300);
+                if (!b.parentElement.getElementsByClassName("spoiler-title").length) {
+                    return
+                }
                 b.parentElement.getElementsByClassName("spoiler-title")[0].className = "spoiler-title spoiler-close";
 
             }
@@ -403,14 +410,15 @@ export default function init() {
             allNew[idx].className = "spoiler-title spoiler-close"
         }
 
-        let closed = true
-
         window.despoil = function() {
             $(".spoiler-body").each(function(k, v) {
-                v.style.display = closed ? "none" : "block"
-                spoiler(v)
+                v.style.display = "block"
+                $(v).find("img").each(function(k, vv) {
+                    if (vv.getAttribute("data-src")) {
+                        vv.src = vv.getAttribute("data-src")
+                    }
+                })
             })
-            closed = closed ? false : true
         }.bind(this)
 
         updateImgs()

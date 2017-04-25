@@ -502,30 +502,8 @@ class ActionTalk extends Action {
 		$sReadlast = $oTalkUser->getDateLast();
 
 		foreach($aComments as $oComment) {
-				$aComment = array();
-				$aComment['id'] = $oComment->getId();
-				$aComment['author'] = array("id"=>$oComment->getUserId(), "login"=>$oComment->getUser()->getLogin(), "avatar"=>$oComment->getUser()->getProfileAvatarPath(48));
-				$aComment['date'] = date(DateTime::ISO8601, strtotime($oComment->getDate()));
-				$aComment['text'] = $oComment->getText();
-				$aComment['isFavourite'] = $oComment->getIsFavourite();
-				$aComment['countFavourite'] = $oComment->getCountFavourite();
-				$aComment['rating'] = $oComment->getRating();
-
-				$oVote = $oComment->getVote();
-				if ($oVote) {
-						$aComment['voted'] = true;
-						$aComment['voteDirection'] = $oVote->getDirection();
-				} else {
-						$aComment['voted'] = false;
-						$aComment['voteDirection'] = null;
-				}
-
-				$aComment['targetType'] = $oComment->getTargetType();
-				$aComment['targetId'] = $oComment->getTargetId();
-				$aComment['level'] = $oComment->getLevel();
-				$aComment['parentId'] = $oComment->getPid();
-				$aComment['isNew'] = $sReadlast <= $oComment->getDate();
-			$aResult[$aComment['id']] = $aComment;
+			$aComment = $this->Comment_ConvertCommentToArray($oComment, $sReadlast);
+			$aComments[$aComment['id']] = $aComment;
 		}
 
 		/**

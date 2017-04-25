@@ -323,7 +323,7 @@ class ModuleImage extends Module {
 
         $bResult=copy($sFileSource,$sFileDestFullPath);
         if ($bResult and !is_null($iMode)) {
-            chmod($sFileDestFullPath,$iMode);
+            @chmod($sFileDestFullPath,$iMode);
         }
         if ($bRemoveSource) {
             unlink($sFileSource);

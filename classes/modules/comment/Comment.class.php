@@ -1011,6 +1011,14 @@ class ModuleComment extends Module {
 		$aComment['author'] = array("id"=>$oComment->getUserId(), "login"=>$oComment->getUser()->getLogin(), "avatar"=>$oComment->getUser()->getProfileAvatarPath(48));
 		$aComment['date'] = gmdate('c',strtotime($oComment->getDate()));
 		$aComment['text'] = $oComment->getText();
+		if ($oComment->getDelete()) {
+			$aComment['text'] = "";
+		}
+		if ($this->oUserCurrent) {
+			if ($this->oUserCurrent->isAdministrator() || $this->oUserCurrent->isGlobalModerator()) {
+				$aComment['text'] = $oComment->getText();
+			}
+		}
 		$aComment['isBad'] = $oComment->isBad();
 		$aComment['isDeleted'] = (int)$oComment->getDelete();
 		$aComment['isFavourite'] = $oComment->getIsFavourite();

@@ -42,6 +42,7 @@
 		var LIVESTREET_SECURITY_KEY = '{$LIVESTREET_SECURITY_KEY}';
 		var SESSION_ID				= '{$_sPhpSessionId}';
 		var BLOG_USE_TINYMCE		= '{cfg name="view.tinymce"}';
+		var TITLE                   = '{$sHtmlTitle}';
 
 		var LOGGED_IN = {if $oUserCurrent}true{else}false{/if};
 

@@ -93,7 +93,6 @@ export default class Tree {
     } 
     this.state.commentsNew.push.apply(this.state.commentsNew, new_comments_ids)
     this.state.commentsNew.sort(this.sortByTree.bind(this))
-    console.log(this.state.commentsNew)
     this.renderNewComments(new_comments, new_comments_ids)
     let ids = []
     ids.push.apply(ids, this.state.commentsNew)
@@ -111,26 +110,36 @@ export default class Tree {
   }
   
   updateCommentsNewCount() {
+    let clear = []
+    for (let i=0; i<this.state.commentsNew.length; i++) {
+      let id = this.state.commentsNew[i]
+      if (id in clear) {
+        continue
+      }
+      clear.push(id)
+    }
+    this.state.commentsNew = clear
     let len = this.state.commentsNew.length
-    console.log("Comments new length", len)
     $("#new_comments_counter")[0].innerText = len
     if (len==0) {
       $("#new_comments_counter").hide()
       document.title = $("title").data("title")
     } else if (!$("#new_comments_counter").is(':visible')) {
       $("#new_comments_counter").show()
-      document.title = `(${len}) `+$("title").data("title")
+      document.title = `(${len}) `+TITLE
     } else {
-      document.title = `(${len}) `+$("title").data("title")
+      document.title = `(${len}) `+TITLE
     }
   }
   
   goToNextComment() {
+    console.log(this.state.commentsNew)
     if (this.state.lastNewComment>0) {
       this.state.commentsOld.push(this.state.lastNewComment)
     }
-    Comments.scrollToComment(this.state.commentsNew[0])
-    this.state.lastNewComment = this.state.commentsNew.shift();
+    let id = this.state.commentsNew[0]
+    Comments.scrollToComment(id)
+    this.state.lastNewComment = id;
     this.updateCommentsNewCount()
   }
   
@@ -156,8 +165,8 @@ export default class Tree {
     }
     $(`[data-id=${id}]`).addClass('comment-current')
     $(`[data-id=${id}]`).removeClass('comment-new')
-    if (this.state.commentsNew.indexOf(""+id)>0) {
-      this.state.commentsNewt.splice(this.state.commentsNew.indexOf(""+id), 1)
+    if (this.state.commentsNew.indexOf(""+id)>(-1)) {
+      this.state.commentsNew.splice(this.state.commentsNew.indexOf(""+id), 1)
     }
     this.updateCommentsNewCount()
     Comments.iCurrentViewComment = id;

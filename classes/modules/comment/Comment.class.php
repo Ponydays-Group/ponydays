@@ -1009,7 +1009,7 @@ class ModuleComment extends Module {
 		$aComment = array();
 		$aComment['id'] = $oComment->getId();
 		$aComment['author'] = array("id"=>$oComment->getUserId(), "login"=>$oComment->getUser()->getLogin(), "avatar"=>$oComment->getUser()->getProfileAvatarPath(48));
-		$aComment['date'] = $oComment->getDate();
+		$aComment['date'] = strtotime($oComment->getDate());
 		$aComment['text'] = $oComment->getText();
 		$aComment['isBad'] = $oComment->isBad();
 		$aComment['isDeleted'] = (int)$oComment->getDelete();

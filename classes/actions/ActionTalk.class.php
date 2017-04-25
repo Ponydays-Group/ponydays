@@ -503,7 +503,7 @@ class ActionTalk extends Action {
 
 		foreach($aComments as $oComment) {
 			$aComment = $this->Comment_ConvertCommentToArray($oComment, $sReadlast);
-			$aComments[$aComment['id']] = $aComment;
+			$aResult[$aComment['id']] = $aComment;
 		}
 
 		/**

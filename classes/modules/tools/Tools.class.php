@@ -79,5 +79,11 @@ class ModuleTools extends Module {
 		unset($aTable['&']);
 		return strtr($sText,$aTable);
 	}
+	
+	public function ExecPython($sScript) {
+		ob_start();
+		passthru('/usr/bin/python3.6 '.Config::Get('path.root.server').'/py/'.$sScript);
+		return ob_get_clean(); 
+	}
 }
 ?>

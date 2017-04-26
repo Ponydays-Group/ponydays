@@ -1216,5 +1216,4 @@ class LS extends LsObject {
 		return call_user_func_array(array(self::E(),$sName),$aArgs);
 	}
 }
-
 ?>

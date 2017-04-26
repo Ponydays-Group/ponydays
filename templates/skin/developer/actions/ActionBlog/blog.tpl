@@ -82,9 +82,11 @@
 			</div>
 			<div id="vote_area_blog_{$oBlog->getId()}" class="vote {if $oBlog->getRating() > 0}vote-count-positive{elseif $oBlog->getRating() < 0}vote-count-negative{/if} {if $oVote} voted {if $oVote->getDirection()>0}voted-up{elseif $oVote->getDirection()<0}voted-down{/if}{/if}">
 				<div class="vote-label">Рейтинг</div>
-				<a href="#" class="vote-up" onclick="return ls.vote.vote({$oBlog->getId()},this,1,'blog');"></a>
-				<a href="#" class="vote-down" onclick="return ls.vote.vote({$oBlog->getId()},this,-1,'blog');"></a>
-				<div id="vote_total_blog_{$oBlog->getId()}" class="vote-count count" title="{$aLang.blog_vote_count}: {$oBlog->getCountVote()}">{if $oBlog->getRating() > 0}+{/if}{$oBlog->getRating()}</div>
+				<div style="flex-direction: row;">
+					<a href="#" class="vote-up fa fa-chevron-up" onclick="return ls.vote.vote({$oBlog->getId()},this,1,'blog');"></a>
+					<div id="vote_total_blog_{$oBlog->getId()}" class="vote-count count" title="{$aLang.blog_vote_count}: {$oBlog->getCountVote()}">{if $oBlog->getRating() > 0}+{/if}{$oBlog->getRating()}</div>
+					<a href="#" class="vote-down fa fa-chevron-down" onclick="return ls.vote.vote({$oBlog->getId()},this,-1,'blog');"></a>
+				</div>
 			</div>
 		</div>
 		</div>

@@ -1,528 +1,509 @@
 {
-    "default": {
-        "cfgAllowTags": [
-            [
+    "jevix": {
+        "default": {
+            "cfgAllowTags": [
                 [
-                    "hid",
-                    "indicator",
-                    "span",
-                    "ls",
-                    "cut",
-                    "a",
-                    "img",
-                    "i",
-                    "b",
-                    "u",
-                    "s",
-                    "video",
-                    "em",
-                    "strong",
-                    "nobr",
-                    "li",
-                    "ol",
-                    "ul",
-                    "sup",
-                    "abbr",
-                    "sub",
-                    "acronym",
-                    "h4",
-                    "h5",
-                    "h6",
-                    "br",
-                    "hr",
-                    "pre",
-                    "code",
-                    "object",
-                    "param",
-                    "embed",
-                    "blockquote",
-                    "iframe",
-                    "table",
-                    "th",
-                    "tr",
-                    "td",
-                    "small"
-                ]
-            ]
-        ],
-        "cfgSetTagShort": [
-            [
-                [
-                    "br",
-                    "img",
-                    "hr",
-                    "cut",
-                    "ls",
-                    "indicator"
-                ]
-            ]
-        ],
-        "cfgSetTagPreformatted": [
-            [
-                [
-                    "pre",
-                    "code",
-                    "video"
-                ]
-            ]
-        ],
-        "cfgAllowTagParams": [
-            [
-                "indicator",
-                {
-                    "class": [
-                        "safe",
-                        "questionable",
-                        "explicit",
-                        "suggestive"
+                    [
+                        "hid",
+                        "indicator",
+                        "span",
+                        "ls",
+                        "cut",
+                        "a",
+                        "img",
+                        "i",
+                        "b",
+                        "u",
+                        "s",
+                        "video",
+                        "em",
+                        "strong",
+                        "nobr",
+                        "li",
+                        "ol",
+                        "ul",
+                        "sup",
+                        "abbr",
+                        "sub",
+                        "acronym",
+                        "h4",
+                        "h5",
+                        "h6",
+                        "br",
+                        "hr",
+                        "pre",
+                        "code",
+                        "object",
+                        "param",
+                        "embed",
+                        "blockquote",
+                        "iframe",
+                        "table",
+                        "th",
+                        "tr",
+                        "td",
+                        "small"
                     ]
-                }
-            ],
-            [
-                "img",
-                {
-                    "0": "src",
-                    "alt": "#text",
-                    "1": "title",
-                    "align": [
-                        "right",
-                        "left",
-                        "center",
-                        "middle"
-                    ],
-                    "width": "#int",
-                    "height": "#int",
-                    "hspace": "#int",
-                    "vspace": "#int",
-                    "class": [
-                        "image-center",
-                        "gray",
-                        "image-center gray"
-                    ]
-                }
-            ],
-            [
-                "span",
-                {
-                    "class": [
-                        "spoiler-gray",
-                        "spoiler-title",
-                        "spoiler-body",
-                        "spoiler-close",
-                        "spoiler-title spoiler-close",
-                        "spoiler",
-                        "left",
-                        "right",
-                        "center"
-                    ]
-                }
-            ],
-            [
-                "a",
-                {
-                    "0": "title",
-                    "1": "href",
-                    "rel": "#text",
-                    "name": "#text",
-                    "target": [
-                        "_blank"
-                    ]
-                }
-            ],
-            [
-                "cut",
-                [
-                    "name"
                 ]
             ],
-            [
-                "object",
-                {
-                    "width": "#int",
-                    "height": "#int",
-                    "data": {
-                        "#domain": [
-                            "youtube.com",
-                            "m.youtube.com",
-                            "rutube.ru",
-                            "vimeo.com"
-                        ]
-                    },
-                    "type": "#text"
-                }
-            ],
-            [
-                "param",
-                {
-                    "name": "#text",
-                    "value": "#text"
-                }
-            ],
-            [
-                "embed",
-                {
-                    "src": {
-                        "#domain": [
-                            "youtube.com",
-                            "m.youtube.com",
-                            "rutube.ru",
-                            "vimeo.com",
-                            "embed.pleer.com",
-                            "dl.dropbox.com"
-                        ]
-                    },
-                    "type": "#text",
-                    "allowscriptaccess": "#text",
-                    "allowfullscreen": "#text",
-                    "width": "#int",
-                    "height": "#int",
-                    "flashvars": "#text",
-                    "wmode": "#text"
-                }
-            ],
-            [
-                "acronym",
+            "cfgSetTagShort": [
                 [
-                    "title"
+                    [
+                        "br",
+                        "img",
+                        "hr",
+                        "cut",
+                        "ls",
+                        "indicator"
+                    ]
                 ]
             ],
-            [
-                "abbr",
+            "cfgSetTagPreformatted": [
                 [
-                    "title"
+                    [
+                        "pre",
+                        "code",
+                        "video"
+                    ]
                 ]
             ],
-            [
-                "iframe",
-                {
-                    "width": "#int",
-                    "height": "#int",
-                    "src": {
-                        "#domain": [
-                            "music.yandex.ru",
-                            "music.yandex.kz",
-                            "youtube.com",
-                            "m.youtube.com",
-                            "rutube.ru",
-                            "vimeo.com",
-                            "soundcloud.com"
+            "cfgAllowTagParams": [
+                [
+                    "indicator", {
+                        "class": [
+                            "safe",
+                            "questionable",
+                            "explicit",
+                            "suggestive"
                         ]
                     }
-                }
-            ],
-            [
-                "ls",
-                {
-                    "user": "#text"
-                }
-            ],
-            [
-                "td",
-                {
-                    "colspan": "#int",
-                    "rowspan": "#int",
-                    "align": [
-                        "right",
-                        "left",
-                        "center",
-                        "justify"
-                    ],
-                    "height": "#int",
-                    "width": "#int"
-                }
-            ],
-            [
-                "table",
-                {
-                    "border": "#int",
-                    "cellpadding": "#int",
-                    "cellspacing": "#int",
-                    "align": [
-                        "right",
-                        "left",
-                        "center"
-                    ],
-                    "height": "#int",
-                    "width": "#int"
-                }
-            ]
-        ],
-        "cfgSetTagParamCombination": [
-            [
-                "param",
-                "name",
-                {
-                    "allowScriptAccess": {
-                        "value": [
-                            "sameDomain"
+                ],
+                [
+                    "img", {
+                        "0": "src",
+                        "alt": "#text",
+                        "1": "title",
+                        "align": [
+                            "right",
+                            "left",
+                            "center",
+                            "middle"
+                        ],
+                        "width": "#int",
+                        "height": "#int",
+                        "hspace": "#int",
+                        "vspace": "#int",
+                        "class": [
+                            "image-center",
+                            "gray",
+                            "image-center gray"
                         ]
-                    },
-                    "movie": {
-                        "value": {
+                    }
+                ],
+                [
+                    "span", {
+                        "class": [
+                            "spoiler-gray",
+                            "spoiler-title",
+                            "spoiler-body",
+                            "spoiler-close",
+                            "spoiler-title spoiler-close",
+                            "spoiler",
+                            "left",
+                            "right",
+                            "center"
+                        ]
+                    }
+                ],
+                [
+                    "a", {
+                        "0": "title",
+                        "1": "href",
+                        "rel": "#text",
+                        "name": "#text",
+                        "target": [
+                            "_blank"
+                        ]
+                    }
+                ],
+                [
+                    "cut", [
+                        "name"
+                    ]
+                ],
+                [
+                    "object", {
+                        "width": "#int",
+                        "height": "#int",
+                        "data": {
+                            "#domain": [
+                                "youtube.com",
+                                "m.youtube.com",
+                                "rutube.ru",
+                                "vimeo.com"
+                            ]
+                        },
+                        "type": "#text"
+                    }
+                ],
+                [
+                    "param", {
+                        "name": "#text",
+                        "value": "#text"
+                    }
+                ],
+                [
+                    "embed", {
+                        "src": {
                             "#domain": [
                                 "youtube.com",
                                 "m.youtube.com",
                                 "rutube.ru",
                                 "vimeo.com",
-                                "embed.pleer.com"
+                                "embed.pleer.com",
+                                "dl.dropbox.com"
+                            ]
+                        },
+                        "type": "#text",
+                        "allowscriptaccess": "#text",
+                        "allowfullscreen": "#text",
+                        "width": "#int",
+                        "height": "#int",
+                        "flashvars": "#text",
+                        "wmode": "#text"
+                    }
+                ],
+                [
+                    "acronym", [
+                        "title"
+                    ]
+                ],
+                [
+                    "abbr", [
+                        "title"
+                    ]
+                ],
+                [
+                    "iframe", {
+                        "width": "#int",
+                        "height": "#int",
+                        "src": {
+                            "#domain": [
+                                "music.yandex.ru",
+                                "music.yandex.kz",
+                                "youtube.com",
+                                "m.youtube.com",
+                                "rutube.ru",
+                                "vimeo.com",
+                                "soundcloud.com"
+                            ]
+                        }
+                    }
+                ],
+                [
+                    "ls", {
+                        "user": "#text"
+                    }
+                ],
+                [
+                    "td", {
+                        "colspan": "#int",
+                        "rowspan": "#int",
+                        "align": [
+                            "right",
+                            "left",
+                            "center",
+                            "justify"
+                        ],
+                        "height": "#int",
+                        "width": "#int"
+                    }
+                ],
+                [
+                    "table", {
+                        "border": "#int",
+                        "cellpadding": "#int",
+                        "cellspacing": "#int",
+                        "align": [
+                            "right",
+                            "left",
+                            "center"
+                        ],
+                        "height": "#int",
+                        "width": "#int"
+                    }
+                ]
+            ],
+            "cfgSetTagParamCombination": [
+                [
+                    "param",
+                    "name", {
+                        "allowScriptAccess": {
+                            "value": [
+                                "sameDomain"
+                            ]
+                        },
+                        "movie": {
+                            "value": {
+                                "#domain": [
+                                    "youtube.com",
+                                    "m.youtube.com",
+                                    "rutube.ru",
+                                    "vimeo.com",
+                                    "embed.pleer.com"
+                                ]
+                            }
+                        },
+                        "align": {
+                            "value": [
+                                "bottom",
+                                "middle",
+                                "top",
+                                "left",
+                                "right"
+                            ]
+                        },
+                        "base": {
+                            "value": true
+                        },
+                        "bgcolor": {
+                            "value": true
+                        },
+                        "border": {
+                            "value": true
+                        },
+                        "devicefont": {
+                            "value": true
+                        },
+                        "flashVars": {
+                            "value": true
+                        },
+                        "hspace": {
+                            "value": true
+                        },
+                        "quality": {
+                            "value": [
+                                "low",
+                                "medium",
+                                "high",
+                                "autolow",
+                                "autohigh",
+                                "best"
+                            ]
+                        },
+                        "salign": {
+                            "value": [
+                                "L",
+                                "T",
+                                "R",
+                                "B",
+                                "TL",
+                                "TR",
+                                "BL",
+                                "BR"
+                            ]
+                        },
+                        "scale": {
+                            "value": [
+                                "scale",
+                                "showall",
+                                "noborder",
+                                "exactfit"
+                            ]
+                        },
+                        "tabindex": {
+                            "value": true
+                        },
+                        "title": {
+                            "value": true
+                        },
+                        "type": {
+                            "value": true
+                        },
+                        "vspace": {
+                            "value": true
+                        },
+                        "wmode": {
+                            "value": [
+                                "window",
+                                "opaque",
+                                "transparent"
                             ]
                         }
                     },
-                    "align": {
-                        "value": [
-                            "bottom",
-                            "middle",
-                            "top",
-                            "left",
-                            "right"
-                        ]
-                    },
-                    "base": {
-                        "value": true
-                    },
-                    "bgcolor": {
-                        "value": true
-                    },
-                    "border": {
-                        "value": true
-                    },
-                    "devicefont": {
-                        "value": true
-                    },
-                    "flashVars": {
-                        "value": true
-                    },
-                    "hspace": {
-                        "value": true
-                    },
-                    "quality": {
-                        "value": [
-                            "low",
-                            "medium",
-                            "high",
-                            "autolow",
-                            "autohigh",
-                            "best"
-                        ]
-                    },
-                    "salign": {
-                        "value": [
-                            "L",
-                            "T",
-                            "R",
-                            "B",
-                            "TL",
-                            "TR",
-                            "BL",
-                            "BR"
-                        ]
-                    },
-                    "scale": {
-                        "value": [
-                            "scale",
-                            "showall",
-                            "noborder",
-                            "exactfit"
-                        ]
-                    },
-                    "tabindex": {
-                        "value": true
-                    },
-                    "title": {
-                        "value": true
-                    },
-                    "type": {
-                        "value": true
-                    },
-                    "vspace": {
-                        "value": true
-                    },
-                    "wmode": {
-                        "value": [
-                            "window",
-                            "opaque",
-                            "transparent"
-                        ]
-                    }
-                },
-                true
-            ]
-        ],
-        "cfgSetTagParamsRequired": [
-            [
-                "img",
-                "src"
-            ]
-        ],
-        "cfgSetTagCutWithContent": [
-            [
-                [
-                    "script",
-                    "style"
+                    true
                 ]
-            ]
-        ],
-        "cfgSetTagChilds": [
-            [
-                "ul",
-                [
-                    "li"
-                ],
-                false,
-                true
             ],
-            [
-                "ol",
+            "cfgSetTagParamsRequired": [
                 [
-                    "li"
-                ],
-                false,
-                true
-            ],
-            [
-                "object",
-                "param",
-                false,
-                true
-            ],
-            [
-                "object",
-                "embed",
-                false,
-                false
-            ],
-            [
-                "table",
-                [
-                    "tr"
-                ],
-                false,
-                true
-            ],
-            [
-                "tr",
-                [
-                    "td",
-                    "th"
-                ],
-                false,
-                true
-            ]
-        ],
-        "cfgSetTagIsEmpty": [
-            [
-                [
-                    "param",
-                    "embed",
-                    "a",
-                    "iframe"
+                    "img",
+                    "src"
                 ]
-            ]
-        ],
-        "cfgSetTagNoAutoBr": [
-            [
+            ],
+            "cfgSetTagCutWithContent": [
                 [
-                    "ul",
-                    "ol",
+                    [
+                        "script",
+                        "style"
+                    ]
+                ]
+            ],
+            "cfgSetTagChilds": [
+                [
+                    "ul", [
+                        "li"
+                    ],
+                    false,
+                    true
+                ],
+                [
+                    "ol", [
+                        "li"
+                    ],
+                    false,
+                    true
+                ],
+                [
                     "object",
-                    "table",
-                    "tr"
-                ]
-            ]
-        ],
-        "cfgSetTagParamDefault": [
-            [
-                "embed",
-                "wmode",
-                "opaque",
-                true
-            ]
-        ],
-        "cfgSetAutoBrMode": [
-            [
-                true
-            ]
-        ],
-        "cfgSetAutoReplace": [
-            [
-                [
-                    "+/-",
-                    "(c)",
-                    "(\u0441)",
-                    "(r)",
-                    "(C)",
-                    "(\u0421)",
-                    "(R)"
+                    "param",
+                    false,
+                    true
                 ],
                 [
-                    "\u00b1",
-                    "\u00a9",
-                    "\u00a9",
-                    "\u00ae",
-                    "\u00a9",
-                    "\u00a9",
-                    "\u00ae"
-                ]
-            ]
-        ],
-        "cfgSetLinkProtocolAllow": [
-            [
+                    "object",
+                    "embed",
+                    false,
+                    false
+                ],
                 [
-                    "http",
-                    "https",
-                    "ftp"
-                ]
-            ]
-        ],
-        "cfgSetTagNoTypography": [
-            [
+                    "table", [
+                        "tr"
+                    ],
+                    false,
+                    true
+                ],
                 [
-                    "code",
-                    "video",
-                    "object"
+                    "tr", [
+                        "td",
+                        "th"
+                    ],
+                    false,
+                    true
                 ]
-            ]
-        ],
-        "cfgSetTagBlockType": [
-            [
+            ],
+            "cfgSetTagIsEmpty": [
                 [
-                    "h4",
-                    "h5",
-                    "h6",
-                    "ol",
-                    "ul",
-                    "blockquote",
-                    "pre",
-                    "table",
-                    "iframe"
+                    [
+                        "param",
+                        "embed",
+                        "a",
+                        "iframe"
+                    ]
                 ]
-            ]
-        ],
-        "cfgSetTagCallbackFull": [
-            [
-                "ls",
+            ],
+            "cfgSetTagNoAutoBr": [
                 [
-                    "_this_",
-                    "CallbackTagLs"
+                    [
+                        "ul",
+                        "ol",
+                        "object",
+                        "table",
+                        "tr"
+                    ]
                 ]
-            ]
-        ]
-    },
-    "search": {
-        "cfgAllowTags": [
-            [
+            ],
+            "cfgSetTagParamDefault": [
                 [
-                    "span"
+                    "embed",
+                    "wmode",
+                    "opaque",
+                    true
+                ]
+            ],
+            "cfgSetAutoBrMode": [
+                [
+                    true
+                ]
+            ],
+            "cfgSetAutoReplace": [
+                [
+                    [
+                        "+/-",
+                        "(c)",
+                        "(с)",
+                        "(r)",
+                        "(C)",
+                        "(С)",
+                        "(R)"
+                    ],
+                    [
+                        "±",
+                        "©",
+                        "©",
+                        "®",
+                        "©",
+                        "©",
+                        "®"
+                    ]
+                ]
+            ],
+            "cfgSetLinkProtocolAllow": [
+                [
+                    [
+                        "http",
+                        "https",
+                        "ftp"
+                    ]
+                ]
+            ],
+            "cfgSetTagNoTypography": [
+                [
+                    [
+                        "code",
+                        "video",
+                        "object"
+                    ]
+                ]
+            ],
+            "cfgSetTagBlockType": [
+                [
+                    [
+                        "h4",
+                        "h5",
+                        "h6",
+                        "ol",
+                        "ul",
+                        "blockquote",
+                        "pre",
+                        "table",
+                        "iframe"
+                    ]
+                ]
+            ],
+            "cfgSetTagCallbackFull": [
+                [
+                    "ls", [
+                        "_this_",
+                        "CallbackTagLs"
+                    ]
                 ]
             ]
-        ],
-        "cfgAllowTagParams": [
-            [
-                "span",
-                {
-                    "class": "#text"
-                }
+        },
+        "search": {
+            "cfgAllowTags": [
+                [
+                    [
+                        "span"
+                    ]
+                ]
+            ],
+            "cfgAllowTagParams": [
+                [
+                    "span", {
+                        "class": "#text"
+                    }
+                ]
             ]
-        ]
+        }
     }
 }

@@ -205,6 +205,5 @@
     },
     "site_version": "2.1",
     "theme": "light",
-    "dark_theme_icon": "moon",
-    "light_theme_icon": "sun"
+    "icon": "moon"
 }

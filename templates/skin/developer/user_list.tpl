@@ -3,6 +3,7 @@
 		<thead>
 			<tr>
 				<th class="cell-name"><a href="{$sUsersRootPage}?order=user_login&order_way={if $sUsersOrder=='user_login'}{$sUsersOrderWayNext}{else}{$sUsersOrderWay}{/if}" {if $sUsersOrder=='user_login'}class="{$sUsersOrderWay}"{/if}>{$aLang.user}</a></th>
+				{if $oUserCurrent}{if $oUserCurrent->isAdministrator() || $oUserCurrent->isGlobalModerator()}<th class="cell-email">Email</th>{/if}{/if}
 				<th>{$aLang.user_date_last}</th>
 				<th><a href="{$sUsersRootPage}?order=user_date_register&order_way={if $sUsersOrder=='user_date_register'}{$sUsersOrderWayNext}{else}{$sUsersOrderWay}{/if}" {if $sUsersOrder=='user_date_register'}class="{$sUsersOrderWay}"{/if}>{$aLang.user_date_registration}</a></th>
 				<th class="cell-skill"><a href="{$sUsersRootPage}?order=user_skill&order_way={if $sUsersOrder=='user_skill'}{$sUsersOrderWayNext}{else}{$sUsersOrderWay}{/if}" {if $sUsersOrder=='user_skill'}class="{$sUsersOrderWay}"{/if}>{$aLang.user_skill}</a></th>
@@ -13,6 +14,7 @@
 		<thead>
 			<tr>
 				<th class="cell-name">{$aLang.user}</th>
+				{if $oUserCurrent}{if $oUserCurrent->isAdministrator() || $oUserCurrent->isGlobalModerator()}<th class="cell-email">Email</th>{/if}{/if}
 				<th class="cell-date">{$aLang.user_date_last}</th>
 				<th class="cell-date">{$aLang.user_date_registration}</th>
 				<th class="cell-skill">{$aLang.user_skill}</th>
@@ -35,8 +37,15 @@
 							{/if}
 						</p>
 					</td>
-					<td class="cell-date">{if $oSession}{date_format date=$oSession->getDateLast() format="d.m.y, H:i"}{/if}</td>
-					<td class="cell-date">{date_format date=$oUserList->getDateRegister() format="d.m.y, H:i"}</td>
+					{if $oUserCurrent}{if $oUserCurrent->isAdministrator() || $oUserCurrent->isGlobalModerator()}<td class="cell-email">{$oUserList->getMail()}</td>{/if}{/if}
+					<td class="cell-date">{if $oSession}{date_format date=$oSession->getDateLast() format="d.m.y, H:i"} 
+						{if $oUserCurrent}{if $oUserCurrent->isAdministrator() || $oUserCurrent->isGlobalModerator()}
+							({$oSession->getIpLast()})
+						{/if}{/if}
+					{/if}</td>
+					<td class="cell-date">{date_format date=$oUserList->getDateRegister() format="d.m.y, H:i"}{if $oUserCurrent}{if $oUserCurrent->isAdministrator() || $oUserCurrent->isGlobalModerator()}
+							({$oUserList->getIpRegister()})
+						{/if}{/if}</td>
 					<td class="cell-skill">{$oUserList->getSkill()}</td>
 					<td class="cell-rating"><strong>{$oUserList->getRating()}</strong></td>
 				</tr>

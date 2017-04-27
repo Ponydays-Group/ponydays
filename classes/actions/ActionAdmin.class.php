@@ -62,6 +62,7 @@ class ActionAdmin extends Action {
 		$this->AddEvent('recalcfavourite','EventRecalculateFavourite');
 		$this->AddEvent('recalcvote','EventRecalculateVote');
 		$this->AddEvent('recalctopic','EventRecalculateTopic');
+		$this->AddEvent('users','EventUsers');
 	}
 
 
@@ -69,6 +70,10 @@ class ActionAdmin extends Action {
 	 ************************ РЕАЛИЗАЦИЯ ЭКШЕНА ***************************************
 	 **********************************************************************************
 	 */
+	 
+	protected function EventUsers() {
+		
+	}
 
 	/**
 	 * Отображение главной страницы админки

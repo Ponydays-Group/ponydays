@@ -113,7 +113,7 @@ export default class Tree {
     let clear = []
     for (let i=0; i<this.state.commentsNew.length; i++) {
       let id = this.state.commentsNew[i]
-      if (id in clear) {
+      if (clear.indexOf(id)>(-1)) {
         continue
       }
       clear.push(id)

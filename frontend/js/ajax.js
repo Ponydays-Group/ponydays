@@ -34,7 +34,28 @@ export function ajax(url, params, callback, more) {
         complete: more.complete || function (msg) {
             Tools.debug("ajax complete: ");
             Tools.debug.apply(this, arguments);
-        }.bind(this)
+        }.bind(this),
+	xhr: function()
+	{
+		var xhr = new window.XMLHttpRequest();
+		// прогресс загрузки на сервер
+		xhr.upload.addEventListener("progress", function(evt){
+			if (evt.lengthComputable) {
+				var percentComplete = evt.loaded / evt.total;
+				// делать что-то...
+				console.log("Complete upload: ",evt.loaded, evt.total);
+			}
+		}, false);
+		// прогресс скачивания с сервера
+		xhr.addEventListener("progress", function(evt){
+			if (evt.lengthComputable) {
+				var percentComplete = evt.loaded / evt.total;
+				// делать что-то...
+				console.log("Complete xhr: ",evt.loaded, evt.total);
+			}
+		}, false);
+		return xhr;
+	},
     };
 
     Emitter.emit('ls_ajax_before', [ajaxOptions], this);

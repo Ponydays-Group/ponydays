@@ -312,3 +312,11 @@ img {
 	line-height: 1em;
 	text-decoration: none;
 }
+.progressbar {
+  height: 2px;
+  width: 0%;
+  background-color: rgba(63, 81, 181, 0.89);
+  box-shadow: 0 0 2px rgba(63, 81, 181, 0.89);
+  position: fixed;
+  z-index: 100600;
+}

@@ -1,0 +1,210 @@
+{
+    "view": {
+        "skin": "developer",
+        "name": "Ponydays dev",
+        "description": "Description your site",
+        "keywords": "site, google, internet",
+        "tinymce": false,
+        "noindex": false,
+        "img_resize_width": 0,
+        "img_max_width": 50000,
+        "img_max_height": 50000,
+        "img_max_size_url": 500000
+    },
+    "seo": {
+        "description_words_count": 20
+    },
+    "block": {
+        "stream": {
+            "row": 8,
+            "show_tip": true
+        },
+        "blogs": {
+            "row": 10
+        },
+        "tags": {
+            "tags_count": 70,
+            "personal_tags_count": 70
+        },
+        "rule_index_blog": {
+            "action": {
+                "0": "index",
+                "blog": [
+                    "{topics}",
+                    "{topic}",
+                    "{blog}"
+                ]
+            },
+            "blocks": {
+                "right": {
+                    "blocks/block.ad.tpl": {
+                        "priority": 40
+                    },
+                    "blocks/block.bquote.tpl": {
+                        "priority": 50
+                    },
+                    "stream": {
+                        "priority": 100
+                    },
+                    "tags": {
+                        "priority": 60
+                    }
+                }
+            },
+            "clear": false
+        },
+        "rule_topic_type": {
+            "action": {
+                "link": [
+                    "add",
+                    "edit"
+                ],
+                "question": [
+                    "add",
+                    "edit"
+                ],
+                "topic": [
+                    "add",
+                    "edit"
+                ],
+                "photoset": [
+                    "add",
+                    "edit"
+                ]
+            },
+            "blocks": {
+                "right": [
+                    "blocks/block.blogInfo.tpl"
+                ]
+            }
+        },
+        "rule_people": {
+            "action": [
+                "people"
+            ],
+            "blocks": {
+                "right": [
+                    "actions/ActionPeople/sidebar.tpl"
+                ]
+            }
+        },
+        "rule_personal_blog": {
+            "action": [
+                "personal_blog"
+            ],
+            "blocks": {
+                "right": [
+                    "stream",
+                    "tags"
+                ]
+            }
+        },
+        "rule_profile": {
+            "action": [
+                "profile",
+                "talk",
+                "settings"
+            ],
+            "blocks": {
+                "right": [
+                    "actions/ActionProfile/sidebar.tpl"
+                ]
+            }
+        },
+        "rule_tag": {
+            "action": [
+                "tag"
+            ],
+            "blocks": {
+                "right": [
+                    "tags",
+                    "stream"
+                ]
+            }
+        },
+        "rule_blogs": {
+            "action": [],
+            "blocks": {
+                "right": {
+                    "0": "stream",
+                    "blocks/block.ad.tpl": {
+                        "priority": 40
+                    }
+                }
+            }
+        },
+        "userfeedBlogs": {
+            "action": [
+                "feed"
+            ],
+            "blocks": {
+                "right": {
+                    "userfeedUsers": {
+                        "priority": 49
+                    },
+                    "userfeedBlogs": {
+                        "priority": 50
+                    },
+                    "blocks/block.ad.tpl": {
+                        "priority": 40
+                    },
+                    "blocks/block.bquote.tpl": {
+                        "priority": 50
+                    },
+                    "stream": {
+                        "priority": 100
+                    },
+                    "tags": {
+                        "priority": 60
+                    }
+                }
+            }
+        },
+        "userfeedUsers": {
+            "action": [
+                "feed"
+            ],
+            "blocks": []
+        },
+        "rule_blog_info": {
+            "action": {
+                "blog": [
+                    "{topic}"
+                ]
+            },
+            "blocks": {
+                "right": {
+                    "blocks/block.blog.tpl": {
+                        "priority": 300
+                    }
+                }
+            },
+            "clear": false
+        },
+        "feedbacks": {
+            "action": [
+                "feedbacks"
+            ],
+            "blocks": {
+                "right": {
+                    "stream": {
+                        "priority": 100
+                    },
+                    "tags": {
+                        "priority": 50
+                    }
+                }
+            },
+            "clear": false
+        }
+    },
+    "pagination": {
+        "pages": {
+            "count": 10
+        }
+    },
+    "site_version": "2.1",
+    "theme": "light",
+    "dark_theme_icon": "moon",
+    "light_theme_icon": "sun"
+}

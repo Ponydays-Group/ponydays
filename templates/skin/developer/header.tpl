@@ -112,6 +112,7 @@
 
 
 	<div id="container" class="{hook run='container_class'}">
+		<div id="progressbar"></div>
 		{include file='header_top.tpl'}
 
 		<div id="wrapper" class="row container-fluid {hook run='wrapper_class'}">

@@ -3,8 +3,8 @@ logs/*
 uploads/
 templates/compiled/
 templates/cache/
-config/config.local.php
-config/frontend.ver
+config/local.config.json
+config/engine_config/frontend.config.json
 .vagga/
 node_modules/*
 .idea/*

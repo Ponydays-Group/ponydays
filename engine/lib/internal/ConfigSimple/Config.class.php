@@ -85,7 +85,7 @@ class Config {
 			return false;
 		}
 		// Get config from file
-		$aConfig=include($sFile);
+		$aConfig=json_decode(file_get_contents($sFile), true);
 		return self::Load($aConfig,$bRewrite,$sInstance);
 	}
 	/**
@@ -359,6 +359,10 @@ class Config {
 			}
 		}
 		return $aRes;
+	}
+	
+	static function jsonify() {
+		return json_encode($this->aConfig);
 	}
 }
 ?>

@@ -83,8 +83,8 @@ let config = {
         function() {
             this.plugin('done', function(stats) {
                 fs.writeFileSync(
-                    path.join(__dirname, 'config', 'frontend.ver'),
-                    stats.hash
+                    path.join(__dirname, 'config', 'engine_config', 'frontend.config.json'),
+                    JSON.stringify({"frontend": {"version": stats.hash}})
                 );
             });
         }

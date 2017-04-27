@@ -378,7 +378,7 @@ export default function init() {
             var target = event.target || event.srcElement;
             if (!target) return;
             var parent = target.parentNode || target.parentElement;
-            if (target.tagName == "IMG" && !parent.classList.contains("spoiler-title")) {
+            if (target.tagName == "IMG" && !parent.classList.contains("spoiler-title") && $(".text img").index(target)>(-1)) {
                 if (target.id == "image-modal-img") {
                     return
                 }

@@ -22,7 +22,7 @@
 .input-width-400 	{ width: 400px; }
 .input-width-500 	{ width: 500px; }
 
-textarea { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; line-height: 1em; }
+textarea { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; line-height: 1em; position: static;}
 
 select 		{ padding: 4px; border: 1px solid $main-accent-third; border-radius: 3px; }
 

@@ -41,7 +41,7 @@ input, textarea, select                                     { margin:0; padding:
     -o-transition:all 0.2s cubic-bezier(0.33, 0, 0.2, 1) 0s;
     background: $main-accent-fifth;
 }
-textarea                                                    { padding:0 0 0 10px; resize:both; min-height:100px; overflow-y:auto; }
+textarea                                                    { padding:0 0 0 10px; resize:both; min-height:100px; overflow-y:auto; position: static;}
 input[type="search"]                                        { -webkit-padding-start:0;  }
 
 

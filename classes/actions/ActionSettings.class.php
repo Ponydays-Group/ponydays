@@ -78,6 +78,7 @@ class ActionSettings extends Action {
 		$this->AddEvent('profile','EventProfile');
 		$this->AddEvent('tuning','EventTuning');
 		$this->AddEvent('account','EventAccount');
+		$this->AddEvent('behavior','EventBehavior');
 	}
 
 
@@ -694,6 +695,11 @@ class ActionSettings extends Action {
 			}
 		}
 
+	}
+	
+	protected function EventBehavior() {
+		$this->Viewer_AddHtmlTitle($this->Lang_Get('settings_menu_behavior'));
+		$this->sMenuSubItemSelect='behavior';
 	}
 	/**
 	 * Выполняется при завершении работы экшена

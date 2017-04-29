@@ -1,0 +1,177 @@
+{
+    "module": {
+        "blog": {
+            "per_page": 10,
+            "users_per_page": 200,
+            "personal_good": -5,
+            "collective_good": -3,
+            "index_good": 8,
+            "avatar_size": [
+                100,
+                64,
+                48,
+                24,
+                0
+            ]
+        },
+        "topic": {
+            "new_time": 86400,
+            "per_page": 10,
+            "max_length": 150000,
+            "link_max_length": 5000,
+            "question_max_length": 5000,
+            "allow_empty_tags": false,
+            "photoset": {
+                "photo_max_size": 6144,
+                "count_photos_min": 2,
+                "count_photos_max": 30,
+                "per_page": 20,
+                "size": [
+                    {
+                        "w": 1000,
+                        "h": null,
+                        "crop": false
+                    },
+                    {
+                        "w": 500,
+                        "h": null,
+                        "crop": false
+                    },
+                    {
+                        "w": 100,
+                        "h": 65,
+                        "crop": true
+                    },
+                    {
+                        "w": 50,
+                        "h": 50,
+                        "crop": true
+                    }
+                ]
+            }
+        },
+        "user": {
+            "per_page": 15,
+            "friend_on_profile": 15,
+            "friend_notice": {
+                "delete": false,
+                "accept": false,
+                "reject": false
+            },
+            "avatar_size": [
+                100,
+                64,
+                48,
+                24,
+                0
+            ],
+            "login": {
+                "min_size": 3,
+                "max_size": 30,
+                "charset": "0-9a-z_\\-"
+            },
+            "time_active": 3600,
+            "usernote_text_max": 250,
+            "usernote_per_page": 20,
+            "userfield_max_identical": 2,
+            "profile_photo_width": 250,
+            "name_max": 30,
+            "captcha_use_registration": false
+        },
+        "comment": {
+            "per_page": 20,
+            "bad": -5,
+            "max_tree": 40,
+            "max_length": 63000,
+            "use_nested": false,
+            "nested_per_page": 0,
+            "nested_page_reverse": true,
+            "favourite_target_allow": [
+                "topic"
+            ],
+            "mobile": {
+                "max_tree": 15
+            }
+        },
+        "talk": {
+            "per_page": 30,
+            "encrypt": "livestreet",
+            "max_users": 15
+        },
+        "lang": {
+            "delete_undefined": true
+        },
+        "notify": {
+            "delayed": false,
+            "insert_single": false,
+            "per_process": 10
+        },
+        "image": {
+            "default": {
+                "watermark_use": false,
+                "watermark_type": "text",
+                "watermark_position": "0,24",
+                "watermark_text": "(c) LiveStreet",
+                "watermark_font": "arial",
+                "watermark_font_color": "255,255,255",
+                "watermark_font_size": "10",
+                "watermark_font_alfa": "0",
+                "watermark_back_color": "0,0,0",
+                "watermark_back_alfa": "40",
+                "watermark_image": false,
+                "watermark_min_width": 200,
+                "watermark_min_height": 130,
+                "round_corner": false,
+                "round_corner_radius": "18",
+                "round_corner_rate": "40",
+                "path": {
+                    "watermarks": "___path.root.server___/engine/lib/external/LiveImage/watermarks/",
+                    "fonts": "___path.root.server___/engine/lib/external/LiveImage/fonts/"
+                },
+                "jpg_quality": 95
+            },
+            "foto": {
+                "watermark_use": false,
+                "round_corner": false
+            },
+            "topic": {
+                "watermark_use": false,
+                "round_corner": false
+            },
+            "use_anon": false,
+            "anon_url": "http://cameleo.xyz/r?url=",
+            "photoset": {
+                "jpg_quality": 100
+            }
+        },
+        "security": {
+            "hash": "livestreet_security_key"
+        },
+        "userfeed": {
+            "count_default": 15
+        },
+        "stream": {
+            "count_default": 20,
+            "disable_vote_events": false
+        },
+        "ls": {
+            "send_general": true,
+            "use_counter": true
+        },
+        "wall": {
+            "count_last_reply": 3,
+            "per_page": 10,
+            "text_max": 250,
+            "text_min": 1
+        },
+        "autoLoad": [
+            "Hook",
+            "Cache",
+            "Security",
+            "Session",
+            "Lang",
+            "Message",
+            "User"
+        ]
+    }
+}

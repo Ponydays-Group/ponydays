@@ -23,9 +23,9 @@ export function ajax(url, params, callback, more) {
         url: url,
         data: params,
         dataType: more.dataType || 'json',
-        success: callback || function () {
-            Tools.debug("ajax success: ");
-            Tools.debug.apply(this, arguments);
+        success: callback? function(){console.log("Test!");callback.apply(this,arguments)}: function () {
+            console.log("ajax success: ");
+            console.log.apply(this, arguments);
         }.bind(this),
         error: more.error || function (msg) {
             Tools.debug("ajax error: ");
@@ -34,7 +34,7 @@ export function ajax(url, params, callback, more) {
         complete: more.complete || function (msg) {
             Tools.debug("ajax complete: ");
             Tools.debug.apply(this, arguments);
-        }.bind(this)
+        }.bind(this),
     };
 
     Emitter.emit('ls_ajax_before', [ajaxOptions], this);

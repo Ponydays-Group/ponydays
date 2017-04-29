@@ -17,6 +17,8 @@
 if (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) {
   $_SERVER['REMOTE_ADDR'] = $_SERVER["HTTP_CF_CONNECTING_IP"];
 }
+setlocale(LC_ALL, "ru_RU.UTF-8");
+date_default_timezone_set('Europe/Moscow'); // See http://php.net/manual/en/timezones.php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 

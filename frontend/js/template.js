@@ -1,4 +1,5 @@
 import * as Talk from './talk'
+import * as Ajax from './ajax'
 import * as Comments from './comments'
 import * as Registry from './registry'
 import * as Toolbar from './toolbar'
@@ -90,7 +91,11 @@ export default function init() {
                 $("#sidebar").css("height", $("#wrapper").height() > $("#sidebar").height() ? $("#wrapper").height() : null)
             }
         }
-        resize_sidebar()
+        try {
+            resize_sidebar()
+        } catch(err) {
+            console.log(err)
+        }
 
         // Всплывающие окна
         $('#window_login_form').jqm();
@@ -372,12 +377,13 @@ export default function init() {
             }
         }
 
-        function spoiler_click(event) {
+        async function click(event) {
             var event = event || window.event;
             if (event.button != 0) return;
             var target = event.target || event.srcElement;
             if (!target) return;
             var parent = target.parentNode || target.parentElement;
+            
             if (target.tagName == "IMG" && !parent.classList.contains("spoiler-title") && $(".text img").index(target)>(-1)) {
                 if (target.id == "image-modal-img") {
                     return
@@ -385,6 +391,7 @@ export default function init() {
                 $("#image-modal-img")[0].src = target.src
                 $("#image-modal").css("display", "flex")
             }
+            
             while (!target.classList.contains("spoiler-title")) {
                 target = target.parentNode || target.parentElement;
                 if (!target || target == document.body) return;
@@ -400,7 +407,7 @@ export default function init() {
         }
 
         window.addEventListener("DOMContentLoaded", function() {
-            document.body.addEventListener("click", spoiler_click);
+            document.body.addEventListener("click", click);
         });
 
         var allNew = document.querySelectorAll('.spoiler-title');
@@ -409,16 +416,22 @@ export default function init() {
         for (idx = 0; idx < allNew.length; idx++) {
             allNew[idx].className = "spoiler-title spoiler-close"
         }
+        
+        window.spoilers_closed = true;
 
         window.despoil = function() {
+            console.log("Despoil!", window.spoilers_closed)
             $(".spoiler-body").each(function(k, v) {
-                v.style.display = "block"
-                $(v).find("img").each(function(k, vv) {
-                    if (vv.getAttribute("data-src")) {
-                        vv.src = vv.getAttribute("data-src")
-                    }
-                })
+                v.style.display = window.spoilers_closed? "block":"none"
+                if (window.spoilers_closed) {
+                    $(v).find("img").each(function(k, vv) {
+                        if (vv.getAttribute("data-src")) {
+                            vv.src = vv.getAttribute("data-src")
+                        }
+                    })
+                }
             })
+            window.spoilers_closed = window.spoilers_closed? false:true
         }.bind(this)
 
         updateImgs()

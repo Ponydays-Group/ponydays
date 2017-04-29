@@ -1353,6 +1353,8 @@ return array(
 	'admin_action_delete_ok' => 'Страница удалена',
 	'admin_action_delete_error' => 'Возникла ошибка при удалении страницы',
 	'admin_action_delete_confirm' => 'Вы действительно хотите удалить эту страницу со всеми вложенными страницами?',
-)
+	),
+	'settings_menu_behavior' => 'Поведение',
+	'min_comment_width_behavior_label' => "Минимальная ширина комментария (в пикселях)",
 );
 ?>

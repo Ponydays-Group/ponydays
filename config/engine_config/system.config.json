@@ -1,0 +1,96 @@
+{
+    "sys": {
+        "plugins": {
+            "activation_file": "plugins.dat"
+        },
+        "cookie": {
+            "host": null,
+            "path": "/",
+            "time": 259200
+        },
+        "session": {
+            "standart": true,
+            "name": "PHPSESSID",
+            "timeout": null,
+            "host": "___sys.cookie.host___",
+            "path": "___sys.cookie.path___"
+        },
+        "mail": {
+            "type": "mail",
+            "from_email": "admin@admin.adm",
+            "from_name": "\u041f\u043e\u0447\u0442\u043e\u0432\u0438\u043a Your Site",
+            "charset": "UTF-8",
+            "smtp": {
+                "host": "localhost",
+                "port": 25,
+                "user": "",
+                "password": "",
+                "secure": "",
+                "auth": true
+            },
+            "include_comment": false,
+            "include_talk": false
+        },
+        "cache": {
+            "use": false,
+            "type": "file",
+            "dir": "___path.root.server___/tmp/",
+            "prefix": "livestreet_cache",
+            "directory_level": 1,
+            "solid": true
+        },
+        "logs": {
+            "file": "log.log",
+            "sql_query": false,
+            "sql_query_file": "sql_query.log",
+            "sql_error": true,
+            "sql_error_file": "sql_error.log",
+            "cron": true,
+            "cron_file": "cron.log",
+            "profiler": false,
+            "profiler_file": "profiler.log",
+            "hacker_console": false
+        }
+    },
+    
+    "smarty": {
+        "compile_check": true
+    },
+    
+    "general": {
+        "close": false,
+        "rss_editor_mail": "___sys.mail.from_email___",
+        "reg": {
+            "invite": false,
+            "activation": false
+        }
+    },
+    "lang": {
+        "current": "russian",
+        "default": "russian",
+        "path": "___path.root.server___/templates/language",
+        "load_to_js": []
+    },
+    "sitemap": {
+        "cache_lifetime": 86400,
+        "sitemap_priority": "0.8",
+        "sitemap_changefreq": "monthly"
+    },
+    
+    "memcache": {
+        "servers": [
+            {
+                "host": "localhost",
+                "port": "11211",
+                "persistent": true
+            }
+        ],
+        "compression": true
+    },
+    
+    "jevix": [],
+    "moderator": [],
+    "autosubscribe": [
+        2
+    ]
+}

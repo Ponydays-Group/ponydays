@@ -253,6 +253,12 @@ class ModuleViewer extends Module {
 		 */
 		$this->Assign("_sPhpSessionName",session_name());
 		$this->Assign("_sPhpSessionId",session_id());
+		if (in_array('SiteStyle', array_keys($_COOKIE))){
+			if ($_COOKIE['SiteStyle']=='Dark') {
+			    Config::Set("theme", "dark");
+			    Config::Set("icon", "sun");
+			}
+		}
 		/**
 		 * Short Engine aliases
 		 */

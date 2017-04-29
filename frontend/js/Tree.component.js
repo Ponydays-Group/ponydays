@@ -11,16 +11,19 @@ export default class Tree {
   state = {
     sorted_ids: [],
     comments: [],
-    max_nesting: parseInt (($("#comments").width()-250)/20),
+    max_nesting: 0,
     commentsNew: [],
     commentsOld: [],
     lastNewComment: 0,
   }
 
   calcNesting() {
-    this.setState({
-      max_nesting: parseInt(($("#comments").width()-250)/20)
-    })
+    let minWidth = parseInt(localStorage.getItem("min_comment_width"))
+    if (!minWidth) {
+      localStorage.setItem("min_comment_width", 250)
+      minWidth = 250
+    }
+    this.state.max_nesting = parseInt(($("#comments").width()-minWidth)/20)
   }
 
   renderNewComments(new_comments, new_comments_ids){
@@ -113,7 +116,7 @@ export default class Tree {
     let clear = []
     for (let i=0; i<this.state.commentsNew.length; i++) {
       let id = this.state.commentsNew[i]
-      if (clear.indexOf(id)>(-1)) {
+      if (clear.indexOf(id)>=0) {
         continue
       }
       clear.push(id)
@@ -175,6 +178,7 @@ export default class Tree {
   mount(obj, comments, ids) {
     this.obj = obj
     $(window).on('resize', this.calcNesting.bind(this))
+    this.calcNesting()
 
     let sorted_ids = this.sortTree(ids, comments)
 

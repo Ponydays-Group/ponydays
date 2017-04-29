@@ -62,7 +62,7 @@ class ActionAdmin extends Action {
 		$this->AddEvent('recalcfavourite','EventRecalculateFavourite');
 		$this->AddEvent('recalcvote','EventRecalculateVote');
 		$this->AddEvent('recalctopic','EventRecalculateTopic');
-		$this->AddEvent('users','EventUsers');
+		$this->AddEvent('jsonconfiglocal','EventJsonConfigLocal');
 	}
 
 
@@ -81,6 +81,12 @@ class ActionAdmin extends Action {
 	 */
 	protected function EventIndex() {
 
+	}
+	
+	protected function EventJsonConfigLocal() {
+		$config = array();
+		require("/var/www/ponydays-dev/config/config.local.php");
+		$this->Viewer_Assign('config',json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 	}
 	/**
 	 * Перестроение дерева комментариев, актуально при $config['module']['comment']['use_nested'] = true;

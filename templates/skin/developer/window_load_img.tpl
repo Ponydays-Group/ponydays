@@ -12,7 +12,7 @@
 	
 		<form method="POST" action="" enctype="multipart/form-data" id="block_upload_img_content_pc" onsubmit="return false;" class="tab-content js-block-upload-img-content" data-type="pc">
 			<p><label for="img_file">{$aLang.uploadimg_file}:</label>
-			<input type="file" multiple name="img_file" id="img_file" value="" class="input-text input-width-full" /></p>
+			<input type="file" multiple name="img_file[]" id="img_file" value="" class="input-text input-width-full" /></p>
 			
 			{hook run="uploadimg_source"}
 			

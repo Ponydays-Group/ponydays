@@ -1,0 +1,41 @@
+{
+    "router": {
+        "rewrite": [],
+        "uri": {
+            "~^(\\d+)\\.html~i": "blog/\\1.html"
+        },
+        "page": {
+            "error": "ActionError",
+            "registration": "ActionRegistration",
+            "profile": "ActionProfile",
+            "my": "ActionMy",
+            "blog": "ActionBlog",
+            "personal_blog": "ActionPersonalBlog",
+            "index": "ActionIndex",
+            "topic": "ActionTopic",
+            "login": "ActionLogin",
+            "people": "ActionPeople",
+            "settings": "ActionSettings",
+            "tag": "ActionTag",
+            "talk": "ActionTalk",
+            "comments": "ActionComments",
+            "rss": "ActionRss",
+            "link": "ActionLink",
+            "question": "ActionQuestion",
+            "blogs": "ActionBlogs",
+            "search": "ActionSearch",
+            "admin": "ActionAdmin",
+            "ajax": "ActionAjax",
+            "feed": "ActionUserfeed",
+            "stream": "ActionStream",
+            "photoset": "ActionPhotoset",
+            "subscribe": "ActionSubscribe",
+            "feedbacks": "ActionFeedbacks",
+            "page": "ActionPage"
+        },
+        "config": {
+            "action_default": "index",
+            "action_not_found": "error"
+        }
+    }
+}

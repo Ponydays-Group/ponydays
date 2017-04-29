@@ -1,0 +1,54 @@
+{
+    "acl": {
+        "create": {
+            "blog": {
+                "rating": 1
+            },
+            "comment": {
+                "rating": -10,
+                "limit_time": 10,
+                "limit_time_rating": -1
+            },
+            "topic": {
+                "limit_time": 240,
+                "limit_time_rating": 5,
+                "limit_rating": -20
+            },
+            "talk": {
+                "limit_time": 300,
+                "limit_time_rating": 1
+            },
+            "talk_comment": {
+                "limit_time": 10,
+                "limit_time_rating": 5
+            },
+            "wall": {
+                "limit_time": 20,
+                "limit_time_rating": 0
+            }
+        },
+        "vote": {
+            "comment": {
+                "rating": -3,
+                "limit_time": 432000
+            },
+            "blog": {
+                "rating": -5
+            },
+            "topic": {
+                "rating": -7,
+                "limit_time": 6220800000
+            },
+            "user": {
+                "rating": -1
+            }
+        },
+        "vote_state": {
+            "comment": {
+                "oe_end": 1470700800,
+                "oe_enable_level": 1,
+                "ne_enable_level": 1
+            }
+        }
+    }
+}

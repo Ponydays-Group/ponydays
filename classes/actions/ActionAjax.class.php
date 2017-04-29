@@ -1291,20 +1291,29 @@ class ActionAjax extends Action
             }
         }
         else {
-            $arr = array();
-            foreach($_FILES['img_file'] as $k => $v) {
-                if (is_array($v)) {
-                    foreach($v as $sk => $sv) {
-                        $arr[$sk][$k] = $sv;
+            function reArrayFiles(&$file_post) {
+
+                $file_ary = array();
+                $file_count = count($file_post['name']);
+                $file_keys = array_keys($file_post);
+    
+                for ($i=0; $i<$file_count; $i++) {
+                    foreach ($file_keys as $key) {
+                        $file_ary[$i][$key] = $file_post[$key][$i];
                     }
                 }
+
+                return $file_ary;
             }
 
             $sText = "";
-            foreach($_FILES as $k => $v) {
+            $aFiles = reArrayFiles($_FILES['img_file']);
+
+            foreach($aFiles as $k => $v) {
                 /**
                  * Был выбран файл с компьютера и он успешно зугрузился?
                  */
+                
                 if (is_uploaded_file($v['tmp_name'])) {
                     if (!$sFile = $this->Topic_UploadTopicImageFile($v, $this->oUserCurrent)) {
                         $this->Message_AddErrorSingle($this->Lang_Get('uploadimg_file_error') , $this->Lang_Get('error'));

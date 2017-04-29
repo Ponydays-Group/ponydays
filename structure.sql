@@ -893,7 +893,7 @@ DROP TABLE IF EXISTS `prefix_user`;
 CREATE TABLE `prefix_user` (
   `user_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_login` varchar(30) NOT NULL,
-  `user_password` varchar(50) NOT NULL,
+  `user_password` varchar(256) NOT NULL,
   `user_mail` varchar(50) NOT NULL,
   `user_skill` float(9,3) unsigned NOT NULL DEFAULT '0.000',
   `user_date_register` datetime NOT NULL,

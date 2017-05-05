@@ -1,7 +1,7 @@
 {
     "path": {
         "root": {
-            "web": "/",
+            "web": "",
             "server": ".",
             "engine": "___path.root.server___/engine",
             "engine_lib": "___path.root.web___/engine/lib"

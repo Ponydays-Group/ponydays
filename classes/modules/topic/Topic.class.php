@@ -237,6 +237,8 @@ class ModuleTopic extends Module {
 	 * @return bool
 	 */
 	public function DeleteTopic($oTopicId) {
+		return;
+
 		if ($oTopicId instanceof ModuleTopic_EntityTopic) {
 			$sTopicId=$oTopicId->getId();
 			$this->Cache_Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG,array("topic_update_user_{$oTopicId->getUserId()}"));
@@ -268,6 +270,8 @@ class ModuleTopic extends Module {
 	 * @return bool
 	 */
 	public function DeleteTopicAdditionalData($iTopicId,$aPhotos=array()) {
+		return;	
+	
 		/**
 		 * Чистим зависимые кеши
 		 */
@@ -371,7 +375,8 @@ class ModuleTopic extends Module {
 	 * @return bool
 	 */
 	public function DeleteTopicContentByTopicId($iTopicId) {
-		return $this->oMapperTopic->DeleteTopicContentByTopicId($iTopicId);
+		return;
+		//return $this->oMapperTopic->DeleteTopicContentByTopicId($iTopicId);
 	}
 	/**
 	 * Получить топик по айдишнику

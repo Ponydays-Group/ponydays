@@ -70,6 +70,7 @@
 			$aActions	= $this->Feedbacks_GetActionsByUserId($this->oUserCurrent->getId(), 20);
 
 			$this->Viewer_Assign('aActions', $aActions);
+			$this->Viewer_Assign('sMenuHeadItemSelect', 'feedbacks');
 
 		}
 

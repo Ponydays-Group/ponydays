@@ -145,6 +145,7 @@ export default class Tree {
       this.state.commentsOld.push(this.state.lastNewComment)
     }
     let id = this.state.commentsNew[0]
+    this.state.comments[id].isNew = false
     Comments.scrollToComment(id)
     this.state.lastNewComment = id;
     this.updateCommentsNewCount()
@@ -202,7 +203,7 @@ export default class Tree {
     Emitter.on("go-to-next-comment", this.goToNextComment.bind(this))
     Emitter.on("go-to-prev-comment", this.goToPrevComment.bind(this))
     Emitter.on("go-to-comment", this.goToComment.bind(this))
-    Emitter.on("comments-calc-nesting", updateNesting.bind(this))
+    Emitter.on("comments-calc-nesting", this.mount.bind(this))
     
     this.initShortcuts()
   }

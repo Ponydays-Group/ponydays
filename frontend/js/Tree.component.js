@@ -2,6 +2,7 @@ var dateFormat = require('dateformat');
 import render_comment from "./Comment.component"
 import $ from "jquery"
 import * as Comments from './comments'
+import * as Vote from './vote'
 import Emitter from "./emitter"
 
 export default class Tree {
@@ -306,6 +307,14 @@ export default class Tree {
       }
       this.updateCommentsNewCount()
     }
+    
+    function voteUp() {
+      Vote.vote($('.comment-current').data('id'), this, 1, 'comment')
+    }
+    
+    function voteDown() {
+      Vote.vote($('.comment-current').data('id'), this, -1, 'comment')
+    }
 
     let shortcuts = {
       'ctrl+space': Comments.goToNextComment,
@@ -326,7 +335,9 @@ export default class Tree {
       'alt+shift+p': goToParent,
       'alt+shift+c': goToChild,
       'alt+shift+m': markAllChildAsRead.bind(this),
-      'alt+shift+w': window.widemode
+      'alt+shift+w': window.widemode,
+      'alt+up': voteUp.bind(this),
+      'alt+down': voteDown.bind(this),
     }
     
     for (let i in shortcuts) {

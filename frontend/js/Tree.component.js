@@ -113,6 +113,9 @@ export default class Tree {
   }
   
   updateCommentsNewCount() {
+    if (!$("#new_comments_counter").length) {
+      return
+    }
     let clear = []
     for (let i=0; i<this.state.commentsNew.length; i++) {
       let id = this.state.commentsNew[i]
@@ -203,7 +206,7 @@ export default class Tree {
   }
   
   initShortcuts() {
-        function goToPrevComment(){
+    function goToPrevComment(){
       Comments.scrollToComment(this.state.sorted_ids[this.state.sorted_ids.indexOf(""+$('.comment-current').data('id'))-1])
     }
     function goToNextComment(){
@@ -322,7 +325,8 @@ export default class Tree {
       'alt+shift+e': editComment,
       'alt+shift+p': goToParent,
       'alt+shift+c': goToChild,
-      'alt+shift+m': markAllChildAsRead.bind(this)
+      'alt+shift+m': markAllChildAsRead.bind(this),
+      'alt+shift+w': window.widemode
     }
     
     for (let i in shortcuts) {

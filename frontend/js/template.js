@@ -433,6 +433,20 @@ export default function init() {
             })
             window.spoilers_closed = window.spoilers_closed? false:true
         }.bind(this)
+        
+        window.widemode = function() {
+            let content = $("#content")
+            let sidebar = $("#sidebar")
+            if (content.hasClass("col-md-9")) {
+                sidebar.removeClass("col-md-3").addClass("col-md-0")
+                content.removeClass("col-md-9").addClass("col-md-12")
+            } else {
+                sidebar.removeClass("col-md-0").addClass("col-md-3")
+                content.removeClass("col-md-12").addClass("col-md-9")
+            }
+            
+            console.log("widemoded!")
+        }
 
         updateImgs()
     });

@@ -238,9 +238,9 @@ class ModuleACL extends Module {
 	 * @return bool
 	 */
 	public function CanVoteComment(ModuleUser_EntityUser $oUser, ModuleComment_EntityComment $oComment) {
-		//if ($oUser->getRating()<Config::Get('acl.vote.comment.rating')) {
-		//	return false;
-		//}
+		if ($oUser->getRating()<Config::Get('acl.vote.comment.rating')) {
+			return false;
+		}
 		if ($oComment->getTargetType() == 'talk'){
 			return false;
 		}

@@ -202,6 +202,7 @@ export default class Tree {
     Emitter.on("go-to-next-comment", this.goToNextComment.bind(this))
     Emitter.on("go-to-prev-comment", this.goToPrevComment.bind(this))
     Emitter.on("go-to-comment", this.goToComment.bind(this))
+    Emitter.on("comments-calc-nesting", function(){this.calcNesting();this.render()}.bind(this))
     
     this.initShortcuts()
   }

@@ -6,6 +6,7 @@ import * as Toolbar from './toolbar'
 import * as Autocomplete from './autocomplete'
 import * as Blocks from './blocks'
 import * as Hook from './hook'
+import Emitter from './emitter'
 
 function showFloatBlock($) {
     if (!$('.block-type-stream').length) {
@@ -444,9 +445,10 @@ export default function init() {
                 sidebar.removeClass("col-md-0").addClass("col-md-3").css("display", "block")
                 content.removeClass("col-md-12").addClass("col-md-9")
             }
+            Emitter.emit("comments-calc-nesting")
             
             console.log("widemoded!")
-        }
+        }.bind(this)
 
         updateImgs()
     });

@@ -180,16 +180,16 @@ export default class Tree {
   }
 
   mount(obj, comments, ids) {
+    function updateNesting(){this.calcNesting();this.render()}
     this.obj = obj
-    $(window).on('resize', this.calcNesting.bind(this))
-    this.calcNesting()
+    $(window).on('resize', updateNesting.bind(this))
 
     let sorted_ids = this.sortTree(ids, comments)
 
     this.state.sorted_ids =  sorted_ids
     this.state.comments =  comments
 
-    this.render(this.obj)
+    updateNesting.bind(this)()
     
     $(".comment-new").each(function(k,v){
       this.state.commentsNew.push(""+$(v).data('id'))
@@ -202,7 +202,7 @@ export default class Tree {
     Emitter.on("go-to-next-comment", this.goToNextComment.bind(this))
     Emitter.on("go-to-prev-comment", this.goToPrevComment.bind(this))
     Emitter.on("go-to-comment", this.goToComment.bind(this))
-    Emitter.on("comments-calc-nesting", function(){this.calcNesting();this.render()}.bind(this))
+    Emitter.on("comments-calc-nesting", updateNesting.bind(this))
     
     this.initShortcuts()
   }

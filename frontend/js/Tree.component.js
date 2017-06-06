@@ -183,7 +183,7 @@ export default class Tree {
   mount(obj, comments, ids) {
     function updateNesting(){this.calcNesting();this.render()}
     this.obj = obj
-    $(window).on('resize', updateNesting.bind(this))
+    //$(window).on('resize', updateNesting.bind(this))
 
     let sorted_ids = this.sortTree(ids, comments)
 

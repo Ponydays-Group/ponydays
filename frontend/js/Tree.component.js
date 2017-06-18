@@ -4,6 +4,7 @@ import $ from "jquery"
 import * as Comments from './comments'
 import * as Vote from './vote'
 import Emitter from "./emitter"
+import {updateImgs} from './template.js' 
 
 export default class Tree {
   
@@ -43,6 +44,7 @@ export default class Tree {
         }
       }
     }
+    updateImgs()
     console.log("finished render")
   }
   
@@ -57,6 +59,7 @@ export default class Tree {
         this.updateCommentsNewCount()
       }
     }
+    updateImgs()
     Comments.calcNewComments()
   }
   
@@ -384,5 +387,6 @@ export default class Tree {
     this.obj.innerHTML = `<div>${this.state.sorted_ids.map(function(id){
       return render_comment(this.state.comments[id], this.state.max_nesting)
     }.bind(this)).join("")}</div>`
+    updateImgs()
   }
 }

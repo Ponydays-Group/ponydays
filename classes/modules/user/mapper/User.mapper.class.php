@@ -1354,5 +1354,36 @@ class ModuleUser_MapperUser extends Mapper {
 
         return $this->oDb->query($sql, $sUserId);
     }
+
+    public function GetBanActive($sUserId) {
+        $sql = "SELECT
+                    banactive, banunlim
+                FROM
+                    " . Config::Get('db.table.adminban') . "
+                WHERE 
+                    user_id = ?d and ( banactive = 1 or banunlim = 1 )
+                ";
+
+
+        $aResult =  $this->oDb->query($sql, $sUserId);
+
+        if ($aResult) {
+            return $aResult[0]['banactive'] || $aResult[0]['banunlim'];
+        }
+
+        return 0;
+    }
+
+    public function GetInvitesConfig() {
+        $sql = "SELECT
+                    adminset_val
+                FROM
+                    " . Config::Get('db.table.adminset') . "
+                WHERE 
+                    adminset_id = 68
+                ";
+
+        return $this->oDb->query($sql)[0]['adminset_val'];;
+    }
 }
 ?>

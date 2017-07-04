@@ -1692,12 +1692,6 @@ class ModuleUser extends Module {
 	{
         $data = $this->oMapper->GetBanActive($sUserId);
 
-
-        $fp = fopen("testee.txt", "a");
-        $log_message = $sUserId . " " . $data . "\n";
-        fwrite($fp, $log_message);
-        fclose($fp);
-
         return $data;
     }
 

@@ -67,11 +67,6 @@ class ActionIndex extends Action {
 		$oUser = $this->User_GetUserCurrent();
 
         if ($oUser && $this->User_isBanned($oUser->getId())) {
-            $fp = fopen("testee.txt", "a");
-            $log_message = $oUser->getLogin() . "\n";
-            fwrite($fp, $log_message);
-            fclose($fp);
-
             $this->User_Logout();
             $this->Session_DropSession();
             return Router::Action('error');

@@ -64,13 +64,6 @@ class ActionIndex extends Action {
 	 *
 	 */
 	public function Init() {
-		$oUser = $this->User_GetUserCurrent();
-
-        if ($oUser && $this->User_isBanned($oUser->getId())) {
-            $this->User_Logout();
-            $this->Session_DropSession();
-            return Router::Action('error');
-        }
 		/**
 		 * Подсчитываем новые топики
 		 */

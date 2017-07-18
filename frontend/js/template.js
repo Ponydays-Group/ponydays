@@ -451,5 +451,25 @@ export default function init() {
         }.bind(this)
 
         updateImgs()
+        
+        if (parseInt(localStorage.getItem('square_avatars'))) {
+            $(document.body).append(`
+            <style>
+            .comment .comment-avatar {
+                border-radius: 0px !important;
+            }
+            .item-list li .avatar {
+                border-radius: 0px !important;
+            }
+            .user-avatar {
+                border-radius: 0px !important;
+            }
+            .topic-author-avatar {
+                border-radius: 0px !important;
+            }
+            </style>
+            `)
+        }
+        
     });
 }

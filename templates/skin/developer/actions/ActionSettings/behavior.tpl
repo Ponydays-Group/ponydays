@@ -15,12 +15,33 @@
 	
 	<label for="min_comment_width">{$aLang.min_comment_width_behavior_label}</label>
 	<input type="number" min=100 max=700 value=250 name="min_comment_width" class="input-width-300" data-save=1 /><br/>
+	
+	<fieldset>
+<span class="checkbox">
+	<span>
+		<input type="checkbox" id="square_avatars" name="square_avatars" data-save=1 class="input-checkbox" /> <label for="square_avatars">Включить квадратные аватарки</label></span></span>
+	
     {literal}
 	<script>
-	    $('#behavior-form  [data-save=1]').each(function(k,v){v.value = localStorage.getItem(v.name)});
+	    $('#behavior-form  [data-save=1]').each(function(k,v){
+	    	if (v.type=="checkbox") {
+	    		console.log("Chackbox:", localStorage.getItem(v.name))
+	    		v.checked = parseInt(localStorage.getItem(v.name))
+	    		return
+	    	}
+	    	v.value = localStorage.getItem(v.name)
+	    });
 	    
 	    function saveBehaviorSettings(e) {
-	        $('#behavior-form  [data-save=1]').each(function(k,v){localStorage.setItem(v.name, v.value)})
+	        $('#behavior-form  [data-save=1]').each(function(k,v){
+	        	if (v.type=="checkbox") {
+	        		console.log("Chackbox:", v.checked)
+	    		localStorage.setItem(v.name, v.checked?1:0)
+	    		return
+	    	}
+	        	localStorage.setItem(v.name, v.value||v.checked)
+	        	
+	        })
 	        ls.msg.notice('','Настройки сохранены')
 	        return false;
 	    }

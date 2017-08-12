@@ -757,6 +757,8 @@ class ModuleBlog extends Module {
 	 * @return bool
 	 */
 	public function DeleteBlog($iBlogId) {
+		return;
+		
 		if($iBlogId instanceof ModuleBlog_EntityBlog){
 			$iBlogId = $iBlogId->getId();
 		}

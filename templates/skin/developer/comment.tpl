@@ -18,11 +18,13 @@
 		<a name="comment{$oComment->getId()}"></a>
 
 
-		<a href="{$oUser->getUserWebPath()}"><img src="{$oUser->getProfileAvatarPath(48)}" alt="avatar" class="comment-avatar" /></a>
+		<a href="{$oUser->getUserWebPath()}" target="_blank"><img src="{$oUser->getProfileAvatarPath(48)}" 
+alt="avatar" 
+class="comment-avatar" /></a>
 
 
 		<ul class="comment-info">
-			<li class="comment-author"><a href="{$oUser->getUserWebPath()}">{$oUser->getLogin()}</a></li>
+			<li class="comment-author"><a href="{$oUser->getUserWebPath()}" target="_blank">{$oUser->getLogin()}</a></li>
 		</ul>
 
 

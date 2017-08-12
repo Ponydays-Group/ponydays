@@ -6,6 +6,7 @@ import * as Toolbar from './toolbar'
 import * as Autocomplete from './autocomplete'
 import * as Blocks from './blocks'
 import * as Hook from './hook'
+import Emitter from './emitter'
 
 function showFloatBlock($) {
     if (!$('.block-type-stream').length) {
@@ -433,7 +434,42 @@ export default function init() {
             })
             window.spoilers_closed = window.spoilers_closed? false:true
         }.bind(this)
+        
+        window.widemode = function() {
+            let content = $("#content")
+            let sidebar = $("#sidebar")
+            if (content.hasClass("col-md-9")) {
+                sidebar.removeClass("col-md-3").addClass("col-md-0").css("display", "none")
+                content.removeClass("col-md-9").addClass("col-md-12")
+            } else {
+                sidebar.removeClass("col-md-0").addClass("col-md-3").css("display", "block")
+                content.removeClass("col-md-12").addClass("col-md-9")
+            }
+            Emitter.emit("comments-calc-nesting")
+            
+            console.log("widemoded!")
+        }.bind(this)
 
         updateImgs()
+        
+        if (parseInt(localStorage.getItem('square_avatars'))) {
+            $(document.body).append(`
+            <style>
+            .comment .comment-avatar {
+                border-radius: 0px !important;
+            }
+            .item-list li .avatar {
+                border-radius: 0px !important;
+            }
+            .user-avatar {
+                border-radius: 0px !important;
+            }
+            .topic-author-avatar {
+                border-radius: 0px !important;
+            }
+            </style>
+            `)
+        }
+        
     });
 }

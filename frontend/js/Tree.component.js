@@ -2,7 +2,9 @@ var dateFormat = require('dateformat');
 import render_comment from "./Comment.component"
 import $ from "jquery"
 import * as Comments from './comments'
+import * as Vote from './vote'
 import Emitter from "./emitter"
+import {updateImgs} from './template.js' 
 
 export default class Tree {
   
@@ -42,6 +44,7 @@ export default class Tree {
         }
       }
     }
+    updateImgs()
     console.log("finished render")
   }
   
@@ -56,6 +59,7 @@ export default class Tree {
         this.updateCommentsNewCount()
       }
     }
+    updateImgs()
     Comments.calcNewComments()
   }
   
@@ -113,6 +117,9 @@ export default class Tree {
   }
   
   updateCommentsNewCount() {
+    if (!$("#new_comments_counter").length) {
+      return
+    }
     let clear = []
     for (let i=0; i<this.state.commentsNew.length; i++) {
       let id = this.state.commentsNew[i]
@@ -141,6 +148,7 @@ export default class Tree {
       this.state.commentsOld.push(this.state.lastNewComment)
     }
     let id = this.state.commentsNew[0]
+    this.state.comments[id].isNew = false
     Comments.scrollToComment(id)
     this.state.lastNewComment = id;
     this.updateCommentsNewCount()
@@ -176,16 +184,16 @@ export default class Tree {
   }
 
   mount(obj, comments, ids) {
+    function updateNesting(){this.calcNesting();this.render()}
     this.obj = obj
-    $(window).on('resize', this.calcNesting.bind(this))
-    this.calcNesting()
+    //$(window).on('resize', updateNesting.bind(this))
 
     let sorted_ids = this.sortTree(ids, comments)
 
     this.state.sorted_ids =  sorted_ids
     this.state.comments =  comments
 
-    this.render(this.obj)
+    updateNesting.bind(this)()
     
     $(".comment-new").each(function(k,v){
       this.state.commentsNew.push(""+$(v).data('id'))
@@ -198,12 +206,13 @@ export default class Tree {
     Emitter.on("go-to-next-comment", this.goToNextComment.bind(this))
     Emitter.on("go-to-prev-comment", this.goToPrevComment.bind(this))
     Emitter.on("go-to-comment", this.goToComment.bind(this))
+    Emitter.on("comments-calc-nesting", this.mount.bind(this))
     
     this.initShortcuts()
   }
   
   initShortcuts() {
-        function goToPrevComment(){
+    function goToPrevComment(){
       Comments.scrollToComment(this.state.sorted_ids[this.state.sorted_ids.indexOf(""+$('.comment-current').data('id'))-1])
     }
     function goToNextComment(){
@@ -303,6 +312,14 @@ export default class Tree {
       }
       this.updateCommentsNewCount()
     }
+    
+    function voteUp() {
+      Vote.vote($('.comment-current').data('id'), this, 1, 'comment')
+    }
+    
+    function voteDown() {
+      Vote.vote($('.comment-current').data('id'), this, -1, 'comment')
+    }
 
     let shortcuts = {
       'ctrl+space': Comments.goToNextComment,
@@ -322,7 +339,10 @@ export default class Tree {
       'alt+shift+e': editComment,
       'alt+shift+p': goToParent,
       'alt+shift+c': goToChild,
-      'alt+shift+m': markAllChildAsRead.bind(this)
+      'alt+shift+m': markAllChildAsRead.bind(this),
+      'alt+shift+w': window.widemode,
+      'alt+up': voteUp.bind(this),
+      'alt+down': voteDown.bind(this),
     }
     
     for (let i in shortcuts) {
@@ -367,5 +387,6 @@ export default class Tree {
     this.obj.innerHTML = `<div>${this.state.sorted_ids.map(function(id){
       return render_comment(this.state.comments[id], this.state.max_nesting)
     }.bind(this)).join("")}</div>`
+    updateImgs()
   }
 }

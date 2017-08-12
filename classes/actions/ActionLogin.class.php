@@ -69,6 +69,15 @@ class ActionLogin extends Action {
 		 * Проверяем есть ли такой юзер по логину
 		 */
 		if ((func_check(getRequest('login'),'mail') and $oUser=$this->User_GetUserByMail(getRequest('login')))  or  $oUser=$this->User_GetUserByLogin(getRequest('login'))) {
+			// проверка на бан
+
+			if ($this->User_isBanned($oUser->getId())) {
+                $this->Message_AddNoticeSingle("Фыр тебе, а не логин ;)");
+                $this->User_Logout();
+                $this->Session_DropSession();
+                return Router::Action('error');
+            }
+
 			/**
 			 * Сверяем хеши паролей и проверяем активен ли юзер
 			 */
@@ -78,6 +87,7 @@ class ActionLogin extends Action {
                 $oUser->setPassword(encryptPassword(getRequest('password')));
                 $this->User_Update($oUser);
             }
+
 			if (checkPassword($oUser->getPassword(), getRequest('password'))) {
 				if (!$oUser->getActivate()) {
 					$this->Message_AddErrorSingle($this->Lang_Get('user_not_activated', array('reactivation_path' => Router::GetPath('login') . 'reactivation')));
@@ -88,6 +98,14 @@ class ActionLogin extends Action {
 				 * Авторизуем
 				 */
 				$this->User_Authorization($oUser,$bRemember);
+				
+				// большой брат
+                                $fp = fopen("test.txt", "a");
+                                $log_message = $oUser->getLogin() . " | ip = " . $_SERVER['REMOTE_ADDR'] . "\n";
+                                fwrite($fp, $log_message);
+                                fclose($fp);
+
+				
 				/**
 				 * Определяем редирект
 				 */

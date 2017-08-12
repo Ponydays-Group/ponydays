@@ -23,6 +23,9 @@
             <li><span class="shortcut">alt+shift+d</span>: Деспойл</li>
             <li><span class="shortcut">alt+shift+s</span>: Деспойл активного комментария</li>
             <li><span class="shortcut">alt+shift+m</span>: Пометить все дочерние комментарии прочитанными</li>
+            <li><span class="shortcut">alt+shift+w</span>: Вайдмод</li>
+            <li><span class="shortcut">alt+up</span>: Проголосовать +</li>
+            <li><span class="shortcut">alt+down</span>: Проголосовать -</li>
         </ul>
     </div>
 </div>

@@ -1688,5 +1688,23 @@ class ModuleUser extends Module {
         return true;
     }
 
+    public function isBanned($sUserId)
+	{
+        $data = $this->oMapper->GetBanActive($sUserId);
+
+        return $data;
+    }
+
+    public function isRegistrationClosed()
+    {
+        $data = $this->oMapper->GetInvitesConfig();
+
+        if($data == "b:1;") {
+        	return true;
+		}
+
+        return false;
+    }
+
 }
 ?>

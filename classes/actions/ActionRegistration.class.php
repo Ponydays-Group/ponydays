@@ -30,6 +30,12 @@ class ActionRegistration extends Action {
 		/**
 		 * Проверяем аторизован ли юзер
 		 */
+        if ($this->User_isRegistrationClosed()) {
+            $this->Message_AddNoticeSingle("Регистрация временно закрыта.");
+            return Router::Action('error');
+        }
+
+
 		if ($this->User_IsAuthorization()) {
 			$this->Message_AddErrorSingle($this->Lang_Get('registration_is_authorization'),$this->Lang_Get('attention'));
 			return Router::Action('error');

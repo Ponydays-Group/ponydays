@@ -88,8 +88,8 @@ commands:
       mysql --defaults-extra-file=/config/mysql.conf -e "CREATE USER '$DB_USERNAME'@'$DB_HOST' IDENTIFIED BY '$DB_PASSWORD';"
       mysql --defaults-extra-file=/config/mysql.conf -e "GRANT ALL PRIVILEGES ON $DB_DATABASE.* TO '$DB_USERNAME'@'$DB_HOST';"
       mysqladmin --defaults-extra-file=/config/mysql.conf flush-privileges
-      mysqladmin --defaults-extra-file=/config/mysql.conf shutdown
       mysql --defaults-extra-file=/config/mysql.conf -u$DB_USERNAME -p$DB_PASSWORD $DB_DATABASE < /work/structure.sql
+      mysqladmin --defaults-extra-file=/config/mysql.conf shutdown
 
   mysql: &mysql !Command
     container: mysql
@@ -104,8 +104,6 @@ commands:
       user-id: 1
       external-user-id: 0
       run: mysql -h 127.0.0.1 --port 3306 -u $DB_USERNAME -p$DB_PASSWORD  $DB_DATABASE
-
-
 
   nginx-prod: &nginx-prod !Command
       container: nginx

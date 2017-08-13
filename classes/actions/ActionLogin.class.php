@@ -98,14 +98,6 @@ class ActionLogin extends Action {
 				 * Авторизуем
 				 */
 				$this->User_Authorization($oUser,$bRemember);
-				
-				// большой брат
-                                $fp = fopen("test.txt", "a");
-                                $log_message = $oUser->getLogin() . " | ip = " . $_SERVER['REMOTE_ADDR'] . "\n";
-                                fwrite($fp, $log_message);
-                                fclose($fp);
-
-				
 				/**
 				 * Определяем редирект
 				 */

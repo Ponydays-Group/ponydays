@@ -434,10 +434,12 @@ export default function init() {
             })
             window.spoilers_closed = window.spoilers_closed? false:true
         }.bind(this)
-        
+
+
         window.widemode = function() {
             let content = $("#content")
             let sidebar = $("#sidebar")
+
             if (content.hasClass("col-md-9")) {
                 sidebar.removeClass("col-md-3").addClass("col-md-0").css("display", "none")
                 content.removeClass("col-md-9").addClass("col-md-12")
@@ -445,6 +447,7 @@ export default function init() {
                 sidebar.removeClass("col-md-0").addClass("col-md-3").css("display", "block")
                 content.removeClass("col-md-12").addClass("col-md-9")
             }
+
             Emitter.emit("comments-calc-nesting")
             
             console.log("widemoded!")

@@ -4,10 +4,10 @@ import $ from "jquery"
 import * as Comments from './comments'
 import * as Vote from './vote'
 import Emitter from "./emitter"
-import {updateImgs} from './template.js' 
+import {updateImgs} from './template.js'
 
 export default class Tree {
-  
+
   obj = $("#comments-tree")[0]
 
   state = {
@@ -47,7 +47,7 @@ export default class Tree {
     updateImgs()
     console.log("finished render")
   }
-  
+
   checkEdited(edited_comments) {
     for (let id in edited_comments) {
       if (this.state.comments[id].text != edited_comments[id].text && !$(`[data-id=${id}]`).hasClass('comment-self')) {
@@ -62,7 +62,7 @@ export default class Tree {
     updateImgs()
     Comments.calcNewComments()
   }
-  
+
   sortByTree(a,b) {
     let a_index = this.state.sorted_ids.indexOf(a)
     let b_index = this.state.sorted_ids.indexOf(b)
@@ -72,7 +72,7 @@ export default class Tree {
       return 1
     }
   }
-  
+
   handleNewComments(new_comments,selfIdComment,soft) {
     let new_sorted_ids = this.state.sorted_ids
     let comments = this.state.comments
@@ -97,7 +97,7 @@ export default class Tree {
     new_comments_ids.sort(this.sortByTree.bind(this))
     if (!soft) {
       this.state.commentsNew = []
-    } 
+    }
     this.state.commentsNew.push.apply(this.state.commentsNew, new_comments_ids)
     this.state.commentsNew.sort(this.sortByTree.bind(this))
     this.renderNewComments(new_comments, new_comments_ids)
@@ -113,9 +113,9 @@ export default class Tree {
     this.updateCommentsNewCount()
     if (selfIdComment && $('#comment_id_' + selfIdComment).length) {
       Comments.scrollToComment(selfIdComment);
-    } 
+    }
   }
-  
+
   updateCommentsNewCount() {
     if (!$("#new_comments_counter").length) {
       return
@@ -141,7 +141,7 @@ export default class Tree {
       document.title = `(${len}) `+TITLE
     }
   }
-  
+
   goToNextComment() {
     console.log(this.state.commentsNew)
     if (this.state.lastNewComment>0) {
@@ -153,14 +153,14 @@ export default class Tree {
     this.state.lastNewComment = id;
     this.updateCommentsNewCount()
   }
-  
+
   goToPrevComment() {
     if (!this.state.commentsOld.length) {
         return
     }
     Comments.scrollToComment(this.state.commentsOld.pop())
   }
-  
+
   goToComment(id) {
     if (this.state.comments[id].isBad) {
       return
@@ -194,11 +194,11 @@ export default class Tree {
     this.state.comments =  comments
 
     updateNesting.bind(this)()
-    
+
     $(".comment-new").each(function(k,v){
       this.state.commentsNew.push(""+$(v).data('id'))
     }.bind(this))
-    
+
     this.updateCommentsNewCount()
 
     Emitter.on("comments-new-loaded", this.handleNewComments.bind(this))
@@ -206,11 +206,11 @@ export default class Tree {
     Emitter.on("go-to-next-comment", this.goToNextComment.bind(this))
     Emitter.on("go-to-prev-comment", this.goToPrevComment.bind(this))
     Emitter.on("go-to-comment", this.goToComment.bind(this))
-    Emitter.on("comments-calc-nesting", this.mount.bind(this))
-    
+    Emitter.on("comments-calc-nesting", updateNesting.bind(this))
+
     this.initShortcuts()
   }
-  
+
   initShortcuts() {
     function goToPrevComment(){
       Comments.scrollToComment(this.state.sorted_ids[this.state.sorted_ids.indexOf(""+$('.comment-current').data('id'))-1])
@@ -218,15 +218,15 @@ export default class Tree {
     function goToNextComment(){
       Comments.scrollToComment(this.state.sorted_ids[this.state.sorted_ids.indexOf(""+$('.comment-current').data('id'))+1])
     }
-    
+
     function goToLastComment(){
       Comments.scrollToComment(this.state.sorted_ids[this.state.sorted_ids.length-1])
     }
-    
+
     function goToFirstComment(){
       Comments.scrollToComment(this.state.sorted_ids[0])
     }
-    
+
     function goToNextBranch(){
       let cur_id = $('.comment-current').data("id")
       let cur_cmt = this.state.comments[cur_id]
@@ -242,7 +242,7 @@ export default class Tree {
       }
       Comments.scrollToComment(prev_branch)
     }
-    
+
     function goToPrevBranch(){
       let cur_id = $('.comment-current').data("id")
       let cur_cmt = this.state.comments[cur_id]
@@ -258,36 +258,36 @@ export default class Tree {
       }
       Comments.scrollToComment(prev_branch)
     }
-    
+
     function toggleReplyOnCurrent(){
       Comments.toggleCommentForm($('.comment-current').data("id"))
     }
-    
+
     function updateComments(){
       Comments.load(window.targetId, window.targetType)
     }
-    
+
     function updateCommentsSoft(){
       Comments.load(window.targetId, window.targetType, null, true)
     }
-    
+
     function toggleReplyOnRoot() {
       Comments.toggleCommentForm(0)
     }
-    
+
     function editComment() {
       Comments.editComment($('.comment-current').data('id'))
     }
-    
+
     function goToParent() {
       Comments.goToParentComment($('.comment-current').data('id'),$('.comment-current').data('pid'))
     }
-    
+
     function goToChild() {
       $('.comment-current').find('.' + Comments.options.classes.comment_goto_child).hide()
       Comments.scrollToComment($('.comment-current').data('cid'))
     }
-    
+
     let closed = true
 
     let despoilComment = function() {
@@ -297,7 +297,7 @@ export default class Tree {
       })
       closed = closed ? false : true
     }.bind(this)
-    
+
     function markAllChildAsRead() {
       let ids = this.state.sorted_ids.slice(this.state.sorted_ids.indexOf(""+$('.comment-current').data("id"))+1)
       let level = $('.comment-current').data("level")
@@ -312,11 +312,11 @@ export default class Tree {
       }
       this.updateCommentsNewCount()
     }
-    
+
     function voteUp() {
       Vote.vote($('.comment-current').data('id'), this, 1, 'comment')
     }
-    
+
     function voteDown() {
       Vote.vote($('.comment-current').data('id'), this, -1, 'comment')
     }
@@ -344,7 +344,7 @@ export default class Tree {
       'alt+up': voteUp.bind(this),
       'alt+down': voteDown.bind(this),
     }
-    
+
     for (let i in shortcuts) {
       $(document).on('keydown', null, i, shortcuts[i])
       $('#form_comment_text').on('keydown', null, i, shortcuts[i])
@@ -384,6 +384,10 @@ export default class Tree {
   }
 
   render(obj) {
+    if (!this.obj) {
+      this.obj = $('#comments-tree')
+    }
+
     this.obj.innerHTML = `<div>${this.state.sorted_ids.map(function(id){
       return render_comment(this.state.comments[id], this.state.max_nesting)
     }.bind(this)).join("")}</div>`

@@ -23,7 +23,7 @@
  */
 class ModuleTopic_EntityTopic extends Entity {
 	/**
-	 * Массив объектов(не всегда) для дополнительных типов топиков(линки, опросы, подкасты и т.п.)
+	 * Массив объектов для дополнительных типов топиков(линки, опросы, подкасты и т.п.)
 	 *
 	 * @var array
 	 */
@@ -162,7 +162,7 @@ class ModuleTopic_EntityTopic extends Entity {
 	 * @return string
 	 */
 	public function getExtra() {
-		return $this->_getDataOne('topic_extra') ? $this->_getDataOne('topic_extra') : serialize('');
+		return $this->_getDataOne('topic_extra') ? $this->_getDataOne('topic_extra') : serialize(array());
 	}
 	/**
 	 * Возвращает строку со списком тегов через запятую

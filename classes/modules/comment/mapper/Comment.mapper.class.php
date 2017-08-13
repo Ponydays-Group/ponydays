@@ -522,7 +522,7 @@ class ModuleComment_MapperComment extends Mapper {
 			comment_date,
 			comment_user_ip,
 			comment_publish,
-			comment_text_hash	
+			comment_text_hash
 			)
 			VALUES(?, ?d, ?, ?d, ?d, ?, ?, ?, ?d, ?)
 		";
@@ -970,6 +970,7 @@ class ModuleComment_MapperComment extends Mapper {
 		}
 		return $aResult;
 	}
+
 	public function UpdateEditCommentData(ModuleComment_EntityComment $oComment)
     {
         $sql="UPDATE " . Config::Get('db.table.comment') . "
@@ -979,10 +980,16 @@ class ModuleComment_MapperComment extends Mapper {
         WHERE
         comment_id = ?d
         ";
+
+        if ($oComment->getEditCount() == NULL && $this->oDb->query($sql, 0, $oComment->getEditDate(), $oComment->getId()) !== false) {
+            return true;
+        }
+
         if ($this->oDb->query($sql, $oComment->getEditCount(), $oComment->getEditDate(), $oComment->getId()) !== false)
         {
             return true;
         }
+
         return false;
     }
 }

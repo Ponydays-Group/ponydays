@@ -167,19 +167,26 @@ export function getMarkitupComment() {
                 name: Lang.get('panel_url'),
                 className: 'fa fa-link',
                 key: 'L',
-                openWith: function(m){return '<a target="_blank" href="' + prompt(Lang.get('panel_url_promt')) + '" title="">'},
-                closeWith: '</a>',
-                placeHolder: 'Your text to link...'
+                replaceWith: function(m) {
+                    let url = prompt(Lang.get('panel_url_promt'));
+                    if(url) return '<a target="_blank" href="' + url + '" title="">' + (m.selection ? m.selection : 'Your text to link...') + '</a>';
+                }
             },
             {
                 name: Lang.get('panel_video'),
                 className: 'fa fa-video-camera',
-                replaceWith: function(m){return '<video>' + prompt(Lang.get('panel_video_promt')) + '</video>'}
+                replaceWith: function(m) {
+                    let url = prompt(Lang.get('panel_video_promt'));
+                    if(url) return '<video>' + url + '</video>'
+                }
             },
             {
                 name: Lang.get('panel_user'),
                 className: 'fa fa-user',
-                replaceWith: function(m){return '<ls user="' + prompt(Lang.get('panel_user_promt')) + '" />'}
+                replaceWith: function(m) {
+                    let username = prompt(Lang.get('panel_user_promt'));
+                    if(username) return '<ls user="' + username + '" />';
+                }
             },
             {separator: '---------------'},
             {
@@ -189,7 +196,7 @@ export function getMarkitupComment() {
             },
             {
                 name: "Спойлер", className: 'fa fa-caret-square-o-down', key: 'R', replaceWith: function (m) {
-                var title = prompt('Спойлер', "Спойлер");
+                let title = prompt('Спойлер', "Спойлер");
                 if (title) if (m.selectionOuter) return '<span class="spoiler"><span class="spoiler-title spoiler-close">' + title + '</span><span class="spoiler-body">\n' + m.selectionOuter + '\n</span></span>'; else if (m.selection) return '<span class="spoiler"><span class="spoiler-title spoiler-close">' + title + '</span><span class="spoiler-body">\n' + m.selection + '\n</span></span>'; else return '<span class="spoiler"><span class="spoiler-title spoiler-close">' + title + '</span><span class="spoiler-body">\nтекст спойлера\n</span></span>'
             }
             },

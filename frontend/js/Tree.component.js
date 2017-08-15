@@ -289,9 +289,16 @@ export default class Tree {
     }
 
     let despoilComment = function() {
-      $('.comment-current').find(".spoiler-body").each(function(k, v) {
-        window.spoiler(v)
+      let current = $('.comment-current')
+      let despoiled = current.hasClass('comment-despoiled')
+      current.find('.spoiler-body').each(function(k, v) {
+        if(v.style.display !== 'block') {
+          if(!despoiled) window.openSpoiler(v)
+        } else {
+          if(despoiled) window.closeSpoiler(v)
+        }
       })
+      current.toggleClass('comment-despoiled')
     }.bind(this)
 
     function markAllChildAsRead() {

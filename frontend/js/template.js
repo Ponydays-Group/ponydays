@@ -353,29 +353,31 @@ export default function init() {
         // Хук конца инициализации javascript-составляющих шаблона
         Hook.run('ls_template_init_end', [], window);
 
-        window.spoiler = function(b) {
-            if (b.style.display != "block") {
-                $(b).show(300);
-                b.style.display = "block";
-                $(b).find("img").each(function(k, v) {
-                    if (v.getAttribute("data-src")) {
-                        v.src = v.getAttribute("data-src")
-                    }
-                })
-                console.log(b.parentElement.getElementsByClassName("spoiler-title").length)
-                if (!b.parentElement.getElementsByClassName("spoiler-title").length) {
-                    return
-                }
-                b.parentElement.getElementsByClassName("spoiler-title")[0].className = "spoiler-title spoiler-open";
+        window.closeSpoiler = function(b) {
+            $(b).hide(300);
+            if (!b.parentElement.getElementsByClassName("spoiler-title").length) {
+                return
             }
-            else {
-                $(b).hide(300);
-                if (!b.parentElement.getElementsByClassName("spoiler-title").length) {
-                    return
-                }
-                b.parentElement.getElementsByClassName("spoiler-title")[0].className = "spoiler-title spoiler-close";
+            b.parentElement.getElementsByClassName("spoiler-title")[0].className = "spoiler-title spoiler-close";
+        }
 
+        window.openSpoiler = function(b) {
+            $(b).show(300);
+            b.style.display = "block";
+            $(b).find("img").each(function(k, v) {
+                if (v.getAttribute("data-src")) {
+                    v.src = v.getAttribute("data-src")
+                }
+            })
+            console.log(b.parentElement.getElementsByClassName("spoiler-title").length)
+            if (!b.parentElement.getElementsByClassName("spoiler-title").length) {
+                return
             }
+            b.parentElement.getElementsByClassName("spoiler-title")[0].className = "spoiler-title spoiler-open";
+        }
+
+        window.spoiler = function(b) {
+            if (b.style.display != "block") openSpoiler(b); else closeSpoiler(b)
         }
 
         async function click(event) {

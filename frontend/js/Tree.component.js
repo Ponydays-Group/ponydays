@@ -288,14 +288,10 @@ export default class Tree {
       Comments.scrollToComment($('.comment-current').data('cid'))
     }
 
-    let closed = true
-
     let despoilComment = function() {
       $('.comment-current').find(".spoiler-body").each(function(k, v) {
-          v.style.display = closed ? "none" : "block"
-          window.spoiler(v)
+        window.spoiler(v)
       })
-      closed = closed ? false : true
     }.bind(this)
 
     function markAllChildAsRead() {

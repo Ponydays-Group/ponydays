@@ -778,7 +778,7 @@ class ModuleTopic_EntityTopic extends Entity {
 	/**
 	 * Устанавливает сериализованную строчку дополнительных данных
 	 *
-	 * @param string $data
+	 * @param array $data
 	 */
 	public function setExtra($data) {
 		$this->_aData['topic_extra']=serialize($data);

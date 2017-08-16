@@ -188,6 +188,10 @@ img.gray:not(:hover) {
     -webkit-filter: contrast(0%) brightness(78.5%) sepia(95.30%) hue-rotate(152.5deg);
 }
 
+.spoiler-gray:not(:hover) a {
+    color: inherit;
+}
+
 .text .left {
     display: inline-block;
     width: 100%;

@@ -721,6 +721,8 @@ return array(
 	'panel_video' => 'video',
 	'panel_video_promt' => 'Enter a link to the video',
 	'panel_image' => 'image',
+	'panel_gray_spoiler' => 'gray spoiler',
+	'panel_spoiler' => 'spoiler',
 	'panel_cut' => 'cut',
 	'panel_quote' => 'quote',
 	'panel_list' => 'List',

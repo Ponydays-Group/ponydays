@@ -260,6 +260,8 @@ margin-right: 10px; background: $main-color; border-radius: 50%; border: 1px sol
 }
 .user.inactive 		{ color: #aaa; }
 
+a.inactive { opacity: 0.6 }
+
 .ls-user.has-avatar img {
     width: 14px;
     height: 14px;

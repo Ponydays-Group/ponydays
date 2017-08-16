@@ -730,6 +730,8 @@ return array(
 	'panel_video' => 'видео',
 	'panel_video_promt' => 'Введите ссылку на видео',
 	'panel_image' => 'изображение',
+	'panel_gray_spoiler' => 'cерый спойлер',
+	'panel_spoiler' => 'спойлер',
 	'panel_cut' => 'кат',
 	'panel_quote' => 'цитировать',
 	'panel_list' => 'Список',

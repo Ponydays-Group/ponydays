@@ -21,9 +21,9 @@ let vendors = [
     'jquery-ui-bundle',
 ];
 
-let contextPath = path.join(__dirname, 'frontend');
+// let contextPath = path.join(__dirname, 'frontend');
 let config = {
-    context: contextPath,
+//    context: contextPath,
     cache: true,
 
     entry: {
@@ -33,7 +33,7 @@ let config = {
         dark: './css/dark.scss',
     },
     output: {
-        path: path.join(__dirname, 'static', '[hash]'),
+        path: path.join(__dirname, '..', 'static', '[hash]'),
         filename: '[name].bundle.js'
     },
     module: {
@@ -71,7 +71,7 @@ let config = {
         modulesDirectories: ['node_modules', 'js'],
         root: [
             process.env.NODE_PATH,
-            path.resolve(contextPath)
+//            path.resolve(contextPath)
         ]
     },
     plugins: [
@@ -83,7 +83,7 @@ let config = {
         function() {
             this.plugin('done', function(stats) {
                 fs.writeFileSync(
-                    path.join(__dirname, 'config', 'engine_config', 'frontend.config.json'),
+                    path.join(__dirname, '..', 'config', 'engine_config', 'frontend.config.json'),
                     JSON.stringify({"frontend": {"version": stats.hash}})
                 );
             });

@@ -12,18 +12,6 @@ containers:
       - !EnsureDir /config
       - !Sh "chmod +r /bin/bbsuid"
 
-  frontend:
-      setup:
-      - !Container _base_alpine
-      - !NpmDependencies
-        file: package.json
-        peer: true
-        optional: true
-        dev: true
-      - !Sh "ln -s /usr/bin/nodejs /usr/local/bin/node"
-      environ:
-        NODE_PATH: /usr/lib/node_modules
-
   mysql:
     setup:
       - !Container _base_alpine
@@ -103,12 +91,7 @@ commands:
       description: Run mysql database server
       user-id: 1
       external-user-id: 0
-      run: mysql -h 127.0.0.1 --port 3306 -u $DB_USERNAME -p$DB_PASSWORD  $DB_DATABASE
-
-  nginx-prod: &nginx-prod !Command
-      container: nginx
-      description: Run nginx webserver
-      run: nginx -c /config/nginx-prod.conf
+      run: mysql -h localhost --port 3306 -u $DB_USERNAME -p$DB_PASSWORD  $DB_DATABASE
 
   nginx-dev: &nginx-dev !Command
       container: nginx
@@ -124,33 +107,6 @@ commands:
       php-fpm7 -version
       php-fpm7 -e -F -O -y /config/php-fpm.conf
       echo
-
-  _clean-old-static: !Command
-    container: frontend
-    description: Clean static files
-    run: |
-      mkdir -vp /work/static
-      rm -rf /work/static/*
-
-  build-static: !Command
-    prerequisites: [_clean-old-static]
-    container: frontend
-    description: Build static files
-    run: [npm, run-script, webpack:trunk]
-
-  watch-static: !Command
-    prerequisites: [_clean-old-static]
-    container: frontend
-    description: Watch and auto-rebuild changed static files
-    run: [npm, run-script, webpack:watch]
-
-  run-prod: !Supervise
-      description: Run full server stack
-      kill-unresponsive-after: 5
-      children:
-        mysql: *mysql
-        nginx: *nginx-prod
-        php: *php
 
   run-dev: !Supervise
         description: Run full server stack

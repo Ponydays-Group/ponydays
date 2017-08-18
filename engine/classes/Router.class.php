@@ -459,7 +459,7 @@ class Router extends LsObject {
 
 		// Смотрим, есть ли правило rewrite
 		$sPage = self::getInstance()->Rewrite($sPage);
-		return "/$sPage/";
+		return rtrim(Config::Get('path.root.web'),'/')."/$sPage/";
 	}
 	/**
 	 * Try to find rewrite rule for given page.

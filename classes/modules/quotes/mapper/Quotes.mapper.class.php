@@ -16,8 +16,6 @@ class ModuleQuotes_MapperQuotes extends Mapper {
 	 * @return int
 	 */
 	public function Add (string $data): int {
-		echo "kus";
-
 		$sql = "INSERT INTO " . Config::Get('db.table.quotes') . " 
 			(data) 
 			VALUES(?)

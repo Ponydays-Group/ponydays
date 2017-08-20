@@ -31,8 +31,6 @@ class ModuleQuotes extends Module {
 	 * @return int
 	 */
 	public function AddQuote (string $data): int {
-		echo "mur";
-
 		if ($data === "")
 			return 0;
 

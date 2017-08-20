@@ -15,15 +15,17 @@
     <div class="comment-preview text" id="quotes_preview"></div>
 
     <form class="modal-content">
-        <label for="quotes_form_data">{$aLang.quotes_data}:</label>
-        {include file='editor.tpl'}
-        <textarea id="quotes_form_data" class="mce-editor markitup-editor input-width-full markItUpEditor"></textarea>
+        <div>
+            <label for="quotes_form_data">{$aLang.quotes_data}:</label>
+            {include file='editor.tpl'}
+            <textarea id="quotes_form_data" class="mce-editor markitup-editor input-width-full markItUpEditor"></textarea>
 
-        <input type="hidden" id="quotes_form_action" />
-        <input type="hidden" id="quotes_form_id" />
+            <input type="hidden" id="quotes_form_action" />
+            <input type="hidden" id="quotes_form_id" />
 
-        <button type="button" onclick="ls.quotes.applyForm(); return false;" class="button button-primary">{$aLang.quotes_add}</button>
-        <button type="button" onclick="ls.quotes.quotesPreview(); return false;" class="button">{$aLang.quotes_prev}</button>
+            <button type="button" onclick="ls.quotes.applyForm(); return false;" class="button button-primary">{$aLang.quotes_add}</button>
+            <button type="button" onclick="ls.quotes.quotesPreview(); return false;" class="button">{$aLang.quotes_prev}</button>
+        </div>
     </form>
 </div>
 

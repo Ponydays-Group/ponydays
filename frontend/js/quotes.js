@@ -21,16 +21,18 @@ export function showEditForm(id) {
 	$('#quotes_form').jqmShow();
 }
 
-export function quotesPreview(id) {
+export function quotesPreview() {
 	let data = $('#quotes_form_data').val();
 	$('#quotes_preview').html(data).show();
 }
 
 export function applyForm() {
 	$('#quotes_form').jqmHide();
-	if ($('#quotes_form_action').val() === 'add') {
+
+	let val = $('#quotes_form_action').val();
+	if (val === 'add') {
 		this.addQuotes();
-	} else if ($('#quotes_form_action').val() === 'update') {
+	} else if (val === 'update') {
 		this.updateQuotes();
 	}
 }
@@ -44,21 +46,21 @@ export function addQuotes() {
 		g_quotesCount++;
 
 		if (!data.bStateError) {
-
 			let trElement = $(
 				'<tr id="field_' + data.id + '">\n' +
 				'    <td>' + g_quotesCount + '</td>\n' +
 				'    <td class="quotes_data">' + data_quote + '</td>\n' +
 				'    <td>\n' +
 				'        <div class="quotes-actions">\n' +
-				'            <a href="#" onclick="ls.quotes.showEditForm(' + data.id + ')" title="' + Lang.get('quotes_update') + '"><i class="fa fa-pencil" style="float: left;" aria-hidden="true"></i></a>\n' +
-				'            <a href="#" onclick="ls.quotes.deleteQuotes(' + data.id + ')" title="' + Lang.get('quotes_delete') + '"><i class="fa fa-trash" style="float: right;" aria-hidden="true"></i></a>\n' +
+				'            <a href="#" onclick="ls.quotes.showEditForm(' + data.id + '); return false;" title="' + Lang.get('quotes_update') + '"><i class="fa fa-pencil" style="float: left;" aria-hidden="true"></i></a>\n' +
+				'            <a href="#" onclick="ls.quotes.deleteQuotes(' + data.id + '); return false;" title="' + Lang.get('quotes_delete') + '"><i class="fa fa-trash" style="float: right;" aria-hidden="true"></i></a>\n' +
 				'        </div>\n' +
 				'    </td>\n' +
 				'</tr>'
 			);
 
 			$('#quotes_list').append(trElement);
+			scrollToQuote(data.id);
 
 			Msg.notice(data.sMsgTitle, data.sMsg);
 		} else {
@@ -77,6 +79,7 @@ export function updateQuotes() {
 	Ajax.ajax(url, params, function (data) {
 		if (!data.bStateError) {
 			$('#field_' + id + ' .quotes_data').html(data_quote);
+			scrollToQuote(id);
 			Msg.notice(data.sMsgTitle, data.sMsg);
 		} else {
 			Msg.error(data.sMsgTitle, data.sMsg);
@@ -102,6 +105,19 @@ export function deleteQuotes(id) {
 			Msg.error(data.sMsgTitle, data.sMsg);
 		}
 	});
+}
+
+export function scrollToQuote(id) {
+	let selectedQuote = $('#field_' + id)
+
+	$('#field_' + g_selectedQuoteId).removeClass('info');
+	selectedQuote.addClass('info');
+
+	g_selectedQuoteId = id;
+
+	$('html, body').animate({
+		scrollTop: selectedQuote.offset().top - 200
+	}, 150);
 }
 
 export function getCountQuotes(value) {

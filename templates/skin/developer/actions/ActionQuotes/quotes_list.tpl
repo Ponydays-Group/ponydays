@@ -4,6 +4,7 @@
 
 <script>
 	var g_quotesCount = {count($aQuotes)};
+	var g_selectedQuoteId = 0;
 </script>
 
 <div class="modal modal-write" id="quotes_form">
@@ -29,7 +30,7 @@
     </form>
 </div>
 
-<a href="javascript:ls.quotes.showAddForm()" class="link-dotted" id="quotes_form_show">{$aLang.quotes_add}</a>
+<a href="javascript:ls.quotes.showAddForm(); return false;" class="link-dotted" id="quotes_form_show">{$aLang.quotes_add}</a>
 
 <table class="table table-hover">
     <thead>
@@ -47,8 +48,8 @@
         <td class="quotes_data">{$aQuote['data']}</td>
         <td>
             <div class="quotes-actions">
-                <a href="#" onclick="ls.quotes.showEditForm({$aQuote['id']})" title="{$aLang.quotes_update}"><i class="fa fa-pencil" style="float:left;" aria-hidden="true"></i></a>
-                <a href="#" onclick="ls.quotes.deleteQuotes({$aQuote['id']})" title="{$aLang.quotes_delete}"><i class="fa fa-trash" style="float:right;" aria-hidden="true"></i></a>
+                <a href="#" onclick="ls.quotes.showEditForm({$aQuote['id']}); return false;" title="{$aLang.quotes_update}"><i class="fa fa-pencil" style="float:left;" aria-hidden="true"></i></a>
+                <a href="#" onclick="ls.quotes.deleteQuotes({$aQuote['id']}); return false;" title="{$aLang.quotes_delete}"><i class="fa fa-trash" style="float:right;" aria-hidden="true"></i></a>
             </div>
         </td>
     </tr>

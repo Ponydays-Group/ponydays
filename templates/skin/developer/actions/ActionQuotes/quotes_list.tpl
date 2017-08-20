@@ -30,7 +30,7 @@
     </form>
 </div>
 
-<a href="javascript:ls.quotes.showAddForm(); return false;" class="link-dotted" id="quotes_form_show">{$aLang.quotes_add}</a>
+<a href="#" onclick="ls.quotes.showAddForm(); return false;" class="link-dotted" id="quotes_form_show">{$aLang.quotes_add}</a>
 
 <table class="table table-hover">
     <thead>

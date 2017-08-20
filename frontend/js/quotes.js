@@ -112,8 +112,6 @@ export function deleteQuotes(id) {
 }
 
 export async function scrollToQuote(id) {
-	console.log("Working!" + id);
-
 	let selectedQuote = $('#field_' + id)
 
 	$('#field_' + g_selectedQuoteId).removeClass('info');

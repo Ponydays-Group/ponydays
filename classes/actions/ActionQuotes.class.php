@@ -51,6 +51,8 @@ class ActionQuotes extends Action {
 		$this->AddEventPreg('/^(page([1-9]\d{0,5}))?$/i', 'EventView');
 		$this->AddEvent('view', 'EventView');
 		$this->AddEvent('edit', 'EventEdit');
+		$this->AddEventPreg('/^([0-9]\d{0,5})?$/i', 'EventFindQuote');
+
 	}
 
 	protected function EventView (): bool {
@@ -125,7 +127,7 @@ class ActionQuotes extends Action {
 				$this->Viewer_SetResponseAjax('json');
 
 				if ($this->Quotes_updateQuote(getRequestStr('id'), getRequestStr('data'))) {
-					$this->Message_AddNotice($this->Lang_Get('quotes_updated'), $this->Lang_Get('attention'));
+					// $this->Message_AddNotice($this->Lang_Get('quotes_updated'), $this->Lang_Get('attention'));
 					return true;
 				}
 
@@ -145,6 +147,20 @@ class ActionQuotes extends Action {
 				$this->Viewer_AddHtmlTitle($this->Lang_Get('quotes_header'));
 				$this->SetTemplateAction('index');
 				return true;
+		}
+	}
+
+	protected function EventFindQuote (): bool {
+		$iQuote = $this->GetEventMatch(1);
+		$iPage = $this->Quotes_getPageById($iQuote);
+		$this->SetTemplateAction('blank');
+
+		if($iPage) {
+			Router::Location(Router::GetPath("quotes") . "page" . $iPage . "/#field_" . $iQuote);
+			return true;
+		} else {
+			Router::SetActionEvent("view");
+			return false;
 		}
 
 	}

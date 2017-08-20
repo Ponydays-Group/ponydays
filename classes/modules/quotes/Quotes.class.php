@@ -138,6 +138,24 @@ class ModuleQuotes extends Module {
 		return 0;
 	}
 
+	public function GetPageById (int $id): int {
+		if($this->IsQuoteExistsById($id)) {
+			$aIds = $this->oMapper->GetIds();
+
+			$iNum = 1;
+			foreach ($aIds as $iId) {
+				if ((int)$iId === $id)
+					break;
+
+				$iNum++;
+			}
+
+			return ceil($iNum / Config::Get('module.quotes.per_page'));
+		}
+
+		return 0;
+	}
+
 	public function GetCount () {
 		return $this->oMapper->GetCount();
 	}

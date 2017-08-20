@@ -125,7 +125,8 @@ export default function init() {
                 }
             }
         });
-        $('#userfield_form').jqm();
+		$('#userfield_form').jqm();
+		$('#quotes_form').jqm();
         $('#favourite-form-tags').jqm();
         $('#modal_write').jqm({
             trigger: '#modal_write_show'

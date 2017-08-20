@@ -1358,5 +1358,17 @@ return array(
 	),
 	'settings_menu_behavior' => 'Поведение',
 	'min_comment_width_behavior_label' => "Минимальная ширина комментария (в пикселях)",
+
+	/* ---- Цитаты ---- */
+	'quotes_added'      => 'Вы добавили новую цитату',
+	'quotes_deleted'    => 'Вы удалили цитату',
+	'quotes_updated'    => 'Вы изменили цитату',
+	'quotes_title_add'  => 'Добавление цитаты',
+	'quotes_add'        => 'Добавить цитату',
+	'quotes_prev'       => 'Предпросмотр',
+	'quotes_header'     => 'Да, это - цитатки! ^_^',
+	'quotes_update'     => 'Изменить цитату',
+	'quotes_delete'     => 'Удалить цитату',
+	'quotes_data'       => 'Текст цитаты',
+	'quotes_delete_confirm' => 'Вы действительно хотите удалить цитату?'
 );
-?>

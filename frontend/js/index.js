@@ -79,6 +79,8 @@ import * as Blocks from './blocks'
 import * as Autocomplete from './autocomplete'
 import Emitter from './emitter'
 import * as Msg from './msg'
+import * as Quotes from './quotes'
+
 
 let ls = {
     ajax: Ajax,
@@ -107,6 +109,7 @@ let ls = {
     autocomplete: Autocomplete,
     emitter: Emitter,
     msg: Msg,
+    quotes: Quotes,
 }
 
 console.log(ls)

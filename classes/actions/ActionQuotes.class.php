@@ -48,7 +48,6 @@ class ActionQuotes extends Action {
 	 */
 	protected function RegisterEvent() {
 		$this->AddEvent('list','EventList');
-		$this->AddEvent('upload','EventUpload');
 
 		// TODO extra
 		// $this->AddEvent('view','EventView');
@@ -113,19 +112,6 @@ class ActionQuotes extends Action {
 				$this->SetTemplateAction('quotes_list');
 				return true;
 		}
-	}
-
-	// Только для заливки из старого цитатника, будет удалено
-	protected function EventUpload (): bool {
-		include('templates/skin/developer/bquote.php');
-
-		foreach ($quote as $data) {
-			echo "fir";
-			$this->Quotes_addQuote($data);
-		}
-
-		echo "Success!";
-		return true;
 	}
 
 }

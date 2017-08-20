@@ -151,7 +151,7 @@ class ActionQuotes extends Action {
 	}
 
 	protected function EventFindQuote (): bool {
-		$iQuote = $this->GetEventMatch(1);
+		$iQuote = (int)$this->GetEventMatch(1);
 		$iPage = $this->Quotes_getPageById($iQuote);
 		$this->SetTemplateAction('blank');
 
@@ -159,7 +159,7 @@ class ActionQuotes extends Action {
 			Router::Location(Router::GetPath("quotes") . "page" . $iPage . "/#field_" . $iQuote);
 			return true;
 		} else {
-			Router::SetActionEvent("view");
+			Router::Location(Router::GetPath("quotes"));
 			return false;
 		}
 

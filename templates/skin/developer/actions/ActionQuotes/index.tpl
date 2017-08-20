@@ -25,10 +25,15 @@
     </form>
 </div>
 
-<h4 class="table-header" style="font-size: 18px;">
+<h4 class="table-header" style="font-size: 18px; float: left;">
     Всего цитат: <i id="quotes_count">{$iCountQuotes}</i>
-    <a href="#" onclick="ls.quotes.showAddForm(); return false;" class="link-dotted" id="quotes_form_show" style="float: right">{$aLang.quotes_add}</a>
+    <p><a href="#" onclick="ls.quotes.showAddForm(); return false;" class="link-dotted" id="quotes_form_show">{$aLang.quotes_add}</a></p>
 </h4>
+
+
+<div style="float: right;">
+    {include file='paging.tpl' aPaging=$aPaging}
+</div>
 
 <table class="table table-hover">
     <thead>
@@ -59,6 +64,11 @@
 	}
 </script>
 
-{include file='paging.tpl' aPaging=$aPaging}
+<h4 class="table-header" style="font-size: 18px; float: left;">
+    <p><a href="#" onclick="ls.quotes.showAddForm(); return false;" class="link-dotted" id="quotes_form_show">{$aLang.quotes_add}</a></p>
+</h4>
+<div style="float: right;">
+    {include file='paging.tpl' aPaging=$aPaging}
+</div>
 
 {include file='footer.tpl'}

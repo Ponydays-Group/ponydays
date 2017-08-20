@@ -54,12 +54,12 @@ class ActionQuotes extends Action {
 	}
 
 	protected function EventView (): bool {
-		// Передан ли номер страницы
-		$iPage = preg_match("/^\d+$/i", $this->GetEventMatch(2)) ? $this->GetEventMatch(2) : 1;
-
-		$aResult = $this->Quotes_getQuotesForPage($iPage, Config::Get('module.quotes.per_page'));
 		$iCountQuotes = $this->Quotes_getCount();
-		
+
+		// Передан ли номер страницы
+		$iPage = preg_match("/^\d+$/i", $this->GetEventMatch(2)) ? $this->GetEventMatch(2) : ceil($iCountQuotes / Config::Get('module.quotes.per_page'));
+		$aResult = $this->Quotes_getQuotesForPage($iPage, Config::Get('module.quotes.per_page'));
+
 		// Формируем постраничность
 		$aPaging = $this->Viewer_MakePaging(
 			$iCountQuotes,

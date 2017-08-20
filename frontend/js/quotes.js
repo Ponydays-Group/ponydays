@@ -63,8 +63,7 @@ export function addQuotes() {
 				'</tr>'
 			);
 
-			$('#quotes_list').prepend(trElement);
-			$('.quote_element:last').remove();
+			$('#quotes_list').append(trElement);
 			scrollToQuote(data.id);
 
 			Msg.notice(data.sMsgTitle, data.sMsg);

@@ -83,9 +83,8 @@ class ModuleQuotes_MapperQuotes extends Mapper {
 					*
 				FROM
 					".Config::Get('db.table.quotes')." 
-				ORDER by id desc
-				LIMIT ?d, ?d
-					";
+				ORDER by id asc
+				LIMIT ?d, ?d";
 
 		if($aQuotes = $this->oDb->select($sql, ($iCurrPage-1)*$iPerPage, $iPerPage))
 			return $aQuotes;

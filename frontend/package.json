@@ -7,7 +7,7 @@
     "webpack:watch": "NODE_ENV=development webpack --config webpack.config.js --progress --profile --colors --watch",
     "webpack:trunk": "NODE_ENV=development webpack --config webpack.config.js --progress --profile --colors",
     "webpack:production": "NODE_ENV=production webpack --config webpack.config.js",
-    "clean": "rm -rf static/*"
+    "clean": "rm -rf ../static/*"
   },
   "repository": {
     "type": "git",

@@ -15,7 +15,7 @@
 		</div>
 
 		Версия фронтэнда: {cfg name='frontend.version'}<br>
-		<a target="_blank" href="https://github.com/lunavod/ponydays/issues">Сообщить об ошибке / Отправить предложение</a>
+		<a target="_blank" href="https://github.com/silvman/ponydays/issues">Сообщить об ошибке / Отправить предложение</a>
 
 		{hook run='footer_end'}
 	</footer>

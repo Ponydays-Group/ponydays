@@ -17,7 +17,7 @@
                 <li {if $sMenuHeadItemSelect=='blogs'}class="active"{/if}><a href="{router page='blogs'}">{$aLang.blogs}</a></li>
                 <li {if $sMenuHeadItemSelect=='people'}class="active"{/if}><a href="{router page='people'}">{$aLang.people}</a></li>
                 <li {if $sMenuHeadItemSelect=='stream'}class="active"{/if}><a href="{router page='stream'}">{$aLang.stream_menu}</a></li>
-                <li {if $sMenuHeadItemSelect=='stream'}class="active"{/if}><a href="{router page='feedbacks'}">{$aLang.feedbacks.header}</a></li>
+                <li {if $sMenuHeadItemSelect=='feedbacks'}class="active"{/if}><a href="{router page='feedbacks'}">{$aLang.feedbacks.header}</a></li>
                 {hook run='main_menu_item'}
 			</ul>
 			<ul class="nav navbar-nav navbar-right">

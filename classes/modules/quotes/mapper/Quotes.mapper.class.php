@@ -78,6 +78,21 @@ class ModuleQuotes_MapperQuotes extends Mapper {
 		return [];
 	}
 
+	public function GetArrayForPage (int $iCurrPage, int $iPerPage): array {
+		$sql ="SELECT
+					*
+				FROM
+					".Config::Get('db.table.quotes')." 
+				ORDER by id desc
+				LIMIT ?d, ?d
+					";
+
+		if($aQuotes = $this->oDb->select($sql, ($iCurrPage-1)*$iPerPage, $iPerPage))
+			return $aQuotes;
+
+		return [];
+	}
+
 	/**
 	 * Возвращает цитату по ID, если существует. Возвращает пустую строку, если нет.
 	 *
@@ -94,6 +109,35 @@ class ModuleQuotes_MapperQuotes extends Mapper {
 		}
 
 		return "";
+	}
+
+	/**
+	 * Возвращает количества элементов в таблице
+	 *
+	 * @return int
+	 */
+	public function GetCount () : int {
+		$sql = "SELECT COUNT(*) FROM " . Config::Get('db.table.quotes');
+
+		return ($this->oDb->query($sql))[0]['COUNT(*)'];
+	}
+
+	/**
+	 * Возвращает массив айдишников. Используется для выбора случайного
+	 *
+	 * @return array
+	 */
+	public function GetIds () : array {
+		$sql = "SELECT id FROM " . Config::Get('db.table.quotes');
+
+		$aIds = [];
+		if ($aRows = $this->oDb->query($sql)) {
+			foreach ($aRows as $aRow) {
+				$aIds[] = $aRow['id'];
+			}
+		}
+
+		return $aIds;
 	}
 
 }

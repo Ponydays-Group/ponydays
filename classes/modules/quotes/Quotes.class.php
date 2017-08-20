@@ -31,7 +31,9 @@ class ModuleQuotes extends Module {
 	 * @return int
 	 */
 	public function AddQuote (string $data): int {
-		if ($data === "")
+		$data = $this->Text_Parser($data);
+
+		if (!func_check($data,'text',2,Config::Get('module.comment.max_length')))
 			return 0;
 
 		return $this->oMapper->Add($data);
@@ -58,7 +60,9 @@ class ModuleQuotes extends Module {
 	 * @return bool
 	 */
 	public function UpdateQuote (int $id, string $data): bool {
-		if ($data === "" || $id === 0)
+		$data = $this->Text_Parser($data);
+
+		if ($id === 0 || !func_check($data,'text',2,Config::Get('module.comment.max_length')))
 			return false;
 
 		if ($this->GetQuoteById($id) === $data)
@@ -76,17 +80,19 @@ class ModuleQuotes extends Module {
 		return $this->oMapper->GetArray();
 	}
 
+	public function GetQuotesForPage (int $iCurrPage, int $iPerPage): array {
+		return $this->oMapper->GetArrayForPage($iCurrPage, $iPerPage);
+	}
+
 	/**
 	 * Возвращает случайную цитату
 	 *
 	 * @return string
 	 */
 	public function GetRandomQuote (): string {
-		$aQuotes = $this->GetQuotes();
-
-		if ($aQuotes !== []) {
+		if ($id = $this->GetRandomId()) {
 			srand((double)microtime() * 1000000);
-			return $aQuotes[rand(0, count($aQuotes))]['data'];
+			return($this->GetQuoteById($id));
 		}
 
 		return "";
@@ -115,4 +121,26 @@ class ModuleQuotes extends Module {
 	public function GetQuoteById (int $id): string {
 		return $this->oMapper->GetById($id);
 	}
+
+	/**
+	 * Возвращает рандомноайдишник
+	 *
+	 * @return int
+	 */
+	public function GetRandomId (): int {
+		$aIds = $this->oMapper->GetIds();
+
+		if($aIds !== []) {
+			srand((double)microtime() * 1000000);
+			return $aIds[rand(0, $this->oMapper->GetCount())];
+		}
+
+		return 0;
+	}
+
+	public function GetCount () {
+		return $this->oMapper->GetCount();
+	}
+
+
 }

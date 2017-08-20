@@ -4,6 +4,8 @@ import Emitter from './emitter'
 import $ from 'jquery'
 import * as Ajax from './ajax'
 
+export let g_selectedQuoteId = 0;
+
 export function showAddForm() {
 	$('#quotes_form_data').val('');
 	$('#quotes_form_id').val('');
@@ -39,16 +41,18 @@ export function applyForm() {
 
 export function addQuotes() {
 	let data_quote = $('#quotes_form_data').val();
-	let url = aRouter['quotes'] + 'list';
+	let url = aRouter['quotes'] + 'edit';
 	let params = {'action': 'add', 'data': data_quote};
 
 	Ajax.ajax(url, params, function (data) {
-		g_quotesCount++;
+		let counter = $('#quotes_count');
+		counter.html(+counter.html() + 1);
 
 		if (!data.bStateError) {
+			window.location.href = aRouter['quotes'] + "#field_" + data.id;
+
 			let trElement = $(
-				'<tr id="field_' + data.id + '">\n' +
-				'    <td>' + g_quotesCount + '</td>\n' +
+				'<tr id="field_' + data.id + '" class="quote_element">\n' +
 				'    <td class="quotes_data">' + data_quote + '</td>\n' +
 				'    <td>\n' +
 				'        <div class="quotes-actions">\n' +
@@ -59,7 +63,8 @@ export function addQuotes() {
 				'</tr>'
 			);
 
-			$('#quotes_list').append(trElement);
+			$('#quotes_list').prepend(trElement);
+			$('.quote_element:last').remove();
 			scrollToQuote(data.id);
 
 			Msg.notice(data.sMsgTitle, data.sMsg);
@@ -73,7 +78,7 @@ export function updateQuotes() {
 	let data_quote = $('#quotes_form_data').val();
 	let id = $('#quotes_form_id').val();
 
-	let url = aRouter['quotes'] + 'list';
+	let url = aRouter['quotes'] + 'edit';
 	let params = {'action': 'update', 'id': id, 'data': data_quote};
 
 	Ajax.ajax(url, params, function (data) {
@@ -94,7 +99,7 @@ export function deleteQuotes(id) {
 		return;
 	}
 
-	let url = aRouter['quotes'] + 'list';
+	let url = aRouter['quotes'] + 'edit';
 	let params = {'action': 'delete', 'id': id};
 
 	Ajax.ajax(url, params, function (data) {
@@ -107,7 +112,9 @@ export function deleteQuotes(id) {
 	});
 }
 
-export function scrollToQuote(id) {
+export async function scrollToQuote(id) {
+	console.log("Working!" + id);
+
 	let selectedQuote = $('#field_' + id)
 
 	$('#field_' + g_selectedQuoteId).removeClass('info');
@@ -118,16 +125,4 @@ export function scrollToQuote(id) {
 	$('html, body').animate({
 		scrollTop: selectedQuote.offset().top - 200
 	}, 150);
-}
-
-export function getCountQuotes(value) {
-	/*
-	$('#user-field-contact-contener').find('select').each(function (k, v) {
-		if (value == $(v).val()) {
-			iCount++;
-		}
-	});
-	*/
-
-	return g_quotesCount;
 }

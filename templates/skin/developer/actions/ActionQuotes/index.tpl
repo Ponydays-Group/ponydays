@@ -2,11 +2,6 @@
 
 <h2 class="page-header">{$aLang.quotes_header}</h2>
 
-<script>
-	var g_quotesCount = {count($aQuotes)};
-	var g_selectedQuoteId = 0;
-</script>
-
 <div class="modal modal-write" id="quotes_form">
     <header class="modal-header">
         <h3>{$aLang.quotes_title_add}</h3>
@@ -30,21 +25,22 @@
     </form>
 </div>
 
-<a href="#" onclick="ls.quotes.showAddForm(); return false;" class="link-dotted" id="quotes_form_show">{$aLang.quotes_add}</a>
+<h4 class="table-header" style="font-size: 18px;">
+    Всего цитат: <i id="quotes_count">{$iCountQuotes}</i>
+    <a href="#" onclick="ls.quotes.showAddForm(); return false;" class="link-dotted" id="quotes_form_show" style="float: right">{$aLang.quotes_add}</a>
+</h4>
 
 <table class="table table-hover">
     <thead>
     <tr>
-        <th class="col-sm-1">Номер</th>
-        <th class="col-sm-10">Цитата</th>
+        <th class="col-sm-11">Цитата</th>
         <th class="col-sm-1" style="text-align: center">Опции</th>
     </tr>
     </thead>
 
     <tbody id="quotes_list">
-    {foreach from=$aQuotes item=aQuote key=iNum}
-    <tr id="field_{$aQuote['id']}">
-        <td>{$iNum + 1}</td>
+    {foreach from=$aQuotes item=aQuote}
+    <tr id="field_{$aQuote['id']}" class="quote_element">
         <td class="quotes_data">{$aQuote['data']}</td>
         <td>
             <div class="quotes-actions">
@@ -56,5 +52,13 @@
     {/foreach}
     </tbody>
 </table>
+
+<script>
+	if (location.hash.startsWith('#field_')) {
+		setTimeout(ls.quotes.scrollToQuote(location.hash.replace('#field_', '')), 2000);
+	}
+</script>
+
+{include file='paging.tpl' aPaging=$aPaging}
 
 {include file='footer.tpl'}

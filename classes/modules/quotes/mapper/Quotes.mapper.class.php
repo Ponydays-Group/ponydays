@@ -29,13 +29,16 @@ class ModuleQuotes_MapperQuotes extends Mapper {
 	}
 
 	/**
-	 * Удаляет цитату из таблицы
+	 * Помечает цитату удалённой
 	 *
 	 * @param int $id
 	 * @return bool
 	 */
 	public function Delete (int $id): bool {
-		$sql = "DELETE FROM " . Config::Get('db.table.quotes') . " WHERE id = ? ";
+		$sql = "UPDATE " . Config::Get('db.table.quotes') . " 
+			SET deleted = 1 
+			WHERE id = ?d
+		";
 
 		if ($this->oDb->query($sql, $id)) {
 			return true;
@@ -51,7 +54,7 @@ class ModuleQuotes_MapperQuotes extends Mapper {
 	 * @param string $data
 	 * @return bool
 	 */
-	public function Update (int $id, string $data) {
+	public function Update (int $id, string $data) : bool {
 		$sql = "UPDATE " . Config::Get('db.table.quotes') . " 
 			SET data = ? 
 			WHERE id = ?d
@@ -65,31 +68,69 @@ class ModuleQuotes_MapperQuotes extends Mapper {
 	}
 
 	/**
-	 * Возвращает массив всех цитат в таблице
+	 * Убирает флаг удаления
 	 *
-	 * @return array
+	 * @param int $id
+	 * @return bool
 	 */
-	public function GetArray (): array {
-		$sql = "SELECT * FROM " . Config::Get('db.table.quotes');
-		if ($aQuotes = $this->oDb->select($sql)) {
-			return $aQuotes;
+	public function Restore (int $id): bool {
+		$sql = "UPDATE " . Config::Get('db.table.quotes') . " 
+			SET deleted = 0 
+			WHERE id = ?d
+		";
+
+		if ($this->oDb->query($sql, $id)) {
+			return true;
 		}
 
-		return [];
+		return false;
 	}
 
+	/**
+	 * Возвращает массив цитат в таблице
+	 *
+	 * @param bool
+	 * @return array
+	 */
+	public function GetArray (bool $bDeleted = false): array {
+		if($bDeleted)
+			$sql = "SELECT * FROM " . Config::Get('db.table.quotes') . " WHERE deleted = 1";
+		else
+			$sql = "SELECT * FROM " . Config::Get('db.table.quotes') . " WHERE deleted = 0";
+
+		$aQuotes = [];
+
+		if ($aRows = $this->oDb->select($sql)) {
+			foreach ($aRows as $aRow) {
+				$aQuotes[$aRow['id']] = $aRow['data'];
+			}
+		}
+
+		return $aQuotes;
+	}
+
+	/**
+	 * @param int $iCurrPage
+	 * @param int $iPerPage
+	 * @return array
+	 */
 	public function GetArrayForPage (int $iCurrPage, int $iPerPage): array {
 		$sql ="SELECT
 					*
 				FROM
 					".Config::Get('db.table.quotes')." 
+				WHERE deleted = 0
 				ORDER by id asc
 				LIMIT ?d, ?d";
 
-		if($aQuotes = $this->oDb->select($sql, ($iCurrPage-1)*$iPerPage, $iPerPage))
-			return $aQuotes;
+		$aQuotes = [];
+		if($aRows = $this->oDb->select($sql, ($iCurrPage-1)*$iPerPage, $iPerPage)) {
+			foreach ($aRows as $aRow) {
+				$aQuotes[$aRow['id']] = $aRow['data'];
+			}
+		}
 
-		return [];
+		return $aQuotes;
 	}
 
 	/**
@@ -100,7 +141,7 @@ class ModuleQuotes_MapperQuotes extends Mapper {
 	 */
 	public function GetById (int $id): string {
 		$sql = "SELECT data FROM " . Config::Get('db.table.quotes') . "
-			WHERE id = ?
+			WHERE id = ? AND deleted = 0
 		";
 
 		if ($aRows = $this->oDb->query($sql, $id)) {
@@ -116,9 +157,9 @@ class ModuleQuotes_MapperQuotes extends Mapper {
 	 * @return int
 	 */
 	public function GetCount () : int {
-		$sql = "SELECT COUNT(*) FROM " . Config::Get('db.table.quotes');
+		$sql = "SELECT COUNT(*) FROM " . Config::Get('db.table.quotes') . " WHERE deleted = 0";
 
-		return ($this->oDb->query($sql))[0]['COUNT(*)'];
+		return (int)($this->oDb->query($sql))[0]['COUNT(*)'];
 	}
 
 	/**
@@ -127,7 +168,7 @@ class ModuleQuotes_MapperQuotes extends Mapper {
 	 * @return array
 	 */
 	public function GetIds () : array {
-		$sql = "SELECT id FROM " . Config::Get('db.table.quotes');
+		$sql = "SELECT id FROM " . Config::Get('db.table.quotes') . " WHERE deleted = 0";
 
 		$aIds = [];
 		if ($aRows = $this->oDb->query($sql)) {

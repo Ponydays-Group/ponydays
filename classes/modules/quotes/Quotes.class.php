@@ -40,7 +40,7 @@ class ModuleQuotes extends Module {
 	}
 
 	/**
-	 * Удаление цитаты
+	 * Безопасное удаление цитаты
 	 *
 	 * @param int $id
 	 * @return bool
@@ -50,6 +50,19 @@ class ModuleQuotes extends Module {
 			return false;
 
 		return $this->oMapper->Delete($id);
+	}
+
+	/**
+	 * Восстановление цитаты
+	 *
+	 * @param int $id
+	 * @return bool
+	 */
+	public function RestoreQuote (int $id): bool {
+		if($id === 0)
+			return false;
+
+		return $this->oMapper->Restore($id);
 	}
 
 	/**
@@ -72,7 +85,7 @@ class ModuleQuotes extends Module {
 	}
 
 	/**
-	 * Возвращает массив всех цитат
+	 * Возвращает массив всех неудалённых цитат
 	 *
 	 * @return array
 	 */
@@ -80,6 +93,13 @@ class ModuleQuotes extends Module {
 		return $this->oMapper->GetArray();
 	}
 
+	/**
+	 * Возвращает цитаты для постраничного вывода
+	 *
+	 * @param int $iCurrPage
+	 * @param int $iPerPage
+	 * @return array
+	 */
 	public function GetQuotesForPage (int $iCurrPage, int $iPerPage): array {
 		return $this->oMapper->GetArrayForPage($iCurrPage, $iPerPage);
 	}
@@ -138,6 +158,12 @@ class ModuleQuotes extends Module {
 		return 0;
 	}
 
+	/**
+	 * Возвращает страницу, на которой располагается цитата
+	 *
+	 * @param int $id
+	 * @return int
+	 */
 	public function GetPageById (int $id): int {
 		if($this->IsQuoteExistsById($id)) {
 			$aIds = $this->oMapper->GetIds();
@@ -156,7 +182,21 @@ class ModuleQuotes extends Module {
 		return 0;
 	}
 
-	public function GetCount () {
+	/**
+	 * Возвращает массив удалённых цитат
+	 *
+	 * @return array
+	 */
+	public function GetDeletedQuotes (): array {
+		return $this->oMapper->GetArray( /* $bDeleted */ true);
+	}
+
+	/**
+	 * Возвращает количество цитат
+	 *
+	 * @return int
+	 */
+	public function GetCount (): int {
 		return $this->oMapper->GetCount();
 	}
 

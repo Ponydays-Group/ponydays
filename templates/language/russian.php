@@ -1367,6 +1367,8 @@ return array(
 	'quotes_title_add'  => 'Добавление цитаты',
 	'quotes_add'        => 'Добавить цитату',
 	'quotes_prev'       => 'Предпросмотр',
+	'quotes_trash'      => 'Корзина цитат',
+	'quotes_restore'    => 'Восстановить цитату',
 	'quotes_header'     => 'Да, это — цитатки! ^_^',
 	'quotes_update'     => 'Изменить цитату',
 	'quotes_delete'     => 'Удалить цитату',

@@ -2,6 +2,7 @@
 
 <h2 class="page-header">{$aLang.quotes_header}</h2>
 
+{if $bIsAdmin}
 <div class="modal modal-write" id="quotes_form">
     <header class="modal-header">
         <h3>{$aLang.quotes_title_add}</h3>
@@ -24,10 +25,14 @@
         </div>
     </form>
 </div>
+{/if}
 
 <h4 class="table-header" style="font-size: 18px; float: left;">
     Всего цитат: <i id="quotes_count">{$iCountQuotes}</i>
-    <p><a href="#" onclick="ls.quotes.showAddForm(); return false;" class="link-dotted" id="quotes_form_show">{$aLang.quotes_add}</a></p>
+    {if $bIsAdmin}
+    <p><a href="#" onclick="ls.quotes.showAddForm(); return false;" class="link-dotted" id="quotes_form_show">{$aLang.quotes_add}</a>&nbsp;
+    <a href="{cfg name="path.root.web"}/quotes/deleted/" class="link-dotted" id="quotes_form_show">{$aLang.quotes_trash}</a></p>
+    {/if}
 </h4>
 
 
@@ -39,23 +44,27 @@
     <thead>
     <tr>
         <th class="col-sm-11">Цитата</th>
-        <th class="col-sm-1" style="text-align: center">Опции</th>
+        <th class="col-sm-1" {if $bIsAdmin} style="text-align: center" {else}  style="text-align: right" {/if}>Опции</th>
     </tr>
     </thead>
 
     <tbody id="quotes_list">
-    {foreach from=$aQuotes item=aQuote}
-    <tr id="field_{$aQuote['id']}" class="quote_element">
-        <td class="quotes_data">{$aQuote['data']}</td>
+    {foreach from=$aQuotes key=iKey item=sData}
+    <tr id="field_{$iKey}" class="quote_element">
+        <td class="quotes_data">{$sData}</td>
         <td>
             <div class="quotes-actions">
-                <span style="float: left">
-                    <a href="#" onclick="ls.quotes.showEditForm({$aQuote['id']}); return false;" title="{$aLang.quotes_update}"><i class="fa fa-pencil" style="float:left;" aria-hidden="true"></i></a>
-                    &nbsp;
-                    <a href="#" onclick="prompt('{$aLang.quotes_link}', '{cfg name='path.root.web'}/quotes/{$aQuote['id']}'); return false;" title="{$aLang.quotes_link}"><i class="fa fa-hashtag" aria-hidden="true"></i></a>
-                </span>
+                {if $bIsAdmin}
+                    <span style="float: left">
+                        <a href="#" onclick="ls.quotes.showEditForm({$iKey}); return false;" title="{$aLang.quotes_update}"><i class="fa fa-pencil" style="float:left;" aria-hidden="true"></i></a>
+                        &nbsp;
+                        <a href="#" onclick="prompt('{$aLang.quotes_link}', '{cfg name='path.root.web'}/quotes/{$iKey}'); return false;" title="{$aLang.quotes_link}"><i class="fa fa-hashtag" aria-hidden="true"></i></a>
+                    </span>
 
-                <a href="#" onclick="ls.quotes.deleteQuotes({$aQuote['id']}); return false;" title="{$aLang.quotes_delete}"><i class="fa fa-trash" style="float:right;" aria-hidden="true"></i></a>
+                    <a href="#" onclick="ls.quotes.deleteQuotes({$iKey}); return false;" title="{$aLang.quotes_delete}"><i class="fa fa-trash" style="float:right;" aria-hidden="true"></i></a>
+                {else}
+                    <a href="#" onclick="prompt('{$aLang.quotes_link}', '{cfg name='path.root.web'}/quotes/{$iKey}'); return false;" title="{$aLang.quotes_link}"><i class="fa fa-hashtag" style="float:right;" aria-hidden="true"></i></a>
+                {/if}
             </div>
         </td>
     </tr>
@@ -69,9 +78,12 @@
 	}
 </script>
 
+{if $bIsAdmin}
 <h4 class="table-header" style="font-size: 18px; float: left;">
     <p><a href="#" onclick="ls.quotes.showAddForm(); return false;" class="link-dotted" id="quotes_form_show">{$aLang.quotes_add}</a></p>
 </h4>
+{/if}
+
 <div style="float: right;">
     {include file='paging.tpl' aPaging=$aPaging}
 </div>

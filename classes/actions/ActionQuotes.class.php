@@ -29,15 +29,9 @@ class ActionQuotes extends Action {
 		$this->oUserCurrent = $this->User_GetUserCurrent();
 
 		if ($this->User_IsAuthorization() && $this->oUserCurrent) {
-			// А можете ли вы админить цитатник? >_>
-
-			$aQuotesAdmins = Config::Get('quotes_admin');
-			foreach ($aQuotesAdmins as $iId) {
-				if ((int)$this->oUserCurrent->getId() === $iId) {
-					$this->SetDefaultEvent('view');
-					return "";
-				}
-			}
+			$this->SetDefaultEvent('view');
+			$this->Viewer_Assign('sMenuHeadItemSelect', $this->sMenuHeadItemSelect);
+			return "";
 		}
 
 		return parent::EventNotFound();
@@ -50,11 +44,17 @@ class ActionQuotes extends Action {
 	protected function RegisterEvent () {
 		$this->AddEventPreg('/^(page([1-9]\d{0,5}))?$/i', 'EventView');
 		$this->AddEvent('view', 'EventView');
+		$this->AddEvent('deleted', 'EventTrash');
 		$this->AddEvent('edit', 'EventEdit');
 		$this->AddEventPreg('/^([0-9]\d{0,5})?$/i', 'EventFindQuote');
 
 	}
 
+	/**
+	 * Эвент просмотра цитатника
+	 *
+	 * @return bool
+	 */
 	protected function EventView (): bool {
 		$iCountQuotes = $this->Quotes_getCount();
 
@@ -84,6 +84,7 @@ class ActionQuotes extends Action {
 		// Передаем в шаблон цитатки
 		$this->Viewer_Assign('aPaging', $aPaging);
 		$this->Viewer_Assign('aQuotes', $aResult);
+		$this->Viewer_Assign('bIsAdmin', $this->IsAnAdmin());
 		$this->Viewer_Assign('iCountQuotes', $iCountQuotes);
 
 		$this->Viewer_AddHtmlTitle($this->Lang_Get('quotes_header'));
@@ -97,6 +98,12 @@ class ActionQuotes extends Action {
 	 * @return bool
 	 */
 	protected function EventEdit (): bool {
+		if (!$this->IsAnAdmin()) {
+			$this->SetTemplateAction('blank');
+			echo "Permission denied.";
+			return Router::Action('error');
+		}
+
 		switch (getRequestStr('action')) {
 			// Создаём цитату
 			case 'add':
@@ -137,6 +144,19 @@ class ActionQuotes extends Action {
 				$this->Message_AddError($this->Lang_Get('quotes_error'), $this->Lang_Get('error'));
 				return false;
 
+			// восстановление удалённой цитаты
+			case 'restore':
+				$this->Viewer_SetResponseAjax('json');
+
+				if ($this->Quotes_restoreQuote(getRequestStr('id'))) {
+					$this->Message_AddNotice($this->Lang_Get('quotes_added'), $this->Lang_Get('attention'));
+					return true;
+				}
+
+				$this->Message_AddError($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+				return false;
+
+
 			// Дефолтная страница со списком цитат
 			default:
 				// Загружаем в шаблон языковые данные
@@ -147,12 +167,59 @@ class ActionQuotes extends Action {
 
 				// Передаем в шаблон цитатки
 				$this->Viewer_Assign('aQuotes', $this->Quotes_getQuotes());
+				$this->Viewer_Assign('bIsAdmin', $this->IsAnAdmin());
 				$this->Viewer_AddHtmlTitle($this->Lang_Get('quotes_header'));
 				$this->SetTemplateAction('index');
 				return true;
 		}
 	}
 
+	/**
+	 * Эвент корзины
+	 *
+	 * @return bool|string
+	 */
+	protected function EventTrash () {
+		if (!$this->IsAnAdmin()) {
+			$this->SetTemplateAction('blank');
+			return Router::Action('error');
+		}
+
+
+		$this->Lang_AddLangJs(array ('quotes_add', 'quotes_restore'));
+
+		// Выключаем сайдбар
+		$this->Viewer_Assign('noSidebar', true);
+
+		// Передаем в шаблон цитатки
+		$this->Viewer_Assign('aQuotes', $this->Quotes_getDeletedQuotes());
+		$this->Viewer_AddHtmlTitle($this->Lang_Get('quotes_trash'));
+		$this->SetTemplateAction('trash');
+
+		return true;
+	}
+
+	/**
+	 * Проверка, является ли пользователь администратором цитатника
+	 *
+	 * @return bool
+	 */
+	protected function IsAnAdmin (): bool {
+		$aQuotesAdmins = Config::Get('quotes_admin');
+		foreach ($aQuotesAdmins as $iId) {
+			if ((int)$this->oUserCurrent->getId() === $iId) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Эвент, определяющий страницу, на которой располагается цитата
+	 *
+	 * @return bool
+	 */
 	protected function EventFindQuote (): bool {
 		$iQuote = (int)$this->GetEventMatch(1);
 		$iPage = $this->Quotes_getPageById($iQuote);
@@ -165,7 +232,6 @@ class ActionQuotes extends Action {
 			Router::Location(Router::GetPath("quotes"));
 			return false;
 		}
-
 	}
 
 }

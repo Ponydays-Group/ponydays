@@ -5,8 +5,6 @@
 
 
     <div class="block-content">
-        <blockquote class="sidebar-quote">
-            {hook run="quotes_generator"}
-        </blockquote>
+        {hook run="quotes_generator"}
     </div>
 </section>

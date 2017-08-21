@@ -1,4 +1,4 @@
-tmp/
+tmp/*
 logs/*
 uploads/
 templates/compiled/

@@ -473,6 +473,9 @@ export default function init() {
             .topic-author-avatar {
                 border-radius: 0px !important;
             }
+            .topic.topic-type-talk .topic-header .topic-info .avatar {
+                border-radius: 0px !important;
+            }
             </style>
             `)
         }

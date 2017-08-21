@@ -402,9 +402,9 @@ return array(
 	'comment_favourite_del' => 'удалить из избранного',
 	'comment_favourite_del_ok' => 'Комментарий удален из избранного',
 	/**
-	 * Люди
+	 * Пони
 	 */
-	'people' => 'Люди',
+	'people' => 'Пони',
 	/**
 	 * Пользователь
 	 */
@@ -864,7 +864,7 @@ return array(
 	 * Userfeed
 	 */
 	'userfeed_block_blogs_title' => 'Фильтр блогов',
-	'userfeed_block_users_title' => 'Люди',
+	'userfeed_block_users_title' => 'Пони',
 	'userfeed_block_users_append' => 'Добавить',
 	'userfeed_block_users_friends' => 'Друзья',
 	'userfeed_subscribes_already_subscribed' => 'Вы уже подписаны на топики этого пользователя',
@@ -872,7 +872,7 @@ return array(
 	'userfeed_get_more' => 'Получить ещё топики',
 	'userfeed_title' => 'Избранные блоги',
 	'userfeed_settings_note_follow_blogs' => 'Выберите блоги которые вы хотели бы убрать из ленты',
-	'userfeed_settings_note_follow_user' => 'Добавьте людей, топики которых вы хотели бы заблокировать в ленте',
+	'userfeed_settings_note_follow_user' => 'Добавьте поней, топики которых вы хотели бы заблокировать в ленте',
 	'userfeed_settings_note_follow_friend' => 'Выберите друзей, топики которых вы хотели бы читать',
 	'userfeed_no_subscribed_users' => 'Вы ещё не подписались на пользователей, чьи топики хотите видеть',
 	'userfeed_no_blogs' => 'Вы не вступили ни в один блог',
@@ -881,7 +881,7 @@ return array(
 	 * Stream
 	 */
 	'stream_block_config_title' => 'Настройка событий',
-	'stream_block_users_title' => 'Люди',
+	'stream_block_users_title' => 'Пони',
 	'stream_block_config_append' => 'Добавить',
 	'stream_block_users_friends' => 'Друзья',
 	'stream_subscribes_already_subscribed' => 'Вы уже подписаны на этого пользователя',
@@ -927,7 +927,7 @@ return array(
 	'stream_menu_all' => 'Вся',
 	'stream_menu_user' => 'Я слежу',
 	'stream_settings_note_filter' => 'Выберите действия которые будут отслеживаться',
-	'stream_settings_note_follow_user' => 'Добавьте людей за активностью которых вы хотели бы следить',
+	'stream_settings_note_follow_user' => 'Добавьте поней за активностью которых вы хотели бы следить',
 	'stream_settings_note_follow_friend' => 'Выберите друзей за активностью которых вы хотели бы следить',
 	/**
 	 * Админка
@@ -1366,6 +1366,7 @@ return array(
 	'quotes_updated'    => 'Вы изменили цитату',
 	'quotes_title_add'  => 'Добавление цитаты',
 	'quotes_add'        => 'Добавить цитату',
+	'quotes_title'      => 'Цитаты',
 	'quotes_prev'       => 'Предпросмотр',
 	'quotes_trash'      => 'Корзина цитат',
 	'quotes_restore'    => 'Восстановить цитату',

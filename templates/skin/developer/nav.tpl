@@ -19,7 +19,7 @@
                 <li {if $sMenuHeadItemSelect=='stream'}class="active"{/if}><a href="{router page='stream'}">{$aLang.stream_menu}</a></li>
                 <li {if $sMenuHeadItemSelect=='feedbacks'}class="active"{/if}><a href="{router page='feedbacks'}">{$aLang.feedbacks.header}</a></li>
                 {if $oUserCurrent}
-				<li {if $sMenuHeadItemSelect=='quotes'}class="active"{/if}><a href="{router page='quotes'}">{$aLang.quotes_header}</a></li>
+				<li {if $sMenuHeadItemSelect=='quotes'}class="active"{/if}><a href="{router page='quotes'}">{$aLang.quotes_title}</a></li>
 				{/if}
                 {hook run='main_menu_item'}
 			</ul>

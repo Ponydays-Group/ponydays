@@ -56,8 +56,9 @@ export function addQuotes() {
 				'    <td class="quotes_data">' + data_quote + '</td>\n' +
 				'    <td>\n' +
 				'        <div class="quotes-actions">\n' +
-				'            <a href="#" onclick="ls.quotes.showEditForm(' + data.id + '); return false;" title="' + Lang.get('quotes_update') + '"><i class="fa fa-pencil" style="float: left;" aria-hidden="true"></i></a>\n' +
-				'            <a href="#" onclick="ls.quotes.deleteQuotes(' + data.id + '); return false;" title="' + Lang.get('quotes_delete') + '"><i class="fa fa-trash" style="float: right;" aria-hidden="true"></i></a>\n' +
+				'           <a href="#" onclick="prompt("' + Lang.get('quotes_link') + '", ' + DIR_WEB_ROOT + '/quotes/' + data.id + '); return false;" title="{$aLang.quotes_link}"><i class="fa fa-hashtag" aria-hidden="true"></i></a>\n' +
+				'			<a href="#" onclick="ls.quotes.showEditForm(' + data.id + '); return false;" title="' + Lang.get('quotes_update') + '"><i class="fa fa-pencil" style="float: left;" aria-hidden="true"></i></a>\n' +
+				'           <a href="#" onclick="ls.quotes.deleteQuotes(' + data.id + '); return false;" title="' + Lang.get('quotes_delete') + '"><i class="fa fa-trash" style="float: right;" aria-hidden="true"></i></a>\n' +
 				'        </div>\n' +
 				'    </td>\n' +
 				'</tr>'
@@ -103,6 +104,9 @@ export function deleteQuotes(id) {
 
 	Ajax.ajax(url, params, function (data) {
 		if (!data.bStateError) {
+			let counter = $('#quotes_count');
+			counter.html(+counter.html() - 1);
+
 			$('#field_' + id).remove();
 			Msg.notice(data.sMsgTitle, data.sMsg);
 		} else {

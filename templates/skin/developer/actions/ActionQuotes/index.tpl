@@ -49,7 +49,12 @@
         <td class="quotes_data">{$aQuote['data']}</td>
         <td>
             <div class="quotes-actions">
-                <a href="#" onclick="ls.quotes.showEditForm({$aQuote['id']}); return false;" title="{$aLang.quotes_update}"><i class="fa fa-pencil" style="float:left;" aria-hidden="true"></i></a>
+                <span style="float: left">
+                    <a href="#" onclick="ls.quotes.showEditForm({$aQuote['id']}); return false;" title="{$aLang.quotes_update}"><i class="fa fa-pencil" style="float:left;" aria-hidden="true"></i></a>
+                    &nbsp;
+                    <a href="#" onclick="prompt('{$aLang.quotes_link}', '{cfg name='path.root.web'}/quotes/{$aQuote['id']}'); return false;" title="{$aLang.quotes_link}"><i class="fa fa-hashtag" aria-hidden="true"></i></a>
+                </span>
+
                 <a href="#" onclick="ls.quotes.deleteQuotes({$aQuote['id']}); return false;" title="{$aLang.quotes_delete}"><i class="fa fa-trash" style="float:right;" aria-hidden="true"></i></a>
             </div>
         </td>

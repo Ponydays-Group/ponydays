@@ -1371,5 +1371,6 @@ return array(
 	'quotes_update'     => 'Изменить цитату',
 	'quotes_delete'     => 'Удалить цитату',
 	'quotes_data'       => 'Текст цитаты',
+	'quotes_link'       => 'Ссылка на цитату',
 	'quotes_delete_confirm' => 'Вы действительно хотите удалить цитату?'
 );

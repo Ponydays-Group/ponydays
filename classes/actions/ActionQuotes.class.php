@@ -73,7 +73,10 @@ class ActionQuotes extends Action {
 		);
 
 		// Загружаем в шаблон языковые данные
-		$this->Lang_AddLangJs(array ('quotes_delete_confirm', 'quotes_add', 'quotes_update', 'quotes_delete'));
+		$this->Lang_AddLangJs(array (
+			'quotes_link', 'quotes_delete_confirm', 'quotes_add',
+			'quotes_update', 'quotes_delete', 'quotes_deleted',
+			'quotes_updated', 'quotes_added'));
 
 		// Выключаем сайдбар
 		$this->Viewer_Assign('noSidebar', true);
@@ -127,7 +130,7 @@ class ActionQuotes extends Action {
 				$this->Viewer_SetResponseAjax('json');
 
 				if ($this->Quotes_updateQuote(getRequestStr('id'), getRequestStr('data'))) {
-					// $this->Message_AddNotice($this->Lang_Get('quotes_updated'), $this->Lang_Get('attention'));
+					$this->Message_AddNotice($this->Lang_Get('quotes_updated'), $this->Lang_Get('attention'));
 					return true;
 				}
 
@@ -137,7 +140,7 @@ class ActionQuotes extends Action {
 			// Дефолтная страница со списком цитат
 			default:
 				// Загружаем в шаблон языковые данные
-				$this->Lang_AddLangJs(array ('quotes_delete_confirm', 'quotes_add', 'quotes_update', 'quotes_delete'));
+				$this->Lang_AddLangJs(array ('quotes_link', 'quotes_delete_confirm', 'quotes_add', 'quotes_update', 'quotes_delete'));
 
 				// Выключаем сайдбар
 				$this->Viewer_Assign('noSidebar', true);

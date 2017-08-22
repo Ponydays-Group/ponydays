@@ -93,7 +93,7 @@ $sidebar-text-a: #aaa;
 @import "./amazium/form";
 @import "./themes/base/all";
 
-.checkbox input + label:before { background-color: $search-background; border-color: #67737a; }
+.checkbox input + label:before { background-color: $background-color; border-color: #696969; }
 
 .table tr.active td,
 .table tr.info td               { background: $main-active-color !important; }

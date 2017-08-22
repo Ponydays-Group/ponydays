@@ -94,3 +94,8 @@ $sidebar-text-a: #aaa;
 @import "./themes/base/all";
 
 .checkbox input + label:before { background-color: $search-background; border-color: #67737a; }
+
+.table tr.active td,
+.table tr.info td               { background: $main-active-color !important; }
+.table tbody tr.info:hover td   { background: $main-active-hover-color !important; }
+.table tbody tr:hover td        { background: $main-accent-fourth; }

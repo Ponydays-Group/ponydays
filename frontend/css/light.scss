@@ -14,6 +14,7 @@ $userbar-hover-background: darken($userbar-background, 5%);
 $content-background: #fff;
 
 $text-color: black;
+$text-notice-color: black;
 $stream-text-color: white;
 
 $stream-item-border: #eee;
@@ -30,6 +31,11 @@ $main-accent-third: #ddd;
 $main-accent-fourth: #eee;
 $main-accent-fifth: #fff;
 
+$attention-text: #333;
+
+$main-active-color: inherit;
+$main-active-hover-color: inherit;
+
 $spoiler-background: #e6e6e6;
 
 $image-opacity: 1;
@@ -44,7 +50,10 @@ $pre-background: #fafafa;
 $blockquote-background: #fafafa;
 $blockquote-border: #eee;
 
+$image-under-photo: url('//static.lunavod.ru/img/aac766f9db4ecd88b1a49b848c86ca18b7386473.jpg');
 
+$sidebar-text: #707b82;
+$sidebar-text-a: #67737a;
 
 @mixin placeholder ($rules) {
 

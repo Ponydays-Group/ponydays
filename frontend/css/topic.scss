@@ -219,7 +219,7 @@
 /* Poll */
 .topic .poll {
     margin-bottom: 15px;
-    background: #fafafa;
+    background: $secondary-accent;
     padding: 15px;
 }
 
@@ -252,8 +252,8 @@
     margin-left: 0;
     list-style-type: none;
     padding: 15px 15px 0;
-    background: #fff;
-    border: 1px solid #eee;
+    background: $accent;
+    border: 1px solid $main-accent-second;
 }
 
 .topic .poll .poll-result li {

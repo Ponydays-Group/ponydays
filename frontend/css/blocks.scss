@@ -19,10 +19,10 @@
 
 /* Block Type - Stream */
 #sidebar {
-  color: #707b82;
+  color: $sidebar-text;
 
   a, a:visited {
-    color: #67737a !important;
+    color: $sidebar-text-a !important;
   }
 
   a:hover {

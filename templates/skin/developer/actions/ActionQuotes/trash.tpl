@@ -6,6 +6,9 @@
     <a href="{cfg name="path.root.web"}/quotes/" class="link-dotted" id="quotes_form_show">{$aLang.quotes_header}</a>
 </h4>
 
+<br />
+<br />
+
 {if $aQuotes != []}
 <table class="table table-hover">
     <thead>

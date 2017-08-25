@@ -1,399 +1,556 @@
-var dateFormat = require('dateformat');
 import render_comment from "./Comment.component"
 import $ from "jquery"
-import * as Comments from './comments'
-import * as Vote from './vote'
+import * as Comments from "./comments"
+import * as Vote from "./vote"
 import Emitter from "./emitter"
-import {updateImgs} from './template.js'
+import {updateImgs} from "./template.js"
+
+const dateFormat = require("dateformat")
+
+class commentSortTree {
+	constructor() {
+		this.root = null
+	}
+
+	addId(id, pid) {
+		if (!this.root) {
+			this.root = new commentSortTreeNode(id)
+		} else if (!this.root.appendId(id, pid)) {
+			this.root.appendAsBro(id)
+		}
+	}
+
+	getSorted() {
+		if (!this.root) {
+			return []
+		}
+
+		return this.root.getIds()
+	}
+}
+
+class commentSortTreeNode {
+	constructor(id) {
+		this.id = id
+		this.child = null
+		this.bro = null
+	}
+
+	appendId(id, pid) {
+		// На случай повторений. Раскомментировать, если буду использовать одно дерево
+		if (this.id === id)
+			return true
+
+		if (pid === null)
+			this.appendAsBro(id)
+
+		if (this.id > pid)
+			return false
+
+		if (this.id === pid) {
+			if (!this.child) {
+				this.child = new commentSortTreeNode(id)
+				return true
+			} else {
+				return this.child.appendAsBro(id)
+			}
+		} else {
+			if (this.child && this.child.appendId(id, pid))
+				return true
+
+			let target = this
+
+			while (target.bro) {
+				target = target.bro
+
+				if (target.id === pid)
+					return target.appendId(id, pid)
+
+				if (target.child && target.child.appendId(id, pid))
+					return true
+			}
+		}
+
+		return false
+	}
+
+	appendAsBro(id) {
+		let target = this
+		while (target.bro !== null) {
+			target = target.bro
+
+			// На случай повторений. Раскомментировать, если буду использовать одно дерево
+			if (target.id === id)
+				return true
+
+		}
+		target.bro = new commentSortTreeNode(id)
+		return true
+	}
+
+	getIds() {
+		let aSortedIds = []
+
+		aSortedIds.push(this.id)
+
+		if (this.child)
+			aSortedIds = aSortedIds.concat(this.child.getIds())
+
+		let target = this
+		while (target.bro) {
+			target = target.bro
+
+			aSortedIds.push(target.id)
+
+			if (target.child)
+				aSortedIds = aSortedIds.concat(target.child.getIds())
+		}
+
+		return aSortedIds
+	}
+}
 
 export default class Tree {
+	state = {
+		mySortTree: null,
+		aSortedIds: [],
+		aSortedIdsOld: [],
+		aComments: [],
+		iMaxNesting: 0,
+		aCommentsNew: [],
+		aCommentsOld: [],
+		lastNewComment: 0,
+	}
 
-  obj = $("#comments-tree")[0]
+	constructor() {
+		this.obj = $("#comments-tree")
 
-  state = {
-    sorted_ids: [],
-    comments: [],
-    max_nesting: 0,
-    commentsNew: [],
-    commentsOld: [],
-    lastNewComment: 0,
-  }
+		Emitter.on("comments-new-loaded", this.handleNewComments.bind(this))
+		Emitter.on("comments-edited-loaded", this.checkEdited.bind(this))
+		Emitter.on("go-to-next-comment", this.goToNextComment.bind(this))
+		Emitter.on("go-to-prev-comment", this.goToPrevComment.bind(this))
+		Emitter.on("go-to-comment", this.goToComment.bind(this))
+	}
 
-  calcNesting() {
-    let minWidth = parseInt(localStorage.getItem("min_comment_width"))
-    if (!minWidth) {
-      localStorage.setItem("min_comment_width", 250)
-      minWidth = 250
-    }
-    this.state.max_nesting = parseInt(($("#comments").width()-minWidth)/20)
-  }
+	calcNesting() {
+		let minWidth = parseInt(localStorage.getItem("min_comment_width"))
 
-  renderNewComments(new_comments, new_comments_ids){
-    console.log("start render")
-    for (let key in new_comments_ids) {
-      let cmt = new_comments[new_comments_ids[key]]
-      if ($(`[data-id=${cmt.id}]`).length == 0) {
-        let cmt_html = render_comment(cmt, this.state.max_nesting)
-        if ($(`[data-id=${this.state.sorted_ids[this.state.sorted_ids.indexOf(cmt.id)-1]}]`).length != 1) {
-          console.info("No parent comment in DOM!", cmt, this.state.sorted_ids)
-          $(this.obj).append($(cmt_html))
-        }
-        $(cmt_html).insertAfter(`[data-id=${this.state.sorted_ids[this.state.sorted_ids.indexOf(cmt.id)-1]}]`)
-        if ($(`[data-id=${cmt.id}]`).length != 1) {
-          console.error("No inserted comment in DOM!", cmt, this.state.sorted_ids)
-        }
-      }
-    }
-    updateImgs()
-    console.log("finished render")
-  }
+		if (!minWidth) {
+			localStorage.setItem("min_comment_width", 250)
+			minWidth = 250
+		}
 
-  checkEdited(edited_comments) {
-    for (let id in edited_comments) {
-      if (this.state.comments[id].text != edited_comments[id].text && !$(`[data-id=${id}]`).hasClass('comment-self')) {
-        $(`#comment_content_id_${id}`)[0].innerHTML = edited_comments[id].text
-        this.state.comments[id].text = edited_comments[id].text
-        $(`[data-id=${id}]`).addClass('comment-new')
-        this.state.commentsNew.push(id)
-        this.state.commentsNew.sort(this.sortByTree.bind(this))
-        this.updateCommentsNewCount()
-      }
-    }
-    updateImgs()
-    Comments.calcNewComments()
-  }
+		this.state.iMaxNesting = parseInt(($("#comments").width() - minWidth) / 20)
+	}
 
-  sortByTree(a,b) {
-    let a_index = this.state.sorted_ids.indexOf(a)
-    let b_index = this.state.sorted_ids.indexOf(b)
-    if (a_index < b_index) {
-      return -1
-    } else {
-      return 1
-    }
-  }
+	renderNewComments(aNewComments) {
+		let iPrevId = 0
+		let iOld = 0
+		let bUseNew = false
 
-  handleNewComments(new_comments,selfIdComment,soft) {
-    let new_sorted_ids = this.state.sorted_ids
-    let comments = this.state.comments
+		this.state.aSortedIds.forEach(function (id) {
+			if (id === this.state.aSortedIdsOld[iOld]) {
+				if (bUseNew)
+					bUseNew = false
 
-    for (let key in new_comments) {
-      let cmt = new_comments[key]
-      if (cmt.parentId) {
-        let parent = comments[cmt.parentId]
-        cmt.level = parseInt(parent.level) + 1
-      }
-      else {
-        cmt.level = 0
-      }
-      comments[cmt.id] = cmt
-      new_sorted_ids.push(cmt.id)
-    }
-    new_sorted_ids = this.sortTree(new_sorted_ids, comments)
-    this.state.comments = comments
-    this.state.sorted_ids = new_sorted_ids
+				iOld++
+				return
+			}
 
-    let new_comments_ids = Object.keys(new_comments)
-    new_comments_ids.sort(this.sortByTree.bind(this))
-    if (!soft) {
-      this.state.commentsNew = []
-    }
-    this.state.commentsNew.push.apply(this.state.commentsNew, new_comments_ids)
-    this.state.commentsNew.sort(this.sortByTree.bind(this))
-    this.renderNewComments(new_comments, new_comments_ids)
-    let ids = []
-    ids.push.apply(ids, this.state.commentsNew)
-    for (let key in ids) {
-      let id = ids[key]
-      let cmt = this.state.comments[id]
-      if (cmt.author.login == USERNAME || cmt.isBad) {
-        this.state.commentsNew.splice(this.state.commentsNew.indexOf(""+cmt.id),1)
-      }
-    }
-    this.updateCommentsNewCount()
-    if (selfIdComment && $('#comment_id_' + selfIdComment).length) {
-      Comments.scrollToComment(selfIdComment);
-    }
-  }
+			// if ($(`[data-id=${id}]`).length) {
+			//  	console.log("panic!")
+			//  	return;
+			// }
 
-  updateCommentsNewCount() {
-    if (!$("#new_comments_counter").length) {
-      return
-    }
-    let clear = []
-    for (let i=0; i<this.state.commentsNew.length; i++) {
-      let id = this.state.commentsNew[i]
-      if (clear.indexOf(id)>=0) {
-        continue
-      }
-      clear.push(id)
-    }
-    this.state.commentsNew = clear
-    let len = this.state.commentsNew.length
-    $("#new_comments_counter")[0].innerText = len
-    if (len==0) {
-      $("#new_comments_counter").hide()
-      document.title = $("title").data("title")
-    } else if (!$("#new_comments_counter").is(':visible')) {
-      $("#new_comments_counter").show()
-      document.title = `(${len}) `+TITLE
-    } else {
-      document.title = `(${len}) `+TITLE
-    }
-  }
+			if (!bUseNew) iPrevId = this.state.aSortedIdsOld[iOld - 1]
 
-  goToNextComment() {
-    console.log(this.state.commentsNew)
-    if (this.state.lastNewComment>0) {
-      this.state.commentsOld.push(this.state.lastNewComment)
-    }
-    let id = this.state.commentsNew[0]
-    this.state.comments[id].isNew = false
-    Comments.scrollToComment(id)
-    this.state.lastNewComment = id;
-    this.updateCommentsNewCount()
-  }
+			let sCmtHtml = render_comment(aNewComments[id], this.state.iMaxNesting)
+			let oPrevCmt = $(`[data-id=${iPrevId}]`)
 
-  goToPrevComment() {
-    if (!this.state.commentsOld.length) {
-        return
-    }
-    Comments.scrollToComment(this.state.commentsOld.pop())
-  }
+			if (oPrevCmt.length !== 1) {
+				// console.info("No needed comment in DOM!")
+				$(this.obj).append($(sCmtHtml))
+			}
 
-  goToComment(id) {
-    if (this.state.comments[id].isBad) {
-      return
-    }
-    if (!$(`[data-id=${id}]`).length) {
-      return false
-    }
-    $('html, body').animate({
-        scrollTop: $(`[data-id=${id}]`).offset().top - 250
-    }, 150);
-    if ($('.comment-current').length){
-      $('.comment-current').removeClass('comment-current')
-    }
-    $(`[data-id=${id}]`).addClass('comment-current')
-    $(`[data-id=${id}]`).removeClass('comment-new')
-    if (this.state.commentsNew.indexOf(""+id)>(-1)) {
-      this.state.commentsNew.splice(this.state.commentsNew.indexOf(""+id), 1)
-    }
-    this.updateCommentsNewCount()
-    Comments.iCurrentViewComment = id;
-  }
+			$(sCmtHtml).insertAfter(oPrevCmt)
 
-  mount(obj, comments, ids) {
-    function updateNesting(){this.calcNesting();this.render()}
-    this.obj = obj
-    //$(window).on('resize', updateNesting.bind(this))
+			// TODO в отдельный метод по работе с commentsNew
+			if (!(aNewComments[id].author.login === USERNAME || aNewComments[id].isBad))
+				this.state.aCommentsNew.push(id)
 
-    let sorted_ids = this.sortTree(ids, comments)
+			iPrevId = id
+			bUseNew = true
 
-    this.state.sorted_ids =  sorted_ids
-    this.state.comments =  comments
+			// if ($(`[data-id=${id}]`).length !== 1) {
+			// 	console.error("No inserted comment in DOM!")
+			// }
+		}.bind(this))
 
-    updateNesting.bind(this)()
+		updateImgs()
+	}
 
-    $(".comment-new").each(function(k,v){
-      this.state.commentsNew.push(""+$(v).data('id'))
-    }.bind(this))
+	checkEdited(edited_comments) {
+		// console.log("checkEdited")
 
-    this.updateCommentsNewCount()
+		for (let id in edited_comments) {
+			if (edited_comments.hasOwnProperty(id)) {
+				let oComment = $(`[data-id=${id}]`)
+				// console.log(id)
 
-    Emitter.on("comments-new-loaded", this.handleNewComments.bind(this))
-    Emitter.on("comments-edited-loaded", this.checkEdited.bind(this))
-    Emitter.on("go-to-next-comment", this.goToNextComment.bind(this))
-    Emitter.on("go-to-prev-comment", this.goToPrevComment.bind(this))
-    Emitter.on("go-to-comment", this.goToComment.bind(this))
-    Emitter.on("comments-calc-nesting", updateNesting.bind(this))
+				if (this.state.aComments[id].text !== edited_comments[id].text && !oComment.hasClass("comment-self")) {
+					$(`#comment_content_id_${id}`)[0].innerHTML = edited_comments[id].text
+					this.state.aComments[id].text = edited_comments[id].text
+					oComment.addClass("comment-new")
+					this.state.aCommentsNew.push(id)
+					this.state.aCommentsNew.sort(this.sortByTree.bind(this))
+					this.updateCommentsNewCount()
+				}
+			}
+		}
 
-    this.initShortcuts()
-  }
+		updateImgs()
+	}
 
-  initShortcuts() {
-    function goToPrevComment(){
-      Comments.scrollToComment(this.state.sorted_ids[this.state.sorted_ids.indexOf(""+$('.comment-current').data('id'))-1])
-    }
-    function goToNextComment(){
-      Comments.scrollToComment(this.state.sorted_ids[this.state.sorted_ids.indexOf(""+$('.comment-current').data('id'))+1])
-    }
+	sortByTree(a, b) {
+		let a_index = this.state.aSortedIds.indexOf(a)
+		let b_index = this.state.aSortedIds.indexOf(b)
 
-    function goToLastComment(){
-      Comments.scrollToComment(this.state.sorted_ids[this.state.sorted_ids.length-1])
-    }
-
-    function goToFirstComment(){
-      Comments.scrollToComment(this.state.sorted_ids[0])
-    }
-
-    function goToNextBranch(){
-      let cur_id = $('.comment-current').data("id")
-      let cur_cmt = this.state.comments[cur_id]
-      let data = this.state.sorted_ids.slice(this.state.sorted_ids.indexOf(""+cur_id)+1)
-      let prev_branch = this.state.sorted_ids[0]
-      for (let key in data) {
-        let id = data[key]
-        let cmt = this.state.comments[id]
-        if (cmt.level == 0) {
-          prev_branch = cmt.id
-          break
-        }
-      }
-      Comments.scrollToComment(prev_branch)
-    }
-
-    function goToPrevBranch(){
-      let cur_id = $('.comment-current').data("id")
-      let cur_cmt = this.state.comments[cur_id]
-      let data = this.state.sorted_ids.slice(0, this.state.sorted_ids.indexOf(""+cur_id)).reverse()
-      let prev_branch = this.state.sorted_ids[0]
-      for (let key in data) {
-        let id = data[key]
-        let cmt = this.state.comments[id]
-        if (cmt.level == 0) {
-          prev_branch = cmt.id
-          break
-        }
-      }
-      Comments.scrollToComment(prev_branch)
-    }
-
-    function toggleReplyOnCurrent(){
-      Comments.toggleCommentForm($('.comment-current').data("id"))
-    }
-
-    function updateComments(){
-      Comments.load(window.targetId, window.targetType)
-    }
-
-    function updateCommentsSoft(){
-      Comments.load(window.targetId, window.targetType, null, true)
-    }
-
-    function toggleReplyOnRoot() {
-      Comments.toggleCommentForm(0)
-    }
-
-    function editComment() {
-      Comments.editComment($('.comment-current').data('id'))
-    }
-
-    function goToParent() {
-      Comments.goToParentComment($('.comment-current').data('id'),$('.comment-current').data('pid'))
-    }
-
-    function goToChild() {
-      $('.comment-current').find('.' + Comments.options.classes.comment_goto_child).hide()
-      Comments.scrollToComment($('.comment-current').data('cid'))
-    }
-
-    let despoilComment = function() {
-      let current = $('.comment-current')
-      let despoiled = current.hasClass('comment-despoiled')
-      current.find('.spoiler-body').each(function(k, v) {
-        if(v.style.display !== 'block') {
-          if(!despoiled) window.openSpoiler(v)
-        } else {
-          if(despoiled) window.closeSpoiler(v)
-        }
-      })
-      current.toggleClass('comment-despoiled')
-    }.bind(this)
-
-    function markAllChildAsRead() {
-      let ids = this.state.sorted_ids.slice(this.state.sorted_ids.indexOf(""+$('.comment-current').data("id"))+1)
-      let level = $('.comment-current').data("level")
-      for (let i in ids) {
-        let id = ids[i]
-        let cmt = this.state.comments[id]
-        if (cmt.level <= level) {
-          break
-        }
-        $(`[data-id=${id}]`).removeClass('comment-new')
-        this.state.commentsNew.splice(this.state.commentsNew.indexOf(""+id), 1)
-      }
-      this.updateCommentsNewCount()
-    }
-
-    function voteUp() {
-      Vote.vote($('.comment-current').data('id'), this, 1, 'comment')
-    }
-
-    function voteDown() {
-      Vote.vote($('.comment-current').data('id'), this, -1, 'comment')
-    }
-
-    let shortcuts = {
-      'ctrl+space': Comments.goToNextComment,
-      'ctrl+shift+space': Comments.goToPrevComment,
-      'ctrl+up': goToPrevComment.bind(this),
-      'ctrl+down': goToNextComment.bind(this),
-      'ctrl+end': goToLastComment.bind(this),
-      'ctrl+home': goToFirstComment.bind(this),
-      'alt+pagedown': goToNextBranch.bind(this),
-      'alt+pageup': goToPrevBranch.bind(this),
-      'alt+r': toggleReplyOnCurrent.bind(this),
-      'alt+u': updateComments,
-      'alt+shift+u': updateCommentsSoft,
-      'alt+shift+d': window.despoil,
-      'alt+shift+s': despoilComment,
-      'alt+n': toggleReplyOnRoot,
-      'alt+shift+e': editComment,
-      'alt+shift+p': goToParent,
-      'alt+shift+c': goToChild,
-      'alt+shift+m': markAllChildAsRead.bind(this),
-      'alt+shift+w': window.widemode,
-      'alt+up': voteUp.bind(this),
-      'alt+down': voteDown.bind(this),
-    }
-
-    for (let i in shortcuts) {
-      $(document).on('keydown', null, i, shortcuts[i])
-      $('#form_comment_text').on('keydown', null, i, shortcuts[i])
-    }
-    $('#form_comment_text').off('keydown', shortcuts['ctrl+end'])
-    $('#form_comment_text').off('keydown', shortcuts['ctrl+home'])
-  }
+		if (a_index < b_index) {
+			return -1
+		} else {
+			return 1
+		}
+	}
 
 
-  sortTree(r_ids, comments) {
-    let ids = []
-    for (let i in r_ids) {
-      if (ids.indexOf(r_ids[i])>=0) {
-        continue
-      }
-      ids.push(r_ids[i])
-    }
-    let sorted_ids = []
-    for (let i in ids) {
-      if (!comments[ids[i]].parentId) {
-        sorted_ids.push(ids[i])
-      }
-    }
+	handleNewComments(aNewComments, selfIdComment, soft) {
+		// массивы, с которых пополняется делево
+		let aUnsortedIds = []
+		let aUnsortedPids = []
 
-    for (let i=0; i<sorted_ids.length; i++) {
-      let id = sorted_ids[i]
+		for (let id in aNewComments) {
+			if(aNewComments.hasOwnProperty(id)) {
+				let oComment = aNewComments[id]
 
-      let data = ids.slice(ids.indexOf(id)+1).reverse()
-      for (let y in data) {
-        if (comments[data[y]].parentId == id) {
-          sorted_ids.splice(i+1, 0, data[y])
-        }
-      }
-    }
-    window.ids = sorted_ids
-    return sorted_ids
-  }
+				// вычисление уловня вложенности
+				oComment.level = oComment.parentId ? 1 + this.state.aComments[oComment.parentId].level : 0
 
-  render(obj) {
-    if (!this.obj) {
-      this.obj = $('#comments-tree')
-    }
+				this.state.aComments[id] = oComment
 
-    this.obj.innerHTML = `<div>${this.state.sorted_ids.map(function(id){
-      return render_comment(this.state.comments[id], this.state.max_nesting)
-    }.bind(this)).join("")}</div>`
-    updateImgs()
-  }
+				aUnsortedIds.push(id)
+				aUnsortedPids.push(oComment.parentId)
+			}
+		}
+
+		// сохраняем старый массив для вычисления разности
+		this.state.aSortedIdsOld = this.state.aSortedIds
+		this.state.aSortedIds = this.updateSortTree(aUnsortedIds, aUnsortedPids)
+
+		// "мягкое" обновление не убирает старых непрочитанных комментов
+		if (!soft)
+			this.state.aCommentsNew = []
+
+		// добавляет новые комментарии на страницу
+		this.renderNewComments(aNewComments)
+		this.updateCommentsNewCount()
+
+		// скроллим к новому комментарию
+		if (selfIdComment && $("#comment_id_" + selfIdComment).length) {
+			Comments.scrollToComment(selfIdComment)
+		}
+	}
+
+	updateCommentsNewCount() {
+		let oCounter = document.getElementById("new_comments_counter")
+		if (!oCounter) return
+
+		let count = this.state.aCommentsNew.length
+		if (count) {
+			oCounter.style.display = "block"
+			oCounter.innerHTML = count
+
+			document.title = `(${count}) ` + TITLE
+		} else {
+			oCounter.style.display = "none"
+
+			document.title = TITLE
+		}
+	}
+
+	goToNextComment() {
+		// console.log(this.state.aCommentsNew)
+		if (this.state.lastNewComment > 0) {
+			this.state.aCommentsOld.push(this.state.lastNewComment)
+		}
+
+		let id = this.state.aCommentsNew[0]
+		this.state.aComments[id].isNew = false
+		Comments.scrollToComment(id)
+
+		this.state.lastNewComment = id
+		this.updateCommentsNewCount()
+	}
+
+	goToPrevComment() {
+		if (!this.state.aCommentsOld.length) {
+			return
+		}
+
+		Comments.scrollToComment(this.state.aCommentsOld.pop())
+	}
+
+	goToComment(id) {
+		if (this.state.aComments[id].isBad) {
+			return
+		}
+
+		let oComment = $(`[data-id=${id}]`)
+		let oCommentCurrent = $(".comment-current")
+
+		if (!oComment.length) {
+			return false
+		}
+
+		$("html, body").animate({
+			scrollTop: oComment.offset().top - 250,
+		}, 150)
+
+		if (oCommentCurrent.length) {
+			oCommentCurrent.removeClass("comment-current")
+		}
+
+		oComment.addClass("comment-current")
+		oComment.removeClass("comment-new")
+
+		if (this.state.aCommentsNew.indexOf("" + id) > (-1)) {
+			this.state.aCommentsNew.splice(this.state.aCommentsNew.indexOf("" + id), 1)
+		}
+
+		this.updateCommentsNewCount()
+		Comments.iCurrentViewComment = id
+	}
+
+	mount(obj, comments) {
+		function updateNesting() {
+			this.calcNesting()
+			this.render()
+		}
+
+		this.obj = obj
+		//$(window).on('resize', updateNesting.bind(this))
+
+		let ids = []
+		let pids = []
+
+		for (let id in comments) {
+			if(comments.hasOwnProperty(id)) {
+				ids.push(id)
+				pids.push(comments[id].parentId)
+			}
+		}
+
+		console.log("Before sort", dateFormat(new Date(), "HH:MM:ss:l"))
+		this.state.aSortedIds = this.updateSortTree(ids, pids)
+		console.log("Aftre sort", dateFormat(new Date(), "HH:MM:ss:l"))
+
+		this.state.aComments = comments
+
+		updateNesting.bind(this)()
+
+		// console.log("Before pushing comments", dateFormat(new Date(), "HH:MM:ss:l"))
+		$(".comment-new").each(function (k, v) {
+			this.state.aCommentsNew.push("" + $(v).data("id"))
+		}.bind(this))
+		// console.log("After pc", dateFormat(new Date(), "HH:MM:ss:l"))
+
+		// console.log("Before update new comments count", dateFormat(new Date(), "HH:MM:ss:l"))
+		this.updateCommentsNewCount()
+		// console.log("After update", dateFormat(new Date(), "HH:MM:ss:l"))
+
+		Emitter.on("comments-calc-nesting", updateNesting.bind(this))
+
+		this.initShortcuts()
+	}
+
+	initShortcuts() {
+		function goToPrevComment() {
+			Comments.scrollToComment(this.state.aSortedIds[this.state.aSortedIds.indexOf("" + $(".comment-current").data("id")) - 1])
+		}
+
+		function goToNextComment() {
+			Comments.scrollToComment(this.state.aSortedIds[this.state.aSortedIds.indexOf("" + $(".comment-current").data("id")) + 1])
+		}
+
+		function goToLastComment() {
+			Comments.scrollToComment(this.state.aSortedIds[this.state.aSortedIds.length - 1])
+		}
+
+		function goToFirstComment() {
+			Comments.scrollToComment(this.state.aSortedIds[0])
+		}
+
+		function goToNextBranch() {
+			let cur_id = $(".comment-current").data("id")
+			// let cur_cmt = this.state.aComments[cur_id]
+			let data = this.state.aSortedIds.slice(this.state.aSortedIds.indexOf("" + cur_id) + 1)
+			let prev_branch = this.state.aSortedIds[0]
+			for (let key in data) {
+				if(data.hasOwnProperty(key)) {
+					let id = data[key]
+					let cmt = this.state.aComments[id]
+					if (parseInt(cmt.level) === 0) {
+						prev_branch = cmt.id
+						break
+					}
+				}
+			}
+			Comments.scrollToComment(prev_branch)
+		}
+
+		function goToPrevBranch() {
+			let cur_id = $(".comment-current").data("id")
+			// let cur_cmt = this.state.aComments[cur_id]
+			let data = this.state.aSortedIds.slice(0, this.state.aSortedIds.indexOf("" + cur_id)).reverse()
+			let prev_branch = this.state.aSortedIds[0]
+			for (let key in data) {
+				if(data.hasOwnProperty(key)) {
+					let id = data[key]
+					let cmt = this.state.aComments[id]
+					if (parseInt(cmt.level) === 0) {
+						prev_branch = cmt.id
+						break
+					}
+				}
+			}
+			Comments.scrollToComment(prev_branch)
+		}
+
+		function toggleReplyOnCurrent() {
+			Comments.toggleCommentForm($(".comment-current").data("id"))
+		}
+
+		function updateComments() {
+			Comments.load(window.targetId, window.targetType)
+		}
+
+		function updateCommentsSoft() {
+			Comments.load(window.targetId, window.targetType, null, true)
+		}
+
+		function toggleReplyOnRoot() {
+			Comments.toggleCommentForm(0)
+		}
+
+		function editComment() {
+			Comments.editComment($(".comment-current").data("id"))
+		}
+
+		function goToParent() {
+			let oCommentCurrent = $(".comment-current")
+			Comments.goToParentComment(oCommentCurrent.data("id"), oCommentCurrent.data("pid"))
+		}
+
+		function goToChild() {
+			let oCommentCurrent = $(".comment-current")
+
+			oCommentCurrent.find("." + Comments.options.classes.comment_goto_child).hide()
+			Comments.scrollToComment(oCommentCurrent.data("cid"))
+		}
+
+		let despoilComment = function () {
+			let current = $(".comment-current")
+			let despoiled = current.hasClass("comment-despoiled")
+			current.find(".spoiler-body").each(function (k, v) {
+				if (v.style.display !== "block") {
+					if (!despoiled) window.openSpoiler(v)
+				} else {
+					if (despoiled) window.closeSpoiler(v)
+				}
+			})
+			current.toggleClass("comment-despoiled")
+		}.bind(this)
+
+		function markAllChildAsRead() {
+			let oCommentCurrent = $(".comment-current")
+
+			let ids = this.state.aSortedIds.slice(this.state.aSortedIds.indexOf("" + oCommentCurrent.data("id")) + 1)
+			let level = oCommentCurrent.data("level")
+			for (let i in ids) {
+				if(ids.hasOwnProperty(i)) {
+					let id = ids[i]
+					let cmt = this.state.aComments[id]
+					if (cmt.level <= level) {
+						break
+					}
+					$(`[data-id=${id}]`).removeClass("comment-new")
+					this.state.aCommentsNew.splice(this.state.aCommentsNew.indexOf("" + id), 1)
+				}
+			}
+			this.updateCommentsNewCount()
+		}
+
+		function voteUp() {
+			Vote.vote($(".comment-current").data("id"), this, 1, "comment")
+		}
+
+		function voteDown() {
+			Vote.vote($(".comment-current").data("id"), this, -1, "comment")
+		}
+
+		let shortcuts = {
+			"ctrl+space": Comments.goToNextComment,
+			"ctrl+shift+space": Comments.goToPrevComment,
+			"ctrl+up": goToPrevComment.bind(this),
+			"ctrl+down": goToNextComment.bind(this),
+			"ctrl+end": goToLastComment.bind(this),
+			"ctrl+home": goToFirstComment.bind(this),
+			"alt+pagedown": goToNextBranch.bind(this),
+			"alt+pageup": goToPrevBranch.bind(this),
+			"alt+r": toggleReplyOnCurrent.bind(this),
+			"alt+u": updateComments,
+			"alt+shift+u": updateCommentsSoft,
+			"alt+shift+d": window.despoil,
+			"alt+shift+s": despoilComment,
+			"alt+n": toggleReplyOnRoot,
+			"alt+shift+e": editComment,
+			"alt+shift+p": goToParent,
+			"alt+shift+c": goToChild,
+			"alt+shift+m": markAllChildAsRead.bind(this),
+			"alt+shift+w": window.widemode,
+			"alt+up": voteUp.bind(this),
+			"alt+down": voteDown.bind(this),
+		}
+
+		let oFormText = $("#form_comment_text")
+
+		for (let i in shortcuts) {
+			$(document).on("keydown", null, i, shortcuts[i])
+			oFormText.on("keydown", null, i, shortcuts[i])
+		}
+
+		oFormText.off("keydown", shortcuts["ctrl+end"])
+		oFormText.off("keydown", shortcuts["ctrl+home"])
+	}
+
+	updateSortTree(ids, pids) {
+		if (!this.state.mySortTree)
+			this.state.mySortTree = new commentSortTree()
+
+		for (let i = 0; i < ids.length; i++)
+			this.state.mySortTree.addId(ids[i], pids[i]);
+
+		return this.state.mySortTree.getSorted()
+	}
+
+	render() {
+		console.log("Before render", dateFormat(new Date(), "HH:MM:ss:l"))
+
+		this.obj[0].innerHTML = `<div>${this.state.aSortedIds.map(function (id) {
+			return render_comment(this.state.aComments[id], this.state.iMaxNesting)
+		}.bind(this)).join("")}</div>`
+
+		console.log("After render", dateFormat(new Date(), "HH:MM:ss:l"))
+
+		updateImgs()
+	}
 }

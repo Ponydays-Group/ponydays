@@ -1,6 +1,5 @@
 import * as Lang from './lang'
 import * as Msg from './msg'
-import Emitter from './emitter'
 import $ from 'jquery'
 import * as Ajax from './ajax'
 
@@ -24,8 +23,9 @@ export function showEditForm(id) {
 }
 
 export function quotesPreview() {
-	let data = $('#quotes_form_data').val();
-	$('#quotes_preview').html(data).show();
+	// let data = $('#quotes_form_data').val();
+	ls.tools.textPreview("quotes_form_data", false, "quotes_preview")
+	$('#quotes_preview').show();
 }
 
 export function applyForm() {
@@ -53,7 +53,7 @@ export function addQuotes() {
 
 			let trElement = $(
 				'<tr id="field_' + data.id + '" class="quote_element">\n' +
-				'    <td class="quotes_data">' + data_quote + '</td>\n' +
+				'    <td class="quotes_data" id="quote_' + data.id + '"></td>\n' +
 				'    <td>\n' +
 				'        <div class="quotes-actions">\n' +
 				'           <a href="#" onclick="prompt("' + Lang.get('quotes_link') + '", ' + DIR_WEB_ROOT + '/quotes/' + data.id + '); return false;" title="' + Lang.get('quotes_link') + '"><i class="fa fa-hashtag" aria-hidden="true"></i></a>&nbsp;&nbsp;\n' +
@@ -63,8 +63,10 @@ export function addQuotes() {
 				'    </td>\n' +
 				'</tr>'
 			);
-
 			$('#quotes_list').append(trElement);
+
+			ls.tools.textPreview("quotes_form_data", false, "quote_" + data.id)
+
 			scrollToQuote(data.id);
 
 			Msg.notice(data.sMsgTitle, data.sMsg);

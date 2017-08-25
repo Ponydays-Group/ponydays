@@ -62,7 +62,7 @@ export function updateImgs() {
     $(".spoiler-body img").each(
         function(k, v) {
             if (!v.getAttribute("data-src")) {
-                console.log(v.src, v)
+                // console.log(v.src, v)
                 v.setAttribute("data-src", v.src)
                 v.src = "#"
             }

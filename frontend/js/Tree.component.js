@@ -6,6 +6,7 @@ import Emitter from "./emitter"
 import {updateImgs} from "./template.js"
 
 const dateFormat = require("dateformat")
+const DEBUG = 0
 
 class commentSortTree {
 	constructor() {
@@ -144,11 +145,13 @@ export default class Tree {
 	}
 
 	renderNewComments(aNewComments) {
-		let iPrevId = 0
-		let iOld = 0
-		let bUseNew = false
+		let iPrevId = 0		// последний добавленный айдишник
+		let iOld 	= 0		// индекс последнего совпавшего значения в старом массиве
+		let bUseNew = false	// true, если новые комментарии идут подряд. Означает - использовать последний добавленный ID вместо значений из массива старых
 
+		// цикл пробегает по всему массиву комментариев и сравнивает со старым, все изменения - отрисовывает
 		this.state.aSortedIds.forEach(function (id) {
+			// совпадение со старым массивом - пропускаем шаг
 			if (id === this.state.aSortedIdsOld[iOld]) {
 				if (bUseNew)
 					bUseNew = false
@@ -157,45 +160,49 @@ export default class Tree {
 				return
 			}
 
-			// if ($(`[data-id=${id}]`).length) {
-			//  	console.log("panic!")
-			//  	return;
-			// }
+			if (DEBUG && $(`[data-id=${id}]`).length) {
+			  	console.log("Comment already exists!")
+			  	return;
+			}
 
-			if (!bUseNew) iPrevId = this.state.aSortedIdsOld[iOld - 1]
+			if (!bUseNew)
+				iPrevId = this.state.aSortedIdsOld[iOld - 1]
 
 			let sCmtHtml = render_comment(aNewComments[id], this.state.iMaxNesting)
 			let oPrevCmt = $(`[data-id=${iPrevId}]`)
 
+			// если не существует предыдущего коммента, считаем комментарий началом новой ветки
 			if (oPrevCmt.length !== 1) {
-				// console.info("No needed comment in DOM!")
+				if (DEBUG)
+					console.info("No needed comment in DOM!")
+
 				$(this.obj).append($(sCmtHtml))
 			}
 
 			$(sCmtHtml).insertAfter(oPrevCmt)
 
-			// TODO в отдельный метод по работе с commentsNew
+			// формируем массив новых ID
 			if (!(aNewComments[id].author.login === USERNAME || aNewComments[id].isBad))
 				this.state.aCommentsNew.push(id)
 
 			iPrevId = id
 			bUseNew = true
 
-			// if ($(`[data-id=${id}]`).length !== 1) {
-			// 	console.error("No inserted comment in DOM!")
-			// }
+			if (DEBUG && $(`[data-id=${id}]`).length !== 1) {
+				console.error("No inserted comment in DOM!")
+			}
 		}.bind(this))
 
 		updateImgs()
 	}
 
 	checkEdited(edited_comments) {
-		// console.log("checkEdited")
+		console.log("checkEdited")
 
 		for (let id in edited_comments) {
 			if (edited_comments.hasOwnProperty(id)) {
 				let oComment = $(`[data-id=${id}]`)
-				// console.log(id)
+				console.log(id)
 
 				if (this.state.aComments[id].text !== edited_comments[id].text && !oComment.hasClass("comment-self")) {
 					$(`#comment_content_id_${id}`)[0].innerHTML = edited_comments[id].text

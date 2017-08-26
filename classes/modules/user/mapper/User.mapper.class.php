@@ -91,7 +91,7 @@ class ModuleUser_MapperUser extends Mapper {
 							  $oUser->getActivate(),
 							  $oUser->getActivateKey(),
 							  $oUser->getProfileName(),
-							  (int)$oUser->getProfileSex(),
+							  ($temp = $oUser->getProfileSex()) ? $temp : 'other',
 							  $oUser->getProfileCountry(),
 							  $oUser->getProfileRegion(),
 							  $oUser->getProfileCity(),
@@ -106,7 +106,8 @@ class ModuleUser_MapperUser extends Mapper {
 							  (int)$oUser->getSettingsNoticeReplyComment(),
 							  (int)$oUser->getSettingsNoticeNewFriend(),
 							  $oUser->getSettingsTimezone(),
-							  $oUser->getId())) {
+							  $oUser->getId())
+		) {
 			return true;
 		}
 		return false;

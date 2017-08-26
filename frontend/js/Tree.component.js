@@ -273,7 +273,7 @@ export default class Tree {
 
 		let count = this.state.aCommentsNew.length
 		if (count) {
-			oCounter.style.display = "flex"
+			oCounter.style.display = ""
 			oCounter.innerHTML = count
 
 			document.title = `(${count}) ` + TITLE

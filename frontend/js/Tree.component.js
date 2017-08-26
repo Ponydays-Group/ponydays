@@ -259,6 +259,10 @@ export default class Tree {
 
 		// добавляет новые комментарии на страницу
 		this.renderNewComments(aNewComments)
+
+		if (soft)
+			this.state.aCommentsNew.sort(this.sortByTree.bind(this))
+
 		this.updateCommentsNewCount()
 
 		// скроллим к новому комментарию

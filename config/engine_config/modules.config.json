@@ -172,6 +172,9 @@
             "Lang",
             "Message",
             "User"
-        ]
+        ],
+        "quotes": {
+            "per_page": 30
+        }
     }
 }

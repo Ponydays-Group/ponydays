@@ -16,7 +16,7 @@ export default function render_comment(data, maxNesting) {
         "comment-new": data.isNew && USERNAME!=data.author.login,
         "comment-deleted": data.isDeleted,
     })}">
-    		<a name=${"comment"+data.id} />
+    		<a name=${"comment"+data.id}></a>
 
     		<a href="/profile/${data.author.login}" target="_blank"><img src="${data.author.avatar}"" alt="avatar" class="comment-avatar" /></a>
 

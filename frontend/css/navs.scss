@@ -123,6 +123,7 @@
 
 .nav.nav-userbar 									{ float: right; }
 .nav.nav-userbar li 								{ }
+.nav.nav-userbar li:focus 							{ background-color: $secondary-accent; }
 .nav.nav-userbar li a 								{ color: #555; }
 .nav.nav-userbar li:first-child a 					{ border-radius: 0px; }
 .nav.nav-userbar li:last-child a 					{ border-radius: 0px; }
@@ -142,8 +143,8 @@
 		height: $userbar-height;
 	}
 }
-.nav.nav-main li a 				{ color: #848e92; }
-.nav.nav-main li a:hover 		{ background: #222b2f; }
+.nav.nav-main li a 				{ color: #b8c5cb; }
+.nav.nav-main li a:hover 		{ background: #222b2f; color: #bbb; }
 .nav.nav-main li:first-child a 	{ border-radius: 0px; }
 .nav.nav-main li:last-child  a 	{ border-radius: 0px; }
 .nav.nav-main li.active a 		{ background: #222b2f; color: white; -webkit-box-shadow: 0 0 7px rgba(0,0,0,.15) inset; box-shadow: 0 0 7px rgba(0,0,0,.15) inset; }

@@ -5,8 +5,6 @@
 
 
     <div class="block-content">
-        <blockquote class="sidebar-quote">
-            {include file="bquote.php"}
-        </blockquote>
+        {hook run="quotes_generator"}
     </div>
 </section>

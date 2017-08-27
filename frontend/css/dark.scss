@@ -13,6 +13,7 @@ $userbar-background: #131313;
 $userbar-hover-background: lighten($userbar-background, 5%);
 $content-background: #131313;
 $text-color: #c9c9c9;
+$text-notice-color: black;
 $stream-text-color: white;
 $stream-item-border: transparent;
 $comments-border-top: 1px solid #27282b;
@@ -27,6 +28,11 @@ $main-accent-third: #1f1f1f;
 $main-accent-fourth: #212121;
 $main-accent-fifth: #333;
 
+$attention-text: #ccc;
+
+$main-active-color: #1f3e4e;
+$main-active-hover-color: #084c6f;
+
 $spoiler-background: #333;
 
 $image-opacity: 0.6;
@@ -40,6 +46,11 @@ $comment-deleted-background: #621717;
 $pre-background: #313131;
 $blockquote-background: #313131;
 $blockquote-border: #212121;
+
+$image-under-photo: url('//static.lunavod.ru/img/4a6ee2b299bf7e48a7e1a257b50ea7dc50ef0aae.jpg');
+
+$sidebar-text: #bcc7ce;
+$sidebar-text-a: #aaa;
 
 @mixin placeholder ($rules) {
 
@@ -80,4 +91,11 @@ $blockquote-border: #212121;
 
 @import "./amazium/variables";
 @import "./amazium/form";
-@import "./themes/base/all"
+@import "./themes/base/all";
+
+.checkbox input + label:before { background-color: $background-color; border-color: #696969; }
+
+.table tr.active td,
+.table tr.info td               { background: $main-active-color !important; }
+.table tbody tr.info:hover td   { background: $main-active-hover-color !important; }
+.table tbody tr:hover td        { background: $main-accent-fourth; }

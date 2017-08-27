@@ -59,7 +59,8 @@
             "views": "___db.table.prefix___feedback_views",
             "adminset": "___db.table.prefix___adminset",
             "adminban": "___db.table.prefix___adminban",
-            "adminips": "___db.table.prefix___adminips"
+            "adminips": "___db.table.prefix___adminips",
+            "quotes": "___db.table.prefix___quotes"
         },
         "tables": {
             "engine": "InnoDB"

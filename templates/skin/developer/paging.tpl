@@ -1,7 +1,7 @@
 {if $aPaging and $aPaging.iCountPage>1} 
 	<div class="pagination">
 		<ul>
-			{if $aPaging.iCurrentPage>1}<li><a href="{$aPaging.sBaseUrl}/{$aPaging.sGetParams}" title="{$aLang.paging_first}"><<</a></li>{/if}
+			{if $aPaging.iCurrentPage>1}<li><a href="{$aPaging.sBaseUrl}/page1/{$aPaging.sGetParams}" title="{$aLang.paging_first}"><<</a></li>{/if}
 			
 			
 			{if $aPaging.iPrevPage}

@@ -19,10 +19,10 @@
 
 /* Block Type - Stream */
 #sidebar {
-  color: #707b82;
+  color: $sidebar-text;
 
   a, a:visited {
-    color: #67737a !important;
+    color: $sidebar-text-a !important;
   }
 
   a:hover {
@@ -137,13 +137,18 @@
 .stream-fixed {
   position: fixed;
   top: 0px;
-  height: 100%;
-  max-height: 100%;
   margin-bottom: 0;
   overflow-y: auto;
-  background: $secondary-accent;
   
   .js-block-stream-content {
     padding-right: 20px;
   }
+}
+
+div .quotes-actions {
+  font-size: 14pt;
+}
+
+#quotes_list td {
+  line-height: 1.6em;
 }

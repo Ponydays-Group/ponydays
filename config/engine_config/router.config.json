@@ -31,7 +31,8 @@
             "photoset": "ActionPhotoset",
             "subscribe": "ActionSubscribe",
             "feedbacks": "ActionFeedbacks",
-            "page": "ActionPage"
+            "page": "ActionPage",
+            "quotes": "ActionQuotes"
         },
         "config": {
             "action_default": "index",

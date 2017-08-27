@@ -62,7 +62,7 @@
 }
 
 .profile .vote.vote-count-positive .vote-count {
-    color: #5055B2;
+    color: #60CC4E;
 }
 
 .profile .strength {
@@ -138,7 +138,7 @@
 }
 
 .profile-main {
-    background: url("http://7428.net/wp-content/uploads/2015/01/Waves-Geometric-Background-Design-Vector-.jpg");
+    background: $image-under-photo;
     height: 374px;
 
     .vote-up, .vote-down {
@@ -179,7 +179,7 @@
 }
 
 .user-info .user-login {
-    color: rgba(0, 0, 0, 0.67);
+    color: $text-color;
     font-size: 30px;
 }
 

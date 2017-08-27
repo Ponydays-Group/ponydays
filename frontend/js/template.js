@@ -62,7 +62,7 @@ export function updateImgs() {
     $(".spoiler-body img").each(
         function(k, v) {
             if (!v.getAttribute("data-src")) {
-                console.log(v.src, v)
+                // console.log(v.src, v)
                 v.setAttribute("data-src", v.src)
                 v.src = "#"
             }
@@ -87,16 +87,16 @@ export default function init() {
 
         $('html').removeClass('no-js');
 
-        window.resize_sidebar = function() {
-            if ($("#content").offset().top == $("#sidebar").offset().top) {
-                $("#sidebar").css("height", $("#wrapper").height() > $("#sidebar").height() ? $("#wrapper").height() : null)
-            }
-        }
-        try {
-            resize_sidebar()
-        } catch(err) {
-            console.log(err)
-        }
+        // window.resize_sidebar = function() {
+        //     if ($("#content").offset().top == $("#sidebar").offset().top) {
+        //         $("#sidebar").css("height", $("#wrapper").height() > $("#sidebar").height() ? $("#wrapper").height() : null)
+        //     }
+        // }
+        // try {
+        //     resize_sidebar()
+        // } catch(err) {
+        //     console.log(err)
+        // }
 
         // Всплывающие окна
         $('#window_login_form').jqm();
@@ -125,7 +125,8 @@ export default function init() {
                 }
             }
         });
-        $('#userfield_form').jqm();
+		$('#userfield_form').jqm();
+		$('#quotes_form').jqm();
         $('#favourite-form-tags').jqm();
         $('#modal_write').jqm({
             trigger: '#modal_write_show'
@@ -470,6 +471,9 @@ export default function init() {
                 border-radius: 0px !important;
             }
             .topic-author-avatar {
+                border-radius: 0px !important;
+            }
+            .topic.topic-type-talk .topic-header .topic-info .avatar {
                 border-radius: 0px !important;
             }
             </style>

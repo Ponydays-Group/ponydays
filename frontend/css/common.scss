@@ -104,6 +104,58 @@
 }
 
 
+@media screen and (max-width: 800px) {
+    .toolbar {
+	box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.51);
+        float: none;
+        height: 40px;
+        display: flex;
+        width: 100%;
+        bottom: 0px;
+        top: calc(100% - 40px);
+        left: 0;
+        justify-content: space-around;
+        background: $main-color;
+
+	section {
+	    box-shadow: none;
+	    width: auto;
+	    padding: 0px 5px !important;
+	    margin-bottom: 0px;
+	    a {
+	        font-size: 14px;
+	        text-align: center;
+	        display: block;
+	        padding: 5px;
+	        display: flex;
+	        justify-content: center;
+	        align-items: center;
+	        align-content: center;
+	        height: 40px;
+	    }
+	}
+    }
+
+    .toolbar-admin a {
+	display: flex !important;
+    }
+
+    .toolbar-update {
+	padding: 0;
+	display: flex;
+	
+	.update-comments {
+	    padding: 0px 5px;
+	}
+	
+	.new-comments {
+	    padding: 0px 10px !important;
+            font-size: 16px !important;
+	    border-top: none !important;
+	}
+    }
+}
+
 
 /* Список пользователей
 ---------------------------------------------------- */

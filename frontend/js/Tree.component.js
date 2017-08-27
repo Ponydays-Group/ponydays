@@ -39,11 +39,11 @@ class commentSortTreeNode {
 
 	appendId(id, pid) {
 		// На случай повторений. Раскомментировать, если буду использовать одно дерево
-		if (this.id === id)
-			return true
+		// if (this.id === id)
+		//	return true
 
 		if (pid === null)
-			this.appendAsBro(id)
+			return this.appendAsBro(id)
 
 		if (this.id > pid)
 			return false
@@ -81,8 +81,8 @@ class commentSortTreeNode {
 			target = target.bro
 
 			// На случай повторений. Раскомментировать, если буду использовать одно дерево
-			if (target.id === id)
-				return true
+			// if (target.id === id)
+			// 	return true
 
 		}
 		target.bro = new commentSortTreeNode(id)
@@ -231,6 +231,8 @@ export default class Tree {
 
 
 	handleNewComments(aNewComments, selfIdComment, soft) {
+		console.log("NC", aNewComments)
+
 		// массивы, с которых пополняется делево
 		let aUnsortedIds = []
 		let aUnsortedPids = []
@@ -249,9 +251,18 @@ export default class Tree {
 			}
 		}
 
+		console.log("IDS", aUnsortedIds)
+
 		// сохраняем старый массив для вычисления разности
+
+
 		this.state.aSortedIdsOld = this.state.aSortedIds
+		
+		console.log("old", this.state.aSortedIdsOld)
+		
 		this.state.aSortedIds = this.updateSortTree(aUnsortedIds, aUnsortedPids)
+
+		console.log("new", this.state.aSortedIds)
 
 		// "мягкое" обновление не убирает старых непрочитанных комментов
 		if (!soft)
@@ -342,6 +353,8 @@ export default class Tree {
 	}
 
 	mount(obj, comments) {
+		console.log("comment mount", comments)
+
 		function updateNesting() {
 			this.calcNesting()
 			this.render()
@@ -360,9 +373,13 @@ export default class Tree {
 			}
 		}
 
+		console.log("ids mount", ids)
+
 		console.log("Before sort", dateFormat(new Date(), "HH:MM:ss:l"))
 		this.state.aSortedIds = this.updateSortTree(ids, pids)
 		console.log("Aftre sort", dateFormat(new Date(), "HH:MM:ss:l"))
+
+                console.log("ids sorted", this.state.aSortedIds)
 
 		this.state.aComments = comments
 

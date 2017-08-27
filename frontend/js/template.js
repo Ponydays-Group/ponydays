@@ -87,16 +87,16 @@ export default function init() {
 
         $('html').removeClass('no-js');
 
-        window.resize_sidebar = function() {
-            if ($("#content").offset().top == $("#sidebar").offset().top) {
-                $("#sidebar").css("height", $("#wrapper").height() > $("#sidebar").height() ? $("#wrapper").height() : null)
-            }
-        }
-        try {
-            resize_sidebar()
-        } catch(err) {
-            console.log(err)
-        }
+        // window.resize_sidebar = function() {
+        //     if ($("#content").offset().top == $("#sidebar").offset().top) {
+        //         $("#sidebar").css("height", $("#wrapper").height() > $("#sidebar").height() ? $("#wrapper").height() : null)
+        //     }
+        // }
+        // try {
+        //     resize_sidebar()
+        // } catch(err) {
+        //     console.log(err)
+        // }
 
         // Всплывающие окна
         $('#window_login_form').jqm();

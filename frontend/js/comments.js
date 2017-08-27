@@ -43,7 +43,8 @@ export let sBStyle
 export let cbsclick
 export let iCurrentShowFormComment = 0
 export let iCurrentViewComment = null
-export let bSuccessLoaded = true;
+export let bSuccessLoaded = true
+export let bStopAutoload = false
 export let aCommentNew = []
 export let aCommentOld = []
 export let lastNewComment = 0
@@ -88,6 +89,8 @@ export function add(formObj, targetId, targetType) {
 	$("#form_comment_text").addClass(options.classes.form_loader).attr("readonly", true)
 	$("#comment-button-submit").attr("disabled", "disabled")
 
+	bStopAutoload = true;
+
 	Ajax.ajax(options.type[targetType].url_add, formObj.serializeJSON(), function (result) {
 		$("#comment-button-submit").removeAttr("disabled")
 		if (!result) {
@@ -104,6 +107,9 @@ export function add(formObj, targetId, targetType) {
 
 			// Load new comments
 			load(targetId, targetType, result.sCommentId, true)
+
+			bStopAutoload = false;
+
 			Emitter.emit("ls_comments_add_after", [formObj, targetId, targetType, result])
 		}
 	}.bind(this))

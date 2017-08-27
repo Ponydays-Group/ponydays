@@ -40,7 +40,7 @@ class commentSortTreeNode {
 	appendId(id, pid) {
 		// На случай повторений. Раскомментировать, если буду использовать одно дерево
 		// if (this.id === id)
-		//	return true
+		// 	return true
 
 		if (pid === null)
 			return this.appendAsBro(id)
@@ -76,13 +76,16 @@ class commentSortTreeNode {
 	}
 
 	appendAsBro(id) {
+		// if (this.id === id)
+		// 	return true
+
 		let target = this
 		while (target.bro !== null) {
 			target = target.bro
 
 			// На случай повторений. Раскомментировать, если буду использовать одно дерево
 			// if (target.id === id)
-			// 	return true
+			//  	return true
 
 		}
 		target.bro = new commentSortTreeNode(id)
@@ -251,18 +254,16 @@ export default class Tree {
 			}
 		}
 
-		console.log("IDS", aUnsortedIds)
 
 		// сохраняем старый массив для вычисления разности
-
-
 		this.state.aSortedIdsOld = this.state.aSortedIds
-		
-		console.log("old", this.state.aSortedIdsOld)
-		
 		this.state.aSortedIds = this.updateSortTree(aUnsortedIds, aUnsortedPids)
 
-		console.log("new", this.state.aSortedIds)
+		if (DEBUG) {
+			console.log("Unsorted new IDs", aUnsortedIds)
+			console.log("Old sorted IDs", this.state.aSortedIdsOld)
+			console.log("New sorted IDs", this.state.aSortedIds)
+		}
 
 		// "мягкое" обновление не убирает старых непрочитанных комментов
 		if (!soft)
@@ -353,8 +354,6 @@ export default class Tree {
 	}
 
 	mount(obj, comments) {
-		console.log("comment mount", comments)
-
 		function updateNesting() {
 			this.calcNesting()
 			this.render()
@@ -373,30 +372,28 @@ export default class Tree {
 			}
 		}
 
-		console.log("ids mount", ids)
-
 		console.log("Before sort", dateFormat(new Date(), "HH:MM:ss:l"))
 		this.state.aSortedIds = this.updateSortTree(ids, pids)
 		console.log("Aftre sort", dateFormat(new Date(), "HH:MM:ss:l"))
 
-                console.log("ids sorted", this.state.aSortedIds)
-
 		this.state.aComments = comments
+
+		if (DEBUG) {
+			console.log("comment mount", comments)
+			console.log("ids mount", ids)
+			console.log("ids sorted", this.state.aSortedIds)
+		}
 
 		updateNesting.bind(this)()
 
-		// console.log("Before pushing comments", dateFormat(new Date(), "HH:MM:ss:l"))
+		// Заполнение массива ID новых сообщений
 		$(".comment-new").each(function (k, v) {
 			this.state.aCommentsNew.push("" + $(v).data("id"))
 		}.bind(this))
-		// console.log("After pc", dateFormat(new Date(), "HH:MM:ss:l"))
-
-		// console.log("Before update new comments count", dateFormat(new Date(), "HH:MM:ss:l"))
-		this.updateCommentsNewCount()
-		// console.log("After update", dateFormat(new Date(), "HH:MM:ss:l"))
 
 		Emitter.on("comments-calc-nesting", updateNesting.bind(this))
 
+		this.updateCommentsNewCount()
 		this.initShortcuts()
 	}
 

@@ -43,6 +43,7 @@ export let sBStyle
 export let cbsclick
 export let iCurrentShowFormComment = 0
 export let iCurrentViewComment = null
+export let bSuccessLoaded = true;
 export let aCommentNew = []
 export let aCommentOld = []
 export let lastNewComment = 0
@@ -65,13 +66,9 @@ export async function renderComments() {
 	let result = await loadComments()
 	let comments = result.aComments
 
-	$("#comment_last_id").val(result.iMaxIdComment)
+	lastNewComment = result.iMaxIdComment
 
 	CommentsTree.mount($("#comments-tree"), comments)
-
-	// фактически не нужно, делало повторную работу
-	// calcNewComments()
-	// resize_sidebar()
 
 	if (location.hash.startsWith("#comment") && location.hash !== "#comments") {
 		setTimeout(scrollToComment(location.hash.replace("#comment", ""), 0, 350), 2000)
@@ -154,7 +151,7 @@ export function _toggleCommentForm(idComment, bNoFocus) {
 
 // Подгружает новые комментарии
 export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
-	let idCommentLast = $("#comment_last_id").val()
+	bSuccessLoaded = false;
 
 	if (aCommentNew !== []) {
 		aCommentOld = aCommentNew
@@ -171,7 +168,7 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
 	objImg.addClass("fa-pulse")
 
 	let params = {
-		idCommentLast: idCommentLast,
+		idCommentLast: lastNewComment,
 		idTarget: idTarget,
 		typeTarget: typeTarget,
 	}
@@ -181,10 +178,13 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
 	}
 
 	console.log("Before ajax", dateFormat(new Date(), "HH:MM:ss:l"))
-
+	// console.log("before", lastNewComment)
+	console.log("params", params)
 	Ajax.ajax(options.type[typeTarget].url_response, params, function (result) {
+		console.log("params", params)
 		console.log("Ajax catched", dateFormat(new Date(), "HH:MM:ss:l"))
 		objImg.removeClass("fa-pulse")
+		bSuccessLoaded = true;
 
 		if (!result) {
 			Msg.error("Error", "Please try again later")
@@ -199,7 +199,9 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
 			console.log("Ajax OK", dateFormat(new Date(), "HH:MM:ss:l"))
 
 			if (Object.keys(aCmt).length > 0 && result.iMaxIdComment) {
-				$("#comment_last_id").val(result.iMaxIdComment)
+				console.log("before", lastNewComment)
+				lastNewComment = result.iMaxIdComment
+				console.log("after", lastNewComment)
 
 				let countComments = $("#count-comments")
 				countComments.text(parseInt(countComments.text()) + Object.keys(aCmt).length)

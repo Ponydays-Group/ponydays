@@ -39,8 +39,8 @@ class commentSortTreeNode {
 
 	appendId(id, pid) {
 		// На случай повторений.
-		// if (this.id === id)
-		// 	return true
+		if (this.id === id)
+		 	return true
 
 		if (pid === null)
 			return this.appendAsBro(id)
@@ -76,16 +76,16 @@ class commentSortTreeNode {
 	}
 
 	appendAsBro(id) {
-		// if (this.id === id)
-		// 	return true
+		if (this.id === id)
+		 	return true
 
 		let target = this
 		while (target.bro !== null) {
 			target = target.bro
 
 			// На случай повторений. Раскомментировать, если буду использовать одно дерево
-			// if (target.id === id)
-			// 	return true
+			if (target.id === id)
+			 	return true
 
 		}
 		target.bro = new commentSortTreeNode(id)

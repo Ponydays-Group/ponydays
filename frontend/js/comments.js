@@ -106,9 +106,15 @@ export function add(formObj, targetId, targetType) {
 			$("#form_comment_text").val("")
 
 			// Load new comments
-			load(targetId, targetType, result.sCommentId, true)
-
-			bStopAutoload = false;
+			// Если подгрузка не завершена - ждем...
+			let timer = setTimeout(function waitUntilLoaded() {
+				if(bSuccessLoaded) {
+					load(targetId, targetType, result.sCommentId, true)
+					bStopAutoload = false;
+				} else {
+					timer = setTimeout(waitUntilLoaded, 100);
+				}
+			}, 100);
 
 			Emitter.emit("ls_comments_add_after", [formObj, targetId, targetType, result])
 		}

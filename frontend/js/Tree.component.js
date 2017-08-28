@@ -38,7 +38,7 @@ class commentSortTreeNode {
 	}
 
 	appendId(id, pid) {
-		// На случай повторений. Раскомментировать, если буду использовать одно дерево
+		// На случай повторений.
 		// if (this.id === id)
 		// 	return true
 
@@ -85,7 +85,7 @@ class commentSortTreeNode {
 
 			// На случай повторений. Раскомментировать, если буду использовать одно дерево
 			// if (target.id === id)
-			//  	return true
+			// 	return true
 
 		}
 		target.bro = new commentSortTreeNode(id)

@@ -43,7 +43,7 @@ export let sBStyle
 export let cbsclick
 export let iCurrentShowFormComment = 0
 export let iCurrentViewComment = null
-export let bSuccessLoaded = true
+// export let bSuccessLoaded = true
 // export let bStopAutoload = false
 export let aCommentNew = []
 export let aCommentOld = []
@@ -165,7 +165,7 @@ export function _toggleCommentForm(idComment, bNoFocus) {
 
 // Подгружает новые комментарии
 export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
-	bSuccessLoaded = false;
+	// bSuccessLoaded = false;
 
 	if (aCommentNew !== []) {
 		aCommentOld = aCommentNew
@@ -198,7 +198,7 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
 		console.log("params", params)
 		console.log("Ajax catched", dateFormat(new Date(), "HH:MM:ss:l"))
 		objImg.removeClass("fa-pulse")
-		bSuccessLoaded = true;
+		// bSuccessLoaded = true;
 
 		if (!result) {
 			Msg.error("Error", "Please try again later")

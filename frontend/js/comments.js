@@ -44,7 +44,7 @@ export let cbsclick
 export let iCurrentShowFormComment = 0
 export let iCurrentViewComment = null
 export let bSuccessLoaded = true
-export let bStopAutoload = false
+// export let bStopAutoload = false
 export let aCommentNew = []
 export let aCommentOld = []
 export let lastNewComment = 0
@@ -89,7 +89,7 @@ export function add(formObj, targetId, targetType) {
 	$("#form_comment_text").addClass(options.classes.form_loader).attr("readonly", true)
 	$("#comment-button-submit").attr("disabled", "disabled")
 
-	bStopAutoload = true;
+	// bStopAutoload = true;
 
 	Ajax.ajax(options.type[targetType].url_add, formObj.serializeJSON(), function (result) {
 		$("#comment-button-submit").removeAttr("disabled")
@@ -107,14 +107,16 @@ export function add(formObj, targetId, targetType) {
 
 			// Load new comments
 			// Если подгрузка не завершена - ждем...
-			let timer = setTimeout(function waitUntilLoaded() {
-				if(bSuccessLoaded) {
-					load(targetId, targetType, result.sCommentId, true)
-					bStopAutoload = false;
-				} else {
-					timer = setTimeout(waitUntilLoaded, 100);
-				}
-			}, 100);
+			// let timer = setTimeout(function waitUntilLoaded() {
+			// 	if(bSuccessLoaded) {
+			// 		load(targetId, targetType, result.sCommentId, true)
+			// 		bStopAutoload = false;
+			// 	} else {
+			// 		timer = setTimeout(waitUntilLoaded, 100);
+			// 	}
+			// }, 100);
+
+			load(targetId, targetType, result.sCommentId, true)
 
 			Emitter.emit("ls_comments_add_after", [formObj, targetId, targetType, result])
 		}

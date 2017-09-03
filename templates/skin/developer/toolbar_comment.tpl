@@ -12,7 +12,7 @@
 	</section>
 <script>
 function autoload(){
-    if (document.getElementById('autoload').checked && ls.comments.bSuccessLoaded && !ls.comments.bStopAutoload) {
+    if (document.getElementById('autoload').checked && ls.comments.bSuccessLoaded) {
 		ls.comments.load({$params.iTargetId}, '{$params.sTargetType}', null, true);
     }
 }

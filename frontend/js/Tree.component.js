@@ -134,6 +134,7 @@ export default class Tree {
 		Emitter.on("go-to-next-comment", this.goToNextComment.bind(this))
 		Emitter.on("go-to-prev-comment", this.goToPrevComment.bind(this))
 		Emitter.on("go-to-comment", this.goToComment.bind(this))
+		Emitter.on("comments-calc-nesting", this.updateNesting.bind(this))
 	}
 
 	calcNesting() {
@@ -354,7 +355,7 @@ export default class Tree {
 	}
 
 	mount(obj, comments) {
-		function updateNesting() {
+		function applyNesting() {
 			this.calcNesting()
 			this.render()
 		}
@@ -384,14 +385,12 @@ export default class Tree {
 			console.log("ids sorted", this.state.aSortedIds)
 		}
 
-		updateNesting.bind(this)()
+		applyNesting.bind(this)()
 
 		// Заполнение массива ID новых сообщений
 		$(".comment-new").each(function (k, v) {
 			this.state.aCommentsNew.push("" + $(v).data("id"))
 		}.bind(this))
-
-		Emitter.on("comments-calc-nesting", updateNesting.bind(this))
 
 		this.updateCommentsNewCount()
 		this.initShortcuts()
@@ -577,5 +576,18 @@ export default class Tree {
 		console.log("After render", dateFormat(new Date(), "HH:MM:ss:l"))
 
 		updateImgs()
+	}
+
+	updateNesting() {
+		this.calcNesting()
+
+		let aComments = $(".comment")
+
+		aComments.each(function(i, comment) {
+			let level = +$(comment).attr("data-level") > this.state.iMaxNesting ? this.state.iMaxNesting : +$(comment).attr("data-level")
+
+			$(comment).css("margin-left", level * 20 + "px")
+		}.bind(this))
+
 	}
 }

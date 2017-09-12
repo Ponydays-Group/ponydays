@@ -144,10 +144,11 @@ export function _toggleCommentForm(idComment, bNoFocus) {
 		tinyMCE.execCommand("mceRemoveControl", true, "form_comment_text")
 	}
 	let comment = $("#comment_id_" + idComment)
+
 	reply.insertAfter(comment).show()
-	reply.css("marginLeft", (comment.data("level") + 1) * 20)
+	reply.css("margin-left", parseInt(comment.css("margin-left").replace("px","")) + 20)
 	if (!comment) {
-		reply.css("marginLeft", 0)
+		reply.css("margin-left", 0)
 	}
 
 	let formCommentText = $("#form_comment_text")

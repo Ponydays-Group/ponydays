@@ -137,6 +137,8 @@
 .stream-fixed {
   position: fixed;
   top: 0px;
+  bottom: 0px;
+  background: $secondary-accent;
   margin-bottom: 0;
   overflow-y: auto;
   

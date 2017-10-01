@@ -274,7 +274,9 @@ class ModuleText extends Module {
 	}
 
     public function RelativeLinkParser(string $sText) : string {
-        return str_replace(Config::Get('path.root.web'),'',$sText);
+        $sText = str_replace("https://alpha.lunavod.ru","", $sText);
+        $sText = str_replace("alpha.lunavod.ru","", $sText);
+        return $sText;
 	}
 }
 ?>

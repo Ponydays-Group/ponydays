@@ -161,9 +161,10 @@ class ModuleText extends Module {
 		}
 		$sResult=$this->FlashParamParser($sText);
 		$sResult=preg_replace('/<iframe src=\"http:\/\/vk\.com\/(.*)\"(.*)\"><\/iframe>/Ui','<video>http://vk.com/$1</video>',$sResult);
-                $sResult=$this->JevixParser($sResult);
+        $sResult=$this->JevixParser($sResult);
 		$sResult=$this->VideoParser($sResult);
 		$sResult=$this->CodeSourceParser($sResult);
+		$sResult=$this->RelativeLinkParser($sResult);
 		return $sResult;
 	}
 	/**

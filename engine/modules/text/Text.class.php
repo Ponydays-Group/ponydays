@@ -274,12 +274,12 @@ class ModuleText extends Module {
 	}
 
     public function RelativeLinkParser(string $sText) : string {
-        $sText = str_replace("https://alpha.lunavod.ru","", $sText);
-        $sText = str_replace("https://bunker.lunavod.ru","", $sText);
-        $sText = str_replace("http://alpha.lunavod.ru","", $sText);
-        $sText = str_replace("http://bunker.lunavod.ru","", $sText);
-        $sText = str_replace("alpha.lunavod.ru","", $sText);
-        $sText = str_replace("bunker.lunavod.ru","", $sText);
+        $sText = str_replace("href=\"https://alpha.lunavod.ru","href=\"", $sText);
+        $sText = str_replace("href=\"https://bunker.lunavod.ru","href=\"", $sText);
+        $sText = str_replace("href=\"http://alpha.lunavod.ru","href=\"", $sText);
+        $sText = str_replace("href=\"http://bunker.lunavod.ru","href=\"", $sText);
+        $sText = str_replace("href=\"alpha.lunavod.ru","href=\"", $sText);
+        $sText = str_replace("href=\"bunker.lunavod.ru","href=\"", $sText);
         return $sText;
 	}
 }

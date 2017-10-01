@@ -275,7 +275,11 @@ class ModuleText extends Module {
 
     public function RelativeLinkParser(string $sText) : string {
         $sText = str_replace("https://alpha.lunavod.ru","", $sText);
+        $sText = str_replace("https://bunker.lunavod.ru","", $sText);
+        $sText = str_replace("http://alpha.lunavod.ru","", $sText);
+        $sText = str_replace("http://bunker.lunavod.ru","", $sText);
         $sText = str_replace("alpha.lunavod.ru","", $sText);
+        $sText = str_replace("bunker.lunavod.ru","", $sText);
         return $sText;
 	}
 }

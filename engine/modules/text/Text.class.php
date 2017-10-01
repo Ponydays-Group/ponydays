@@ -271,5 +271,9 @@ class ModuleText extends Module {
 		}
 		return $sText;
 	}
+
+    public function RelativeLinkParser(string $sText) : string {
+        return str_replace(Config::Get('path.root.web'),'',$sText);
+	}
 }
 ?>

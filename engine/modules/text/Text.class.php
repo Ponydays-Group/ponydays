@@ -161,9 +161,10 @@ class ModuleText extends Module {
 		}
 		$sResult=$this->FlashParamParser($sText);
 		$sResult=preg_replace('/<iframe src=\"http:\/\/vk\.com\/(.*)\"(.*)\"><\/iframe>/Ui','<video>http://vk.com/$1</video>',$sResult);
-                $sResult=$this->JevixParser($sResult);
+        $sResult=$this->JevixParser($sResult);
 		$sResult=$this->VideoParser($sResult);
 		$sResult=$this->CodeSourceParser($sResult);
+		$sResult=$this->RelativeLinkParser($sResult);
 		return $sResult;
 	}
 	/**
@@ -270,6 +271,16 @@ class ModuleText extends Module {
 			}
 		}
 		return $sText;
+	}
+
+    public function RelativeLinkParser(string $sText) : string {
+        $sText = str_replace("href=\"https://alpha.lunavod.ru","href=\"", $sText);
+        $sText = str_replace("href=\"https://bunker.lunavod.ru","href=\"", $sText);
+        $sText = str_replace("href=\"http://alpha.lunavod.ru","href=\"", $sText);
+        $sText = str_replace("href=\"http://bunker.lunavod.ru","href=\"", $sText);
+        $sText = str_replace("href=\"alpha.lunavod.ru","href=\"", $sText);
+        $sText = str_replace("href=\"bunker.lunavod.ru","href=\"", $sText);
+        return $sText;
 	}
 }
 ?>

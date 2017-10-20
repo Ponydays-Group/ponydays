@@ -12,10 +12,11 @@
 	</section>
 <script>
 function autoload(){
-    if (document.getElementById('autoload').checked){
-        ls.comments.load({$params.iTargetId}, '{$params.sTargetType}', null, true);
+    if (document.getElementById('autoload').checked) {
+		ls.comments.load({$params.iTargetId}, '{$params.sTargetType}', null, true);
     }
 }
+
 console.log(setInterval(autoload, 10000));
 </script>
 {/if}

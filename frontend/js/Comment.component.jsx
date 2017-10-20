@@ -9,7 +9,7 @@ var dateFormat = require('dateformat');
 
 export default function render_comment(data, maxNesting) {
     let level = data.level > maxNesting? maxNesting : data.level
-    return data.isBad?`<section id=${"comment_id_"+data.id} style="margin-left: ${level*20}px" data-id=${data.id} data-level=${level} data-pid=${data.parentId} data-author=${data.author.login}><span class="bad-placeholder">...</bad></section>`:`<section id=${"comment_id_"+data.id} data-author=${data.author.login} data-id=${data.id} data-level=${level} data-pid=${data.parentId} style="margin-left: ${level*20}px" class="${classNames({
+    return data.isBad?`<section id=${"comment_id_"+data.id} style="margin-left: ${level*20}px" data-id=${data.id} data-level=${data.level} data-pid=${data.parentId} data-author=${data.author.login}><span class="bad-placeholder">...</bad></section>`:`<section id=${"comment_id_"+data.id} data-author=${data.author.login} data-id=${data.id} data-level=${data.level} data-pid=${data.parentId} style="margin-left: ${level*20}px" class="${classNames({
         "comment": true,
         "comment-bad": data.rating < -5,
         "comment-self": USERNAME==data.author.login,

@@ -43,6 +43,8 @@ export let sBStyle
 export let cbsclick
 export let iCurrentShowFormComment = 0
 export let iCurrentViewComment = null
+// export let bSuccessLoaded = true
+// export let bStopAutoload = false
 export let aCommentNew = []
 export let aCommentOld = []
 export let lastNewComment = 0
@@ -65,13 +67,9 @@ export async function renderComments() {
 	let result = await loadComments()
 	let comments = result.aComments
 
-	$("#comment_last_id").val(result.iMaxIdComment)
+	lastNewComment = result.iMaxIdComment
 
 	CommentsTree.mount($("#comments-tree"), comments)
-
-	// фактически не нужно, делало повторную работу
-	// calcNewComments()
-	// resize_sidebar()
 
 	if (location.hash.startsWith("#comment") && location.hash !== "#comments") {
 		setTimeout(scrollToComment(location.hash.replace("#comment", ""), 0, 350), 2000)
@@ -91,6 +89,8 @@ export function add(formObj, targetId, targetType) {
 	$("#form_comment_text").addClass(options.classes.form_loader).attr("readonly", true)
 	$("#comment-button-submit").attr("disabled", "disabled")
 
+	// bStopAutoload = true;
+
 	Ajax.ajax(options.type[targetType].url_add, formObj.serializeJSON(), function (result) {
 		$("#comment-button-submit").removeAttr("disabled")
 		if (!result) {
@@ -106,7 +106,18 @@ export function add(formObj, targetId, targetType) {
 			$("#form_comment_text").val("")
 
 			// Load new comments
+			// Если подгрузка не завершена - ждем...
+			// let timer = setTimeout(function waitUntilLoaded() {
+			// 	if(bSuccessLoaded) {
+			// 		load(targetId, targetType, result.sCommentId, true)
+			// 		bStopAutoload = false;
+			// 	} else {
+			// 		timer = setTimeout(waitUntilLoaded, 100);
+			// 	}
+			// }, 100);
+
 			load(targetId, targetType, result.sCommentId, true)
+
 			Emitter.emit("ls_comments_add_after", [formObj, targetId, targetType, result])
 		}
 	}.bind(this))
@@ -133,10 +144,11 @@ export function _toggleCommentForm(idComment, bNoFocus) {
 		tinyMCE.execCommand("mceRemoveControl", true, "form_comment_text")
 	}
 	let comment = $("#comment_id_" + idComment)
+
 	reply.insertAfter(comment).show()
-	reply.css("marginLeft", (comment.data("level") + 1) * 20)
+	reply.css("margin-left", parseInt(comment.css("margin-left").replace("px","")) + 20)
 	if (!comment) {
-		reply.css("marginLeft", 0)
+		reply.css("margin-left", 0)
 	}
 
 	let formCommentText = $("#form_comment_text")
@@ -154,7 +166,7 @@ export function _toggleCommentForm(idComment, bNoFocus) {
 
 // Подгружает новые комментарии
 export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
-	let idCommentLast = $("#comment_last_id").val()
+	// bSuccessLoaded = false;
 
 	if (aCommentNew !== []) {
 		aCommentOld = aCommentNew
@@ -171,7 +183,7 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
 	objImg.addClass("fa-pulse")
 
 	let params = {
-		idCommentLast: idCommentLast,
+		idCommentLast: lastNewComment,
 		idTarget: idTarget,
 		typeTarget: typeTarget,
 	}
@@ -181,10 +193,13 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
 	}
 
 	console.log("Before ajax", dateFormat(new Date(), "HH:MM:ss:l"))
-
+	// console.log("before", lastNewComment)
+	console.log("params", params)
 	Ajax.ajax(options.type[typeTarget].url_response, params, function (result) {
+		console.log("params", params)
 		console.log("Ajax catched", dateFormat(new Date(), "HH:MM:ss:l"))
 		objImg.removeClass("fa-pulse")
+		// bSuccessLoaded = true;
 
 		if (!result) {
 			Msg.error("Error", "Please try again later")
@@ -199,7 +214,9 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
 			console.log("Ajax OK", dateFormat(new Date(), "HH:MM:ss:l"))
 
 			if (Object.keys(aCmt).length > 0 && result.iMaxIdComment) {
-				$("#comment_last_id").val(result.iMaxIdComment)
+				console.log("before", lastNewComment)
+				lastNewComment = result.iMaxIdComment
+				console.log("after", lastNewComment)
 
 				let countComments = $("#count-comments")
 				countComments.text(parseInt(countComments.text()) + Object.keys(aCmt).length)

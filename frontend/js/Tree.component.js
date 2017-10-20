@@ -38,12 +38,12 @@ class commentSortTreeNode {
 	}
 
 	appendId(id, pid) {
-		// На случай повторений. Раскомментировать, если буду использовать одно дерево
+		// На случай повторений.
 		if (this.id === id)
-			return true
+		 	return true
 
 		if (pid === null)
-			this.appendAsBro(id)
+			return this.appendAsBro(id)
 
 		if (this.id > pid)
 			return false
@@ -76,13 +76,16 @@ class commentSortTreeNode {
 	}
 
 	appendAsBro(id) {
+		if (this.id === id)
+		 	return true
+
 		let target = this
 		while (target.bro !== null) {
 			target = target.bro
 
 			// На случай повторений. Раскомментировать, если буду использовать одно дерево
 			if (target.id === id)
-				return true
+			 	return true
 
 		}
 		target.bro = new commentSortTreeNode(id)
@@ -131,6 +134,7 @@ export default class Tree {
 		Emitter.on("go-to-next-comment", this.goToNextComment.bind(this))
 		Emitter.on("go-to-prev-comment", this.goToPrevComment.bind(this))
 		Emitter.on("go-to-comment", this.goToComment.bind(this))
+		Emitter.on("comments-calc-nesting", this.updateNesting.bind(this))
 	}
 
 	calcNesting() {
@@ -231,6 +235,8 @@ export default class Tree {
 
 
 	handleNewComments(aNewComments, selfIdComment, soft) {
+		console.log("NC", aNewComments)
+
 		// массивы, с которых пополняется делево
 		let aUnsortedIds = []
 		let aUnsortedPids = []
@@ -249,9 +255,16 @@ export default class Tree {
 			}
 		}
 
+
 		// сохраняем старый массив для вычисления разности
 		this.state.aSortedIdsOld = this.state.aSortedIds
 		this.state.aSortedIds = this.updateSortTree(aUnsortedIds, aUnsortedPids)
+
+		if (DEBUG) {
+			console.log("Unsorted new IDs", aUnsortedIds)
+			console.log("Old sorted IDs", this.state.aSortedIdsOld)
+			console.log("New sorted IDs", this.state.aSortedIds)
+		}
 
 		// "мягкое" обновление не убирает старых непрочитанных комментов
 		if (!soft)
@@ -342,7 +355,7 @@ export default class Tree {
 	}
 
 	mount(obj, comments) {
-		function updateNesting() {
+		function applyNesting() {
 			this.calcNesting()
 			this.render()
 		}
@@ -366,20 +379,20 @@ export default class Tree {
 
 		this.state.aComments = comments
 
-		updateNesting.bind(this)()
+		if (DEBUG) {
+			console.log("comment mount", comments)
+			console.log("ids mount", ids)
+			console.log("ids sorted", this.state.aSortedIds)
+		}
 
-		// console.log("Before pushing comments", dateFormat(new Date(), "HH:MM:ss:l"))
+		applyNesting.bind(this)()
+
+		// Заполнение массива ID новых сообщений
 		$(".comment-new").each(function (k, v) {
 			this.state.aCommentsNew.push("" + $(v).data("id"))
 		}.bind(this))
-		// console.log("After pc", dateFormat(new Date(), "HH:MM:ss:l"))
 
-		// console.log("Before update new comments count", dateFormat(new Date(), "HH:MM:ss:l"))
 		this.updateCommentsNewCount()
-		// console.log("After update", dateFormat(new Date(), "HH:MM:ss:l"))
-
-		Emitter.on("comments-calc-nesting", updateNesting.bind(this))
-
 		this.initShortcuts()
 	}
 
@@ -563,5 +576,18 @@ export default class Tree {
 		console.log("After render", dateFormat(new Date(), "HH:MM:ss:l"))
 
 		updateImgs()
+	}
+
+	updateNesting() {
+		this.calcNesting()
+
+		let aComments = $(".comment")
+
+		aComments.each(function(i, comment) {
+			let level = +$(comment).attr("data-level") > this.state.iMaxNesting ? this.state.iMaxNesting : +$(comment).attr("data-level")
+
+			$(comment).css("margin-left", level * 20 + "px")
+		}.bind(this))
+
 	}
 }

@@ -335,7 +335,9 @@ export default class Tree {
 			return false
 		}
 
-		$("html, body").animate({
+        let body = $("html, body")
+		body.stop()
+		body.animate({
 			scrollTop: oComment.offset().top - 250,
 		}, 150)
 

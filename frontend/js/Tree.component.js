@@ -192,12 +192,12 @@ export default class Tree {
 			iPrevId = id
 			bUseNew = true
 
+            updateImgs($(`[data-id=${id}]`))
+
 			if (DEBUG && $(`[data-id=${id}]`).length !== 1) {
 				console.error("No inserted comment in DOM!")
 			}
 		}.bind(this))
-
-		updateImgs()
 	}
 
 	checkEdited(edited_comments) {
@@ -216,10 +216,9 @@ export default class Tree {
 					this.state.aCommentsNew.sort(this.sortByTree.bind(this))
 					this.updateCommentsNewCount()
 				}
-			}
+                updateImgs(oComment)
+            }
 		}
-
-		updateImgs()
 	}
 
 	sortByTree(a, b) {
@@ -335,7 +334,9 @@ export default class Tree {
 			return false
 		}
 
-		$("html, body").animate({
+        let body = $("html, body")
+		body.stop()
+		body.animate({
 			scrollTop: oComment.offset().top - 250,
 		}, 150)
 

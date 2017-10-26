@@ -4,7 +4,7 @@
 
 <section class="block">
 	<div class="profile-main">
-		<div class="user-avatar-wrapper"><img class="user-avatar" src="{$oUserProfile->getProfileAvatarPath(100)}" /></div>
+		<div class="user-avatar-wrapper"><img src="{$oUserProfile->getProfileFotoPath()}" /></div>
 		<div class="user-info">
 			<span class="user-login">{$oUserProfile->getLogin()}</span>
 			<div class="user-rating">

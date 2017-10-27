@@ -525,13 +525,13 @@ export default class Tree {
 		let shortcuts = {
 			"ctrl+space": Comments.goToNextComment,
 			"ctrl+shift+space": Comments.goToPrevComment,
-			"ctrl+up": goToPrevComment.bind(this),
-			"ctrl+down": goToNextComment.bind(this),
-			"ctrl+end": goToLastComment.bind(this),
-			"ctrl+home": goToFirstComment.bind(this),
-			"alt+pagedown": goToNextBranch.bind(this),
-			"alt+pageup": goToPrevBranch.bind(this),
-			"alt+r": toggleReplyOnCurrent.bind(this),
+			"ctrl+up": goToPrevComment,
+			"ctrl+down": goToNextComment,
+			"ctrl+end": goToLastComment,
+			"ctrl+home": goToFirstComment,
+			"alt+pagedown": goToNextBranch,
+			"alt+pageup": goToPrevBranch,
+			"alt+r": toggleReplyOnCurrent,
 			"alt+u": updateComments,
 			"alt+shift+u": updateCommentsSoft,
 			"alt+shift+d": window.despoil,
@@ -540,17 +540,17 @@ export default class Tree {
 			"alt+shift+e": editComment,
 			"alt+shift+p": goToParent,
 			"alt+shift+c": goToChild,
-			"alt+shift+m": markAllChildAsRead.bind(this),
+			"alt+shift+m": markAllChildAsRead,
 			"alt+shift+w": window.widemode,
-			"alt+up": voteUp.bind(this),
-			"alt+down": voteDown.bind(this),
+			"alt+up": voteUp,
+			"alt+down": voteDown,
 		}
 
 		let oFormText = $("#form_comment_text")
 
 		for (let i in shortcuts) {
-			$(document).on("keydown", null, i, shortcuts[i])
-			oFormText.on("keydown", null, i, shortcuts[i])
+			$(document).on("keydown", null, i, function(e) { shortcuts[i].apply(this); e.preventDefault(); }.bind(this))
+			oFormText.on("keydown", null, i, function(e) { shortcuts[i].apply(this); e.preventDefault(); }.bind(this))
 		}
 
 		oFormText.off("keydown", shortcuts["ctrl+end"])

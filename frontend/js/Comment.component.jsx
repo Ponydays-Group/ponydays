@@ -23,8 +23,13 @@ export default function render_comment(data, maxNesting) {
     		<ul class="comment-info">
     			<li class="comment-author"><a href="/profile/${data.author.login}" target="_blank">${data.author.login}</a></li>
     		</ul>
-
-    		<div id=${"comment_content_id_"+data.id} class="comment-content text">${data.text}</div>
+    		
+    		<div id=${"comment_content_id_"+data.id} class="comment-content text">
+    		${data.isDeleted && LOGGED_IN && (IS_ADMIN | USERNAME == data.author.login) ? `<span onclick="children[0].style.display = 'block'; children[1].style.display='none' ">
+                <span class="spoiler-body" style="display: none; padding: 0; margin: unset;">` : ""}
+    		    ${data.text}
+    		${data.isDeleted && LOGGED_IN && (IS_ADMIN | USERNAME == data.author.login) ? `</span><a href="#" onclick="return false">Раскрыть комментарий</a></span>` : ""}
+    		</div>
 
     			<div class="comment-actions-wrapper"><ul class="comment-actions">
     				<li class="comment-date">

@@ -183,7 +183,7 @@ export default class Tree {
 				$(this.obj).append($(sCmtHtml))
 			}
 
-			$(sCmtHtml).insertAfter(oPrevCmt)
+			$(sCmtHtml).insertAfter(oPrevCmt.next('.reply').length ? oPrevCmt.next('.reply') : oPrevCmt)
 
 			// формируем массив новых ID
 			if (!(aNewComments[id].author.login === USERNAME || aNewComments[id].isBad))

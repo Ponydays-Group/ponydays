@@ -139,7 +139,6 @@
 
 .profile-main {
     background: $image-under-photo;
-    height: 374px;
 
     .vote-up, .vote-down {
         margin: 0;
@@ -157,8 +156,8 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    height: 70%;
     width: 100%;
+    padding: 20px 0 20px 0;
 }
 
 .user-avatar {
@@ -170,7 +169,7 @@
 
 .user-info {
     background: rgba(0, 0, 0, 0.12);
-    height: 30%;
+    height: 110px;
     width: 100%;
     display: flex;
     flex-direction: column;

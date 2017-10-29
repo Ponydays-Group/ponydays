@@ -25,7 +25,7 @@
 	<input type="password" id="password" name="password" class="input-text input-width-200" />
 	<small class="validate-error-hide validate-error-login"></small></p>
 	
-	<p><label><input type="checkbox" name="remember" checked class="input-checkbox" /> {$aLang.user_login_remember}</label></p>
+	<p><span class="checkbox"><span><input type="checkbox" id="remember0" name="remember" checked class="input-checkbox" /><label for="remember0"> {$aLang.user_login_remember}</label></span></span></p>
 	
 	{hook run='form_login_end'}
 

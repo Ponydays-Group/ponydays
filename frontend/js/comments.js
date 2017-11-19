@@ -23,6 +23,9 @@ export let options = {
 			url_add: aRouter.talk + "ajaxaddcomment/",
 			url_response: aRouter.talk + "ajaxresponsecomment/",
 		},
+		comment: {
+			url: aRouter.ajax + "comment/",
+		},
 	},
 	classes: {
 		form_loader: "loader",
@@ -541,6 +544,15 @@ export function cancelEditComment(idComment) {
 
 	reply.hide()
 	setFormText("")
+}
+
+export function showDeletedComment(idComment) {
+	let params = {'idComment': idComment}
+
+	Ajax.ajax(options.type.comment.url, params, function(res) {
+        let oComment = $("#comment_content_id_"+idComment)
+        oComment.html(res.aComment.text);
+    })
 }
 
 export function editComment(idComment) {

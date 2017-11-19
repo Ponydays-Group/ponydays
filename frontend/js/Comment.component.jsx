@@ -25,10 +25,8 @@ export default function render_comment(data, maxNesting) {
     		</ul>
     		
     		<div id=${"comment_content_id_"+data.id} class="comment-content text">
-    		${data.isDeleted && LOGGED_IN && (IS_ADMIN | USERNAME == data.author.login) ? `<span onclick="window.openSpoiler(children[0]); children[1].style.display='none' ">
-                <span class="spoiler-body" style="display: none; padding: 0; margin: unset;">` : ""}
-    		    ${data.text}
-    		${data.isDeleted && LOGGED_IN && (IS_ADMIN | USERNAME == data.author.login) ? `</span><a href="#" onclick="return false">Раскрыть комментарий</a></span>` : ""}
+    		${data.isDeleted && LOGGED_IN && (IS_ADMIN || USERNAME == data.author.login) ? `<a href="#" onclick="ls.comments.showDeletedComment(${data.id}); return false;">Раскрыть комментарий</a>` : ""}
+    		${data.text}
     		</div>
 
     			<div class="comment-actions-wrapper"><ul class="comment-actions">

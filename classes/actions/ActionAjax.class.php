@@ -84,6 +84,7 @@ class ActionAjax extends Action
         $this->AddEvent('editcomment-gethistory', 'EventGetHistory');
         $this->AddEvent('editcomment-getsource', 'EventGetSource');
         $this->AddEvent('editcomment-edit', 'EventEdit');
+        $this->AddEventPreg('/^comment$/i', 'EventGetComment');
     }
 
     /**********************************************************************************
@@ -1852,6 +1853,42 @@ class ActionAjax extends Action
         $this->Logger_Notice($sLogText);
         $this->Viewer_AssignAjax('bCanEditMore', $this->ACL_UserCanEditComment($this->oUserCurrent, $oComment, PHP_INT_MAX) === true);
     }
+
+    protected function EventGetComment() {
+    	$idComment=getRequestStr('idComment', null, 'post');
+		if(!($oComment=$this->Comment_GetCommentById($idComment))) {
+			$this->Message_AddErrorSingle($this->Lang_Get('system_error') , $this->Lang_Get('error'));
+			return;
+		}
+		if ($oComment->getTargetType()!='topic' or !($oTopic=$oComment->getTarget())) {
+			$this->Message_AddErrorSingle($this->Lang_Get('system_error') , $this->Lang_Get('error'));
+			return;
+		}
+		if (!$oTopic->getPublish() and (!$this->oUserCurrent or ($this->oUserCurrent->getId()!=$oTopic->getUserId() and !$this->oUserCurrent->isAdministrator()))) {
+			$this->Message_AddErrorSingle($this->Lang_Get('system_error') , $this->Lang_Get('error'));
+			return;
+		}
+		if(in_array($oTopic->getBlog()->getType(), array('close', 'invite'))
+			and (!$this->oUserCurrent
+				|| !in_array(
+					$oTopic->getBlog()->getId(),
+					$this->Blog_GetAccessibleBlogsByUser($this->oUserCurrent)
+				)
+			)
+		) {
+			$this->Message_AddErrorSingle($this->Lang_Get('blog_close_show'),$this->Lang_Get('not_access'));
+			return Router::Action('error');
+		}
+		$bIgnoreDelete=false;
+		if ($this->oUserCurrent) {
+    		if ($this->oUserCurrent->isAdministrator() || $this->oUserCurrent->isGlobalModerator()) {
+    			$bIgnoreDelete=true;
+    		}
+    	}
+		$aResult=$this->Comment_ConvertCommentToArray($oComment, $oTopic->getDateRead(), $bIgnoreDelete);
+		$this->Viewer_AssignAjax("aComment", $aResult);
+		$this->Viewer_DisplayAjax();
+	}
 }
 
 function _gov_s_date_asc($a, $b)

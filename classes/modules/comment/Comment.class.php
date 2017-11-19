@@ -1005,20 +1005,20 @@ class ModuleComment extends Module {
 		return $this->GetCommentsByArrayId($aCommentId);
 	}
 	
-	public function ConvertCommentToArray($oComment, $sReadlast) {
+	public function ConvertCommentToArray($oComment, $sReadlast, $bIgnoreDelete=false) {
 		$aComment = array();
 		$aComment['id'] = $oComment->getId();
 		$aComment['author'] = array("id"=>$oComment->getUserId(), "login"=>$oComment->getUser()->getLogin(), "avatar"=>$oComment->getUser()->getProfileAvatarPath(48));
 		$aComment['date'] = gmdate('c',strtotime($oComment->getDate()));
 		$aComment['text'] = $oComment->getText();
-		if ($oComment->getDelete()) {
+		if ($oComment->getDelete() && !$bIgnoreDelete) {
 			$aComment['text'] = "";
 		}
-		if ($this->oUserCurrent) {
+		/*if ($this->oUserCurrent) {
 			if ($this->oUserCurrent->isAdministrator() || $this->oUserCurrent->isGlobalModerator()) {
 				$aComment['text'] = $oComment->getText();
 			}
-		}
+		}*/
 		$aComment['isBad'] = $oComment->isBad();
 		$aComment['isDeleted'] = (int)$oComment->getDelete();
 		$aComment['isFavourite'] = $oComment->getIsFavourite();

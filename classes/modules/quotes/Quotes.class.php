@@ -152,7 +152,7 @@ class ModuleQuotes extends Module {
 
 		if($aIds !== []) {
 			srand((double)microtime() * 1000000);
-			return $aIds[rand(0, $this->oMapper->GetCount())];
+			return $aIds[rand(0, $this->oMapper->GetCount() - 1)];
 		}
 
 		return 0;

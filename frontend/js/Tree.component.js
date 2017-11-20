@@ -293,9 +293,10 @@ export default class Tree {
 			oCounter.innerHTML = count
 
 			document.title = `(${count}) ` + TITLE
+			$("#next_new").removeClass("disabled")
 		} else {
 			oCounter.style.display = "none"
-
+            $("#next_new").addClass("disabled")
 			document.title = TITLE
 		}
 	}
@@ -311,6 +312,7 @@ export default class Tree {
 		Comments.scrollToComment(id)
 
 		this.state.lastNewComment = id
+        $("#prev_new").removeClass("disabled")
 		this.updateCommentsNewCount()
 	}
 

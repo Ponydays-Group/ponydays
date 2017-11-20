@@ -1,3 +1,5 @@
+"use strict"
+
 let path = require('path');
 let fs = require('fs');
 let webpack = require('webpack');
@@ -30,7 +32,7 @@ let config = {
         main: './js/index',
         vendor: vendors,
         light: './css/light.scss',
-        dark: './css/dark.scss',
+        // dark: './css/dark.scss',
     },
     output: {
         path: path.join(__dirname, '..', 'static', '[hash]'),

@@ -9,10 +9,13 @@
 
 body {
 	font-size: 13px;
-	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-family: Roboto, sans-serif;
 	line-height: 18px;
 	color: $text-color;
 	background-color: $background-color;
+	//padding-top: 200px;
+	padding-top: 50px;
+	transition: top .2s, padding-top .2s, padding .2s;
 }
 
 
@@ -319,4 +322,18 @@ img {
   box-shadow: 0 0 2px rgba(63, 81, 181, 0.89);
   position: fixed;
   z-index: 100600;
+}
+
+#head_collaps {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	width: 30px;
+	height: 30px;
+	border-radius: 15px;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	color: white;
+	cursor: pointer;
 }

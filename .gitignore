@@ -11,3 +11,4 @@ node_modules/*
 static/*
 .c9/*
 img/*
+/nbproject/private/

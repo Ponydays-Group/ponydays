@@ -7,13 +7,14 @@
     width: 100%;
     margin: 0 auto;
     margin-bottom: 20px;
+    padding-right: 64px;
 }
 #header 	{ padding: 50px 0; position: relative; }
 #nav 		{ overflow: hidden; }
-#wrapper 	{ position: relative; overflow: hidden; zoom: 1; background: $content-background; border-bottom: 1px solid $main-accent-second; -webkit-box-shadow: 0 0 3px rgba(0,0,0,.1); box-shadow: 0 0 3px rgba(0,0,0,.1); }
-#content 	{ max-width: 100%; float: left;  margin-right: 0; background: $content-background; position: relative; padding-top: 20px; }
+#wrapper 	{ margin-top: 20px; border-radius: 20px; position: relative; overflow: hidden; zoom: 1; background: $wrapper; border-bottom: 1px solid $main-accent-second; box-shadow: 0 0 6px rgba(0,0,0,.15); }
+#content 	{ max-width: 100%; float: left;  margin-right: 0; background: wrapper; position: relative; padding-top: 20px; }
 
-#sidebar	{ float: left;  background-color: $secondary-accent; padding: 20px 0px;}
+#sidebar	{ float: left;}
 @media (max-width: 992px) { #sidebar { position: relative } }
 
 #footer 	{ overflow: hidden; zoom: 1; margin-bottom: 20px; padding: 20px 0 50px; color: #777; }

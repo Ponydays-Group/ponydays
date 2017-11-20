@@ -45,7 +45,7 @@ export default function render_comment(data, maxNesting) {
                           </a>
                         </li>` : ""}
                         ${LOGGED_IN && (IS_ADMIN | USERNAME==data.author.login)? `<li class="action-hidden">
-                          <a href="#" class="editcomment_editlink" title="История редактирования" onclick="ls.comments.showHistory(${data.id}); return false;">
+                          <a href="#" class="editcomment_historylink" title="История редактирования" onclick="ls.comments.showHistory(${data.id}); return false;">
                             <i class="fa fa-history" title="История редактирования"></i>
                           </a>
                         </li>` : ""}
@@ -78,9 +78,9 @@ export default function render_comment(data, maxNesting) {
                   "voted-up": data.voteDirection > 0,
                   "voted-down": data.voteDirection < 0,
               })}">
-                ${LOGGED_IN? `<div class="vote-up fa fa-plus-square-o" onclick="return ls.vote.vote(${data.id},this,1,'comment');"></div>` : "" }
+                ${LOGGED_IN? `<div class="vote-up" onclick="return ls.vote.vote(${data.id},this,1,'comment');"><i class="material-icons">keyboard_arrow_up</i></div>` : "" }
     						<span class="vote-count" onclick="ls.vote.getVotes(${data.id},'comment',this); return false;" id=${"vote_total_comment_"+data.id}>${data.rating > 0? "+" : ""}${data.rating}</span>
-                ${LOGGED_IN? `<div class="vote-down fa fa-minus-square-o" onclick="return ls.vote.vote(${data.id},this,-1,'comment');"` : ""}
+                ${LOGGED_IN? `<div class="vote-down" onclick="return ls.vote.vote(${data.id},this,-1,'comment');"><i class="material-icons">keyboard_arrow_down</i></div>` : ""}
     					</li>
     			</ul></div>
     </section>`

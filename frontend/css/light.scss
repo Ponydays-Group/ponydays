@@ -1,6 +1,6 @@
 @import url(https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css);
 
-$link-color: #38a6a6;
+$link-color: #4D5DB7;
 
 $userbar-height: 64px;
 
@@ -9,7 +9,7 @@ $search-active-color: rgba(61, 142, 185, 1);
 $search-background: #38a6a6;
 
 $background-color: #f7f7f7;
-$userbar-background: #fff;
+$userbar-background: #4D5DB7;
 $userbar-hover-background: darken($userbar-background, 5%);
 $content-background: #fff;
 
@@ -68,6 +68,16 @@ $sidebar-text-a: #67737a;
 }
 
 @import "bootstrap/assets/stylesheets/bootstrap";
+
+$navbar-bg: #4D5DB7;
+$brand: #5d67bb;
+$wrapper: #f0f0f0;
+$first: #fff;
+
+$second: #F9F9F9;
+//$second: white;
+$second-border: 0.5px solid rgba(0,0,0,0.1);
+
 @import "./markitup";
 @import "./base";
 @import "./blocks";
@@ -94,4 +104,4 @@ $sidebar-text-a: #67737a;
 
 @import "./amazium/variables";
 @import "./amazium/form";
-@import "./themes/base/all"
+@import "./themes/base/all";

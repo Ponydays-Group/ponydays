@@ -21,14 +21,13 @@ $button-primary-border-color: #d44545;
 .button {
 	display: inline-block;
 
-	padding: 7px 15px;
+	padding: 10px 20px;
 	text-align: center;
 
 	border: none;
-	border-radius: 3px;
-	border-bottom: 2px solid $button-border-color;
+	border-radius: 20px;
 
-	font-size: 12px;
+	font-size: 13px;
 	line-height: 16px;
 
 	color: $main-color;
@@ -51,10 +50,9 @@ $button-primary-border-color: #d44545;
 
 /* Button Primary */
 .button.button-primary 			{
-	background: $button-primary-background;
-	border-color: $button-primary-border-color;
+	background: $brand;
 }
-.button.button-primary:hover, .button.button-primary.hovered 	{ background: $button-primary-border-color; }
+.button.button-primary:hover, .button.button-primary.hovered 	{ background: darken($brand, 10%); }
 .button.button-primary.active { background: $button-primary-border-color; }
 
 /* Button Icon (Without text) */

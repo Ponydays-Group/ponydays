@@ -73,6 +73,8 @@ export function updateImgs(el = $(document)) {
 
 export default function init() {
     $(document).ready(function ($) {
+        var shortcuts_shown = false
+        $(".keyboard_shortcuts_trigger").click(function(){$("#comment-shortcuts-description").animate({"right": shortcuts_shown? "-450px" : "74px"}, 200); shortcuts_shown=!shortcuts_shown})
         var el = $("#head_image")[0]
         function checkCollapse() {
             if (parseInt(localStorage.getItem('headCollapsed', 0))) {

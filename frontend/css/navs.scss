@@ -442,6 +442,20 @@
         }
     }
 
+    .dropd {
+        height: 0px;
+        overflow: hidden;
+        transition: height .2s;
+        box-sizing: border-box;
+        box-shadow: inset 0px 0px 6px rgba(0,0,0,0.3);
+        background: #4a53a4;
+    }
+
+    .rightbar-item:hover .dropd {
+        height: 320px;
+        padding-bottom: 20px;
+    }
+
     .delim-top {
         padding-top: 20px;
     }

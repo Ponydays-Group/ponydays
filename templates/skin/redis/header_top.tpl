@@ -5,5 +5,4 @@
 </div>
 
 
-{include file='rightbar.tpl'}
 {include file='nav.tpl'}

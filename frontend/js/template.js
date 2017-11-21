@@ -93,6 +93,26 @@ export default function init() {
             $("#rightbar").css("paddingTop", el.getBoundingClientRect().bottom > 0 ? el.getBoundingClientRect().bottom + "px" : "0px")
         }
 
+        function scrollBottom(){
+            let body = $("html, body")
+            body.stop()
+            body.animate({
+                scrollTop: $(document).height(),
+            }, 150)
+        }
+
+        function scrollTop(){
+            let body = $("html, body")
+            body.stop()
+            body.animate({
+                scrollTop: 0,
+            }, 150)
+        }
+
+        $("#scroll_down").click(scrollBottom)
+
+        $("#scroll_up").click(scrollTop)
+
         document.addEventListener("scroll", checkSidebarPadding)
         checkCollapse()
         $("#head_collaps").click(

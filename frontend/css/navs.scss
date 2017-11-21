@@ -232,6 +232,24 @@
 
     li {
         height: $userbar-height;
+
+        a.iconic {
+            width: 64px;
+            height: 64px;
+            display: flex;
+            justify-content: center;
+            align-content: center;
+            padding: 0;
+            font-size: 25px;
+
+            i {
+                font-size: 28px;
+            }
+        }
+
+        a.with-login {
+            padding-left: 16px !important;
+        }
     }
     z-index: 2;
     //margin-top: 200px;

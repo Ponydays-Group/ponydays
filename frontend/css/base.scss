@@ -368,3 +368,29 @@ img {
 		}
 	}
 }
+
+#scroller {
+	height: 100%;
+	width: 50px;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	cursor: pointer;
+	z-index: 100;
+
+	#scroll_down, #scroll_up {
+		height: 50%;
+		width: 100%;
+		transition: background .2s, color .2s;
+		display: flex;
+		justify-content: center;
+		align-content: center;
+		align-items: center;
+		color: transparent;
+
+		&:hover {
+			background: rgba(0,0,0,0.1);
+			color: rgba(0,0,0,0.3);
+		}
+	}
+}

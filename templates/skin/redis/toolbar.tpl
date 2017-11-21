@@ -52,7 +52,7 @@
     <div id="rightbar_menu_bottom">
 
         <div class="rightbar-item keyboard_shortcuts_trigger">
-            <a href="#" title="Shortcuts">
+            <a href="#" title="Shortcuts" onclick="return false;">
                 <i class="material-icons">keyboard</i>
             </a>
         </div>

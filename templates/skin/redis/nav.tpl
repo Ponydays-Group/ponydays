@@ -55,14 +55,14 @@
                                     class="material-icons">exit_to_app</i></a>
                     </li>
                 {else}
+                    <li id="head_collaps">
+                        <i class="material-icons">keyboard_arrow_up</i>
+                    </li>
                     <li><a href="{router page='login'}" class="js-login-form-show">{$aLang.user_login_submit}</a></li>
                     <li><a href="{router page='registration'}"
                            class="js-registration-form-show">{$aLang.registration_submit}</a></li>
                 {/if}
                 <li>
-                <li id="head_collaps">
-                    <i class="material-icons">keyboard_arrow_up</i>
-                </li>
                 <a href="#"
                    class="user-wrapper {if $oUserCurrent}with-login{/if}">{if $oUserCurrent}{$oUserCurrent->getLogin()}{/if}
                     <span class="avatar-wrapper"><img

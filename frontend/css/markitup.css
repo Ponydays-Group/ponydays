@@ -31,6 +31,7 @@
     box-sizing: border-box;
     border: 1px solid $main-accent-fourth;
 		border-radius: 0px;
+	background:white;
 }
 .markItUpPreviewFrame	{
 	overflow:auto;
@@ -42,7 +43,7 @@
 }
 
 .markItUpHeader {
-	background: $main-accent-second;
+	background: white;
 padding: 5px;
 border-top: 1px solid $main-accent-fourth;
 border-left: 1px solid $main-accent-fourth;

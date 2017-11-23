@@ -32,14 +32,14 @@ $button-primary-border-color: #d44545;
 
 	color: $main-color;
 
-	background: $button-background;
+	background: #009688;
 
 	cursor: pointer;
 
 	*margin-right: 5px;
 	transition: background .2s;
 }
-.button:hover, .button.hovered { text-decoration: none; color: $main-color; background: $button-border-color; }
+.button:hover, .button.hovered { text-decoration: none; color: $main-color; background: #00695C; }
 .button:active {
 	-moz-box-shadow: 	0 0 7px rgba(0, 0, 0, .5) inset;
 	-webkit-box-shadow: 0 0 7px rgba(0, 0, 0, .5) inset;
@@ -51,6 +51,7 @@ $button-primary-border-color: #d44545;
 /* Button Primary */
 .button.button-primary 			{
 	background: $brand;
+	border: 1px solid darken($brand, 15%);
 }
 .button.button-primary:hover, .button.button-primary.hovered 	{ background: darken($brand, 10%); }
 .button.button-primary.active { background: $button-primary-border-color; }

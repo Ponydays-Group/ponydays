@@ -28,12 +28,13 @@ function showFloatBlock($) {
             return;
         }
         var sidebar = $('#sidebar');
-        var last_block = $($(".block")[$(".block").length - 1])
+        var last_block = $($(".block:not(.hidden)")[$(".block:not(.hidden)").length - 1])
         var bottomPos = last_block.offset().top + last_block.outerHeight();
         if (showFloat) {
             //bottomPos += floatBlock.outerHeight();
         }
         if (window.pageYOffset > bottomPos) {
+            console.log("Yup", bottomPos)
             if (!showFloat) {
                 floatBlock.addClass('stream-fixed');
                 floatBlock.css("width", sidebar.width());
@@ -49,6 +50,7 @@ function showFloatBlock($) {
             }
         }
         else {
+            console.log("Nope", bottomPos)
             if (showFloat) {
                 floatBlock.removeClass('stream-fixed');
                 showFloat = false;

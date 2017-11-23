@@ -13,6 +13,7 @@
 		<!-- Collect the nav links, forms, and other content for toggling -->
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 			<ul class="nav navbar-nav">
+
                 <li {if $sMenuHeadItemSelect=='blog'}class="active"{/if}><a href="/">{$aLang.topic_title}</a></li>
                 <li {if $sMenuHeadItemSelect=='blogs'}class="active"{/if}><a href="{router page='blogs'}">{$aLang.blogs}</a></li>
                 <li {if $sMenuHeadItemSelect=='people'}class="active"{/if}><a href="{router page='people'}">{$aLang.people}</a></li>
@@ -25,6 +26,9 @@
 			</ul>
 			<ul class="nav navbar-nav navbar-right">
 				{if $oUserCurrent}
+					<li id="head_collaps">
+						<i class="material-icons">keyboard_arrow_up</i>
+					</li>
 					<li>
 						<a class="iconic" href="{router page='topic'}add/" id="modal_write_show"><i class="material-icons">mode_edit</i></a>
 					</li>

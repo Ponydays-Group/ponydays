@@ -485,3 +485,18 @@
 .navbar-default {
     height: 64px;
 }
+
+#head_collaps {
+    width: 64px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    cursor: pointer;
+    transition: background .2s;
+    margin-right: 15px;
+
+    &:hover {
+        background: darken($navbar-bg, 5%);
+    }
+}

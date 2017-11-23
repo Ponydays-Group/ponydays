@@ -80,8 +80,8 @@ export default function init() {
         var el = $("#head_image")[0]
         function checkCollapse() {
             if (parseInt(localStorage.getItem('headCollapsed', 0))) {
-                $(document.body).css("paddingTop", "50px");
-                $("#head_image").css("height", "50px").css("backgroundImage", "none").css("backgroundColor", "#5d67bb");
+                $(document.body).css("paddingTop", "0px");
+                $("#head_image").css("height", "0px").css("backgroundImage", "none").css("backgroundColor", "#5d67bb");
                 $("#head_collaps i")[0].innerText = "keyboard_arrow_down"
             } else {
                 $(document.body).css("paddingTop", "200px");

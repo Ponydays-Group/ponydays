@@ -130,18 +130,22 @@
 .pagination ul li span,
 .pagination ul li a {
   float: left;
-  padding: 7px 10px;
-  background: $main-accent-second;
+  background: #fff;
   color: $text-color;
+  height: 40px;
+  min-width: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+  border: $second-border;
+  transition: color .2s, border-color .2s;
 }
 
-.pagination ul li a:hover {
-  background: $main-accent-third;
-}
-
-.pagination ul li.active span {
-  color: #bbb;
-  background: $main-color;
+.pagination ul li.active span, .pagination ul li a:hover {
+  color: $brand;
+  background: white;
+  border-color: $brand;
 }
 
 .pagination ul li i {

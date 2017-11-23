@@ -6,13 +6,13 @@
     max-width: 1500px;
     width: 100%;
     margin: 0 auto;
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     padding: 0px 64px;
 }
 #header 	{ padding: 50px 0; position: relative; }
 #nav 		{ overflow: hidden; }
 #wrapper 	{ margin-top: 20px; border-radius: 20px; position: relative; overflow: hidden; zoom: 1; background: $wrapper; border-bottom: 1px solid $main-accent-second; box-shadow: 0 0 6px rgba(0,0,0,.15); }
-#content 	{ max-width: 100%; float: left;  margin-right: 0; background: wrapper; position: relative; padding-top: 20px; }
+#content 	{ max-width: 100%; float: left;  margin-right: 0; background: wrapper; position: relative; padding-top: 15px; }
 
 #sidebar	{ float: left;}
 @media (max-width: 992px) { #sidebar { position: relative } }

@@ -3,16 +3,16 @@
 ------------------------------------------------------------------- */
 
 .table 					{ width: 100%; margin-bottom: 15px; }
-.table th 				{ text-align: left; background: $main-color; }
-.table td, .table th 	{ border-bottom: 1px solid $main-accent-second; padding: 10px; }
-.table tr.active td 	{ background: #CBF4BC; }
+.table th 				{ text-align: left; }
+.table td, .table th 	{ border-bottom: 1px solid $main-accent-second; padding: 10px !important; font-size: 14px !important; font-weight: 400; color: #2a2a2a; vertical-align: middle !important; }
+.table tr.active td 	{ background: #CBF4BC; font-size: 14px !important; }
 
 .table a.asc:after		{ content: "▲"; }
 .table a.desc:after		{ content: "▼"; }
 
 /* Table Blogs */
-.table.table-blogs .cell-name .avatar 	{ float: left; margin-right: 10px; clear: right; }
-.table.table-blogs .cell-name p		 	{ overflow: hidden; }
+.table.table-blogs .cell-name .avatar 	{ float: left; margin-right: 10px; clear: right; border-radius: 24px; }
+.table.table-blogs .cell-name p		 	{ overflow: hidden; margin-top: 14px;}
 .table.table-blogs .cell-rating 		{ width: 70px; font-weight: bold; }
 .table.table-blogs .cell-readers 		{ width: 70px; text-align: center; vertical-align: middle; }
 .table.table-blogs .cell-join 			{ width: 130px; text-align: center; vertical-align: middle; }
@@ -36,11 +36,25 @@
 
 /* Table Users */
 .table.table-users th 					{ font-size: 11px; }
-.table.table-users .cell-name 			{ font-weight: bold; }
-.table.table-users .cell-name img 		{ float: left; }
-.table.table-users .cell-name .username { margin-left: 32px; width: 100%; max-width: 320px; position: relative; top: 1px; }
+.table.table-users .cell-name 			{ }
+.table.table-users .cell-name img 		{ float: left; border-radius: 24px; }
+.table.table-users .cell-name .username {
+    margin-left: 58px;
+    width: 100%;
+    max-width: 320px;
+    position: relative;
+    top: calc(24px - (17px / 2));
+    height: 1em;
+
+}
 .table.table-users .cell-rating,
 .table.table-users .cell-skill 			{ text-align: center; width: 50px; }
+.table.table-users .cell-rating-positive {
+    color: #4CAF50;
+}
+.table.table-users .cell-rating-negative {
+    color: #F44336;
+}
 
 /* Table Talk */
 .table.table-talk .cell-checkbox 		{ width: 20px; padding: 12px 0 10px 10px; }
@@ -49,3 +63,11 @@
 .table.table-talk .cell-recipients 		{ width: 100px; }
 .table.table-talk tbody .cell-date 		{ font-size: 11px; width: 130px; }
 .table.table-talk tbody td				{ vertical-align: top; }
+
+#list_wrapper {
+    padding: 10px;
+    border-radius: 20px;
+    background: white;
+    border: $second-border;
+    margin-bottom: 15px;
+}

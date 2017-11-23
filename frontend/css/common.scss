@@ -360,29 +360,32 @@
   height: 64px;
   float: left;
   margin: 0;
+  margin-bottom: 0px;
   padding: 0 25px;
   justify-content: center;
   align-items: center;
   align-content: center;
   vertical-align: middle;
   position: relative;
-  background: $search-background;
+  background: #f9f9f9;
+  border-radius: 50px;
+  border: 0.5px solid #e0e0e0;
 }
 
 .search .input-text {
-  background: $search-background;
+  background: transparent;
   border: 0px;
   width: 100px;
   padding-right: 25px;
   box-shadow: none;
-  border-bottom: 2px solid $search-color;
+  border-bottom: 2px solid #d4d4d4;
   border-radius: 0px;
   transition: border-bottom .4s, width .2s;
 
   @include placeholder ((('color', white)));
 
   &:focus {
-    border-bottom: 2px solid $search-active-color;
+    border-bottom: 2px solid $brand;
     box-shadow: none;
     outline: none;
     width: 200px;

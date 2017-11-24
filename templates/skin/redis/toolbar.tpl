@@ -2,7 +2,7 @@
     <div id="sidebar_menu_top">
 
         <div class="rightbar-item with_dropd">
-            <a href="{$oUserCurrent->getUserWebPath()}">
+            <a href="{if $oUserCurrent}{$oUserCurrent->getUserWebPath()}{/if}">
                 <img
                         src="{if $oUserCurrent}{$oUserCurrent->getProfileAvatarPath(48)}{else}https://chenhan1218.github.io/img/profile.png{/if}"
                         alt="avatar" class="avatar"/>

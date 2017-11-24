@@ -3,277 +3,279 @@
 ------------------------------------------------------------------- */
 
 .block {
-    margin-top: 15px;
-    background: #f1f1f1;
-    border-radius: 20px;
-    padding: 10px;
-    background: $first;
-    border: $second-border;
+  margin-top: 15px;
+  background: #f1f1f1;
+  border-radius: 20px;
+  padding: 10px;
+  background: $first;
+  border: $second-border;
 }
 
 .block:last-child {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 .sidebar-left .block {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .block .block-header {
-    padding: 16px;
-    border-radius: 36px;
-    height: 50px;
-    background: #f9f9f9;
-    border-top: none;
-    position: relative;
-    align-items: center;
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    border: $second-border;
+  padding: 16px;
+  border-radius: 36px;
+  height: 50px;
+  background: #f9f9f9;
+  border-top: none;
+  position: relative;
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  border: $second-border;
 }
 
 .block-header span {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .block-header span i.material-icons {
-    color: #4d5db7;
-    margin-right: 16px;
-    font-size: 30px;
+  color: #4d5db7;
+  margin-right: 16px;
+  font-size: 30px;
 }
 
 .block .block-header h3 {
-    font-size: 20px;
-    line-height: 1em;
-    font-weight: normal;
-    color: #5d67bb;
+  font-size: 20px;
+  line-height: 1em;
+  font-weight: normal;
+  color: #5d67bb;
 }
 
 .block .block-header h3 a {
-    text-decoration: none;
+  text-decoration: none;
 }
 
 .block .block-header h3 a.link-dotted {
-    color: #5055B2;
+  color: #5055B2;
 }
 
 .block .block-content {
-    //padding: 10px;
+  padding: 5px;
+  font-size: 16px;
+  color: #4c4c4c;
 }
 
 .block footer {
-    margin-top: 15px;
-    font-size: 12px;
+  margin-top: 15px;
+  font-size: 12px;
 }
 
 .block .max-height-200 {
-    overflow: auto;
-    max-height: 200px;
-    _height: expression( this.scrollHeight > 200 ? "200px" : "auto" );
-    position: relative;
+  overflow: auto;
+  max-height: 200px;
+  _height: expression( this.scrollHeight > 200 ? "200px" : "auto" );
+  position: relative;
 }
 
 /* Block Type - Stream */
 #sidebar {
-    .table.table-profile-info {
-        margin-bottom: 0px;
-    }
+  .table.table-profile-info {
+    margin-bottom: 0px;
+  }
 }
 
 .block .block-update {
-    cursor: pointer;
-    font-size: 20px;
-    color: #4d5db7;
+  cursor: pointer;
+  font-size: 20px;
+  color: #4d5db7;
 }
 
 .block .block-update.active {
-    background-position: -16px 0;
+  background-position: -16px 0;
 }
 
 /* Block Type - Activity Settings */
 .block.block-type-activity p {
-    margin-bottom: 15px;
+  margin-bottom: 15px;
 }
 
 .block.block-type-activity ul li {
-    margin-bottom: 5px;
+  margin-bottom: 5px;
 }
 
 .block.block-type-activity .note {
-    display: block;
-    margin-bottom: 15px;
-    color: #aaa;
+  display: block;
+  margin-bottom: 15px;
+  color: #aaa;
 }
 
 /* Block Type - Profile */
 .block.block-type-profile {
-    background: none;
-    border: none;
-    padding: 0;
+  background: none;
+  border: none;
+  padding: 0;
 }
 
 .block.block-type-profile .profile-photo-wrapper {
-    position: relative;
-    min-height: 50px;
+  position: relative;
+  min-height: 50px;
 }
 
 .block.block-type-profile .profile-photo {
-    vertical-align: top;
+  vertical-align: top;
 }
 
 .block.block-type-profile .status {
-    position: absolute;
-    top: 5px;
-    left: 5px;
-    padding: 0 5px;
-    border-radius: 2px;
-    font-size: 11px;
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  padding: 0 5px;
+  border-radius: 2px;
+  font-size: 11px;
 }
 
 .block.block-type-profile .status.status-online {
-    background: #B7BC1C;
-    color: $main-color;
+  background: #B7BC1C;
+  color: $main-color;
 }
 
 .block.block-type-profile .status.status-offline {
-    background: #333;
-    color: $main-color;
-    opacity: .5;
-    filter: alpha(opacity=50);
+  background: #333;
+  color: $main-color;
+  opacity: .5;
+  filter: alpha(opacity=50);
 }
 
 .block.block-type-profile .upload-photo {
-    padding: 7px 10px 10px;
-    background: $main-color;
+  padding: 7px 10px 10px;
+  background: $main-color;
 }
 
 .block.block-type-profile-note {
-    background: #F1F7AF;
-    border: 1px solid #E1EA83;
-    padding: 15px;
+  background: #F1F7AF;
+  border: 1px solid #E1EA83;
+  padding: 15px;
 }
 
 .block.block-type-profile-note p {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .block.block-type-profile-note .actions {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 .block.block-type-profile-nav {
-    padding: 0;
-    background: none;
+  padding: 0;
+  background: none;
 }
 
 .block.block-type-profile-actions .block-content {
-    padding: 10px 15px;
+  padding: 10px 15px;
 }
 
 .block.block-type-profile-actions ul li {
-    margin-bottom: 5px;
+  margin-bottom: 5px;
 }
 
 .block.block-type-profile-actions ul li:last-child {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
 .block.block-type-profile-actions ul li a.followed {
-    color: #f00;
+  color: #f00;
 }
 
 /* Block Type - Foldable */
 .block.block-type-foldable {
-    background: none;
+  background: none;
 }
 
 .block.block-type-foldable .block-header {
-    background: none;
-    border: none;
-    padding: 0 0 10px;
+  background: none;
+  border: none;
+  padding: 0 0 10px;
 }
 
 .block.block-type-foldable .block-content {
-    display: none;
-    background: $main-color;
+  display: none;
+  background: $main-color;
 }
 
 .block.block-type-talk-search {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .block.block-type-talk-friends {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .sidebar-quote {
-    //background: $main-color;
-    border-left: 0px solid #bbb;
-    font-size: 1.1em;
-    font-style: italic;
-    margin: 1.5em 10px;
-    padding: 0.5em 10px;
+  //background: $main-color;
+  border-left: 0px solid #bbb;
+  font-size: 1.1em;
+  font-style: italic;
+  margin: 1.5em 10px;
+  padding: 0.5em 10px;
 }
 
 .sidebar-quote:before {
-    color: #bbb;
-    content: "\201C"; /* Непечатаемый символ слева */
-    font-size: 3em;
-    line-height: 0.1em;
-    margin-right: 0.2em;
-    vertical-align: -.4em;
+  color: #bbb;
+  content: "\201C"; /* Непечатаемый символ слева */
+  font-size: 3em;
+  line-height: 0.1em;
+  margin-right: 0.2em;
+  vertical-align: -.4em;
 }
 
 .sidebar-quote:after {
-    color: #bbb;
-    content: "\201D"; /* Непечатаемый символ справа */
-    font-size: 3em;
-    line-height: 0.1em;
-    vertical-align: -.45em;
+  color: #bbb;
+  content: "\201D"; /* Непечатаемый символ справа */
+  font-size: 3em;
+  line-height: 0.1em;
+  vertical-align: -.45em;
 }
 
 .sidebar-quote > p:first-child {
-    display: inline;
+  display: inline;
 }
 
 .friend {
-    flex-direction: column;
-    display: flex;
-    min-height: 64px;
-    padding-left: 84px;
-    margin-bottom: 10px;
-    justify-content: center;
+  flex-direction: column;
+  display: flex;
+  min-height: 64px;
+  padding-left: 84px;
+  margin-bottom: 10px;
+  justify-content: center;
 
-    .friend-logo {
-        position: absolute;
-        border-radius: 50%;
-        left: 20px;
-    }
+  .friend-logo {
+    position: absolute;
+    border-radius: 50%;
+    left: 20px;
+  }
 
-    .friend-title {
-        display: inline-block;
-        width: 100%;
-    }
+  .friend-title {
+    display: inline-block;
+    width: 100%;
+  }
 }
 
 .stream-fixed {
-    position: fixed;
-    top: -10px;
-    margin-bottom: 0;
-    overflow-y: auto;
+  position: fixed;
+  top: -10px;
+  margin-bottom: 0;
+  overflow-y: auto;
 
-    .js-block-stream-content {
-        padding-right: 20px;
-    }
+  .js-block-stream-content {
+    padding-right: 20px;
+  }
 }
 
 div .quotes-actions {
-    font-size: 14pt;
+  font-size: 14pt;
 }
 
 #quotes_list td {
-    line-height: 1.6em;
+  line-height: 1.6em;
 }

@@ -119,6 +119,11 @@
 		<div id="progressbar"></div>
 
 		<div id="wrapper" class="row container-fluid {hook run='wrapper_class'}">
+			{if $sTopBlock}
+				<div class="col-md-12" id="top_block">
+					{include file=$sTopBlock}
+				</div>
+			{/if}
 			{if !$noSidebar && $sidebarPosition == 'left'}
 				{include file='sidebar.tpl'}
 			{/if}

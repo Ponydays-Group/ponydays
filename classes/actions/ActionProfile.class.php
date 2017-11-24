@@ -1302,6 +1302,7 @@ class ActionProfile extends Action {
 		$this->Viewer_Assign('USER_FRIEND_ACCEPT',ModuleUser::USER_FRIEND_ACCEPT);
 		$this->Viewer_Assign('USER_FRIEND_REJECT',ModuleUser::USER_FRIEND_REJECT);
 		$this->Viewer_Assign('USER_FRIEND_DELETE',ModuleUser::USER_FRIEND_DELETE);
+		$this->Viewer_Assign('sTopBlock', 'actions/ActionProfile/top_block.tpl');
 	}
 }
 ?>

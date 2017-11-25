@@ -2,7 +2,7 @@
 	<div class="modal modal-login" id="window_login_form">
 		<header class="modal-header">
 			<h3>{$aLang.user_authorization}</h3>
-			<a href="#" class="close jqmClose"></a>
+			<a href="#" class="close jqmClose material-icons">close</a>
 		</header>
 		
 		

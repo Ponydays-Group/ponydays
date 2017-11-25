@@ -18,14 +18,11 @@
 
 .modal .close {
     position: absolute;
-    font-size: 14px;
-    top: 14px;
-    right: 14px;
-    width: 14px;
-    height: 14px;
-    background: url(images/icons.png) -312px 0 no-repeat;
+    top: 22px;
+    right: 20px;
     opacity: .3;
     filter: alpha(opacity=30);
+    -webkit-transition: all .2s;
     transition: all .2s;
 }
 

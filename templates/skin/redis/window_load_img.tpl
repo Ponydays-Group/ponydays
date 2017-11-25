@@ -1,7 +1,7 @@
 <div class="modal modal-image-upload" id="window_upload_img">
 	<header class="modal-header">
 		<h3>{$aLang.uploadimg}</h3>
-		<a href="#" class="close jqmClose"></a>
+		<a href="#" class="close jqmClose material-icons">close</a>
 	</header>
 	
 	<div class="modal-content">

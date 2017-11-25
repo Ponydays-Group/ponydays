@@ -12,7 +12,7 @@
         </div>
 
         <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
 
                 <li {if $sMenuHeadItemSelect=='blog'}class="active"{/if}><a href="/">{$aLang.topic_title}</a></li>
@@ -30,7 +30,7 @@
                 {/if}
                 {hook run='main_menu_item'}
             </ul>
-            <ul class="nav navbar-nav navbar-right">
+            <ul class="nav navbar-nav navbar-right" id="navbar-right-big">
                 {if $oUserCurrent}
                     <li id="head_collaps">
                         <i class="material-icons">keyboard_arrow_up</i>
@@ -63,12 +63,55 @@
                            class="js-registration-form-show">{$aLang.registration_submit}</a></li>
                 {/if}
                 <li>
-                <a href="#"
-                   class="user-wrapper {if $oUserCurrent}with-login{/if}">{if $oUserCurrent}{$oUserCurrent->getLogin()}{/if}
-                    <span class="avatar-wrapper"><img
-                                src="{if $oUserCurrent}{$oUserCurrent->getProfileAvatarPath(48)}{else}https://chenhan1218.github.io/img/profile.png{/if}"
-                                alt="avatar" class="avatar"/></span></a></li>
+                    <a href="#"
+                       class="user-wrapper {if $oUserCurrent}with-login{/if}">{if $oUserCurrent}{$oUserCurrent->getLogin()}{/if}
+                        <span class="avatar-wrapper"><img
+                                    src="{if $oUserCurrent}{$oUserCurrent->getProfileAvatarPath(48)}{else}https://chenhan1218.github.io/img/profile.png{/if}"
+                                    alt="avatar" class="avatar"/></span></a></li>
             </ul>
-        </div><!-- /.navbar-collapse -->
+
+            <ul class="nav navbar-nav navbar-right" id="navbar-right-small">
+                <li class="with_dropd">
+                    <a href="#"
+                       class="user-wrapper">{if $oUserCurrent}{/if}
+                        <span class="avatar-wrapper"><img
+                                    src="{if $oUserCurrent}{$oUserCurrent->getProfileAvatarPath(48)}{else}https://chenhan1218.github.io/img/profile.png{/if}"
+                                    alt="avatar" class="avatar"/></span></a>
+                    <ul class="dropd">
+                        {if $oUserCurrent}
+                <li id="head_collaps">
+                    <i class="material-icons">keyboard_arrow_up</i>
+                </li>
+                <li>
+                    <a class="iconic" href="{router page='topic'}add/" id="modal_write_show"><i
+                                class="material-icons">mode_edit</i></a>
+                </li>
+                <li>
+                    <a class="iconic" href="{router page='feedbacks'}"><i class="material-icons">question_answer</i></a>
+                </li>
+                <li>
+                    <a class="iconic" href="{$oUserCurrent->getUserWebPath()}favourites/topics/"><i
+                                class="material-icons">favorite</i></a>
+                </li>
+                <li>
+                    <a class="iconic" href="{router page='settings'}profile/"><i class="material-icons">settings</i></a>
+                </li>
+                <li>
+                    <a class="iconic"
+                       href="{router page='login'}exit/?security_ls_key={$LIVESTREET_SECURITY_KEY}"><i
+                                class="material-icons">exit_to_app</i></a>
+                </li>
+                {else}
+                <li id="head_collaps">
+                    <i class="material-icons">keyboard_arrow_up</i>
+                </li>
+                <li><a href="{router page='login'}" class="js-login-form-show">{$aLang.user_login_submit}</a></li>
+                <li><a href="{router page='registration'}"
+                       class="js-registration-form-show">{$aLang.registration_submit}</a></li>
+                {/if}
+        </ul>
+        </li>
+        </ul>
+    </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
 </nav>

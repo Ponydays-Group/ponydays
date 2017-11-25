@@ -1,5 +1,5 @@
 {include file='header.tpl'}
-
+<div id="list_wrapper">
 <h2 class="page-header">{$aLang.quotes_header}</h2>
 
 {if $bIsAdmin}
@@ -36,9 +36,9 @@
 </h4>
 
 
-<div style="float: right;">
-    {include file='paging.tpl' aPaging=$aPaging}
-</div>
+{*<div style="float: right;">*}
+    {*{include file='paging.tpl' aPaging=$aPaging}*}
+{*</div>*}
 
 <table class="table table-hover">
     <thead>
@@ -87,5 +87,5 @@
 <div style="float: right;">
     {include file='paging.tpl' aPaging=$aPaging}
 </div>
-
+</div>
 {include file='footer.tpl'}

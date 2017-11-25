@@ -4,7 +4,7 @@
 
 .table 					{ width: 100%; margin-bottom: 15px; }
 .table th 				{ text-align: left; }
-.table td, .table th 	{ border-bottom: 1px solid $main-accent-second; padding: 10px !important; font-size: 14px !important; font-weight: 400; color: #2a2a2a; vertical-align: middle !important; }
+.table td, .table th 	{ border-bottom: 1px solid $main-accent-second; padding: 10px !important; font-size: 14px !important; font-weight: 400; color: $table-color; vertical-align: middle !important; }
 .table tr.active td 	{ background: #CBF4BC; font-size: 14px !important; }
 
 .table a.asc:after		{ content: "▲"; }
@@ -67,7 +67,25 @@
 #list_wrapper {
     padding: 10px;
     border-radius: 20px;
-    background: white;
+    background: $first;
     border: $second-border;
     margin-bottom: 15px;
+}
+
+.table-hover > tbody > tr:hover {
+    background-color: $table-hover;
+}
+
+.table td,
+.table th {
+    border-bottom: none;
+}
+
+.table > thead > tr > th,
+.table > thead > tr > td,
+.table > tbody > tr > th,
+.table > tbody > tr > td,
+.table > tfoot > tr > th,
+.table > tfoot > tr > td {
+    border-top: none;
 }

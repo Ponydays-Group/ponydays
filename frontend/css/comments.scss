@@ -63,7 +63,7 @@
     min-height: 48px;
     padding: 5px 8px 8px 68px;
     position: relative;
-    border: 0.5px solid #e5e5e5;
+    border: $second-border;
     border-radius: 20px;
     margin-bottom: 10px;
 }
@@ -100,15 +100,16 @@
 }
 
 .comment.comment-self {
-    background: rgb(231, 252, 246);
+    border-left: 3px solid $brand;
+    border-right: 3px solid $brand;
 }
 
 .comment.comment-new {
-    background: rgb(254, 254, 225);
+    background: $comment-new-background;
 }
 
 .comment.comment-current {
-    background: rgb(219, 245, 253);
+    background: $comment-current-background;
 }
 
 .comment.comment-bad {
@@ -237,7 +238,8 @@
 .reply textarea {
     resize: vertical;
     height: 100px;
-    background: white;
+    background: $first;
+    border: $second-border;
 }
 
 .reply textarea.loader {

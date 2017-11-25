@@ -531,5 +531,9 @@ export default function init() {
             </style>
             `)
         }
+
+        if (getCookie("SiteStyle")=="Dark") {
+            $("#change_theme").css("transform", "rotate(180deg)")
+        }
     });
 }

@@ -7,20 +7,14 @@ window.getCookie = function(name) {
 
 
 window.switchTheme = function() {
-    var date = new Date;
+    let date = new Date;
     date.setDate(date.getDate() + 100);
     if (getCookie("SiteStyle") == "Dark") {
         document.cookie = "SiteStyle=Light; path=/; expires=" + date.toUTCString();
-        location.reload();
     } else {
-        if (getCookie("SiteStyle") == "Light") {
-            document.cookie = "SiteStyle=Dark; path=/; expires=" + date.toUTCString();
-            location.reload();
-        } else {
-            document.cookie = "SiteStyle=Dark; path=/; expires=" + date.toUTCString();
-            location.reload();
-        }
+        document.cookie = "SiteStyle=Dark; path=/; expires=" + date.toUTCString();
     }
+    location.reload();
 }
 
 

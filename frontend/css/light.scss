@@ -8,7 +8,7 @@ $search-color: white;
 $search-active-color: rgba(61, 142, 185, 1);
 $search-background: #38a6a6;
 
-$background-color: #f7f7f7;
+$background-image: url(/back_light.png);
 $userbar-background: #4D5DB7;
 $userbar-hover-background: darken($userbar-background, 5%);
 $content-background: #fff;
@@ -41,9 +41,9 @@ $spoiler-background: #e6e6e6;
 $image-opacity: 1;
 $image-opacity-hover: 1;
 
-$comment-self-background: rgba(197, 247, 234, 0.42);
-$comment-new-background: rgba(251, 251, 168, 0.35);
-$comment-current-background: rgba(165, 231, 250, 0.4);
+$comment-self-background: rgb(231, 252, 246);
+$comment-new-background: #ffffc4;
+$comment-current-background: #c7f2ff;
 $comment-deleted-background: #efd5d5;
 
 $pre-background: #fafafa;
@@ -77,6 +77,15 @@ $first: #fff;
 $second: #F9F9F9;
 //$second: white;
 $second-border: 0.5px solid rgba(0,0,0,0.1);
+$table-color: #2a2a2a;
+$table-hover: white;
+
+$scroller-hover-bg: rgba(0, 0, 0, 0.1);
+$scroller-hover-color: rgba(0, 0, 0, 0.3);
+
+$attention-text: #333;
+
+$block-content-color: #4c4c4c;
 
 @import "./markitup";
 @import "./base";
@@ -105,3 +114,7 @@ $second-border: 0.5px solid rgba(0,0,0,0.1);
 @import "./amazium/variables";
 @import "./amazium/form";
 @import "./themes/base/all";
+
+#change_theme:hover {
+  transform: rotate(180deg) !important;
+}

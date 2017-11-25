@@ -130,7 +130,7 @@
 .pagination ul li span,
 .pagination ul li a {
   float: left;
-  background: #fff;
+  background: $first;
   color: $text-color;
   height: 40px;
   min-width: 40px;
@@ -144,7 +144,6 @@
 
 .pagination ul li.active span, .pagination ul li a:hover {
   color: $brand;
-  background: white;
   border-color: $brand;
 }
 
@@ -367,9 +366,9 @@
   align-content: center;
   vertical-align: middle;
   position: relative;
-  background: #f9f9f9;
+  background: $second;
   border-radius: 50px;
-  border: 0.5px solid #e0e0e0;
+  border: $second-border;
 }
 
 .search .input-text {

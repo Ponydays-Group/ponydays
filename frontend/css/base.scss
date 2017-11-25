@@ -12,8 +12,7 @@ body {
   font-family: Roboto, sans-serif;
   line-height: 18px;
   color: $text-color;
-  background-color: $background-color;
-  background-image: url(http://cs6.pikabu.ru/images/previews_comm/2015-08_2/1438916526195283588.png);
+  background-image: $background-image;
   //padding-top: 200px;
   padding-top: 0px;
   transition: top .2s, padding-top .2s, padding .2s;
@@ -163,7 +162,7 @@ h2.header-table {
   display: block;
   text-align: center;
   padding: 12px 0;
-  background: white;
+  background: $first;
   color: $brand;
   text-decoration: none;
   border-radius: 20px;
@@ -173,7 +172,7 @@ h2.header-table {
 }
 
 .stream-get-more:hover {
-  background: darken(white, 2%);
+  background: darken($first, 2%);
 }
 
 .stream_loading {
@@ -191,12 +190,14 @@ h2.header-table {
 }
 
 .stream-list li.stream-item {
-  margin-bottom: 5px;
+  margin-bottom: 10px;
   min-height: 48px;
   _height: 48px;
-  background: $comment-self-background;
+  background: $first;
   padding: 10px 15px 10px 70px;
   position: relative;
+  border-radius: 20px;
+  border: $second-border;
 }
 
 .stream-list li.stream-item .avatar {
@@ -589,8 +590,8 @@ img {
     color: transparent;
 
     &:hover {
-      background: rgba(0, 0, 0, 0.1);
-      color: rgba(0, 0, 0, 0.3);
+      background: $scroller-hover-bg;
+      color: $scroller-hover-color;
     }
   }
 }
@@ -603,4 +604,12 @@ img {
   border: 0.5px solid #e5e5e5;
   border-radius: 20px;
   overflow: hidden;
+}
+
+//#change_theme:hover {
+//  transform: rotate(360deg) !important;
+//}
+
+#change_theme {
+  transition: all 1s ease-in-out;
 }

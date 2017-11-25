@@ -43,11 +43,11 @@
 }
 
 .markItUpHeader {
-	background: white;
+	background: $second;
 padding: 5px;
-border-top: 1px solid $main-accent-fourth;
-border-left: 1px solid $main-accent-fourth;
-border-right: 1px solid $main-accent-fourth;
+border-top: $second-border;
+border-left: $second-border;
+border-right: $second-border;
 }
 .markItUpFooter {
 	width:100%;

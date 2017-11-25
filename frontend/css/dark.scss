@@ -1,56 +1,58 @@
 @import url(https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css);
-
-$link-color: #38a6a6;
-
+$brand: #5d67bb;
+$link-color: lighten($brand, 5%);
 $userbar-height: 64px;
 
 $search-color: white;
 $search-active-color: rgba(61, 142, 185, 1);
 $search-background: #38a6a6;
 
-$background-color: #1a1a1a;
-$userbar-background: #131313;
-$userbar-hover-background: lighten($userbar-background, 5%);
-$content-background: #131313;
-$text-color: #c9c9c9;
+$background-image: url(/back_dark.jpg);
+$userbar-background: #4D5DB7;
+$userbar-hover-background: darken($userbar-background, 5%);
+$content-background: #fff;
+
+$text-color: white;
 $text-notice-color: black;
 $stream-text-color: white;
-$stream-item-border: transparent;
-$comments-border-top: 1px solid #27282b;
 
-$accent: #181818;
-$secondary-accent: #1d2122;
+$stream-item-border: #eee;
+$comments-border-top: 1px solid #e7e8ec;
 
-$main-color: #313131;
-$main-accent: #313131;
-$main-accent-second: #0c0c0c;
-$main-accent-third: #1f1f1f;
-$main-accent-fourth: #212121;
-$main-accent-fifth: #333;
+$main-color: #303030;
 
-$attention-text: #ccc;
+$accent: #fafafa;
+$secondary-accent: #edf1f2;
 
-$main-active-color: #1f3e4e;
-$main-active-hover-color: #084c6f;
+$main-accent: #f3f3f3;
+$main-accent-second: #eee;
+$main-accent-third: #ddd;
+$main-accent-fourth: #eee;
+$main-accent-fifth: #fff;
 
-$spoiler-background: #333;
+$attention-text: #333;
 
-$image-opacity: 0.6;
+$main-active-color: inherit;
+$main-active-hover-color: inherit;
+
+$spoiler-background: #414141;
+
+$image-opacity: 0.7;
 $image-opacity-hover: 1;
 
-$comment-self-background: #212121;
-$comment-new-background: rgb(45, 45, 45);
+$comment-self-background: rgba(197, 247, 234, 0.42);
+$comment-new-background: #1e1e1e;
 $comment-current-background: #313851;
-$comment-deleted-background: #621717;
+$comment-deleted-background: #efd5d5;
 
-$pre-background: #313131;
-$blockquote-background: #313131;
-$blockquote-border: #212121;
+$pre-background: #474747;
+$blockquote-background: #323232;
+$blockquote-border: #565656;
 
-$image-under-photo: url('//static.lunavod.ru/img/0c013188add3798ad973cf57da557dcb4759c30c.png');
+$image-under-photo: url('//static.lunavod.ru/img/96264c202d9e423707c39c917669f9cd2277716e.png');
 
-$sidebar-text: #bcc7ce;
-$sidebar-text-a: #aaa;
+$sidebar-text: #707b82;
+$sidebar-text-a: #67737a;
 
 @mixin placeholder ($rules) {
 
@@ -65,6 +67,27 @@ $sidebar-text-a: #aaa;
 }
 
 @import "bootstrap/assets/stylesheets/bootstrap";
+
+$navbar-bg: #4D5DB7;
+$brand: #5d67bb;
+$wrapper: #303030;
+$first: #232323;
+
+$second: #303030;
+//$second: white;
+$second-border: 0.5px solid rgba(0,0,0,0.5);
+
+//$link-color: lighten($brand, 5%);
+$table-color: #e7e7e7;
+$table-hover: #292929;
+
+$scroller-hover-bg: rgba(255, 255, 255, 0.17);
+$scroller-hover-color: rgb(0, 0, 0);
+
+$attention-text: #e1e1e1;
+
+$block-content-color: #c3c3c3;
+
 @import "./markitup";
 @import "./base";
 @import "./blocks";
@@ -93,9 +116,6 @@ $sidebar-text-a: #aaa;
 @import "./amazium/form";
 @import "./themes/base/all";
 
-.checkbox input + label:before { background-color: $background-color; border-color: #696969; }
-
-.table tr.active td,
-.table tr.info td               { background: $main-active-color !important; }
-.table tbody tr.info:hover td   { background: $main-active-hover-color !important; }
-.table tbody tr:hover td        { background: $main-accent-fourth; }
+#change_theme:hover {
+  transform: rotate(360deg) !important;
+}

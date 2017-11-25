@@ -68,6 +68,9 @@
             {*</script>*}
         {*{/literal}*}
     {*</section>*}
+    <div id=change_theme_wrapper">
+        <img src="/dark-to-day.png" class="switch-theme" onclick="switchTheme()" id="change_theme">
+    </div>
 </footer>
 
 </div> <!-- /container -->

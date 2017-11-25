@@ -116,13 +116,13 @@
     display: flex;
     flex-wrap: wrap;
     list-style: none;
-    background: white;
+    background: $first;
     margin-left: 0px;
     padding-left: 100px;
 }
 
 .profile-tabs li {
-    border-bottom: 2px solid white;
+    border-bottom: 2px solid $first;
 }
 
 .profile-tabs li.active {
@@ -190,7 +190,7 @@
 
 
 #top_block_users {
-    border: 0.5px solid #e5e5e5;
+    border: $second-border;
     border-radius: 20px;
     display: flex;
     justify-content: space-between;

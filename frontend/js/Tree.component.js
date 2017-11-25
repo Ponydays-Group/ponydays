@@ -303,6 +303,10 @@ export default class Tree {
 
 	goToNextComment() {
 		// console.log(this.state.aCommentsNew)
+		if (!this.state.aCommentsNew.length) {
+			return false
+		}
+
 		if (this.state.lastNewComment > 0) {
 			this.state.aCommentsOld.push(this.state.lastNewComment)
 		}

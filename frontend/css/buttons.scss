@@ -23,8 +23,6 @@ $button-primary-border-color: #d44545;
 
 	padding: 10px 20px;
 	text-align: center;
-
-	border: none;
 	border-radius: 20px;
 
 	font-size: 13px;
@@ -38,6 +36,9 @@ $button-primary-border-color: #d44545;
 
 	*margin-right: 5px;
 	transition: background .2s;
+	text-transform: uppercase;
+	font-family: "Roboto";
+	border: 1px solid darken(#009688, 15%);
 }
 .button:hover, .button.hovered { text-decoration: none; color: $main-color; background: #00695C; }
 .button:active {

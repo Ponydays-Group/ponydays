@@ -1,4 +1,21 @@
 
+@media screen and (max-width: 1600px) {
+  #scroller {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+
+    #scroll_down, #scroll_up {
+      height: 50px;
+    }
+  }
+
+  #container {
+    padding-right: 64px;
+    padding-left: 0px;
+  }
+}
+
 #navbar-right-small {
   display: none;
 }
@@ -47,7 +64,17 @@
 
 @media screen and (max-width: 530px) {
   #scroller {
-    display: none;
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+
+    #scroll_down, #scroll_up {
+      height: 50px;
+    }
+
+    #scroll_down {
+      margin-bottom: 50px;
+    }
   }
 
   #container {
@@ -84,5 +111,9 @@
     #rightbar_menu_bottom {
       display: none;
     }
+  }
+
+  .comment .comment-actions li i {
+    font-size: 16px;
   }
 }

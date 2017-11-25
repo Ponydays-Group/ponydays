@@ -576,7 +576,6 @@ img {
   position: fixed;
   top: 0px;
   left: 0px;
-  cursor: pointer;
   z-index: 1;
 
   #scroll_down, #scroll_up {
@@ -588,6 +587,7 @@ img {
     align-content: center;
     align-items: center;
     color: transparent;
+    cursor: pointer;
 
     &:hover {
       background: $scroller-hover-bg;

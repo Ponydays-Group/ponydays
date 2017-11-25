@@ -78,6 +78,11 @@ export default function init() {
         var shortcuts_shown = false
         $(".keyboard_shortcuts_trigger").click(function(){$("#comment-shortcuts-description").animate({"right": shortcuts_shown? "-450px" : "74px"}, 200); shortcuts_shown=!shortcuts_shown})
         var el = $("#head_image")[0]
+        if(localStorage.getItem('headCollapsed', 0)==null||localStorage.getItem('headCollapsed', 0)=="null") {
+            if ($(window).width()<1500) {
+                localStorage.setItem('headCollapsed', 1)
+            }
+        }
         function checkCollapse() {
             if (parseInt(localStorage.getItem('headCollapsed', 0))) {
                 $(document.body).css("paddingTop", "0px");

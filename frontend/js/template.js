@@ -535,5 +535,7 @@ export default function init() {
         if (getCookie("SiteStyle")=="Dark") {
             $("#change_theme").css("transform", "rotate(180deg)")
         }
+
+        $(".topic-more").click(function(el){$(el.target).parent().find(".topic-dropdown").toggleClass("active")})
     });
 }

@@ -35,5 +35,30 @@
 			</time></span>
             </div>
         </div>
-        <a class="topic-more"><i class="material-icons">more_vert</i></a>
+        <div class="topic-more">
+            <i class="material-icons">more_vert</i>
+            <div class="topic-dropdown">
+                {if $oUserCurrent and (($oUserCurrent->isGlobalModerator() and $oTopic->getBlog()->getType() == "open") or $oUserCurrent->getId()==$oTopic->getUserId() or $oUserCurrent->isAdministrator() or $oBlog->getUserIsAdministrator() or $oBlog->getUserIsModerator() or $oBlog->getOwnerId()==$oUserCurrent->getId())}
+                    <a href="/{$oTopic->getType()}/edit/{$oTopic->getId()}/" title="{$aLang.topic_edit}">
+                        <i class="material-icons">mode_edit</i> Редактировать
+                    </a>
+                {/if}
+                {if $oUserCurrent and (($oUserCurrent->isGlobalModerator() and $oTopic->getBlog()->getType() == "open") or $oUserCurrent->isAdministrator() or $oBlog->getUserIsAdministrator() or $oBlog->getUserIsModerator() or ($oTopic->getUserId() === $oUserCurrent->getId() and !$oTopic->isControlLocked()) or $oBlog->getOwnerId()==$oUserCurrent->getId())}
+                    <a href="{router page='topic'}delete/{$oTopic->getId()}/?security_ls_key={$LIVESTREET_SECURITY_KEY}" title="{$aLang.topic_delete}">
+                        <i class="material-icons">delete</i> Удалить
+                    </a>
+                {/if}
+                {if $bAllowLockControl}
+                    <a href="#">
+                        <span class="checkbox" style="margin: 0;"><span style="padding: 0;"><input name="topic_{$oTopic->getId()}_lock"
+                                                                                id="topic_{$oTopic->getId()}_lock"
+                                                                                type="checkbox"
+                                                                                onclick="if(!!this.checked || confirm('{$aLang.topic_lock_control_un}')) return ls.topic.lockControl({$oTopic->getId()},this); else return false;"
+                                                                                {if $oTopic->isControlLocked()}checked="checked"{/if} /><label
+                                        for="topic_{$oTopic->getId()}_lock" title="{$aLang.topic_lock_control_title}"
+                                        class="actions-topic_lock_control">{$aLang.topic_lock_control}</label></span></span>
+                    </a>
+                {/if}
+            </div>
+        </div>
     </header>

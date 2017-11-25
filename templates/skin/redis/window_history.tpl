@@ -1,6 +1,6 @@
 <div class="modal editcomment-history" id="modal-editcomment-history">
 	<header class="modal-header">
-	    <h3>{$aLang.plugin.editcomment.history_window_title}</h3>
+	    <h3>{$aLang.editcomment.history_window_title}</h3>
 		<a href="#" class="close jqmClose material-icons">close</a>
 	</header>
 	

@@ -14,7 +14,7 @@
 #wrapper 	{ margin-top: 20px; border-radius: 20px; position: relative; overflow: hidden; zoom: 1; background: $wrapper; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.32); padding-bottom: 15px; }
 #content 	{ max-width: 100%; float: left;  margin-right: 0; background: wrapper; position: relative; padding-top: 15px; }
 
-#sidebar	{ float: left;}
+#sidebar	{ float: left; max-width: 100%;}
 @media (max-width: 992px) { #sidebar { position: relative } }
 
 #footer 	{

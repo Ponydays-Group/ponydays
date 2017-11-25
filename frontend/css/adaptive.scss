@@ -63,7 +63,7 @@
     top: calc(100% - 50px);
     flex-direction: row;
 
-    #rightbar_menu_top, #rightbar_menu_bottom {
+    #rightbar_menu_top {
       display: flex;
 
       .rightbar-item a {
@@ -79,6 +79,10 @@
       .user_item {
         display: none;
       }
+    }
+
+    #rightbar_menu_bottom {
+      display: none;
     }
   }
 }

@@ -29,14 +29,14 @@
 .comment-preview {
     padding: 5px 10px 6px;
     margin-bottom: 10px;
-    background: $comment-self-background;
-    border: 1px solid $main-accent-fifth;
+    background: $first;
+    border: $second-border;
     border-radius: 3px;
 }
 
 .comment-preview {
-    font-size: 13px;
-    line-height: 18px;
+    //font-size: 13px;
+    //line-height: 18px;
 }
 
 

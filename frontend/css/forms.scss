@@ -43,7 +43,7 @@ dl.form-item dt { float: left; width: 135px; padding-top: 4px; padding-right: 15
 dl.form-item dd { float: left; max-width: 800px; width:100%; }
 
 .form-profile { position: relative; }
-.form-profile .avatar-change { position: absolute; top: 40px; right: 0; padding: 10px; background: $main-color; font-size: 11px; }
+.form-profile .avatar-change { position: absolute; top: 40px; right: 0; padding: 10px; background: $first; font-size: 11px; border: $second-border; border-radius: 20px; }
 
 /* Placeholder */
 :-moz-placeholder { color: #aaa; }
@@ -67,4 +67,12 @@ input[type="file"] {
 input, textarea, select {
 	background-color: $first !important;
 	border-color: $second-border-color !important;
+}
+
+label, .label {
+	color: $label-color !important;
+}
+
+fieldset legend {
+	color: $attention-text;
 }

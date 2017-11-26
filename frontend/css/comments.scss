@@ -425,12 +425,14 @@ button#comment-button-history {
 }
 
 .bad-placeholder {
-    color: rgba(255, 0, 0, 0.61);
-    height: 1.9em;
+    color: darken($comment-deleted-background, 5%);
+    height: 40px;
+    border-radius: 20px;
     display: flex;
     width: 100%;
-    background: rgba(255, 0, 0, 0.03);
-    border-bottom: 1px solid rgba(255, 0, 0, 0.08);
+    background: rgba($comment-deleted-background, 0.2);
+    border: 1px solid rgba(darken($comment-deleted-background, 5%), 0.2);
     justify-content: center;
-    
+    align-items: center;
+    margin-bottom: 10px;
 }

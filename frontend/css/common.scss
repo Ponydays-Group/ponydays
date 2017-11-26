@@ -97,11 +97,13 @@
   opacity: .3;
   filter: alpha(opacity=30);
   cursor: pointer;
+  transition: color .2s;
 }
 
 .favourite.active {
   opacity: 1;
   filter: alpha(opacity=100);
+  color: #E91E63;
 }
 
 .favourite:hover {

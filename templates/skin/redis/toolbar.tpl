@@ -28,9 +28,11 @@
             {/if}
         </div>
 
-        {if $oUserCurfrent}
+        {if $oUserCurrent}
             <div class="rightbar-item">
-                <a href="#"><i class="material-icons">mail_outline</i></a>
+                <a href="{router page='talk'}" id="new_messages"><i class="material-icons">mail_outline</i><span class="new-comments"
+                    {if !$iUserCurrentCountTalkNew}style="display: none;"{/if}
+                    title="{$aLang.comment_count_new}">{$iUserCurrentCountTalkNew}</span></a></a>
             </div>
         {/if}
 

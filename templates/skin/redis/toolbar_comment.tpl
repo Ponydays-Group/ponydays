@@ -11,8 +11,7 @@
                     id="update-comments" class="material-icons">autorenew</i><span class="new-comments"
                                                                                    id="new_comments_counter"
                                                                                    style="display: none;"
-                                                                                   title="{$aLang.comment_count_new}"
-                                                                                   onclick="ls.comments.goToNextComment(); return false;"></span></a>
+                                                                                   title="{$aLang.comment_count_new}"></span></a>
 
         <input type="hidden" id="comment_last_id" value="{$params.iMaxIdComment}"/>
         <input type="hidden" id="comment_use_paging" value="{if $aPagingCmt and $aPagingCmt.iCountPage>1}1{/if}"/>

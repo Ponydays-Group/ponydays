@@ -123,6 +123,8 @@ export async function ajaxUploadImg(form, sToLoad) {
     let result = await ajaxSubmit('upload/image/', form, function (data) {
         if (data.bStateError) {
             Msg.error(data.sMsgTitle, data.sMsg);
+            $("#"+form+"_submit").toggleClass("hovered")
+            $("#"+form+"_submit").attr("disabled", false)
         } else {
             if (!data.sText.length) {
                 Msg.error("Ошибка", "Сервер не отдал картинку");

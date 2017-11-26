@@ -63,6 +63,9 @@
 }
 
 @media screen and (max-height: 720px) {
+  #container {
+    padding-right: 40px;
+  }
   #rightbar {
     padding-top: 0px;
     //width: 100%;

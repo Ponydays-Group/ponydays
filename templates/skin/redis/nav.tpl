@@ -63,16 +63,16 @@
                            class="js-registration-form-show">{$aLang.registration_submit}</a></li>
                 {/if}
                 <li>
-                    <a href="#"
+                    <a href="{if $oUserCurrent}{$oUserCurrent->getUserWebPath()}{/if}"
                        class="user-wrapper {if $oUserCurrent}with-login{/if}">{if $oUserCurrent}{$oUserCurrent->getLogin()}{/if}
-                        <a href="{if $oUserCurrent}{$oUserCurrent->getUserWebPath()}{/if}" class="avatar-wrapper"><img
+                        <span class="avatar-wrapper"><img
                                     src="{if $oUserCurrent}{$oUserCurrent->getProfileAvatarPath(48)}{else}https://chenhan1218.github.io/img/profile.png{/if}"
-                                    alt="avatar" class="avatar"/></a></a></li>
+                                    alt="avatar" class="avatar"/></span></a></li>
             </ul>
 
             <ul class="nav navbar-nav navbar-right" id="navbar-right-small">
                 <li class="with_dropd">
-                    <a href="#"
+                    <a href="{if $oUserCurrent}{$oUserCurrent->getUserWebPath()}{/if}"
                        class="user-wrapper">{if $oUserCurrent}{/if}
                         <span class="avatar-wrapper"><img
                                     src="{if $oUserCurrent}{$oUserCurrent->getProfileAvatarPath(48)}{else}https://chenhan1218.github.io/img/profile.png{/if}"

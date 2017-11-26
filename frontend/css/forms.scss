@@ -63,3 +63,8 @@ input[type="file"] {
 	align-items: center;
 	display: flex;
 }
+
+input, textarea, select {
+	background-color: $first !important;
+	border-color: $second-border-color !important;
+}

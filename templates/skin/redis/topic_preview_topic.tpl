@@ -4,14 +4,17 @@
 
 <article class="topic topic-type-{$oTopic->getType()}">
 	<header class="topic-header">
-		<h1 class="topic-title">
-			{$oTopic->getTitle()|escape:'html'}
-		</h1>
-
-		<div class="topic-info">
-			<time datetime="{date_format date=$oTopic->getDateAdd() format='c'}" pubdate title="{date_format date=$oTopic->getDateAdd() format='j F Y, H:i'}">
-			{date_format date=$oTopic->getDateAdd() format="j F Y, H:i"}
-			</time>
+		<div class="topic-data-wrapper">
+			<a href="{$oUser->getUserWebPath()}"><img src="{$oUser->getProfileAvatarPath(64)}"
+													  class="topic-author-avatar"/></a>
+			<div class="topic-data">
+				<span class="topic-title"><a href="#">{$oTopic->getTitle()}</a></span>
+				<span><a href="{$oUser->getUserWebPath()}">{$oUser->getLogin()}</a>,
+			<time class="topic-time" datetime="{date_format date=$oTopic->getDateAdd() format='c'}"
+				  title="{date_format date=$oTopic->getDateAdd() format='j F Y, H:i'}">
+				{date_format date=$oTopic->getDateAdd() format="j F Y, H:i"}
+			</time></span>
+			</div>
 		</div>
 	</header>
 
@@ -25,7 +28,7 @@
 
 	<footer class="topic-footer">
 		<ul class="topic-tags">
-			<li>{$aLang.block_tags}:</li>
+			<li>Тэги:</li>
 			{strip}
 				{if $oTopic->getTagsArray()}
 					{foreach from=$oTopic->getTagsArray() item=sTag name=tags_list}
@@ -35,11 +38,6 @@
 					<li>{$aLang.topic_tags_empty}</li>
 				{/if}
 			{/strip}
-		</ul>
-
-		<ul class="topic-info">
-			<li class="topic-info-author"><a rel="author" href="{$oUser->getUserWebPath()}">{$oUser->getLogin()}</a></li>
-			{hook run='topic_preview_show_info' topic=$oTopic}
 		</ul>
 
 		{hook run='topic_preview_show_end' topic=$oTopic}

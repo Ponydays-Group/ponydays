@@ -65,9 +65,9 @@
                 <li>
                     <a href="#"
                        class="user-wrapper {if $oUserCurrent}with-login{/if}">{if $oUserCurrent}{$oUserCurrent->getLogin()}{/if}
-                        <span class="avatar-wrapper"><img
+                        <a href="{if $oUserCurrent}{$oUserCurrent->getUserWebPath()}{/if}" class="avatar-wrapper"><img
                                     src="{if $oUserCurrent}{$oUserCurrent->getProfileAvatarPath(48)}{else}https://chenhan1218.github.io/img/profile.png{/if}"
-                                    alt="avatar" class="avatar"/></span></a></li>
+                                    alt="avatar" class="avatar"/></a></a></li>
             </ul>
 
             <ul class="nav navbar-nav navbar-right" id="navbar-right-small">

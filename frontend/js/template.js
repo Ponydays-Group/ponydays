@@ -92,12 +92,13 @@ export default function init() {
                 $(document.body).css("paddingTop", "0px");
                 $("#head_image").css("height", "0px").css("backgroundImage", "none").css("backgroundColor", "#5d67bb");
                 $("#head_collaps i")[0].innerText = "keyboard_arrow_down"
+                $("#rightbar").css("paddingTop", "0px")
             } else {
                 $(document.body).css("paddingTop", "200px");
                 $("#head_image").css("height", "200px").css("backgroundImage", "url(/head_image.png)");
                 $("#head_collaps i")[0].innerText = "keyboard_arrow_up"
+                $("#rightbar").css("paddingTop", "200px")
             }
-            checkSidebarPadding()
         }
 
         function checkSidebarPadding() {

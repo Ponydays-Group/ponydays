@@ -15,7 +15,8 @@
                 {if $oTopic->getPublish() == 0}
                     <i class="fa fa-tag" title="{$aLang.topic_unpublish}"></i>
                 {/if}
-                <span><a href="{$oBlog->getUrlFull()}" class="topic-blog">{$oBlog->getTitle()|escape:'html'}</a>
+                <span><a href="{$oUser->getUserWebPath()}">{$oUser->getLogin()}</a>,
+                    <a href="{$oBlog->getUrlFull()}" class="topic-blog">{$oBlog->getTitle()|escape:'html'}</a>
 			<time class="topic-time" datetime="{date_format date=$oTopic->getDateAdd() format='c'}"
                   title="{date_format date=$oTopic->getDateAdd() format='j F Y, H:i'}">
 				{date_format date=$oTopic->getDateAdd() format="j F Y, H:i"}

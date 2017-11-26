@@ -54,7 +54,7 @@
 			<small class="note">{$aLang.stream_settings_note_follow_user}</small>
 
 			<p><input type="text" id="stream_users_complete" autocomplete="off" class="autocomplete-users input-text input-width-200" />
-			<a href="javascript:ls.stream.appendUser()" class="button">{$aLang.stream_block_config_append}</a></p>
+			<a href="javascript:ls.stream.appendUser()" class="button" style="margin-top: 10px;">{$aLang.stream_block_config_append}</a></p>
 
 			{if count($aStreamSubscribedUsers)}
 				<ul id="stream_block_users_list" class="max-height-200">

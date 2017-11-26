@@ -16,19 +16,19 @@
 		<header class="block-header">
 			<h3>{$aLang.userfeed_block_users_title}</h3>
 		</header>
-		
+
 		<div class="block-content">
 			<small class="note">{$aLang.userfeed_settings_note_follow_user}</small>
-			
+
 			<div class="stream-settings-userlist">
 				<p><input type="text" id="userfeed_users_complete" autocomplete="off" class="autocomplete-users input-text input-width-200" />
-				<a href="javascript:ls.userfeed.appendUser()" class="button">{$aLang.userfeed_block_users_append}</a></p>
-				
+				<span><a href="javascript:ls.userfeed.appendUser()" class="button" style="margin-top: 10px;">{$aLang.userfeed_block_users_append}</a></p></span>
+
 				{if count($aUserfeedSubscribedUsers)}
 					<ul id="userfeed_block_users_list" class="max-height-200">
 						{foreach from=$aUserfeedSubscribedUsers item=oUser}
 							{assign var=iUserId value=$oUser->getId()}
-							
+
 							{if !isset($aUserfeedFriends.$iUserId)}
 								<li><input class="userfeedUserCheckbox input-checkbox"
 											type="checkbox"
@@ -46,21 +46,21 @@
 			</div>
 		</div>
 	</section>
-	
-	
+
+
 	{if count($aUserfeedFriends)}
 		<section class="block block-type-activity hidden">
 			<header class="block-header">
 				<h3>{$aLang.userfeed_block_users_friends}</h3>
 			</header>
-			
+
 			<div class="block-content">
 				<small class="note">{$aLang.userfeed_settings_note_follow_friend}</small>
-				
+
 				<ul class="stream-settings-friends max-height-200">
 					{foreach from=$aUserfeedFriends item=oUser}
 						{assign var=iUserId value=$oUser->getId()}
-						
+
 						<li><input class="userfeedUserCheckbox input-checkbox"
 									type="checkbox"
 									id="usf_u_{$iUserId}"

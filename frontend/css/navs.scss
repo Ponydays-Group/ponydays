@@ -526,3 +526,7 @@
 .navbar-default .navbar-toggle .icon-bar {
   background-color: #fff;
 }
+
+.navbar-nav > li > a:focus {
+  color: white !important;
+}

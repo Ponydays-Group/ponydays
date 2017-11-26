@@ -64,7 +64,7 @@ input[type="file"] {
 	display: flex;
 }
 
-input, textarea, select {
+input[type="text"], textarea, select {
 	background-color: $first !important;
 	border-color: $second-border-color !important;
 }

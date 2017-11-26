@@ -505,59 +505,60 @@
 }
 
 .topic.topic-type-talk .topic-header {
-    background: $main-accent-fourth;
-    padding: 10px 15px 15px;
-    border-top: 1px solid $main-accent-fourth;
-    border-bottom: 1px solid $main-accent-fourth;
+    //background: $main-accent-fourth;
+    //padding: 10px 15px 15px;
+    //border-top: 1px solid $main-accent-fourth;
+    //border-bottom: 1px solid $main-accent-fourth;
 }
 
 .topic.topic-type-talk .topic-header .topic-title {
-    margin-bottom: 13px;
-    font-size: 20px;
+    //margin-bottom: 13px;
+    //font-size: 20px;
 }
 
-.topic.topic-type-talk .topic-header .topic-info {
-    margin-bottom: 0;
-    position: relative;
-    min-height: 30px;
-    padding-left: 40px;
-    line-height: 14px;
-}
-
-.topic.topic-type-talk .topic-header .topic-info .avatar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    border-radius: 50%;
-}
-
-.topic.topic-type-talk .topic-header .topic-info .author-wrapper {
-    margin-bottom: 4px;
-    position: relative;
-    top: -2px;
-}
-
-.topic.topic-type-talk .topic-header .topic-info .author-wrapper .author {
-    font-weight: bold;
-    margin-right: 15px;
-}
-
-.topic.topic-type-talk .topic-header .topic-info .recipient {
-    margin-right: 10px;
-}
-
-.topic.topic-type-talk .topic-content {
-    font-size: 13px;
-    padding: 15px;
-    background: $main-accent;
-    margin-bottom: 1px;
-    border-top: 1px solid $main-accent;
-}
-
-.topic.topic-type-talk .topic-footer .topic-info {
-    border-radius: 0;
-    background: $main-accent-fourth;
-}
+//.topic.topic-type-talk .topic-header .topic-info {
+//    margin-bottom: 0;
+//    position: relative;
+//    min-height: 30px;
+//    padding-left: 40px;
+//    line-height: 14px;
+//}
+//
+//.topic.topic-type-talk .topic-header .topic-info .avatar {
+//    position: absolute;
+//    top: 0;
+//    left: 0;
+//    border-radius: 50%;
+//}
+//
+//.topic.topic-type-talk .topic-header .topic-info .author-wrapper {
+//    margin-bottom: 4px;
+//    position: relative;
+//    top: -2px;
+//}
+//
+//.topic.topic-type-talk .topic-header .topic-info .author-wrapper .author {
+//    font-weight: bold;
+//    margin-right: 15px;
+//}
+//
+//.topic.topic-type-talk .topic-header .topic-info .recipient {
+//    margin-right: 10px;
+//}
+//
+//.topic.topic-type-talk .topic-content {
+//    font-size: 13px;
+//    padding: 15px;
+//    background: $main-accent;
+//    margin-bottom: 1px;
+//    border-top: 1px solid $main-accent;
+//}
+//
+//.topic.topic-type-talk .topic-footer .topic-info {
+//    border-radius: 0;
+//    background: $main-accent-fourth;
+//}
+//
 
 .topic.topic-type-talk .talk-recipients {
     padding: 15px;

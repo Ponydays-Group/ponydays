@@ -7,7 +7,7 @@
 
 {if $aTalks}
 	{include file='actions/ActionTalk/filter.tpl'}
-
+<div id="list_wrapper">
 	<form action="{router page='talk'}" method="post" id="form_talks_list">
 		<input type="hidden" name="security_ls_key" value="{$LIVESTREET_SECURITY_KEY}" />
 		<input type="hidden" name="submit_talk_read" id="form_talks_list_submit_read" value="" />
@@ -82,6 +82,7 @@
 			</tbody>
 		</table>
 	</form>
+</div>
 {else}
 	<div class="notice-empty">{$aLang.talk_inbox_empty}</div>
 {/if}

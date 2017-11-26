@@ -193,18 +193,24 @@
 
 /* Block Type - Foldable */
 .block.block-type-foldable {
-  background: none;
+  //background: none;
 }
 
 .block.block-type-foldable .block-header {
-  background: none;
-  border: none;
-  padding: 0 0 10px;
+  //background: none;
+  //border: none;
+  padding: 0px;
+  padding-left: 20px;
+  margin-bottom: 0px;
 }
 
 .block.block-type-foldable .block-content {
   display: none;
-  background: $main-color;
+  background: $second;
+  border: $second-border;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 20px;
 }
 
 .block.block-type-talk-search {

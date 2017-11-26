@@ -68,6 +68,10 @@
   &.content-big {
     font-size: 16px;
   }
+
+  * {
+    max-width: 100%;
+  }
 }
 
 .block footer {

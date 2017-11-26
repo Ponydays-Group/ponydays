@@ -6,7 +6,7 @@
 	<header class="block-header">
 		<h3>О себе</h3>
 	</header>
-	<div class="block-content colorful-links">
+	<div class="block-content colorful-links content-big">
 		{$oUserProfile->getProfileAbout()}
 	</div>
 </section>

@@ -62,8 +62,12 @@
 
 .block .block-content {
   padding: 5px;
-  font-size: 16px;
+  font-size: 14px;
   color: $block-content-color;
+
+  &.content-big {
+    font-size: 16px;
+  }
 }
 
 .block footer {

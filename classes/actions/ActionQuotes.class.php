@@ -33,8 +33,6 @@ class ActionQuotes extends Action {
 			$this->Viewer_Assign('sMenuHeadItemSelect', $this->sMenuHeadItemSelect);
 			return "";
 		}
-
-		return parent::EventNotFound();
 	}
 
 
@@ -84,7 +82,7 @@ class ActionQuotes extends Action {
 		// Передаем в шаблон цитатки
 		$this->Viewer_Assign('aPaging', $aPaging);
 		$this->Viewer_Assign('aQuotes', $aResult);
-		$this->Viewer_Assign('bIsAdmin', $this->IsAnAdmin());
+		$this->Viewer_Assign('bIsAdmin', $this->IsAdmin());
 		$this->Viewer_Assign('iCountQuotes', $iCountQuotes);
 
 		$this->Viewer_AddHtmlTitle($this->Lang_Get('quotes_header'));
@@ -98,7 +96,7 @@ class ActionQuotes extends Action {
 	 * @return bool
 	 */
 	protected function EventEdit (): bool {
-		if (!$this->IsAnAdmin()) {
+		if (!$this->IsAdmin()) {
 			$this->SetTemplateAction('blank');
 			echo "Permission denied.";
 			return Router::Action('error');
@@ -167,7 +165,7 @@ class ActionQuotes extends Action {
 
 				// Передаем в шаблон цитатки
 				$this->Viewer_Assign('aQuotes', $this->Quotes_getQuotes());
-				$this->Viewer_Assign('bIsAdmin', $this->IsAnAdmin());
+				$this->Viewer_Assign('bIsAdmin', $this->IsAdmin());
 				$this->Viewer_AddHtmlTitle($this->Lang_Get('quotes_header'));
 				$this->SetTemplateAction('index');
 				return true;
@@ -180,7 +178,7 @@ class ActionQuotes extends Action {
 	 * @return bool|string
 	 */
 	protected function EventTrash () {
-		if (!$this->IsAnAdmin()) {
+		if (!$this->IsAdmin()) {
 			$this->SetTemplateAction('blank');
 			return Router::Action('error');
 		}
@@ -204,7 +202,13 @@ class ActionQuotes extends Action {
 	 *
 	 * @return bool
 	 */
-	protected function IsAnAdmin (): bool {
+	protected function IsAdmin (): bool {
+	    if (!$this->oUserCurrent) {
+	        return false;
+        }
+	    if ($this->oUserCurrent->isAdministrator()) {
+	        return true;
+        }
 		$aQuotesAdmins = Config::Get('quotes_admin');
 		foreach ($aQuotesAdmins as $iId) {
 			if ((int)$this->oUserCurrent->getId() === $iId) {

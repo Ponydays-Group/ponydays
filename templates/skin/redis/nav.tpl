@@ -24,10 +24,8 @@
                             href="{router page='stream'}">{$aLang.stream_menu}</a></li>
                 <li {if $sMenuHeadItemSelect=='feedbacks'}class="active"{/if}><a
                             href="{router page='feedbacks'}">{$aLang.feedbacks.header}</a></li>
-                {if $oUserCurrent}
-                    <li {if $sMenuHeadItemSelect=='quotes'}class="active"{/if}><a
-                                href="{router page='quotes'}">{$aLang.quotes_title}</a></li>
-                {/if}
+                <li {if $sMenuHeadItemSelect=='quotes'}class="active"{/if}><a
+                            href="{router page='quotes'}">{$aLang.quotes_title}</a></li>
                 {hook run='main_menu_item'}
             </ul>
             <ul class="nav navbar-nav navbar-right" id="navbar-right-big">
@@ -79,39 +77,40 @@
                                     alt="avatar" class="avatar"/></span></a>
                     <ul class="dropd">
                         {if $oUserCurrent}
-                <li id="head_collaps">
-                    <i class="material-icons">keyboard_arrow_up</i>
+                            <li id="head_collaps">
+                                <i class="material-icons">keyboard_arrow_up</i>
+                            </li>
+                            <li>
+                                <a class="iconic" href="{router page='topic'}add/" id="modal_write_show"><i
+                                            class="material-icons">mode_edit</i></a>
+                            </li>
+                            <li>
+                                <a class="iconic" href="{router page='feedbacks'}"><i class="material-icons">question_answer</i></a>
+                            </li>
+                            <li>
+                                <a class="iconic" href="{$oUserCurrent->getUserWebPath()}favourites/topics/"><i
+                                            class="material-icons">favorite</i></a>
+                            </li>
+                            <li>
+                                <a class="iconic" href="{router page='settings'}profile/"><i class="material-icons">settings</i></a>
+                            </li>
+                            <li>
+                                <a class="iconic"
+                                   href="{router page='login'}exit/?security_ls_key={$LIVESTREET_SECURITY_KEY}"><i
+                                            class="material-icons">exit_to_app</i></a>
+                            </li>
+                        {else}
+                            <li id="head_collaps">
+                                <i class="material-icons">keyboard_arrow_up</i>
+                            </li>
+                            <li><a href="{router page='login'}"
+                                   class="js-login-form-show">{$aLang.user_login_submit}</a></li>
+                            <li><a href="{router page='registration'}"
+                                   class="js-registration-form-show">{$aLang.registration_submit}</a></li>
+                        {/if}
+                    </ul>
                 </li>
-                <li>
-                    <a class="iconic" href="{router page='topic'}add/" id="modal_write_show"><i
-                                class="material-icons">mode_edit</i></a>
-                </li>
-                <li>
-                    <a class="iconic" href="{router page='feedbacks'}"><i class="material-icons">question_answer</i></a>
-                </li>
-                <li>
-                    <a class="iconic" href="{$oUserCurrent->getUserWebPath()}favourites/topics/"><i
-                                class="material-icons">favorite</i></a>
-                </li>
-                <li>
-                    <a class="iconic" href="{router page='settings'}profile/"><i class="material-icons">settings</i></a>
-                </li>
-                <li>
-                    <a class="iconic"
-                       href="{router page='login'}exit/?security_ls_key={$LIVESTREET_SECURITY_KEY}"><i
-                                class="material-icons">exit_to_app</i></a>
-                </li>
-                {else}
-                <li id="head_collaps">
-                    <i class="material-icons">keyboard_arrow_up</i>
-                </li>
-                <li><a href="{router page='login'}" class="js-login-form-show">{$aLang.user_login_submit}</a></li>
-                <li><a href="{router page='registration'}"
-                       class="js-registration-form-show">{$aLang.registration_submit}</a></li>
-                {/if}
-        </ul>
-        </li>
-        </ul>
+            </ul>
     </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
 </nav>

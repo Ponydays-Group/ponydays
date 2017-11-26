@@ -79,7 +79,7 @@
 </script>
 
 {if $bIsAdmin}
-<h4 class="table-header" style="font-size: 18px; float: left;">
+<h4 class="table-header" style="font-size: 18px; float: left; margin-top: 20px;">
     <p><a href="#" onclick="ls.quotes.showAddForm(); return false;" class="link-dotted" id="quotes_form_show">{$aLang.quotes_add}</a></p>
 </h4>
 {/if}

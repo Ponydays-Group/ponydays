@@ -191,7 +191,7 @@ h2.header-table {
 
 .stream-list li.stream-item {
   margin-bottom: 10px;
-  min-height: 48px;
+  min-height: 72px;
   _height: 48px;
   background: $first;
   padding: 10px 15px 10px 70px;
@@ -204,6 +204,7 @@ h2.header-table {
   position: absolute;
   top: 10px;
   left: 10px;
+  border-radius: 100px;
 }
 
 .stream-list li.stream-item .date {

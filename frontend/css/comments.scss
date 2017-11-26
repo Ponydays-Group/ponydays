@@ -44,12 +44,13 @@
 
 .comments.comment-list .comment {
     margin-bottom: 15px;
+    border-radius: 0px 0px 20px 20px;
 }
 
 .comments.comment-list .comment-path {
-    background: $main-accent-fourth;
-    padding: 5px 10px 6px;
-    border-top: 1px solid $main-accent-fourth;
+    background: darken($first, 5%);
+    padding: 6px 16px 6px;
+    border-radius: 20px 20px 0px 0px;
 }
 
 .comments.comment-list .comment-path .blog-name {

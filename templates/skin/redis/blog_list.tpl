@@ -1,3 +1,4 @@
+<div class="table-wrapper">
 <table class="table table-blogs">
 	{if $bBlogsUseOrder}
 		<thead>
@@ -82,3 +83,4 @@
 		{/if}
 	</tbody>
 </table>
+</div>

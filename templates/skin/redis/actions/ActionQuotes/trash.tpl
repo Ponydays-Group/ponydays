@@ -10,6 +10,7 @@
 <br />
 
 {if $aQuotes != []}
+<div class="table-wrapper">
 <table class="table table-hover">
     <thead>
     <tr>
@@ -31,6 +32,7 @@
     {/foreach}
     </tbody>
 </table>
+</div>
 {else}
     <p>
         <br /><br /><br />

@@ -7,6 +7,7 @@
 
 
 {if $aTalks}
+<div class="table-wrapper">
 	<table class="table table-talk">
 		<thead>
 			<tr>
@@ -49,6 +50,7 @@
 		{/foreach}
 		</tbody>
 	</table>
+</div>
 {else}
 	<div class="notice-empty">{$aLang.talk_favourite_empty}</div>
 {/if}

@@ -69,8 +69,9 @@ $sidebar-text-a: #67737a;
 
 @import "bootstrap/assets/stylesheets/bootstrap";
 
-$navbar-bg: #4D5DB7;
 $brand: #5d67bb;
+$brand-dark: #4a53a4;
+$navbar-bg: $brand;
 $wrapper: #f5f5f5;
 $first: #fff;
 

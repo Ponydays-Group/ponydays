@@ -408,7 +408,7 @@
   position: fixed;
   width: 64px;
   height: 100%;
-  background: $brand;
+  background: $navbar-bg;
   right: 0px;
   top: 0;
   z-index: 1;
@@ -469,7 +469,7 @@
     transition: height .2s;
     box-sizing: border-box;
     box-shadow: inset 0px 0px 6px rgba(0, 0, 0, 0.3);
-    background: #4a53a4;
+    background: $brand-dark;
   }
 
   .rightbar-item:hover .dropd {
@@ -515,8 +515,8 @@
 }
 
 .navbar-collapse {
-  background: $brand;
-  border: 1px solid darken($brand, 10%) !important;
+  background: $navbar-bg;
+  border: 1px solid darken($navbar-bg, 10%) !important;
 }
 
 .navbar-default .navbar-toggle {

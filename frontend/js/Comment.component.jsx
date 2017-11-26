@@ -56,7 +56,7 @@ export default function render_comment(data, maxNesting) {
                 </a>
               </li>` : "" }
 
-    					${(LOGGED_IN | data.countFavourite)>0? `<li class="comment-favourite action-hidden">
+    					${(LOGGED_IN | data.countFavourite)>0&&targetType!="talk"? `<li class="comment-favourite action-hidden">
     						<div onclick="return ls.favourite.toggle(${data.id},this,'comment');" id=${"comment_favourite_"+data.id} class="${classNames({
                     fa: true,
                     "fa-heart-o": true,

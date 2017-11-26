@@ -1,6 +1,6 @@
 <div id="top_block_users">
     <div id="user_background">
-        <img src="{$oUserProfile->getProfileAvatar(100)}" class="avatar" />
+        <img src="{$oUserProfile->getProfileAvatar(100)}" class="avatar {if $oUserProfile->isOnline()}online{/if}" />
         <div id="user_background_grad">{$oUserProfile->getLogin()}</div>
     </div>
 

@@ -202,12 +202,16 @@
         width: 100px;
         height:100px;
         border-radius: 150px;
-        border: 3px solid #4CAF50;
+        border: 3px solid #F44336;
         position: absolute;
         bottom: -20px;
         left: 10px;
         z-index: 1;
         background: $first;
+
+        &.online {
+            border-color: #4CAF50;
+        }
     }
 
     #user_background {

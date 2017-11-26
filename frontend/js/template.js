@@ -529,7 +529,7 @@ export default function init() {
             .item-list li .avatar {
                 border-radius: 0px !important;
             }
-            .user-avatar {
+            .user-avatar, .avatar {
                 border-radius: 0px !important;
             }
             .topic-author-avatar {
@@ -537,6 +537,9 @@ export default function init() {
             }
             .topic.topic-type-talk .topic-header .topic-info .avatar {
                 border-radius: 0px !important;
+            }
+            .topic .topic-header .topic-data-wrapper .topic-author-avatar {
+                margin-left: 10px;
             }
             </style>
             `)

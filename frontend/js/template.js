@@ -29,7 +29,11 @@ function showFloatBlock($) {
         }
         var sidebar = $('#sidebar');
         var last_block = $($(".block:not(.hidden)")[$(".block:not(.hidden)").length - 1])
-        var bottomPos = last_block.offset().top + last_block.outerHeight();
+        if (last_block.hasClass("block-type-stream")) {
+            bottomPos = 0
+        } else {
+            var bottomPos = last_block.offset().top + last_block.outerHeight();
+        }
         if (showFloat) {
             //bottomPos += floatBlock.outerHeight();
         }

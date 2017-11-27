@@ -125,7 +125,8 @@ export default function init() {
 
         $("#scroll_up").click(scrollTop)
 
-        // document.addEventListener("scroll", checkSidebarPadding)
+        document.addEventListener("scroll", checkSidebarPadding)
+
         checkCollapse()
         $("#head_collaps").click(
             function () {

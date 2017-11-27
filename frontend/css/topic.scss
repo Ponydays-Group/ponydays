@@ -593,7 +593,7 @@
     position: absolute;
     top: 45px;
     right: 5px;
-    background: white;
+    background: $first;
     //border: 1px solid #e5e5e5;
     border-radius: 5px;
     box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.19);
@@ -616,10 +616,10 @@
     transition: background .2s;
     align-items: center;
     font-size: 16px;
-    color: #555;
+    color: $text-color;
 }
 .topic-dropdown a:hover {
-    background: rgba(0, 0, 0, 0.03);
+    background: darken($first, 5%);
 }
 .topic-dropdown a .material-icons {
     font-size: 20px;

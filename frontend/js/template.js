@@ -549,6 +549,19 @@ export default function init() {
             $("#change_theme").css("transform", "rotate(180deg)")
         }
 
-        $(".topic-more").click(function(el){$(el.target).parent().find(".topic-dropdown").toggleClass("active")})
+        $(".topic-more").click(function(e){
+            let el = $(e.target).parent().find(".topic-dropdown")
+            el.toggleClass("active")
+            if (el.hasClass("active")) {
+                $(document).on("click", function(e1){
+                    console.log("outclick!")
+                    if ($(e1.target).parents(".topic-more").length) return;
+                    console.log("no return!")
+                    el.toggleClass("active")
+                    e1.stopPropagation()
+                    $(document).off("click")
+                }.bind(this))
+            }
+        })
     });
 }

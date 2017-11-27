@@ -213,6 +213,11 @@
     > span {
         margin-left: 10px;
         display: inline;
+
+
+        &.vote-count {
+            margin-left: 0;
+        }
     }
 }
 

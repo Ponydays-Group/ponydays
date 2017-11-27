@@ -66,7 +66,7 @@ input[type="file"] {
 	border-color: #111;
 }
 
-input[type="text"], textarea, select {
+input[type="text"], textarea, select, .input-text, .input-width-300 {
 	background-color: $first !important;
 	border-color: $second-border-color !important;
 }
@@ -77,4 +77,8 @@ label, .label {
 
 fieldset legend {
 	color: $attention-text;
+}
+
+fieldset {
+	border-top: none !important;
 }

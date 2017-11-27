@@ -4,7 +4,7 @@
 
 .table 					{ width: 100%; margin-bottom: 15px; }
 .table th 				{ text-align: left; }
-.table td, .table th 	{ border-bottom: 1px solid $main-accent-second; padding: 10px 0px !important; font-size: 14px !important; font-weight: 400; color: $table-color; vertical-align: middle !important; }
+.table td, .table th 	{ border-bottom: 1px solid $main-accent-second; padding: 10px 3px !important; font-size: 14px !important; font-weight: 400; color: $table-color; vertical-align: middle !important; }
 .table tr.active td 	{ background: #CBF4BC; font-size: 14px !important; }
 
 .table a.asc:after		{ content: "▲"; }
@@ -93,4 +93,5 @@
 .table-wrapper {
     max-width: 100%;
     overflow-x: scroll;
+    width: 100%;
 }

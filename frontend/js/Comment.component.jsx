@@ -37,26 +37,26 @@ export default function render_comment(data, maxNesting) {
     						<time dateTime=${data.date}>${dateFormat(new Date(data.date), "dd.mm.yy HH:MM:ss")}</time>
     					</a>
     				</li>
-
-    					${LOGGED_IN? `<li><a href="#" onclick="ls.comments.toggleCommentForm(${data.id}); return false;" class="reply-link">Ответить</a></li>` : "" }
-                        ${LOGGED_IN && (IS_ADMIN | USERNAME==data.author.login)? `<li class="action-hidden">
+    					${LOGGED_IN? `<span><a href="#" onclick="ls.comments.toggleCommentForm(${data.id}); return false;" class="reply-link">Ответить</a></span>` : "" }
+    					<li class="action-hidden">
+                        ${LOGGED_IN && (IS_ADMIN | USERNAME==data.author.login)? `<span>
                           <a href="#" class="editcomment_editlink" title="Редактировать комментарий" onclick="ls.comments.editComment(${data.id}); return false;">
                             <i class="fa fa-pencil" title="Редактировать комментарий"></i>
                           </a>
-                        </li>` : ""}
-                        ${LOGGED_IN && (IS_ADMIN | USERNAME==data.author.login)? `<li class="action-hidden">
+                        </span>` : ""}
+                        ${LOGGED_IN && (IS_ADMIN | USERNAME==data.author.login)? `<span>
                           <a href="#" class="editcomment_historylink" title="История редактирования" onclick="ls.comments.showHistory(${data.id}); return false;">
                             <i class="fa fa-history" title="История редактирования"></i>
                           </a>
-                        </li>` : ""}
+                        </span>` : ""}
 
-              ${LOGGED_IN && IS_ADMIN? `<li>
-                <a onclick="ls.comments.toggle(this,${data.id}); return false;" href="#" class="comment-delete action-hidden">
+              ${LOGGED_IN && IS_ADMIN? `<span>
+                <a onclick="ls.comments.toggle(this,${data.id}); return false;" href="#" class="comment-delete">
                   <i class="fa fa-trash" title="Удалить/восстановить комментарий"></i>
                 </a>
-              </li>` : "" }
+              </span>` : "" }
 
-    					${(LOGGED_IN | data.countFavourite)>0&&targetType!="talk"? `<li class="comment-favourite action-hidden">
+    					${(LOGGED_IN | data.countFavourite)>0&&targetType!="talk"? `<span class="comment-favourite">
     						<div onclick="return ls.favourite.toggle(${data.id},this,'comment');" id=${"comment_favourite_"+data.id} class="${classNames({
                     fa: true,
                     "fa-heart-o": true,
@@ -64,12 +64,12 @@ export default function render_comment(data, maxNesting) {
                     "active": data.isFavourite
                 })}" />
               <span class="favourite-count" id=${"fav_count_comment_"+data.id}>${data.countFavourite>0? " "+data.countFavourite : ""}</span>
-          </li>` : ""}
-
-    					${data.level>0? `<li class="goto-comment-parent action-hidden"><a href="#" onclick="ls.comments.goToParentComment(${data.id},${data.parentId}); return false;" title="Перейти к родительскому комментарию">↑</a></li>`:""}
-                        <li style="display: none" class="goto-comment-child action-hidden"><a href="#" title="Вернуться к дочернему">↓</a></li>
+          </span></div></span>` : ""}
+         
+    					${data.level>0? `<span class="goto-comment-parent"><a href="#" onclick="ls.comments.goToParentComment(${data.id},${data.parentId}); return false;" title="Перейти к родительскому комментарию">↑</a></li>`:""}
+                        <span style="display: none" class="goto-comment-child"><a href="#" title="Вернуться к дочернему">↓</a></span></li>
             </ul><ul class="comment-actions">
-    					<li id=${"vote_area_comment_"+data.id} class="${classNames({
+    					<span id=${"vote_area_comment_"+data.id} class="${classNames({
                   vote: true,
                   "action-hidden": data.rating == 0,
                   "vote-count-positive": data.rating > 0,

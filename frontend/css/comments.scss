@@ -170,7 +170,8 @@
 }
 
 .comment .vote i {
-        font-size: 15px;
+    font-size: 17px;
+    font-weight: 600;
 }
 
 .comment .comment-info li.goto-comment-child {
@@ -206,8 +207,13 @@
 }
 
 .comment .comment-actions li {
-    display: inline;
+    display: inline-flex;
     margin-right: 10px;
+
+    > span {
+        margin-left: 10px;
+        display: inline;
+    }
 }
 
 .comment .comment-actions time {

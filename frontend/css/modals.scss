@@ -105,6 +105,8 @@
 .modal.modal-write .write-list {
     *overflow: hidden;
     *zoom: 1;
+    display: flex;
+    justify-content: space-around;
 }
 
 .modal.modal-write .write-list li {
@@ -124,9 +126,9 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background: $secondary-accent;
-    width: 100px;
-    height: 100px;
+    background: $second;
+    width: 90px;
+    height: 90px;
     font-size: 25px;
     border-radius: 3px;
     text-align: center;

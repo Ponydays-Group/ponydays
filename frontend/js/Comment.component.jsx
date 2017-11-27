@@ -66,7 +66,7 @@ export default function render_comment(data, maxNesting) {
               <span class="favourite-count" id=${"fav_count_comment_"+data.id}>${data.countFavourite>0? " "+data.countFavourite : ""}</span>
           </span></div></span>` : ""}
          
-    					${data.level>0? `<span class="goto-comment-parent"><a href="#" onclick="ls.comments.goToParentComment(${data.id},${data.parentId}); return false;" title="Перейти к родительскому комментарию">↑</a></li>`:""}
+    					${data.level>0? `<span class="goto-comment-parent"><a href="#" onclick="ls.comments.goToParentComment(${data.id},${data.parentId}); return false;" title="Перейти к родительскому комментарию">↑</a></span>`:""}
                         <span style="display: none" class="goto-comment-child"><a href="#" title="Вернуться к дочернему">↓</a></span></li>
             </ul><ul class="comment-actions">
     					<span id=${"vote_area_comment_"+data.id} class="${classNames({

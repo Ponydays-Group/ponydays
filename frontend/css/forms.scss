@@ -58,10 +58,12 @@ dl.form-item dd { float: left; max-width: 800px; width:100%; }
 .validate-error-show { display: block; color: #f00; font-weight: bold; font-size: 12px; }
 
 input[type="file"] {
-	height: 34px;
+	//height: 34px;
 	justify-content: center;
 	align-items: center;
 	display: flex;
+	background: #303030;
+	border-color: #111;
 }
 
 input[type="text"], textarea, select {

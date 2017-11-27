@@ -31,12 +31,13 @@ export default function render_comment(data, maxNesting) {
     		${data.isDeleted && LOGGED_IN && (IS_ADMIN | USERNAME == data.author.login) ? `</span><a href="#" onclick="return false">Раскрыть комментарий</a></span>` : ""}
     		</div>
 
-    			<div class="comment-actions-wrapper"><ul class="comment-actions">
-    				<li class="comment-date">
-    					<a href=${"#comment"+data.id} onclick="ls.comments.scrollToComment(${data.id}); return false;" title="Ссылка на комментарий">
-    						<time dateTime=${data.date}>${dateFormat(new Date(data.date), "dd.mm.yy HH:MM:ss")}</time>
-    					</a>
-    				</li>
+    			<div class="comment-actions-wrapper">
+    			    <ul class="comment-actions">
+    				    <li class="comment-date">
+    					    <a href=${"#comment"+data.id} onclick="ls.comments.scrollToComment(${data.id}); return false;" title="Ссылка на комментарий">
+    						    <time dateTime=${data.date}>${dateFormat(new Date(data.date), "dd.mm.yy HH:MM:ss")}</time>
+    					    </a>
+    				    </li>
     					${LOGGED_IN? `<span><a href="#" onclick="ls.comments.toggleCommentForm(${data.id}); return false;" class="reply-link">Ответить</a></span>` : "" }
     					<li class="action-hidden">
                             ${LOGGED_IN && (IS_ADMIN | USERNAME==data.author.login)? `<span>
@@ -56,35 +57,56 @@ export default function render_comment(data, maxNesting) {
                                 </a>
                             </span>` : "" }
 
-    					    ${(LOGGED_IN | data.countFavourite)>0&&targetType!="talk"? `<span class="comment-favourite">
+    					    ${(LOGGED_IN | data.countFavourite)>0&&targetType!="talk"? `
+                            <span class="comment-favourite">
     						    <div onclick="return ls.favourite.toggle(${data.id},this,'comment');" id=${"comment_favourite_"+data.id} class="${classNames({
-                                    fa: true,
+                                    "fa": true,
                                     "fa-heart-o": true,
                                     "favourite": true,
                                     "active": data.isFavourite
-                                })}" />
-                                <span class="favourite-count" id=${"fav_count_comment_"+data.id}>${data.countFavourite>0? " "+data.countFavourite : ""}</span>
+                                })}"></div>
+                                <span class="favourite-count" id=${"fav_count_comment_"+data.id}>
+                                    ${data.countFavourite>0? " "+data.countFavourite : ""}
+                                </span>
                             </span>` : ""}
          
-    					${data.level>0? `<span class="goto-comment-parent"><a href="#" onclick="ls.comments.goToParentComment(${data.id},${data.parentId}); return false;" title="Перейти к родительскому комментарию">↑</a></span>`:""}
-                        <span style="display: none" class="goto-comment-child"><a href="#" title="Вернуться к дочернему">↓</a></span>
-            </li>
-            
-            </ul>
-            <ul class="comment-actions">
+    					    ${data.level>0? `<span class="goto-comment-parent">
+                                <a href="#" onclick="ls.comments.goToParentComment(${data.id},${data.parentId}); return false;" title="Перейти к родительскому комментарию">
+                                    ↑
+                                </a>
+                            </span>`:""}
+                        
+                            <span style="display: none" class="goto-comment-child">
+                                <a href="#" title="Вернуться к дочернему">
+                                    ↓
+                                </a>
+                            </span>
+                        </li>
+                    </ul>
+                    
+                    <ul class="comment-actions">
     					<li id=${"vote_area_comment_"+data.id} class="${classNames({
-                  vote: true,
-                  "action-hidden": data.rating == 0,
-                  "vote-count-positive": data.rating > 0,
-                  "vote-count-negative": data.rating < 0,
-                  "voted": data.voted,
-                  "voted-up": data.voteDirection > 0,
-                  "voted-down": data.voteDirection < 0,
-              })}">
-                ${LOGGED_IN? `<div class="vote-up" onclick="return ls.vote.vote(${data.id},this,1,'comment');"><i class="material-icons">keyboard_arrow_up</i></div>` : "" }
-    						<span class="vote-count" onclick="ls.vote.getVotes(${data.id},'comment',this); return false;" id=${"vote_total_comment_"+data.id}>${data.rating > 0? "+" : ""}${data.rating}</span>
-                ${LOGGED_IN? `<div class="vote-down" onclick="return ls.vote.vote(${data.id},this,-1,'comment');"><i class="material-icons">keyboard_arrow_down</i></div>` : ""}
+                            vote: true,
+                            "action-hidden": data.rating == 0,
+                            "vote-count-positive": data.rating > 0,
+                            "vote-count-negative": data.rating < 0,
+                            "voted": data.voted,
+                            "voted-up": data.voteDirection > 0,
+                            "voted-down": data.voteDirection < 0,
+                        })}">
+                            ${LOGGED_IN? `
+                            <div class="vote-up" onclick="return ls.vote.vote(${data.id},this,1,'comment');">
+                                <i class="material-icons">keyboard_arrow_up</i>
+                            </div>` : "" }
+    					    <span class="vote-count" onclick="ls.vote.getVotes(${data.id},'comment',this); return false;" id=${"vote_total_comment_"+data.id}>
+    						    ${data.rating > 0? "+" : ""}${data.rating}
+    					    </span>
+                            ${LOGGED_IN? `
+                            <div class="vote-down" onclick="return ls.vote.vote(${data.id},this,-1,'comment');">
+                                <i class="material-icons">keyboard_arrow_down</i>
+                            </div>` : ""}
     					</li>
-    			</ul></div>
+    			    </ul>
+    			</div>
     </section>`
 }

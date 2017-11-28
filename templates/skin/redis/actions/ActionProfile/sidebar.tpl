@@ -323,7 +323,7 @@
             <h3>Забанить</h3>
         </header>
         <div class="block-content">
-            <form method="post" action="/ajax/ban/" class="well well-small" onsubmit="ls.user.banUser(this);return false;">
+            <form method="post" action="/ajax/ban/" onsubmit="ls.user.banUser(this);return false;">
                 <input name="security_ls_key" value="{$LIVESTREET_SECURITY_KEY}" type="hidden">
 
                 <input name="iUserId" value="{$oUserProfile->getId()}" type="hidden">
@@ -345,7 +345,7 @@
             <h3>Разбанить</h3>
         </header>
         <div class="block-content">
-            <form method="post" action="/ajax/ban/" class="well well-small" onsubmit="ls.user.banUser(this);return false;">
+            <form method="post" action="/ajax/ban/" onsubmit="ls.user.banUser(this);return false;">
                 <input name="security_ls_key" value="{$LIVESTREET_SECURITY_KEY}" type="hidden">
 
                 <input name="iUnban" value="1" type="hidden">

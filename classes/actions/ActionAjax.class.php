@@ -85,12 +85,40 @@ class ActionAjax extends Action
         $this->AddEvent('editcomment-getsource', 'EventGetSource');
         $this->AddEvent('editcomment-edit', 'EventEdit');
         $this->AddEventPreg('/^comment$/i', 'EventGetComment');
+        $this->AddEvent('ban', 'EventBan');
     }
 
     /**********************************************************************************
     ************************ РЕАЛИЗАЦИЯ ЭКШЕНА ***************************************
     **********************************************************************************
     */
+
+
+    protected
+    function EventBan()
+    {
+        if (!$this->oUserCurrent || !($this->oUserCurrent->isAdministrator() || $this->oUserCurrent->isGlobalModerator())) {
+            return Router::Action('error');
+        }
+
+        $iUserId = (int)getRequest('iUserId');
+
+        if ((int)getRequest('iUnban')) {
+            $this->User_Unban($iUserId);
+            return;
+        }
+
+        $sBanComment = getRequest('sBanComment');
+        $iBanHours = getRequest('iBanHours');
+
+        if ((int)$iBanHours) {
+            $t = time()+((int)$iBanHours*60*60);
+            $this->User_Ban($iUserId, $this->oUserCurrent->getId(), date("Y-m-d H:i:s", $t), 0, $sBanComment);
+        } else {
+            $this->User_Ban($iUserId, $this->oUserCurrent->getId(), null, 1, $sBanComment);
+        }
+    }
+
     /**
      * Вывод информации о блоге
      */

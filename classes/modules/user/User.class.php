@@ -69,6 +69,7 @@ class ModuleUser extends Module {
 		/**
 		 * Проверяем есть ли у юзера сессия, т.е. залогинен или нет
 		 */
+
 		$sUserId=$this->Session_Get('user_id');
 		if ($sUserId and $oUser=$this->GetUserById($sUserId) and $oUser->getActivate()) {
 			if ($this->oSession=$oUser->getSession()) {
@@ -78,6 +79,14 @@ class ModuleUser extends Module {
 				$this->oUserCurrent=$oUser;
 			}
 		}
+
+		if ($this->oUserCurrent && $this->oUserCurrent->isBanned()) {
+            $this->Message_AddNoticeSingle($oUser->getBanComment());
+			$this->Logout();
+            $this->Session_DropSession();
+            return Router::Action('error');
+		}
+
 		/**
 		 * Запускаем автозалогинивание
 		 * В куках стоит время на сколько запоминать юзера
@@ -120,7 +129,7 @@ class ModuleUser extends Module {
 	 */
 	public function GetUsersAdditionalData($aUserId,$aAllowData=null) {
 		if (is_null($aAllowData)) {
-			$aAllowData=array('vote','session','friend','geo_target','note');
+			$aAllowData=array('vote','session','friend','geo_target','note', 'ban');
 		}
 		func_array_simpleflip($aAllowData);
 		if (!is_array($aUserId)) {
@@ -151,9 +160,9 @@ class ModuleUser extends Module {
 		if (isset($aAllowData['geo_target'])) {
 			$aGeoTargets=$this->Geo_GetTargetsByTargetArray('user',$aUserId);
 		}
-		if (isset($aAllowData['note']) and $this->oUserCurrent) {
-			$aNotes=$this->GetUserNotesByArray($aUserId,$this->oUserCurrent->getId());
-		}
+        if (isset($aAllowData['note']) and $this->oUserCurrent) {
+            $aNotes=$this->GetUserNotesByArray($aUserId,$this->oUserCurrent->getId());
+        }
 		/**
 		 * Добавляем данные к результату
 		 */
@@ -180,13 +189,13 @@ class ModuleUser extends Module {
 			} else {
 				$oUser->setGeoTarget(null);
 			}
-			if (isset($aAllowData['note'])) {
-				if (isset($aNotes[$oUser->getId()])) {
-					$oUser->setUserNote($aNotes[$oUser->getId()]);
-				} else {
-					$oUser->setUserNote(false);
-				}
-			}
+            if (isset($aAllowData['note'])) {
+                if (isset($aNotes[$oUser->getId()])) {
+                    $oUser->setUserNote($aNotes[$oUser->getId()]);
+                } else {
+                    $oUser->setUserNote(false);
+                }
+            }
 		}
 
 		return $aUsers;
@@ -1690,10 +1699,30 @@ class ModuleUser extends Module {
 
     public function isBanned($sUserId)
 	{
-        $data = $this->oMapper->GetBanActive($sUserId);
+        $data = $this->oMapper->GetBan($sUserId);
+        if (!$data) {
+        	return false;
+		}
+
+        return (int)$data["banunlim"] || (int)$data["banactive"];
+    }
+
+    public function GetBan($sUserId) {
+        $data = $this->oMapper->GetBan($sUserId);
 
         return $data;
-    }
+	}
+
+    public function Ban($nUserId, $nModerId, $dDate, $nUnlim, $sComment = null) {
+        $data = $this->oMapper->SetBan($nUserId, $nModerId, $dDate, $nUnlim, $sComment);
+
+        return $data;
+	}
+
+	public function Unban($nUserId) {
+        $data = $this->oMapper->DelBanUser($nUserId);
+        return $data;
+	}
 
     public function isRegistrationClosed()
     {

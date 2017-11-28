@@ -71,8 +71,9 @@ class ActionLogin extends Action {
 		if ((func_check(getRequest('login'),'mail') and $oUser=$this->User_GetUserByMail(getRequest('login')))  or  $oUser=$this->User_GetUserByLogin(getRequest('login'))) {
 			// проверка на бан
 
-			if ($this->User_isBanned($oUser->getId())) {
-                $this->Message_AddNoticeSingle("Фыр тебе, а не логин ;)");
+//			if ($this->User_isBanned($oUser->getId())) {
+			if ($oUser->isBanned()) {
+                $this->Message_AddNoticeSingle($oUser->getBanComment());
                 $this->User_Logout();
                 $this->Session_DropSession();
                 return Router::Action('error');

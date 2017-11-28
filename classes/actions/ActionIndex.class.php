@@ -284,6 +284,8 @@ class ActionIndex extends Action {
 		$this->Viewer_Assign('iCountTopicsNew',$this->iCountTopicsNew);
 		$this->Viewer_Assign('iCountTopicsCollectiveNew',$this->iCountTopicsCollectiveNew);
 		$this->Viewer_Assign('iCountTopicsPersonalNew',$this->iCountTopicsPersonalNew);
+//		$oUser = $this->User_GetUserCurrent();
+//		var_dump($this->User_GetBan("539"));
 	}
 }
 ?>

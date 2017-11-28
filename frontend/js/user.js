@@ -3,7 +3,7 @@ import * as Stream from './stream'
 import * as Msg from './msg'
 import Emitter from './emitter'
 import $ from 'jquery'
-import * as Ajax from './ajax' 
+import * as Ajax from './ajax'
 
 export let jcropAvatar = null;
 export let jcropFoto = null;
@@ -540,3 +540,17 @@ export function followToggle(obj, iUserId) {
     }
     return false;
 };
+
+export function banUser(form) {
+    // Ajax.ajaxSubmit('ban', form)
+    let iUnban = $(form).find(`[name="iUnban"]`).val()
+    let iUserId = $(form).find(`[name="iUserId"]`).val()
+    let iBanHours = $(form).find(`[name="iBanHours"]`).val()
+    let sBanComment = $(form).find(`[name="sBanComment"]`).val()
+    Ajax.asyncAjax('ban', {
+        iUnban: iUnban,
+        iUserId: iUserId,
+        iBanHours: iBanHours,
+        sBanComment: sBanComment},
+        function() {location.reload()})
+}

@@ -457,6 +457,62 @@ class ModuleUser_EntityUser extends Entity {
 		return $this->_getDataOne('user_note');
 	}
 
+	public function isBanned() {
+		if (!$aBan = $this->User_GetBan($this->getId())) {
+			return false;
+		}
+		return (int)$aBan["banunlim"] || $aBan["banactive"];
+	}
+
+    public function getBanUnlim() {
+        if (!$aBan = $this->User_GetBan($this->getId())) {
+            return false;
+        }
+        return (int)$aBan["banunlim"];
+    }
+
+    public function getBanActive() {
+        if (!$aBan = $this->User_GetBan($this->getId())) {
+            return false;
+        }
+        return (int)$aBan["banactive"];
+    }
+
+    public function getBanComment() {
+        if (!$aBan = $this->User_GetBan($this->getId())) {
+            return "";
+        }
+        return $aBan["bancomment"];
+    }
+
+    public function getBanLine() {
+        if (!$aBan = $this->User_GetBan($this->getId())) {
+            return false;
+        }
+        return $aBan["banline"];
+    }
+
+    public function getBanDate() {
+        if (!$aBan = $this->User_GetBan($this->getId())) {
+            return false;
+        }
+        return $aBan["bandate"];
+    }
+
+    public function getBanModerId() {
+        if (!$aBan = $this->User_GetBan($this->getId())) {
+            return false;
+        }
+        return (int)$aBan["moder_id"];
+    }
+
+    public function getBanModer() {
+        if (!$aBan = $this->User_GetBan($this->getId())) {
+            return false;
+        }
+        return $this->User_GetUserById($aBan["moder_id"]);
+	}
+
 
 	/**
 	 * Устанавливает ID пользователя
@@ -714,6 +770,10 @@ class ModuleUser_EntityUser extends Entity {
 	 */
 	public function setUserFriend($data) {
 		$this->_aData['user_friend']=$data;
+	}
+
+	public function setBan($data) {
+        $this->_aData['ban']=$data;
 	}
 }
 ?>

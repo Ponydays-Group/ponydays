@@ -21,26 +21,26 @@ $button-primary-border-color: #d44545;
 .button {
 	display: inline-block;
 
-	padding: 7px 15px;
+	padding: 10px;
 	text-align: center;
+	border-radius: 20px;
 
-	border: none;
-	border-radius: 3px;
-	border-bottom: 2px solid $button-border-color;
-
-	font-size: 12px;
+	font-size: 13px;
 	line-height: 16px;
 
 	color: $main-color;
 
-	background: $button-background;
+	background: #009688;
 
 	cursor: pointer;
 
 	*margin-right: 5px;
 	transition: background .2s;
+	text-transform: uppercase;
+	font-family: "Roboto";
+	border: 1px solid darken(#009688, 15%);
 }
-.button:hover, .button.hovered { text-decoration: none; color: $main-color; background: $button-border-color; }
+.button:hover, .button.hovered { text-decoration: none; color: $main-color; background: #00695C; }
 .button:active {
 	-moz-box-shadow: 	0 0 7px rgba(0, 0, 0, .5) inset;
 	-webkit-box-shadow: 0 0 7px rgba(0, 0, 0, .5) inset;
@@ -51,10 +51,10 @@ $button-primary-border-color: #d44545;
 
 /* Button Primary */
 .button.button-primary 			{
-	background: $button-primary-background;
-	border-color: $button-primary-border-color;
+	background: $brand;
+	border: 1px solid darken($brand, 15%);
 }
-.button.button-primary:hover, .button.button-primary.hovered 	{ background: $button-primary-border-color; }
+.button.button-primary:hover, .button.button-primary.hovered 	{ background: darken($brand, 10%); }
 .button.button-primary.active { background: $button-primary-border-color; }
 
 /* Button Icon (Without text) */

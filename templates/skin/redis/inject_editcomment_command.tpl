@@ -1,0 +1,1 @@
+<li><a href="#" class="editcomment_editlink" title="{$aLang.editcomment.edit_command_title}" onclick="ls.comments.editComment({$iCommentId}); return false;">{$aLang.editcomment.edit_command_title}</a></li>

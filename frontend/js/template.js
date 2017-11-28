@@ -9,6 +9,7 @@ import * as Hook from './hook'
 import Emitter from './emitter'
 
 function showFloatBlock($) {
+
     if (!$('.block-type-stream').length) {
         return
     }
@@ -17,7 +18,7 @@ function showFloatBlock($) {
         return
     }
     var showFloat = false;
-    var reinit = function() {
+    var reinit = function () {
         var floatBlock = $('.block-type-stream');
         if ($(window).width() < 1024 || $(window).height() < 500 || screen.width < 1024) {
             if (showFloat) {
@@ -27,19 +28,24 @@ function showFloatBlock($) {
             return;
         }
         var sidebar = $('#sidebar');
-        var last_block = $($(".block")[$(".block").length - 1])
-        var bottomPos = last_block.offset().top + last_block.outerHeight();
+        var last_block = $($(".block:not(.hidden)")[$(".block:not(.hidden)").length - 1])
+        if (last_block.hasClass("block-type-stream")) {
+            bottomPos = 0
+        } else {
+            var bottomPos = last_block.offset().top + last_block.outerHeight();
+        }
         if (showFloat) {
             //bottomPos += floatBlock.outerHeight();
         }
         if (window.pageYOffset > bottomPos) {
+            console.log("Yup", bottomPos)
             if (!showFloat) {
                 floatBlock.addClass('stream-fixed');
                 floatBlock.css("width", sidebar.width());
                 //floatBlock.offset({left: Math.min($(window).width - 360, $(window).width / 2 + 1280/2 - 360)});
                 floatBlock.animate({
                     opacity: 0
-                }, 0, function() {
+                }, 0, function () {
                     floatBlock.animate({
                         opacity: 1
                     }, 350)
@@ -48,6 +54,7 @@ function showFloatBlock($) {
             }
         }
         else {
+            console.log("Nope", bottomPos)
             if (showFloat) {
                 floatBlock.removeClass('stream-fixed');
                 showFloat = false;
@@ -60,7 +67,7 @@ function showFloatBlock($) {
 
 export function updateImgs(el = $(document)) {
     $(".spoiler-body img", el).each(
-        function(k, v) {
+        function (k, v) {
             if (!v.getAttribute("data-src")) {
                 // console.log(v.src, v)
                 v.setAttribute("data-src", v.src)
@@ -71,17 +78,71 @@ export function updateImgs(el = $(document)) {
 }
 
 export default function init() {
-    $(document).ready(function($) {
+    $(document).ready(function ($) {
+        var shortcuts_shown = false
+        $(".keyboard_shortcuts_trigger").click(function(){$("#comment-shortcuts-description").animate({"right": shortcuts_shown? "-450px" : "74px"}, 200); shortcuts_shown=!shortcuts_shown})
+        var el = $("#head_image")[0]
+        if(localStorage.getItem('headCollapsed', 0)==null||localStorage.getItem('headCollapsed', 0)=="null") {
+            if ($(window).width()<1500) {
+                localStorage.setItem('headCollapsed', 1)
+            }
+        }
+        function checkCollapse() {
+            if (parseInt(localStorage.getItem('headCollapsed', 0))) {
+                $(document.body).css("paddingTop", "0px");
+                $("#head_image").css("height", "0px").css("backgroundImage", "none").css("backgroundColor", "#5d67bb");
+                $("#head_collaps i")[0].innerText = "keyboard_arrow_down"
+                $("#rightbar").css("paddingTop", "0px")
+            } else {
+                $(document.body).css("paddingTop", "200px");
+                $("#head_image").css("height", "200px").css("backgroundImage", "url(/head_image.png)");
+                $("#head_collaps i")[0].innerText = "keyboard_arrow_up"
+                $("#rightbar").css("paddingTop", "200px")
+            }
+        }
+
+        function checkSidebarPadding() {
+            $("#rightbar").css("paddingTop", el.getBoundingClientRect().bottom > 0 ? el.getBoundingClientRect().bottom + "px" : "0px")
+        }
+
+        function scrollBottom(){
+            let body = $("html, body")
+            body.stop()
+            body.animate({
+                scrollTop: $(document).height(),
+            }, 150)
+        }
+
+        function scrollTop(){
+            let body = $("html, body")
+            body.stop()
+            body.animate({
+                scrollTop: 0,
+            }, 150)
+        }
+
+        $("#scroll_down").click(scrollBottom)
+
+        $("#scroll_up").click(scrollTop)
+
+        document.addEventListener("scroll", checkSidebarPadding)
+
+        checkCollapse()
+        $("#head_collaps").click(
+            function () {
+                parseInt(localStorage.getItem("headCollapsed")) ? localStorage.setItem('headCollapsed', 0) : localStorage.setItem('headCollapsed', 1);
+                checkCollapse();
+            })
         // Хук начала инициализации javascript-составляющих шаблона
         Hook.run('ls_template_init_start', [], window);
-        
+
         $("title").data("title", document.title)
 
         // updateImgs()
-        $("#image-modal").click(function() {
+        $("#image-modal").click(function () {
             $("#image-modal").css("display", "none")
         })
-        $("#image-modal-img").click(function() {
+        $("#image-modal-img").click(function () {
             $("#image-modal").css("display", "none")
         })
 
@@ -107,16 +168,20 @@ export default function init() {
             trigger: '#add_friend_show'
         });
         $('#window_upload_img').jqm({
-            onShow:  function(hash) {
+            onShow: function (hash) {
                 hash.w.show()
-                console.log("Is visible",$("#img_file").is(":visible"),$("#img_file"))
+                console.log("Is visible", $("#img_file").is(":visible"), $("#img_file"))
                 if ($("#img_file").is(":visible")) {
-                    setTimeout(function(){$("#img_file").focus()}, 100);
+                    setTimeout(function () {
+                        $("#img_file").focus()
+                    }, 100);
                 } else {
-                    setTimeout(function(){$("#img_url").focus()}, 100);
+                    setTimeout(function () {
+                        $("#img_url").focus()
+                    }, 100);
                 }
             },
-            onHide:  function(hash) {
+            onHide: function (hash) {
                 hash.w.hide() && hash.o && hash.o.remove();
                 if ($("#reply").is(":visible")) {
                     $("#reply").focus()
@@ -125,8 +190,8 @@ export default function init() {
                 }
             }
         });
-		$('#userfield_form').jqm();
-		$('#quotes_form').jqm();
+        $('#userfield_form').jqm();
+        $('#quotes_form').jqm();
         $('#favourite-form-tags').jqm();
         $('#modal_write').jqm({
             trigger: '#modal_write_show'
@@ -145,7 +210,7 @@ export default function init() {
             trigger: '#photoset-start-upload'
         });
 
-        $('.js-registration-form-show').click(function() {
+        $('.js-registration-form-show').click(function () {
             if (Blocks.switchTab('registration', 'popup-login')) {
                 $('#window_login_form').jqmShow();
             }
@@ -159,7 +224,7 @@ export default function init() {
             trigger: '#test-trigger'
         });
 
-        $('.js-login-form-show').click(function() {
+        $('.js-login-form-show').click(function () {
             if (Blocks.switchTab('login', 'popup-login')) {
                 $('#window_login_form').jqmShow();
             }
@@ -182,7 +247,7 @@ export default function init() {
 
 
         // Поиск по тегам
-        $('.js-tag-search-form').submit(function() {
+        $('.js-tag-search-form').submit(function () {
             window.location = aRouter['tag'] + encodeURIComponent($(this).find('.js-tag-search').val()) + '/';
             return false;
         });
@@ -219,7 +284,7 @@ export default function init() {
         });
 
         $('.js-infobox-vote-topic').poshytip({
-            content: function() {
+            content: function () {
                 var id = $(this).attr('id').replace('vote_total_topic_', 'vote-info-topic-');
                 return $('#' + id).html();
             },
@@ -267,7 +332,7 @@ export default function init() {
         Comments.init();
 
         // избранное
-        Hook.add('ls_favourite_toggle_after', function(idTarget, objFavourite, type, params, result) {
+        Hook.add('ls_favourite_toggle_after', function (idTarget, objFavourite, type, params, result) {
             $('#fav_count_' + type + '_' + idTarget).text((result.iCount > 0) ? result.iCount : '');
         });
 
@@ -276,13 +341,13 @@ export default function init() {
          */
 
         // Добавляем или удаляем друга из списка получателей
-        $('#friends input:checkbox').change(function() {
+        $('#friends input:checkbox').change(function () {
             Talk.toggleRecipient($('#' + $(this).attr('id') + '_label').text(), $(this).attr('checked'));
         });
 
         // Добавляем всех друзей в список получателей
-        $('#friend_check_all').click(function() {
-            $('#friends input:checkbox').each(function(index, item) {
+        $('#friend_check_all').click(function () {
+            $('#friends input:checkbox').each(function (index, item) {
                 Talk.toggleRecipient($('#' + $(item).attr('id') + '_label').text(), true);
                 $(item).attr('checked', true);
             });
@@ -290,8 +355,8 @@ export default function init() {
         });
 
         // Удаляем всех друзей из списка получателей
-        $('#friend_uncheck_all').click(function() {
-            $('#friends input:checkbox').each(function(index, item) {
+        $('#friend_uncheck_all').click(function () {
+            $('#friends input:checkbox').each(function (index, item) {
                 Talk.toggleRecipient($('#' + $(item).attr('id') + '_label').text(), false);
                 $(item).attr('checked', false);
             });
@@ -299,20 +364,20 @@ export default function init() {
         });
 
         // Удаляем пользователя из черного списка
-        $("#black_list_block").delegate("a.delete", "click", function() {
+        $("#black_list_block").delegate("a.delete", "click", function () {
             Talk.removeFromBlackList(this);
             return false;
         });
 
         // Удаляем пользователя из переписки
-        $("#speaker_list_block").delegate("a.delete", "click", function() {
+        $("#speaker_list_block").delegate("a.delete", "click", function () {
             Talk.removeFromTalk(this, $('#talk_id').val());
             return false;
         });
 
 
         // Help-tags link
-        $('.js-tags-help-link').click(function() {
+        $('.js-tags-help-link').click(function () {
             var target = Registry.get('tags-help-target-id');
             if (!target || !$('#' + target).length) {
                 return false;
@@ -333,7 +398,7 @@ export default function init() {
 
 
         // Фикс бага с z-index у встроенных видео
-        $("iframe").each(function() {
+        $("iframe").each(function () {
             var ifr_source = $(this).attr('src');
 
             if (ifr_source) {
@@ -349,12 +414,10 @@ export default function init() {
         showFloatBlock($);
 
 
-
-
         // Хук конца инициализации javascript-составляющих шаблона
         Hook.run('ls_template_init_end', [], window);
 
-        window.closeSpoiler = function(b) {
+        window.closeSpoiler = function (b) {
             $(b).hide(300);
             if (!b.parentElement.getElementsByClassName("spoiler-title").length) {
                 return
@@ -362,10 +425,10 @@ export default function init() {
             b.parentElement.getElementsByClassName("spoiler-title")[0].className = "spoiler-title spoiler-close";
         }
 
-        window.openSpoiler = function(b) {
+        window.openSpoiler = function (b) {
             $(b).show(300);
             b.style.display = "block";
-            $(b).find("img").each(function(k, v) {
+            $(b).find("img").each(function (k, v) {
                 if (v.getAttribute("data-src")) {
                     v.src = v.getAttribute("data-src")
                 }
@@ -377,7 +440,7 @@ export default function init() {
             b.parentElement.getElementsByClassName("spoiler-title")[0].className = "spoiler-title spoiler-open";
         }
 
-        window.spoiler = function(b) {
+        window.spoiler = function (b) {
             if (b.style.display != "block") openSpoiler(b); else closeSpoiler(b)
         }
 
@@ -387,15 +450,15 @@ export default function init() {
             var target = event.target || event.srcElement;
             if (!target) return;
             var parent = target.parentNode || target.parentElement;
-            
-            if (target.tagName == "IMG" && !parent.classList.contains("spoiler-title") && $(".text img").index(target)>(-1)) {
+
+            if (target.tagName == "IMG" && !parent.classList.contains("spoiler-title") && $(".text img").index(target) > (-1)) {
                 if (target.id == "image-modal-img") {
                     return
                 }
                 $("#image-modal-img")[0].src = target.src
                 $("#image-modal").css("display", "flex")
             }
-            
+
             while (!target.classList.contains("spoiler-title")) {
                 target = target.parentNode || target.parentElement;
                 if (!target || target == document.body) return;
@@ -410,7 +473,7 @@ export default function init() {
             return false;
         }
 
-        window.addEventListener("DOMContentLoaded", function() {
+        window.addEventListener("DOMContentLoaded", function () {
             document.body.addEventListener("click", click);
         });
 
@@ -420,26 +483,26 @@ export default function init() {
         for (idx = 0; idx < allNew.length; idx++) {
             allNew[idx].className = "spoiler-title spoiler-close"
         }
-        
+
         window.spoilers_closed = true;
 
-        window.despoil = function() {
+        window.despoil = function () {
             console.log("Despoil!", window.spoilers_closed)
-            $(".spoiler-body").each(function(k, v) {
-                v.style.display = window.spoilers_closed? "block":"none"
+            $(".spoiler-body").each(function (k, v) {
+                v.style.display = window.spoilers_closed ? "block" : "none"
                 if (window.spoilers_closed) {
-                    $(v).find("img").each(function(k, vv) {
+                    $(v).find("img").each(function (k, vv) {
                         if (vv.getAttribute("data-src")) {
                             vv.src = vv.getAttribute("data-src")
                         }
                     })
                 }
             })
-            window.spoilers_closed = window.spoilers_closed? false:true
+            window.spoilers_closed = window.spoilers_closed ? false : true
         }.bind(this)
 
 
-        window.widemode = function() {
+        window.widemode = function () {
             let content = $("#content")
             let sidebar = $("#sidebar")
 
@@ -452,12 +515,12 @@ export default function init() {
             }
 
             Emitter.emit("comments-calc-nesting")
-            
+
             console.log("widemoded!")
         }.bind(this)
 
         updateImgs()
-        
+
         if (parseInt(localStorage.getItem('square_avatars'))) {
             $(document.body).append(`
             <style>
@@ -467,7 +530,7 @@ export default function init() {
             .item-list li .avatar {
                 border-radius: 0px !important;
             }
-            .user-avatar {
+            .user-avatar, .avatar {
                 border-radius: 0px !important;
             }
             .topic-author-avatar {
@@ -476,9 +539,30 @@ export default function init() {
             .topic.topic-type-talk .topic-header .topic-info .avatar {
                 border-radius: 0px !important;
             }
+            .topic .topic-header .topic-data-wrapper .topic-author-avatar {
+                margin-left: 10px;
+            }
             </style>
             `)
         }
-        
+
+        if (getCookie("SiteStyle")=="Dark") {
+            $("#change_theme").css("transform", "rotate(180deg)")
+        }
+
+        $(".topic-more").click(function(e){
+            let el = $(e.target).parent().find(".topic-dropdown")
+            el.toggleClass("active")
+            if (el.hasClass("active")) {
+                $(document).on("click", function(e1){
+                    console.log("outclick!")
+                    if ($(e1.target).parents(".topic-more").length) return;
+                    console.log("no return!")
+                    el.toggleClass("active")
+                    e1.stopPropagation()
+                    $(document).off("click")
+                }.bind(this))
+            }
+        })
     });
 }

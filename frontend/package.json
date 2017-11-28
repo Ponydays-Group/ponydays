@@ -43,6 +43,7 @@
   "license": "ISC",
   "homepage": "https://bitbucket.org/lunavod/bunker_stable#readme",
   "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^1.0.0-alpha.2",
     "classnames": "^2.2.5",
     "dateformat": "^2.0.0",
     "eventemitter3": "^2.0.2",

@@ -53,8 +53,13 @@ export function toggle(idTarget, objFavourite, type) {
             if (result.bState) {
                 this.objFavourite.addClass(this.options.active);
                 this.showTags(type, idTarget);
+                console.log(type)
             } else {
                 this.hideTags(type, idTarget);
+            }
+            if (type=="comment") {
+                console.log(result, $(objFavourite).find(".favourite-count"))
+                $(objFavourite).find(".favourite-count")[0].innerText = result.iCount? result.iCount : ""
             }
             Emitter.emit('ls_favourite_toggle_after', [idTarget, objFavourite, type, params, result], this);
         }

@@ -1,6 +1,6 @@
 @import url(https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css);
 
-$link-color: #38a6a6;
+$link-color: #4D5DB7;
 
 $userbar-height: 64px;
 
@@ -8,8 +8,8 @@ $search-color: white;
 $search-active-color: rgba(61, 142, 185, 1);
 $search-background: #38a6a6;
 
-$background-color: #f7f7f7;
-$userbar-background: #fff;
+$background-image: url(/back_light.png);
+$userbar-background: #4D5DB7;
 $userbar-hover-background: darken($userbar-background, 5%);
 $content-background: #fff;
 
@@ -41,10 +41,10 @@ $spoiler-background: #e6e6e6;
 $image-opacity: 1;
 $image-opacity-hover: 1;
 
-$comment-self-background: rgba(197, 247, 234, 0.42);
-$comment-new-background: rgba(251, 251, 168, 0.35);
-$comment-current-background: rgba(165, 231, 250, 0.4);
-$comment-deleted-background: #efd5d5;
+$comment-self-background: rgb(231, 252, 246);
+$comment-new-background: #ffffc4;
+$comment-current-background: #c7f2ff;
+$comment-deleted-background: #C62828;
 
 $pre-background: #fafafa;
 $blockquote-background: #fafafa;
@@ -68,6 +68,30 @@ $sidebar-text-a: #67737a;
 }
 
 @import "bootstrap/assets/stylesheets/bootstrap";
+
+$brand: #5d67bb;
+$brand-dark: #4a53a4;
+$navbar-bg: $brand;
+$wrapper: #f5f5f5;
+$first: #fff;
+
+$second: #F9F9F9;
+//$second: white;
+$second-border-color: rgba(0,0,0,0.1);
+$second-border: 0.5px solid $second-border-color;
+
+$label-color: #333;
+
+$table-color: #2a2a2a;
+$table-hover: white;
+
+$scroller-hover-bg: rgba(0, 0, 0, 0.1);
+$scroller-hover-color: rgba(0, 0, 0, 0.3);
+
+$attention-text: #333;
+
+$block-content-color: #4c4c4c;
+
 @import "./markitup";
 @import "./base";
 @import "./blocks";
@@ -94,4 +118,10 @@ $sidebar-text-a: #67737a;
 
 @import "./amazium/variables";
 @import "./amazium/form";
-@import "./themes/base/all"
+@import "./themes/base/all";
+
+#change_theme:hover {
+  transform: rotate(180deg) !important;
+}
+
+@import "./adaptive";

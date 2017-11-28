@@ -253,21 +253,22 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
 			//  Emitter.emit('ls_comments_load_after', [idTarget, typeTarget, selfIdComment, bNotFlushNew, result])
 			// }
 
-			let new_messages = document.getElementById("new_messages")
+			let new_messages = $("#new_messages .new-comments")
 			let pm_title = ""
 
 			if (result.iUserCurrentCountTalkNew > 0) {
-				$(".toolbar-talk").css("display", "block")
-				$(".toolbar-talk a")[0].title = `+${result.iUserCurrentCountTalkNew}`
-				new_messages.classList.add("new-messages")
-				pm_title = " (" + result.iUserCurrentCountTalkNew.toString() + ")"
+				// $(".toolbar-talk").css("display", "block")
+				// $(".toolbar-talk a")[0].title = `+${result.iUserCurrentCountTalkNew}`
+				// new_messages.classList.add("new-messages")
+                new_messages.css("display", "")
+                new_messages[0].innerText=result.iUserCurrentCountTalkNew
 			} else {
-				$(".toolbar-talk").css("display", "none")
-				new_messages.classList.remove("new-messages")
+                new_messages.css("display", "none")
+				// new_messages.classList.remove("new-messages")
 			}
 
-			new_messages.childNodes[0].textContent = pm_title
-			new_messages.parentNode.title = pm_title
+			// new_messages.childNodes[0].textContent = pm_title
+			// new_messages.parentNode.title = pm_title
 			console.log("Ajax done", dateFormat(new Date(), "HH:MM:ss:l"))
 		}
 

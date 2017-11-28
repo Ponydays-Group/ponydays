@@ -1,6 +1,6 @@
 {
     "view": {
-        "skin": "developer",
+        "skin": "redis",
         "name": "Ponydays dev",
         "description": "Description your site",
         "keywords": "site, google, internet",

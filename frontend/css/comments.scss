@@ -29,14 +29,13 @@
 .comment-preview {
     padding: 5px 10px 6px;
     margin-bottom: 10px;
-    background: $comment-self-background;
-    border: 1px solid $main-accent-fifth;
+    background: $first;
+    border: $second-border;
     border-radius: 3px;
 }
 
 .comment-preview {
     font-size: 13px;
-    line-height: 18px;
 }
 
 
@@ -44,12 +43,13 @@
 
 .comments.comment-list .comment {
     margin-bottom: 15px;
+    border-radius: 0px 0px 20px 20px;
 }
 
 .comments.comment-list .comment-path {
-    background: $main-accent-fourth;
-    padding: 5px 10px 6px;
-    border-top: 1px solid $main-accent-fourth;
+    background: darken($first, 5%);
+    padding: 6px 16px 6px;
+    border-radius: 20px 20px 0px 0px;
 }
 
 .comments.comment-list .comment-path .blog-name {
@@ -61,9 +61,11 @@
 
 .comment {
     min-height: 48px;
-    border-top: $comments-border-top;
-    padding: 8px 8px 8px 68px;
+    padding: 5px 8px 8px 68px;
     position: relative;
+    border: $second-border;
+    border-radius: 20px;
+    margin-bottom: 10px;
 }
 
 .comment .deleted {
@@ -90,7 +92,7 @@
  */
 
 .comment {
-    background: transparent;
+    background: $first;
 }
 
 .comment.comment-deleted {
@@ -98,7 +100,8 @@
 }
 
 .comment.comment-self {
-    background: $comment-self-background;
+    border-left: 3px solid $brand;
+    border-right: 3px solid $brand;
 }
 
 .comment.comment-new {
@@ -123,7 +126,7 @@
 /* Info Block */
 
 .comment .comment-info {
-    padding: 0 70px 7px 0;
+    padding: 5px 70px 7px 0;
     line-height: 12px;
     position: relative;
     top: -2px;
@@ -165,6 +168,11 @@
     margin: 0;
 }
 
+.comment .vote i {
+    font-size: 17px;
+    font-weight: 600;
+}
+
 .comment .comment-info li.goto-comment-child {
     display: none;
 }
@@ -198,8 +206,18 @@
 }
 
 .comment .comment-actions li {
-    display: inline;
+    display: inline-flex;
     margin-right: 10px;
+
+    > span {
+        margin-left: 10px;
+        display: inline;
+
+
+        &.vote-count {
+            margin-left: 0;
+        }
+    }
 }
 
 .comment .comment-actions time {
@@ -231,7 +249,8 @@
 .reply textarea {
     resize: vertical;
     height: 100px;
-    background: $spoiler-background;
+    background: $first;
+    border: $second-border;
 }
 
 .reply textarea.loader {
@@ -417,12 +436,14 @@ button#comment-button-history {
 }
 
 .bad-placeholder {
-    color: rgba(255, 0, 0, 0.61);
-    height: 1.9em;
+    color: darken($comment-deleted-background, 5%);
+    height: 40px;
+    border-radius: 20px;
     display: flex;
     width: 100%;
-    background: rgba(255, 0, 0, 0.03);
-    border-bottom: 1px solid rgba(255, 0, 0, 0.08);
+    background: rgba($comment-deleted-background, 0.2);
+    border: 1px solid rgba(darken($comment-deleted-background, 5%), 0.2);
     justify-content: center;
-    
+    align-items: center;
+    margin-bottom: 10px;
 }

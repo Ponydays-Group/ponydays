@@ -1,0 +1,37 @@
+/* --------------------------------------------
+	СЕТКА
+-------------------------------------------- */
+
+#container 	{
+    max-width: 1500px;
+    width: 100%;
+    margin: 0 auto;
+    margin-bottom: 15px;
+    padding: 0px 64px;
+}
+#header 	{ padding: 50px 0; position: relative; }
+#nav 		{ overflow: hidden; }
+#wrapper 	{ margin-top: 20px; border-radius: 20px; position: relative; overflow: hidden; zoom: 1; background: $wrapper; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.32); padding-bottom: 15px; }
+#content 	{ max-width: 100%; float: left;  margin-right: 0; background: wrapper; position: relative; padding-top: 15px; }
+
+#sidebar	{ float: left; max-width: 100%;}
+@media (max-width: 992px) { #sidebar { position: relative } }
+
+#footer 	{
+    overflow: hidden;
+    zoom: 1;
+    color: #777;
+    background: $wrapper;
+    padding: 10px;
+    border-radius: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.32);
+    margin-top: 50px;
+    display: flex;
+    justify-content: space-around;
+}
+
+
+#content.content-full-width { width: 100%; margin-right: 0; }
+
+#content.content-right 		{ margin-right: 0; float: right; }
+#sidebar.sidebar-left 		{ left: 0; float: left; padding-right: 0px; padding-top: 0;}

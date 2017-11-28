@@ -2,20 +2,73 @@
 	ТОПИК
 -------------------------------------------- */
 .topic {
-    border: 2px solid $secondary-accent;
-    background: $accent;
+    background: $first;
     overflow: hidden;
     zoom: 1;
-    margin-bottom: 50px;
-    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 20px;
+    border: $second-border;
 }
+
 // .topic:last-child { margin-bottom: 0; }
 /* Header */
+.topic .topic-header {
+    display: flex;
+    justify-content: space-between;
+    background: $second;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 36px;
+    align-items: center;
+    border: $second-border;
+    border-right: 3px solid $brand;
+    border-left: 3px solid $brand;
+
+    .topic-data-wrapper {
+        display: flex;
+        justify-content: space-between;
+
+        .topic-author-avatar {
+            background: white;
+            width: 51px;
+            border-radius: 51px;
+            margin-right: 10px;
+        }
+
+        .topic-data {
+            font-size: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+
+            .topic-time {
+                color: #918d8d;
+            }
+        }
+    }
+
+    .topic-more {
+        width: 40px;
+        height: 40px;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: background .2s;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+
+        &:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+    }
+}
+
 .topic .topic-header .topic-title {
-    font-size: 26px;
+    font-size: 28px;
     line-height: 1.1em;
-    font-weight: bold;
-    margin: 0 0 15px;
 }
 
 .topic .topic-header .topic-title a {
@@ -79,55 +132,12 @@
     margin: 0;
 }
 
-.topic .topic-header .topic-title a {
-    color: #67737a;
-}
-
 .topic-author-login {
     display: inline-block;
     padding: 3px 0;
     color: #707b82;
 }
 
-.topic-header-bottom {
-    color: #707b82;
-    padding-top: 3px;
-    padding-left: 80px;
-    position: relative;
-    height: 20px;
-    display: inline-block;
-    margin-bottom: 5px;
-
-    .topic-author-avatar {
-        top: -50px;
-        border-radius: 50%;
-        outline: $main-color;
-        background: $main-color;
-        border: 1px solid $main-color;
-        position: absolute;
-        left: 5px;
-    }
-}
-
-.topic-header-top {
-    i {
-        display: inline-block;
-        margin-right: 3px;
-    }
-    color: #707b82;
-
-    .topic-time {
-        font-size: 1.1em;
-        font-style: italic;
-        dicplay: inline-block;
-        margin-right: 10px;
-        margin-left: 10px;
-    }
-
-    .topic-blog {
-        margin-left: 3px;
-    }
-}
 /* Content */
 .topic .topic-content {
     margin-bottom: 15px;
@@ -137,6 +147,7 @@
     color: $text-color;
     padding: 0 10px;
 }
+
 /* Tags */
 .topic .topic-footer .topic-tags {
     margin: 0 0 15px;
@@ -155,60 +166,69 @@
 .topic .topic-footer .topic-tags li.topic-tags-user a {
     color: #3CA023;
 }
+
 /* Info */
 .topic .topic-footer .topic-info i {
-    font-size: 1.3em;
+    font-size: 20px;
 }
 
 .topic .topic-footer .topic-info {
     overflow: hidden;
-    height: 35px;
-    background: $secondary-accent;
-    -webkit-border-radius: 3px;
-}
-
-.topic .topic-footer .topic-info li {
-    font-size: 1.1em;
+    height: 40px;
     display: flex;
-    float: left;
-    height: 35px;
-    padding: 0 15px;
-    vertical-align: middle;
-    justify-content: center;
-    align-items: center;
 
-    > a > i {
-        font-size: 1.3em;
+    a {
+        background: $second;
+        border: $second-border;
+        margin-right: 10px;
+        min-width: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 20px;
+        font-size: 16px;
+
+        &.vote-up {
+            color: #4CAF50;
+        }
+
+        &.vote-count {
+            color: #9E9E9E;
+
+            &.vote-count-positive {
+                color: #1B5E20;
+            }
+
+            &.vote-count-negative {
+                color: #B71C1C;
+            }
+        }
+
+        &.vote-down {
+            color: #F44336;
+        }
+
+        &.topic-info-favourite {
+            margin-left: 10px;
+
+            .favourite {
+                opacity: 1 !important;
+                color: #E91E63;
+            }
+        }
+
+        &.topic-info-comments {
+            margin-left: 10px;
+            padding: 0 15px;
+
+            i {
+                margin-right: 10px;
+            }
+
+        }
     }
 }
 
-.topic .topic-footer .topic-info li a {
-    text-decoration: none;
-    color: #a5b1b8;
-}
-
-.topic .topic-footer .topic-info li a .fa {
-    font-size: 1.3em;
-}
-
-.topic .topic-footer .topic-info li.topic-info-author a {
-    font-weight: bold;
-    color: $text-color;
-}
-
-.topic .topic-footer .topic-info li.topic-info-author a:hover {
-    text-decoration: underline;
-}
-
-.topic .topic-footer .topic-info li.topic-info-comments a {}
-
-.topic .topic-footer .topic-info li.topic-info-comments a span {
-    color: #777;
-}
-
-.topic .topic-footer .topic-info li.topic-info-comments a:hover {
-    text-decoration: underline;
-}
 /* Share */
 .topic .topic-share {
     display: none;
@@ -216,6 +236,7 @@
     margin-bottom: 10px;
     border: 5px solid #eee;
 }
+
 /* Poll */
 .topic .poll {
     margin-bottom: 15px;
@@ -301,8 +322,10 @@
 .topic .poll .button.button-icon.active {
     background: #43bb34;
 }
+
 /* Topic Photo */
-.topic.topic-type-photoset {}
+.topic.topic-type-photoset {
+}
 
 .topic.topic-type-photoset .topic-photo-preview {
     position: relative;
@@ -323,7 +346,7 @@
     background: #000;
     color: #6bd24b;
     padding: 4px 7px;
-    background: rgba(0,0,0,.6);
+    background: rgba(0, 0, 0, .6);
 }
 
 .topic.topic-type-photoset .topic-photo-preview .topic-photo-desc {
@@ -337,7 +360,7 @@
     color: #6bd24b;
     color: #fff;
     line-height: 16px;
-    background: rgba(0,0,0,.7);
+    background: rgba(0, 0, 0, .7);
 }
 
 .topic.topic-type-photoset .topic-photo-images {
@@ -371,7 +394,7 @@
     color: #6bd24b;
     padding: 1px 6px;
     font-size: 11px;
-    background: rgba(0,0,0,.6);
+    background: rgba(0, 0, 0, .6);
 }
 
 .topic.topic-type-photoset .topic-photo-images ul li:hover .image-number {
@@ -476,63 +499,66 @@
 .topic-photo-upload .topic-photo-upload-input input {
     margin-top: 3px;
 }
+
 /* Topic Talk */
-.topic.topic-type-talk {}
+.topic.topic-type-talk {
+}
 
 .topic.topic-type-talk .topic-header {
-    background: $main-accent-fourth;
-    padding: 10px 15px 15px;
-    border-top: 1px solid $main-accent-fourth;
-    border-bottom: 1px solid $main-accent-fourth;
+    //background: $main-accent-fourth;
+    //padding: 10px 15px 15px;
+    //border-top: 1px solid $main-accent-fourth;
+    //border-bottom: 1px solid $main-accent-fourth;
 }
 
 .topic.topic-type-talk .topic-header .topic-title {
-    margin-bottom: 13px;
-    font-size: 20px;
+    //margin-bottom: 13px;
+    //font-size: 20px;
 }
 
-.topic.topic-type-talk .topic-header .topic-info {
-    margin-bottom: 0;
-    position: relative;
-    min-height: 30px;
-    padding-left: 40px;
-    line-height: 14px;
-}
-
-.topic.topic-type-talk .topic-header .topic-info .avatar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    border-radius: 50%;
-}
-
-.topic.topic-type-talk .topic-header .topic-info .author-wrapper {
-    margin-bottom: 4px;
-    position: relative;
-    top: -2px;
-}
-
-.topic.topic-type-talk .topic-header .topic-info .author-wrapper .author {
-    font-weight: bold;
-    margin-right: 15px;
-}
-
-.topic.topic-type-talk .topic-header .topic-info .recipient {
-    margin-right: 10px;
-}
-
-.topic.topic-type-talk .topic-content {
-    font-size: 13px;
-    padding: 15px;
-    background: $main-accent;
-    margin-bottom: 1px;
-    border-top: 1px solid $main-accent;
-}
-
-.topic.topic-type-talk .topic-footer .topic-info {
-    border-radius: 0;
-    background: $main-accent-fourth;
-}
+//.topic.topic-type-talk .topic-header .topic-info {
+//    margin-bottom: 0;
+//    position: relative;
+//    min-height: 30px;
+//    padding-left: 40px;
+//    line-height: 14px;
+//}
+//
+//.topic.topic-type-talk .topic-header .topic-info .avatar {
+//    position: absolute;
+//    top: 0;
+//    left: 0;
+//    border-radius: 50%;
+//}
+//
+//.topic.topic-type-talk .topic-header .topic-info .author-wrapper {
+//    margin-bottom: 4px;
+//    position: relative;
+//    top: -2px;
+//}
+//
+//.topic.topic-type-talk .topic-header .topic-info .author-wrapper .author {
+//    font-weight: bold;
+//    margin-right: 15px;
+//}
+//
+//.topic.topic-type-talk .topic-header .topic-info .recipient {
+//    margin-right: 10px;
+//}
+//
+//.topic.topic-type-talk .topic-content {
+//    font-size: 13px;
+//    padding: 15px;
+//    background: $main-accent;
+//    margin-bottom: 1px;
+//    border-top: 1px solid $main-accent;
+//}
+//
+//.topic.topic-type-talk .topic-footer .topic-info {
+//    border-radius: 0;
+//    background: $main-accent-fourth;
+//}
+//
 
 .topic.topic-type-talk .talk-recipients {
     padding: 15px;
@@ -547,6 +573,7 @@
     font-weight: bold;
     margin-bottom: 10px;
 }
+
 /* Topic Preview */
 .topic-preview {
     margin-top: 30px;
@@ -559,3 +586,44 @@
 .topic-preview .topic {
     margin-bottom: 20px;
 }
+
+.topic-dropdown {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 45px;
+    right: 5px;
+    background: $first;
+    //border: 1px solid #e5e5e5;
+    border-radius: 5px;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.19);
+
+    height: 0px;
+    overflow: hidden;
+    border: none;
+    transition: height .3s;
+
+    &.active {
+        height: auto;
+        border: none;
+    }
+}
+.topic-dropdown a {
+    display: flex;
+    align-content: center;
+    padding: 10px;
+    min-width: 100px;
+    transition: background .2s;
+    align-items: center;
+    font-size: 16px;
+    color: $text-color;
+}
+.topic-dropdown a:hover {
+    background: darken($first, 5%);
+}
+.topic-dropdown a .material-icons {
+    font-size: 20px;
+    margin-right: 12px;
+    color: $brand;
+}
+

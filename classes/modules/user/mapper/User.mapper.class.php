@@ -1497,7 +1497,9 @@ class ModuleUser_MapperUser extends Mapper
         $sql = "SELECT user_id FROM " . Config::Get('db.table.adminban') . " WHERE user_id=?";
         if ($this->oDb->selectCell($sql, $nUserId)) {
             $sql = "UPDATE " . Config::Get('db.table.adminban') . " SET bandate=?, banline=?, banunlim=?, bancomment=?, banactive=1, moder_id=? WHERE user_id=?";
-            $result = $this->oDb->query($sql, date("Y-m-d H:i:s"), $dDate, $nUnlim, $sComment, $nUserId, $nModerId);
+            $result = $this->oDb->query($sql, date("Y-m-d H:i:s"), $dDate, $nUnlim, $sComment, $nModerId, $nUserId);
+            var_dump($result);
+            echo "I AM HERE!";
         } else {
             $sql = "INSERT INTO " . Config::Get('db.table.adminban') . "(user_id, bandate, banline, banunlim, bancomment, banactive, moder_id) VALUES(?, ?, ?, ?, ?, 1, ?)";
             $result = $this->oDb->query($sql, $nUserId, date("Y-m-d H:i:s"), $dDate, $nUnlim, $sComment, $nModerId);

@@ -693,4 +693,8 @@ a.inactive {
   position: absolute;
   top: 0;
   transition: height .2s;
+  background-image: url(https://static.lunavod.ru/img/1ae1c25101ed2fed5cf62d537724a75e253feae8.png), url(https://static.lunavod.ru/img/43827168610c7bb57fa7b4d5a2a3e2a80808d35d.png);
+  background-size: contain, cover;
+  background-position: center, center;
+  background-repeat: no-repeat, repeat;
 }

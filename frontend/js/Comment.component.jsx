@@ -1,75 +1,95 @@
-import * as Comments from './comments'
-import * as Favourite from './favourite'
-import * as Vote from './vote'
-import * as Msg from './msg'
-import Emitter from "./emitter"
-
 var classNames = require("classnames")
 var dateFormat = require('dateformat');
 
-export default function render_comment(data, maxNesting) {
-    let level = data.level > maxNesting? maxNesting : data.level
-    return data.isBad?`<section id=${"comment_id_"+data.id} style="margin-left: ${level*20}px" data-id=${data.id} data-level=${data.level} data-pid=${data.parentId} data-author=${data.author.login}><span class="bad-placeholder">...</bad></section>`:`<section id=${"comment_id_"+data.id} data-author=${data.author.login} data-id=${data.id} data-level=${data.level} data-pid=${data.parentId} style="margin-left: ${level*20}px" class="${classNames({
-        "comment": true,
-        "comment-bad": data.rating < -5,
-        "comment-self": USERNAME==data.author.login,
-        "comment-new": data.isNew && USERNAME!=data.author.login,
-        "comment-deleted": data.isDeleted,
-    })}">
-    		<a name=${"comment"+data.id}></a>
+export default class Comment {
+    constructor(data) {
+        this.id = data.id
+        this.author = data.author
+        this.date = data.date
+        this.text = data.text
+        this.isBad = data.isBad
+        this.isDeleted = data.isDeleted
+        this.isFavourite = data.isFavourite
+        this.countFavourite = data.countFavourite
+        this.rating = data.rating
+        this.voted = data.voted
+        this.voteDirection = data.voteDirection
+        this.targetType = data.targetType
+        this.targetId = data.targetId
+        this.level = parseInt(data.level)
+        this.parentId = data.parentId
+        this.isNew = data.isNew
+    }
 
-    		<a href="/profile/${data.author.login}" target="_blank"><img src="${data.author.avatar}"" alt="avatar" class="comment-avatar" /></a>
+    render(folded, foldable) {
+        let maxNesting = 10000
+        let level = this.level > maxNesting? maxNesting : this.level
+        return this.isBad?`<section id=${"comment_id_"+this.id} style="margin-left: ${level*20}px" data-id=${this.id} data-level=${this.level} data-pid=${this.parentId} data-author=${this.author.login}><span class="bad-placeholder">...</bad></section>`:`<section id=${"comment_id_"+this.id} data-author=${this.author.login} data-id=${this.id} data-level=${this.level} data-pid=${this.parentId} style="margin-left: ${level*20}px" class="${classNames({
+            "comment": true,
+            "comment-bad": this.rating < -5,
+            "comment-self": USERNAME==this.author.login,
+            "comment-new": this.isNew && USERNAME!=this.author.login,
+            "comment-deleted": this.isDeleted,
+            "comment-folding-start": folded
+        })}">
+    		<a name=${"comment"+this.id}></a>
 
-    		<ul class="comment-info">
-    			<li class="comment-author"><a href="/profile/${data.author.login}" target="_blank">${data.author.login}</a></li>
+    		<a href="/profile/${this.author.login}" target="_blank"><img src="${this.author.avatar}"" alt="avatar" class="comment-avatar" /></a>
+    		
+    		${foldable? `<div class="fold" onclick="foldBranch('${this.id}')"><i class='material-icons'>keyboard_arrow_up</i></div>`:''}
+    		<div class="unfold" onclick="unfoldBranch('${this.id}')"><i class='material-icons'>keyboard_arrow_down</i></div>
+    
+    
+                <ul class="comment-info">
+                    <li class="comment-author"><a href="/profile/${this.author.login}" target="_blank">${this.author.login}</a></li>
     		</ul>
     		
-    		<div id=${"comment_content_id_"+data.id} class="comment-content text">
-    		${data.isDeleted && LOGGED_IN && (IS_ADMIN || USERNAME == data.author.login) ? `<a href="#" onclick="ls.comments.showDeletedComment(${data.id}); return false;">Раскрыть комментарий</a>` : ""}
-    		${data.text}
+    		<div id=${"comment_content_id_"+this.id} class="comment-content text">
+    		${this.isDeleted && LOGGED_IN && (IS_ADMIN || USERNAME == this.author.login) ? `<a href="#" onclick="ls.comments.showDeletedComment(${this.id}); return false;">Раскрыть комментарий</a>` : ""}
+    		${this.text}
     		</div>
 
     			<div class="comment-actions-wrapper">
     			    <ul class="comment-actions">
     				    <li class="comment-date">
-    					    <a href=${"#comment"+data.id} onclick="ls.comments.scrollToComment(${data.id}); return false;" title="Ссылка на комментарий">
-    						    <time dateTime=${data.date}>${dateFormat(new Date(data.date), "dd.mm.yy HH:MM:ss")}</time>
+    					    <a href=${"#comment"+this.id} onclick="ls.comments.scrollToComment(${this.id}); return false;" title="Ссылка на комментарий">
+    						    <time dateTime=${this.date}>${dateFormat(new Date(this.date), "dd.mm.yy HH:MM:ss")}</time>
     					    </a>
     				    </li>
-    					${LOGGED_IN? `<span><a href="#" onclick="ls.comments.toggleCommentForm(${data.id}); return false;" class="reply-link">Ответить</a></span>` : "" }
+    					${LOGGED_IN? `<span><a href="#" onclick="ls.comments.toggleCommentForm(${this.id}); return false;" class="reply-link">Ответить</a></span>` : "" }
     					<li class="action-hidden">
-                            ${LOGGED_IN && (IS_ADMIN | USERNAME==data.author.login)? `<span>
-                                <a href="#" class="editcomment_editlink" title="Редактировать комментарий" onclick="ls.comments.editComment(${data.id}); return false;">
+                            ${LOGGED_IN && (IS_ADMIN | USERNAME==this.author.login)? `<span>
+                                <a href="#" class="editcomment_editlink" title="Редактировать комментарий" onclick="ls.comments.editComment(${this.id}); return false;">
                                     <i class="fa fa-pencil" title="Редактировать комментарий"></i>
                                 </a>
                             </span>` : ""}
-                            ${LOGGED_IN && (IS_ADMIN | USERNAME==data.author.login)? `<span>
-                                <a href="#" class="editcomment_historylink" title="История редактирования" onclick="ls.comments.showHistory(${data.id}); return false;">
+                            ${LOGGED_IN && (IS_ADMIN | USERNAME==this.author.login)? `<span>
+                                <a href="#" class="editcomment_historylink" title="История редактирования" onclick="ls.comments.showHistory(${this.id}); return false;">
                                     <i class="fa fa-history" title="История редактирования"></i>
                                 </a>
                             </span>` : ""}
 
                             ${LOGGED_IN && IS_ADMIN? `<span>
-                                <a onclick="ls.comments.toggle(this,${data.id}); return false;" href="#" class="comment-delete">
+                                <a onclick="ls.comments.toggle(this,${this.id}); return false;" href="#" class="comment-delete">
                                     <i class="fa fa-trash" title="Удалить/восстановить комментарий"></i>
                                 </a>
                             </span>` : "" }
 
-    					    ${(LOGGED_IN | data.countFavourite)>0&&targetType!="talk"? `
+    					    ${(LOGGED_IN | this.countFavourite)>0&&targetType!="talk"? `
                             <span class="comment-favourite">
-    						    <div onclick="return ls.favourite.toggle(${data.id},this,'comment');" id=${"comment_favourite_"+data.id} class="${classNames({
-                                    "fa": true,
-                                    "fa-heart-o": true,
-                                    "favourite": true,
-                                    "active": data.isFavourite
-                                })}"></div>
-                                <span class="favourite-count" id=${"fav_count_comment_"+data.id}>
-                                    ${data.countFavourite>0? " "+data.countFavourite : ""}
+    						    <div onclick="return ls.favourite.toggle(${this.id},this,'comment');" id=${"comment_favourite_"+this.id} class="${classNames({
+            "fa": true,
+            "fa-heart-o": true,
+            "favourite": true,
+            "active": this.isFavourite
+        })}"></div>
+                                <span class="favourite-count" id=${"fav_count_comment_"+this.id}>
+                                    ${this.countFavourite>0? " "+this.countFavourite : ""}
                                 </span>
                             </span>` : ""}
          
-    					    ${data.level>0? `<span class="goto-comment-parent">
-                                <a href="#" onclick="ls.comments.goToParentComment(${data.id},${data.parentId}); return false;" title="Перейти к родительскому комментарию">
+    					    ${this.level>0? `<span class="goto-comment-parent">
+                                <a href="#" onclick="ls.comments.goToParentComment(${this.id},${this.parentId}); return false;" title="Перейти к родительскому комментарию">
                                     ↑
                                 </a>
                             </span>`:""}
@@ -83,28 +103,29 @@ export default function render_comment(data, maxNesting) {
                     </ul>
                     
                     <ul class="comment-actions">
-    					<li id=${"vote_area_comment_"+data.id} class="${classNames({
-                            vote: true,
-                            "action-hidden": data.rating == 0,
-                            "vote-count-positive": data.rating > 0,
-                            "vote-count-negative": data.rating < 0,
-                            "voted": data.voted,
-                            "voted-up": data.voteDirection > 0,
-                            "voted-down": data.voteDirection < 0,
-                        })}">
+    					<li id=${"vote_area_comment_"+this.id} class="${classNames({
+            vote: true,
+            "action-hidden": this.rating == 0,
+            "vote-count-positive": this.rating > 0,
+            "vote-count-negative": this.rating < 0,
+            "voted": this.voted,
+            "voted-up": this.voteDirection > 0,
+            "voted-down": this.voteDirection < 0,
+        })}">
                             ${LOGGED_IN? `
-                            <div class="vote-up" onclick="return ls.vote.vote(${data.id},this,1,'comment');">
+                            <div class="vote-up" onclick="return ls.vote.vote(${this.id},this,1,'comment');">
                                 <i class="material-icons">keyboard_arrow_up</i>
                             </div>` : "" }
-    					    <span class="vote-count" onclick="ls.vote.getVotes(${data.id},'comment',this); return false;" id=${"vote_total_comment_"+data.id}>
-    						    ${data.rating > 0? "+" : ""}${data.rating}
+    					    <span class="vote-count" onclick="ls.vote.getVotes(${this.id},'comment',this); return false;" id=${"vote_total_comment_"+this.id}>
+    						    ${this.rating > 0? "+" : ""}${this.rating}
     					    </span>
                             ${LOGGED_IN? `
-                            <div class="vote-down" onclick="return ls.vote.vote(${data.id},this,-1,'comment');">
+                            <div class="vote-down" onclick="return ls.vote.vote(${this.id},this,-1,'comment');">
                                 <i class="material-icons">keyboard_arrow_down</i>
                             </div>` : ""}
     					</li>
     			    </ul>
     			</div>
     </section>`
+    }
 }

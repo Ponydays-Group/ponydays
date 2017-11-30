@@ -1,4 +1,4 @@
-import render_comment from "./Comment.component"
+import Comment from "./Comment.component"
 import $ from "jquery"
 import * as Comments from "./comments"
 import * as Vote from "./vote"
@@ -172,7 +172,8 @@ export default class Tree {
 			if (!bUseNew)
 				iPrevId = this.state.aSortedIdsOld[iOld - 1]
 
-			let sCmtHtml = render_comment(aNewComments[id], this.state.iMaxNesting)
+			// let sCmtHtml = render_comment(aNewComments[id], this.state.iMaxNesting)
+            let sCmtHtml =  this.state.aComments[id].render(false,false)
 			let oPrevCmt = $(`[data-id=${iPrevId}]`)
 
 			// если не существует предыдущего коммента, считаем комментарий началом новой ветки
@@ -247,7 +248,7 @@ export default class Tree {
 				// вычисление уловня вложенности
 				oComment.level = oComment.parentId ? 1 + this.state.aComments[oComment.parentId].level : 0
 
-				this.state.aComments[id] = oComment
+				this.state.aComments[id] = new Comment(oComment)
 
 				aUnsortedIds.push(id)
 				aUnsortedPids.push(oComment.parentId)
@@ -287,7 +288,7 @@ export default class Tree {
 		let oCounter = document.getElementById("new_comments_counter")
 		if (!oCounter) return
 
-		let count = this.state.aCommentsNew.length
+		let count = $('.comment-new:visible').length
 		if (count) {
 			oCounter.style.display = ""
 			oCounter.innerHTML = count
@@ -303,7 +304,7 @@ export default class Tree {
 
 	goToNextComment() {
 		// console.log(this.state.aCommentsNew)
-		if (!this.state.aCommentsNew.length) {
+		if (!$('.comment-new:visible').length) {
 			return false
 		}
 
@@ -311,7 +312,7 @@ export default class Tree {
 			this.state.aCommentsOld.push(this.state.lastNewComment)
 		}
 
-		let id = this.state.aCommentsNew[0]
+		let id = $('.comment-new:visible')[0].dataset['id']
 		this.state.aComments[id].isNew = false
 		Comments.scrollToComment(id)
 
@@ -377,6 +378,7 @@ export default class Tree {
 			if(comments.hasOwnProperty(id)) {
 				ids.push(id)
 				pids.push(comments[id].parentId)
+                this.state.aComments[id] = new Comment(comments[id])
 			}
 		}
 
@@ -384,7 +386,7 @@ export default class Tree {
 		this.state.aSortedIds = this.updateSortTree(ids, pids)
 		console.log("Aftre sort", dateFormat(new Date(), "HH:MM:ss:l"))
 
-		this.state.aComments = comments
+		// this.state.aComments = comments
 
 		if (DEBUG) {
 			console.log("comment mount", comments)
@@ -561,6 +563,50 @@ export default class Tree {
 
 		oFormText.off("keydown", shortcuts["ctrl+end"])
 		oFormText.off("keydown", shortcuts["ctrl+home"])
+
+		window.foldBranch = function(id) {
+            let foldings = localStorage.getItem('foldings_'+this.state.aComments[this.state.aSortedIds[0]].targetType+'_'+targetId) //||"".split(',') || []
+			if (!foldings) {
+            	foldings = []
+			} else {
+                foldings = foldings.split(',')
+            }
+			foldings.push(id)
+			console.log("FOLDINGS", foldings)
+            localStorage.setItem('foldings_'+targetType+'_'+targetId, foldings.join(','))
+		    if ($("#folded_branch_"+id).length>0) {
+                $("#folded_branch_"+id).addClass("folded")
+                $("#comment_id_"+id).addClass("comment-folding-start")
+                this.updateCommentsNewCount()
+				return
+			}
+			let comment = this.state.aComments[id]
+			let to_fold = []
+			let found = false;
+			for (let i=this.state.aSortedIds.indexOf(id)+1;!found;i++) {
+				if (this.state.aComments[this.state.aSortedIds[i]].level>comment.level) {
+					to_fold.push(this.state.aSortedIds[i])
+				} else {
+					found = true
+				}
+			}
+			$("#comment_id_"+to_fold.join(", #comment_id_")).wrapAll(`<div class='folding-comments'></div>`)
+            $(`#comment_id_${to_fold[0]}`).parent().wrap(`<div class='folding folded' id="folded_branch_${id}" data-commentid='${id}'></div>`)
+			$("#comment_id_"+id).addClass("comment-folding-start")
+            this.updateCommentsNewCount()
+			console.log("#comment_id_"+to_fold.join(", #comment_id_"))
+
+		}.bind(this)
+
+		window.unfoldBranch = function(id) {
+            let foldings = localStorage.getItem('foldings_'+this.state.aComments[this.state.aSortedIds[0]].targetType+'_'+targetId).split(',') || []
+            foldings.pop(id)
+            localStorage.setItem('foldings_'+targetType+'_'+targetId, foldings.join(','))
+			console.log(id)
+			$("#folded_branch_"+id).removeClass("folded")
+            $("#comment_id_"+id).removeClass("comment-folding-start")
+            this.updateCommentsNewCount()
+		}.bind(this)
 	}
 
 	updateSortTree(ids, pids) {
@@ -575,9 +621,34 @@ export default class Tree {
 
 	render() {
 		console.log("Before render", dateFormat(new Date(), "HH:MM:ss:l"))
-
-		this.obj[0].innerHTML = `<div>${this.state.aSortedIds.map(function (id) {
-			return render_comment(this.state.aComments[id], this.state.iMaxNesting)
+        let foldings = localStorage.getItem('foldings_'+this.state.aComments[this.state.aSortedIds[0]].targetType+'_'+targetId) //||"".split(',') || []
+        if (!foldings) {
+            foldings = []
+        } else {
+			foldings = foldings.split(',')
+		}
+		console.log(foldings, 'foldings_'+this.state.aComments[this.state.aSortedIds[0]].targetType+'_'+targetId)
+		let foldings_tree = []
+		this.obj[0].innerHTML = `<div>${this.state.aSortedIds.map(function (id, i) {
+			console.log(typeof(id))
+			let folding_starting = foldings.indexOf(id)>=0
+			let comment = this.state.aComments[id]
+            let foldable = false
+			if (i != this.state.aSortedIds.length-1) {
+                foldable = this.state.aComments[this.state.aSortedIds[i + 1]].level > comment.level
+            }
+			let s = comment.render(folding_starting, foldable)
+            if (foldings_tree[foldings_tree.length-1]>=parseInt(comment.level)) {
+                s = '</div></div>' + s
+                foldings_tree.pop()
+            }
+			if (folding_starting) {
+				console.log("IN FOLDINGS!")
+				s += `<div class='folding folded' id="folded_branch_${id}" data-commentid='${id}'><div class='folding-comments'>`
+				foldings_tree.push(parseInt(comment.level))
+			}
+			return s
+			//return render_comment(this.state.aComments[id], this.state.iMaxNesting)
 		}.bind(this)).join("")}</div>`
 
 		console.log("After render", dateFormat(new Date(), "HH:MM:ss:l"))

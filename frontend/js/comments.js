@@ -177,7 +177,7 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
 
 	// Удаляем подсветку у комментариев
 	if (!bNotFlushNew) {
-		$(".comment").each(function (index, item) {
+		$(".comment:visible").each(function (index, item) {
 			$(item).removeClass(options.classes.comment_new + " " + options.classes.comment_current)
 		}.bind(this))
 	}

@@ -122,6 +122,68 @@
     filter: alpha(opacity=100);
 }
 
+.comment.comment-folding-start {
+    border-bottom: 3px solid $brand;
+}
+
+.fold, .unfold {
+    position: absolute;
+    left: 22px;
+    bottom: 5px;
+    height: 24px;
+    color: $brand;
+    opacity: 0;
+    transition: opacity .2s;
+    cursor: pointer;
+}
+
+.unfold {
+    display: none;
+}
+
+.comment:hover .fold, .comment:hover .unfold {
+    opacity: 1;
+}
+
+.comment.comment-folding-start {
+    .unfold {
+        display: block;
+    }
+
+    .fold {
+        display: none;
+    }
+}
+
+.folding-show {
+    display: none;
+    height: 24px;
+    width: 24px;
+    background: white;
+    border-radius: 12px;
+    color: $brand;
+    border: $second-border;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    cursor: pointer;
+    margin-left: 20px;
+    margin-bottom: 10px;
+
+    i {
+        font-size: 20px;
+    }
+}
+
+.folding.folded {
+    .folding-comments {
+        display: none;
+    }
+    .folding-show {
+        display: flex;
+    }
+}
+
 
 /* Info Block */
 

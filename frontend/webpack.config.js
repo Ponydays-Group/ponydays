@@ -9,17 +9,17 @@ let isProduction = process.env.NODE_ENV == 'production';
 
 let vendors = [
     'babel-polyfill',
-    './js/jquery',
-    './js/jquery.file.js',
-    './js/jquery.jqmodal.js',
-    './js/jquery.notifier.js',
-    './js/jquery.markitup.js',
-    './js/jquery.serialize.js',
-    './js/jquery.poshytip.js',
-    './js/jquery.Jcrop.js',
+    path.resolve(__dirname,'js','jquery'),
+    path.resolve(__dirname,'js','jquery.file.js'),
+    path.resolve(__dirname,'js','jquery.jqmodal.js'),
+    path.resolve(__dirname,'js','jquery.notifier.js'),
+    path.resolve(__dirname,'js','jquery.markitup.js'),
+    path.resolve(__dirname,'js','jquery.serialize.js'),
+    path.resolve(__dirname,'js','jquery.poshytip.js'),
+    path.resolve(__dirname,'js','jquery.Jcrop.js'),
     'jquery.hotkeys',
     'jquery-form',
-    './css/bootstrap/assets/javascripts/bootstrap',
+    path.resolve(__dirname,'css','bootstrap','assets','javascripts','bootstrap'),
     'jquery-ui-bundle',
 ];
 
@@ -29,10 +29,10 @@ let config = {
     cache: true,
 
     entry: {
-        main: path.resolve(__dirname,'js', 'index'),
+        main: path.resolve(__dirname, 'js', 'index'),
         vendor: vendors,
-        light: path.resolve(__dirname,'css','light.scss'),
-        dark: path.resolve(__dirname,'css','dark.scss'),
+        light: path.resolve(__dirname, 'css', 'light.scss'),
+        dark: path.resolve(__dirname, 'css', 'dark.scss'),
     },
     output: {
         path: path.join(__dirname, '..', 'static', '[hash]'),
@@ -40,14 +40,14 @@ let config = {
     },
     module: {
         loaders: [{
-                test: /\.jsx?$/,
-                loader: 'babel-loader',
-                exclude: /node_modules/,
-                query: {
-                    presets: ['es2015', 'stage-0', 'react']
-                },
-                compact: true
+            test: /\.jsx?$/,
+            loader: 'babel-loader',
+            exclude: /node_modules/,
+            query: {
+                presets: ['es2015', 'stage-0', 'react']
             },
+            compact: true
+        },
             {
                 test: /\.scss$/,
                 loader: ExtractTextPlugin.extract("style-loader", "css!autoprefixer-loader?browsers=last 15 versions!resolve-url-loader!sass")
@@ -82,8 +82,8 @@ let config = {
             name: 'vendor'
         }),
         new webpack.optimize.DedupePlugin(),
-        function() {
-            this.plugin('done', function(stats) {
+        function () {
+            this.plugin('done', function (stats) {
                 fs.writeFileSync(
                     path.join(__dirname, '..', 'config', 'engine_config', 'frontend.config.json'),
                     JSON.stringify({"frontend": {"version": stats.hash}})

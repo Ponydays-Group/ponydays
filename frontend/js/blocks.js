@@ -152,12 +152,20 @@ export function init(block, params) {
     }
 
     let $this = this;
-    $('.js-block-' + block + '-update').click(function () {
+    $('.js-block-stream-update').click(function () {
         $(this).addClass('fa-spin');
         load(getCurrentItem(block), block)
         setTimeout(function () {
             $(this).removeClass('fa-spin');
         }.bind(this), 600);
+    });
+
+    $('.js-block-quote-update').click(function () {
+        $(this).addClass('fa-spin');
+        loadRandomQuote()
+        setTimeout(function () {
+            $(this).removeClass('fa-spin');
+        }.bind(this), 300);
     });
 }
 
@@ -200,4 +208,11 @@ export function initNavigation(block, count) {
         $('.js-block-' + block + '-dropdown').hide();
     }
     //Emitter.emit('ls_blocks_init_navigation_after',[block,count],this);
+}
+
+export async function loadRandomQuote() {
+    let quote = await Ajax.asyncAjax("/quotes/random");
+    $('.sidebar-quote')[0].innerHTML = quote.sQuote
+    $('#quote_id')[0].href = `/quotes/${quote.iId}`
+    $('#quote_id')[0].innerText = `~${quote.iId}`
 }

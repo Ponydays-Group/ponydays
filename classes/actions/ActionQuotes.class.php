@@ -43,7 +43,8 @@ class ActionQuotes extends Action {
 		$this->AddEventPreg('/^(page([1-9]\d{0,5}))?$/i', 'EventView');
 		$this->AddEvent('view', 'EventView');
 		$this->AddEvent('deleted', 'EventTrash');
-		$this->AddEvent('edit', 'EventEdit');
+        $this->AddEvent('edit', 'EventEdit');
+        $this->AddEvent('random', 'EventRandom');
 		$this->AddEventPreg('/^([0-9]\d{0,5})?$/i', 'EventFindQuote');
 
 	}
@@ -89,6 +90,14 @@ class ActionQuotes extends Action {
 		$this->SetTemplateAction('index');
 		return true;
 	}
+
+	protected function EventRandom() {
+        $this->Viewer_SetResponseAjax('json');
+        $aQuote = $this->Quotes_GetRandomQuote();
+        $this->Viewer_AssignAjax("sQuote", $aQuote['data']);
+        $this->Viewer_AssignAjax("iId", $aQuote['id']);
+        return true;
+    }
 
 	/**
 	 * Ивент редактора цитатника

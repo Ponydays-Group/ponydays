@@ -151,6 +151,15 @@ class ModuleQuotes_MapperQuotes extends Mapper {
 		return "";
 	}
 
+	public function GetRandom() {
+        $sql = "SELECT * FROM " . Config::Get('db.table.quotes') . " ORDER BY RAND() LIMIT 1;";
+        if ($aRows = $this->oDb->query($sql)) {
+            return $aRows[0];
+        }
+
+        return "";
+    }
+
 	/**
 	 * Возвращает количества элементов в таблице
 	 *

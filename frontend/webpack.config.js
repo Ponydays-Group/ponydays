@@ -29,10 +29,10 @@ let config = {
     cache: true,
 
     entry: {
-        main: './js/index',
+        main: path.resolve(__dirname,'js', 'index'),
         vendor: vendors,
-        light: './css/light.scss',
-        dark: './css/dark.scss',
+        light: path.resolve(__dirname,'css','light.scss'),
+        dark: path.resolve(__dirname,'css','dark.scss'),
     },
     output: {
         path: path.join(__dirname, '..', 'static', '[hash]'),

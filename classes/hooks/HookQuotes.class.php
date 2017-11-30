@@ -11,10 +11,10 @@ class HookQuotes extends Hook {
 	}
 
 	public function GetQuote() {
-		$iId = $this->Quotes_GetRandomId();
+		$aQuote = $this->Quotes_GetRandomQuote();
 
-		$this->Viewer_Assign('sQuote', $this->Quotes_GetQuoteById($iId));
-		$this->Viewer_Assign('iQuoteId',$iId);
+		$this->Viewer_Assign('sQuote', $aQuote['data']);
+		$this->Viewer_Assign('iQuoteId',$aQuote['id']);
 		return $this->Viewer_Fetch('quote_block.tpl');
 	}
 }

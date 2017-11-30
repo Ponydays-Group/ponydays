@@ -109,14 +109,10 @@ class ModuleQuotes extends Module {
 	 *
 	 * @return string
 	 */
-	public function GetRandomQuote (): string {
-		if ($id = $this->GetRandomId()) {
-			srand((double)microtime() * 1000000);
-			return($this->GetQuoteById($id));
-		}
 
-		return "";
-	}
+    public function GetRandomQuote(): array {
+        return $this->oMapper->GetRandom();
+    }
 
 	/**
 	 * Существует ли такая цитата
@@ -138,25 +134,9 @@ class ModuleQuotes extends Module {
 	 * @param int $id
 	 * @return string
 	 */
-	public function GetQuoteById (int $id): string {
-		return $this->oMapper->GetById($id);
-	}
-
-	/**
-	 * Возвращает рандомноайдишник
-	 *
-	 * @return int
-	 */
-	public function GetRandomId (): int {
-		$aIds = $this->oMapper->GetIds();
-
-		if($aIds !== []) {
-			srand((double)microtime() * 1000000);
-			return $aIds[rand(0, $this->oMapper->GetCount() - 1)];
-		}
-
-		return 0;
-	}
+    public function GetQuoteById (int $id): string {
+        return $this->oMapper->GetById($id);
+    }
 
 	/**
 	 * Возвращает страницу, на которой располагается цитата

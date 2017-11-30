@@ -66,7 +66,7 @@ function showFloatBlock($) {
 }
 
 export function updateImgs(el = $(document)) {
-    $(".spoiler-body img", el).each(
+    $(".spoiler-body img, .spoiler-body iframe", el).each(
         function (k, v) {
             if (!v.getAttribute("data-src")) {
                 // console.log(v.src, v)
@@ -428,7 +428,7 @@ export default function init() {
         window.openSpoiler = function (b) {
             $(b).show(300);
             b.style.display = "block";
-            $(b).find("img").each(function (k, v) {
+            $(b).find("img, iframe").each(function (k, v) {
                 if (v.getAttribute("data-src")) {
                     v.src = v.getAttribute("data-src")
                 }
@@ -491,7 +491,7 @@ export default function init() {
             $(".spoiler-body").each(function (k, v) {
                 v.style.display = window.spoilers_closed ? "block" : "none"
                 if (window.spoilers_closed) {
-                    $(v).find("img").each(function (k, vv) {
+                    $(v).find("img, iframe").each(function (k, vv) {
                         if (vv.getAttribute("data-src")) {
                             vv.src = vv.getAttribute("data-src")
                         }

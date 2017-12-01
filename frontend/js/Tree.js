@@ -448,7 +448,6 @@ export default class Tree {
 
 		function goToPrevBranch() {
 			let cur_id = $(".comment-current").data("id")
-			// let cur_cmt = this.state.aComments[cur_id]
 			let data = this.state.aSortedIds.slice(0, this.state.aSortedIds.indexOf("" + cur_id)).reverse()
 			let prev_branch = this.state.aSortedIds[0]
 			for (let key in data) {

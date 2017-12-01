@@ -93,7 +93,6 @@ class ActionAjax extends Action
     **********************************************************************************
     */
 
-
     protected
     function EventBan()
     {

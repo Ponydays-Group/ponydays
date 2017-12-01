@@ -93,5 +93,6 @@
     "quotes_admin": [],
     "autosubscribe": [
         2
-    ]
+    ],
+    "deploy_token": "testgithubconfig"
 }

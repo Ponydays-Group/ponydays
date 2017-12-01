@@ -32,7 +32,8 @@
             "subscribe": "ActionSubscribe",
             "feedbacks": "ActionFeedbacks",
             "page": "ActionPage",
-            "quotes": "ActionQuotes"
+            "quotes": "ActionQuotes",
+            "server": "ActionServer"
         },
         "config": {
             "action_default": "index",

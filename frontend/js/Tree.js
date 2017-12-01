@@ -215,13 +215,16 @@ export default class Tree {
 				let oComment = $(`[data-id=${id}]`)
 				console.log(id)
 
-				if (this.state.aComments[id].text !== edited_comments[id].text && !oComment.hasClass("comment-self")) {
+				if (this.state.aComments[id].text !== edited_comments[id].text && !oComment.hasClass("comment-self") && !oComment.hasClass("comment-current")) {
 					$(`#comment_content_id_${id}`)[0].innerHTML = edited_comments[id].text
 					this.state.aComments[id].text = edited_comments[id].text
 					oComment.addClass("comment-new")
 					this.state.aCommentsNew.push(id)
 					this.state.aCommentsNew.sort(this.sortByTree.bind(this))
 					this.updateCommentsNewCount()
+				}
+                if (this.state.aComments[id].text !== edited_comments[id].text) {
+                    this.state.aComments[id].update_edited(true)
 				}
                 updateImgs(oComment)
             }

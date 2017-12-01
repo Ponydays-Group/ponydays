@@ -19,6 +19,7 @@ export default class Comment {
         this.level = parseInt(data.level)
         this.parentId = data.parentId
         this.isNew = data.isNew
+        this.editCount = parseInt(data.editCount)
     }
 
     update_foldable(foldable) {
@@ -31,6 +32,20 @@ export default class Comment {
         } else {
             cmt.removeClass('comment-foldable')
         }
+    }
+
+    update_edited(edited) {
+        console.log("Update edited")
+        if (!$(`#comment_id_${this.id}`).length) {
+            return false;
+        }
+        let edit_el = $(`#comment_id_${this.id} .comment-edited`)
+        if (edited) {
+            edit_el.css('display', 'inline-block')
+        } else {
+            edit_el.css('display', 'none')
+        }
+        console.log("Updated edited")
     }
 
     render(folded, foldable) {
@@ -68,6 +83,7 @@ export default class Comment {
     						    <time dateTime=${this.date}>${dateFormat(new Date(this.date), "dd.mm.yy HH:MM:ss")}</time>
     					    </a>
     				    </li>
+    				    <li class="comment-edited" ${this.editCount>0? `style="display: inline-block;"`:""}>(edited)</li>
     					${LOGGED_IN? `<span><a href="#" onclick="ls.comments.toggleCommentForm(${this.id}); return false;" class="reply-link">Ответить</a></span>` : "" }
     					<li class="action-hidden">
                             ${LOGGED_IN && (IS_ADMIN | USERNAME==this.author.login)? `<span>

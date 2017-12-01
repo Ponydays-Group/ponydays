@@ -1039,6 +1039,7 @@ class ModuleComment extends Module {
 		$aComment['level'] = $oComment->getLevel();
 		$aComment['parentId'] = $oComment->getPid();
 		$aComment['isNew'] = $sReadlast <= $oComment->getDate();
+		$aComment['editCount'] = $oComment->getEditCount();
 		return $aComment;
 	}
 }

@@ -202,6 +202,8 @@
     zoom: 1;
 }
 
+
+
 .comment .comment-info li {
     float: left;
     margin-right: 10px;
@@ -285,6 +287,12 @@
         &.vote-count {
             margin-left: 0;
         }
+    }
+
+    &.comment-edited {
+        display: none;
+        margin-left: -8px;
+        color: #4CAF50;
     }
 }
 
@@ -381,7 +389,7 @@ button#comment-button-history {
     bottom: 10px;
     z-index: 100501;
     display: flex;
-    flex-flow: reverse;
+    //flex-flow: reverse;
     flex-direction: column-reverse;
     justify-content: inherit;
     align-items: flex-end;

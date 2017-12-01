@@ -6,7 +6,7 @@ import Emitter from "./emitter"
 import * as Msg from "./msg"
 import * as Ajax from "./ajax"
 
-import Tree from "./Tree.component"
+import Tree from "./Tree"
 
 var dateFormat = require("dateformat")
 

@@ -137,12 +137,18 @@
     cursor: pointer;
 }
 
-.unfold {
+.unfold, .fold {
     display: none;
 }
 
 .comment:hover .fold, .comment:hover .unfold {
     opacity: 1;
+}
+
+.comment.comment-foldable {
+    .fold {
+        display: flex;
+    }
 }
 
 .comment.comment-folding-start {

@@ -21,22 +21,34 @@ export default class Comment {
         this.isNew = data.isNew
     }
 
+    update_foldable(foldable) {
+        let cmt = $(`#comment_id_${this.id}`)
+        if (!cmt.length) {
+            return false;
+        }
+        if (foldable) {
+            cmt.addClass('comment-foldable')
+        } else {
+            cmt.removeClass('comment-foldable')
+        }
+    }
+
     render(folded, foldable) {
-        let maxNesting = 10000
-        let level = this.level > maxNesting? maxNesting : this.level
+        let level = this.level > iMaxNesting? iMaxNesting : this.level
         return this.isBad?`<section id=${"comment_id_"+this.id} style="margin-left: ${level*20}px" data-id=${this.id} data-level=${this.level} data-pid=${this.parentId} data-author=${this.author.login}><span class="bad-placeholder">...</bad></section>`:`<section id=${"comment_id_"+this.id} data-author=${this.author.login} data-id=${this.id} data-level=${this.level} data-pid=${this.parentId} style="margin-left: ${level*20}px" class="${classNames({
             "comment": true,
             "comment-bad": this.rating < -5,
             "comment-self": USERNAME==this.author.login,
             "comment-new": this.isNew && USERNAME!=this.author.login,
             "comment-deleted": this.isDeleted,
-            "comment-folding-start": folded
+            "comment-folding-start": folded,
+            "comment-foldable": foldable
         })}">
     		<a name=${"comment"+this.id}></a>
 
     		<a href="/profile/${this.author.login}" target="_blank"><img src="${this.author.avatar}"" alt="avatar" class="comment-avatar" /></a>
     		
-    		${foldable? `<div class="fold" onclick="foldBranch('${this.id}')"><i class='material-icons'>keyboard_arrow_up</i></div>`:''}
+    		<div class="fold" onclick="foldBranch('${this.id}')"><i class='material-icons'>keyboard_arrow_up</i></div>
     		<div class="unfold" onclick="unfoldBranch('${this.id}')"><i class='material-icons'>keyboard_arrow_down</i></div>
     
     

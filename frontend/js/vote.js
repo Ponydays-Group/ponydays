@@ -233,8 +233,9 @@ export function onGetVotes(result) {
 }
 
 export function onVotesListLeaved(e) {
+    console.log("CLICKED OUT!!!", this.target, this.eventTarget)
     if (this.target != e.target && (
-            e.target.tagName != "A" && !document.getElementsByClassName("nav-userbar")[0].contains(e.target) && !this.target.contains(e.target)
+            e.target.tagName != "A" && !this.target.contains(e.target)
         )) {
         this.target.classList.add("hidden");
         //setTimeout(Element.prototype.remove.bind(this.target), 500);

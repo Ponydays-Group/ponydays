@@ -459,7 +459,7 @@ export default function init() {
                 $("#image-modal").css("display", "flex")
             }
 
-            while (!target.classList.contains("spoiler-title")) {
+            while (target.classList && !target.classList.contains("spoiler-title")) {
                 target = target.parentNode || target.parentElement;
                 if (!target || target == document.body) return;
             }

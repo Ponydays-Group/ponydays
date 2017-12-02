@@ -66,7 +66,7 @@ function showFloatBlock($) {
 }
 
 export function updateImgs(el = $(document)) {
-    $(".spoiler-body img, .spoiler-body iframe", el).each(
+    $(".spoiler-body img", el).each(
         function (k, v) {
             if (!v.getAttribute("data-src")) {
                 // console.log(v.src, v)

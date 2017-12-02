@@ -1,4 +1,4 @@
-{if $oUserCurrent}
+
     {assign var=aPagingCmt value=$params.aPagingCmt}
     <div class="rightbar-item delim-top" id="prevcomment">
         <a href="#" id="prev_new" class="update-comments disabled"
@@ -30,4 +30,3 @@
 
         console.log(setInterval(autoload, 10000))
     </script>
-{/if}

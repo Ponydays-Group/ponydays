@@ -65,14 +65,16 @@ export async function loadComments() {
 }
 
 export async function renderComments() {
+    lastNewComment = parseInt(localStorage.getItem('lastcomment_'+targetType+'_'+targetId)) || 0
 	let CommentsTree = new Tree()
 
 	let result = await loadComments()
 	let comments = result.aComments
 
-	lastNewComment = result.iMaxIdComment
-
-	CommentsTree.mount($("#comments-tree"), comments)
+	CommentsTree.mount($("#comments-tree"), comments, lastNewComment)
+	if (!LOGGED_IN)
+    	lastNewComment = result.iMaxIdComment
+	localStorage.setItem('lastcomment_'+targetType+'_'+targetId, lastNewComment)
 
 	if (location.hash.startsWith("#comment") && location.hash !== "#comments") {
 		setTimeout(scrollToComment(location.hash.replace("#comment", ""), 0, 350), 2000)
@@ -219,6 +221,7 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
 			if (Object.keys(aCmt).length > 0 && result.iMaxIdComment) {
 				console.log("before", lastNewComment)
 				lastNewComment = result.iMaxIdComment
+                localStorage.setItem('lastcomment_'+targetType+'_'+targetId, lastNewComment)
 				console.log("after", lastNewComment)
 
 				let countComments = $("#count-comments")
@@ -332,7 +335,8 @@ export function toggle(obj, commentId) {
 				oComment.find('.comment-content')[0].innerHTML = `<div class="delete-reason">${deleteReason}</div><a href="#" onclick="ls.comments.showDeletedComment(${commentId}); return false;">Раскрыть комментарий</a>`
 			} else {
 				oComment.find('.delete-reason').remove()
-                ls.comments.showDeletedComment(commentId)
+				if (!LOGGED_IN)
+                	ls.comments.showDeletedComment(commentId)
 			}
 			Emitter.emit("ls_comments_toggle_after", [obj, commentId, result])
 		}

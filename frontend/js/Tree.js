@@ -124,6 +124,7 @@ export default class Tree {
         aCommentsNew: [],
         aCommentsOld: [],
         lastNewComment: 0,
+        lastReadComment: 0,
     }
 
     constructor() {
@@ -375,7 +376,9 @@ export default class Tree {
         Comments.iCurrentViewComment = id
     }
 
-    mount(obj, comments) {
+    mount(obj, comments, lastReadComment = 0) {
+        console.log("LAST READ COMMENT", lastReadComment)
+        lastReadComment = parseInt(lastReadComment)
         function applyNesting() {
             this.calcNesting()
             this.render()
@@ -392,6 +395,9 @@ export default class Tree {
                 ids.push(id)
                 pids.push(comments[id].parentId)
                 this.state.aComments[id] = new Comment(comments[id])
+                if (lastReadComment) {
+                    this.state.aComments[id].isNew = parseInt(id)>lastReadComment
+                }
             }
         }
 
@@ -406,6 +412,8 @@ export default class Tree {
             console.log("ids mount", ids)
             console.log("ids sorted", this.state.aSortedIds)
         }
+
+        this.state.lastReadComment = lastReadComment
 
         applyNesting.bind(this)()
 

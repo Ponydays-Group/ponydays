@@ -1196,10 +1196,10 @@ class ActionBlog extends Action {
 		/**
 		 * Пользователь авторизован?
 		 */
-		if (!$this->oUserCurrent) {
-			$this->Message_AddErrorSingle($this->Lang_Get('need_authorization'),$this->Lang_Get('error'));
-			return;
-		}
+//		if (!$this->oUserCurrent) {
+//			$this->Message_AddErrorSingle($this->Lang_Get('need_authorization'),$this->Lang_Get('error'));
+//			return;
+//		}
 		/**
 		 * Топик существует?
 		 */
@@ -1209,9 +1209,16 @@ class ActionBlog extends Action {
 			return;
 		}
 		if ($oTopic->getType() != 'talk') {
-			if (!in_array($oTopic->getBlogId(), $this->ModuleBlog_GetAccessibleBlogsByUser($this->oUserCurrent)) and $oTopic->getBlog()->getType() != "open"){
-			    $this->Message_AddErrorSingle($this->Lang_Get('system_error'),$this->Lang_Get('error'));
-			    return;
+			if ($this->oUserCurrent) {
+                if (!in_array($oTopic->getBlogId(), $this->ModuleBlog_GetAccessibleBlogsByUser($this->oUserCurrent)) and $oTopic->getBlog()->getType() != "open") {
+                    $this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+                    return;
+                }
+            } else {
+				if ($oTopic->getBlog()->getType() != "open") {
+                    $this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+                    return;
+				}
 			}
 		}
 
@@ -1244,7 +1251,9 @@ class ActionBlog extends Action {
 		}
 		$iMaxIdComment=$aReturn['iMaxIdComment'];
 
-		$sReadlast = $oTopic->getReadLast();
+//		if ($this->oUserCurrent) {
+            $sReadlast = $oTopic->getReadLast();
+//        }
 
 		$aCmts=$aReturn['comments'];
 		if ($aCmts and is_array($aCmts)) {
@@ -1253,14 +1262,15 @@ class ActionBlog extends Action {
 				$aComments[$aComment['id']] = $aComment;
 			}
 		}
-
-		$oTopicRead=Engine::GetEntity('Topic_TopicRead');
-		$oTopicRead->setTopicId($oTopic->getId());
-		$oTopicRead->setUserId($this->oUserCurrent->getId());
-		$oTopicRead->setCommentCountLast($oTopic->getCountComment());
-		$oTopicRead->setCommentIdLast($iMaxIdComment);
-		$oTopicRead->setDateRead(date("Y-m-d H:i:s"));
-		$this->Topic_SetTopicRead($oTopicRead);
+		if ($this->oUserCurrent) {
+            $oTopicRead = Engine::GetEntity('Topic_TopicRead');
+            $oTopicRead->setTopicId($oTopic->getId());
+            $oTopicRead->setUserId($this->oUserCurrent->getId());
+            $oTopicRead->setCommentCountLast($oTopic->getCountComment());
+            $oTopicRead->setCommentIdLast($iMaxIdComment);
+            $oTopicRead->setDateRead(date("Y-m-d H:i:s"));
+            $this->Topic_SetTopicRead($oTopicRead);
+        }
 		
 		$aEditedComments = [];
 		$aEditedCommentsRaw = $this->Comment_GetCommentsOlderThenEdited('topic', $oTopic->getId(), $idCommentLast);
@@ -1274,7 +1284,9 @@ class ActionBlog extends Action {
 		$this->Viewer_AssignAjax('iMaxIdComment',$iMaxIdComment);
 		$this->Viewer_AssignAjax('aComments',$aComments);
 		$this->Viewer_AssignAjax('aEditedComments',$aEditedComments);
-		$this->Viewer_AssignAjax('iUserCurrentCountTalkNew',$this->Talk_GetCountTalkNew($this->oUserCurrent->getId()));
+		if ($this->oUserCurrent) {
+            $this->Viewer_AssignAjax('iUserCurrentCountTalkNew', $this->Talk_GetCountTalkNew($this->oUserCurrent->getId()));
+        }
 	}
 	/**
 	 * Обработка ajax запроса на отправку

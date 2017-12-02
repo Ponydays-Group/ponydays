@@ -8,7 +8,8 @@ export default class Comment {
         this.date = data.date
         this.text = data.text
         this.isBad = data.isBad
-        this.isDeleted = data.isDeleted
+        this.isDeleted = parseInt(data.isDeleted)
+        this.deleteReason = data.deleteReason
         this.isFavourite = data.isFavourite
         this.countFavourite = data.countFavourite
         this.rating = data.rating
@@ -61,7 +62,7 @@ export default class Comment {
         })}">
     		<a name=${"comment"+this.id}></a>
 
-    		<a href="/profile/${this.author.login}" target="_blank"><img src="${this.author.avatar}"" alt="avatar" class="comment-avatar" /></a>
+    		<a href="/profile/${this.author.login}" target="_blank"><img src="${this.author.avatar}" alt="avatar" class="comment-avatar" /></a>
     		
     		<div class="fold" onclick="foldBranch('${this.id}')"><i class='material-icons'>keyboard_arrow_up</i></div>
     		<div class="unfold" onclick="unfoldBranch('${this.id}')"><i class='material-icons'>keyboard_arrow_down</i></div>
@@ -72,6 +73,7 @@ export default class Comment {
     		</ul>
     		
     		<div id=${"comment_content_id_"+this.id} class="comment-content text">
+            ${this.isDeleted? `<div class="delete-reason">${this.deleteReason||"Нет причины удаления"}</div>`:''}
     		${this.isDeleted && LOGGED_IN && (IS_ADMIN || USERNAME == this.author.login) ? `<a href="#" onclick="ls.comments.showDeletedComment(${this.id}); return false;">Раскрыть комментарий</a>` : ""}
     		${this.text}
     		</div>

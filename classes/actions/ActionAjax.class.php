@@ -1433,6 +1433,7 @@ class ActionAjax extends Action
          * Комментарий существует?
          */
         $idComment = getRequestStr('idComment', null, 'post');
+        $sDeleteReason = getRequestStr('sDeleteReason', null, 'post');
         if (!($oComment = $this->Comment_GetCommentById($idComment))) {
             $this->Message_AddErrorSingle($this->Lang_Get('system_error') , $this->Lang_Get('error'));
             return;
@@ -1447,6 +1448,7 @@ class ActionAjax extends Action
          * Устанавливаем пометку о том, что комментарий удален
          */
         $oComment->setDelete(($oComment->getDelete() + 1) % 2);
+        $oComment->setDeleteReason($sDeleteReason);
         $this->Hook_Run('comment_delete_before', array(
             'oComment' => $oComment
         ));

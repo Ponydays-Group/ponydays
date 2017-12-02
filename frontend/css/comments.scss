@@ -97,6 +97,15 @@
 
 .comment.comment-deleted {
     background: $comment-deleted-background !important;
+    border-left: 3px solid #F44336 !important;
+    border-right: 3px solid #F44336 !important;
+}
+
+.delete-reason {
+    font-style: italic;
+    padding: 10px;
+    border-left: 3px solid #F44336;
+    background: $comment-delete-reason;
 }
 
 .comment.comment-self {

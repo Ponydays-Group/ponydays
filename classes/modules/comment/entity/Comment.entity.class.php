@@ -219,16 +219,33 @@ class ModuleComment_EntityComment extends Entity {
 		return $this->_getDataOne('comment_count_favourite');
 	}
 
+    /**
+     * Возвращает причину удаления комментария
+     *
+     * @return int|null
+     */
+	public function getDeleteReason() {
+        return $this->_getDataOne('delete_reason');
+    }
 
 
-	/**
-	 * Устанавливает ID комментария
-	 *
-	 * @param int $data
-	 */
-	public function setId($data) {
-		$this->_aData['comment_id']=$data;
-	}
+
+    /**
+     * Устанавливает причину удаления
+     *
+     * @param string $data
+     */
+    public function setDeleteReason($data) {
+        $this->_aData['delete_reason']=$data;
+    }
+    /**
+     * Устанавливает ID комментария
+     *
+     * @param int $data
+     */
+    public function setId($data) {
+        $this->_aData['comment_id']=$data;
+    }
 	/**
 	 * Устанавливает ID родительского комментария
 	 *

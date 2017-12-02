@@ -101,7 +101,7 @@ class ModuleComment extends Module {
 	 */
 	public function GetCommentsAdditionalData($aCommentId,$aAllowData=null) {
 		if (is_null($aAllowData)) {
-			$aAllowData=array('vote','target','favourite','user'=>array());
+			$aAllowData=array('vote','target','favourite','user'=>array(),'delete_reason');
 		}
 		func_array_simpleflip($aAllowData);
 		if (!is_array($aCommentId)) {
@@ -1020,7 +1020,8 @@ class ModuleComment extends Module {
 			}
 		}*/
 		$aComment['isBad'] = $oComment->isBad();
-		$aComment['isDeleted'] = (int)$oComment->getDelete();
+        $aComment['isDeleted'] = (int)$oComment->getDelete();
+        $aComment['deleteReason'] = $oComment->getDeleteReason();
 		$aComment['isFavourite'] = $oComment->getIsFavourite();
 		$aComment['countFavourite'] = $oComment->getCountFavourite();
 		$aComment['rating'] = $oComment->getRating();

@@ -656,12 +656,13 @@ class ModuleComment_MapperComment extends Mapper {
 				comment_count_vote= ?d,
 				comment_count_favourite= ?d,
 				comment_delete = ?d ,
+				delete_reason = ? ,
 				comment_publish = ?d ,
 				comment_text_hash = ?
 			WHERE
 				comment_id = ?d
 		";
-		if ($this->oDb->query($sql,$oComment->getText(),$oComment->getRating(),$oComment->getCountVote(),$oComment->getCountFavourite(),$oComment->getDelete(),$oComment->getPublish(),$oComment->getTextHash(),$oComment->getId())) {
+		if ($this->oDb->query($sql,$oComment->getText(),$oComment->getRating(),$oComment->getCountVote(),$oComment->getCountFavourite(),$oComment->getDelete(),$oComment->getDeleteReason(),$oComment->getPublish(),$oComment->getTextHash(),$oComment->getId())) {
 			return $this->UpdateEditCommentData($oComment);
 		}
 		return false;

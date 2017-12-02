@@ -559,13 +559,41 @@ export function cancelEditComment(idComment) {
 	setFormText("")
 }
 
-export function showDeletedComment(idComment) {
+export function showHiddenComment(idComment) {
+    idComment = parseInt(idComment)
+    let hidden = localStorage.getItem('comments_hide')
+    if (hidden==null) {
+        hidden = []
+    } else {
+        hidden = hidden.split(",")
+    }
+    if (hidden.indexOf(idComment)) {
+    	hidden.pop(idComment)
+	}
+    localStorage.setItem('comments_hide', hidden)
 	let params = {'idComment': idComment}
 
 	Ajax.ajax(options.type.comment.url, params, function(res) {
         let oComment = $("#comment_content_id_"+idComment)
-        oComment.html(res.aComment.text);
+        oComment.html(res.aComment.text).removeClass("content-hidden");
     })
+}
+
+export function hideComment(idComment) {
+    let cmt = $(`[data-id="${idComment}"] .comment-content`)
+	if (cmt.hasClass("content-hidden")) {
+    	return
+	}
+	let hidden = localStorage.getItem('comments_hide')
+	if (hidden==null) {
+		hidden = []
+	} else {
+		hidden = hidden.split(",")
+	}
+	if (hidden.indexOf(idComment)<0)
+		hidden.push(idComment)
+    localStorage.setItem('comments_hide', hidden)
+	cmt.addClass('content-hidden').html(`<a href="#" onclick="ls.comments.showHiddenComment(${idComment}); return false;">Раскрыть комментарий</a>`)
 }
 
 export function editComment(idComment) {

@@ -125,6 +125,7 @@ export default class Tree {
         aCommentsOld: [],
         lastNewComment: 0,
         lastReadComment: 0,
+        hidden: [],
     }
 
     constructor() {
@@ -210,6 +211,7 @@ export default class Tree {
                 console.error("No inserted comment in DOM!")
             }
         }.bind(this))
+        this.update_hidden()
     }
 
     checkEdited(edited_comments) {
@@ -220,7 +222,7 @@ export default class Tree {
                 let oComment = $(`[data-id=${id}]`)
                 console.log(id)
 
-                if (this.state.aComments[id].text !== edited_comments[id].text && !oComment.hasClass("comment-self") && !oComment.hasClass("comment-current")) {
+                if (this.state.aComments[id].text !== edited_comments[id].text && !oComment.hasClass("comment-self") && !oComment.hasClass("comment-current") && !$(`#comment_content_id_${id}`).hasClass("hidden")) {
                     $(`#comment_content_id_${id}`)[0].innerHTML = edited_comments[id].text
                     this.state.aComments[id].text = edited_comments[id].text
                     oComment.addClass("comment-new")
@@ -644,6 +646,19 @@ export default class Tree {
         return this.state.mySortTree.getSorted()
     }
 
+    update_hidden() {
+        this.state.hidden = localStorage.getItem('comments_hide')
+        if (this.state.hidden==null) {
+            this.state.hidden = []
+        } else {
+            this.state.hidden = this.state.hidden.split(",")
+        }
+        console.log("hidden", this.state.hidden)
+        for (let i=0; i<this.state.hidden.length; i++) {
+            Comments.hideComment(this.state.hidden[i])
+        }
+    }
+
     render() {
         console.log("Before render", dateFormat(new Date(), "HH:MM:ss:l"))
         let foldings = localStorage.getItem('foldings_' + this.state.aComments[this.state.aSortedIds[0]].targetType + '_' + targetId) //||"".split(',') || []
@@ -678,6 +693,7 @@ export default class Tree {
         console.log("After render", dateFormat(new Date(), "HH:MM:ss:l"))
 
         updateImgs()
+        this.update_hidden()
     }
 
     updateNesting() {

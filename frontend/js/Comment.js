@@ -72,7 +72,7 @@ export default class Comment {
                     <li class="comment-author"><a href="/profile/${this.author.login}" target="_blank">${this.author.login}</a></li>
     		</ul>
     		
-    		<div id=${"comment_content_id_"+this.id} class="comment-content text">
+    		<div id=${"comment_content_id_"+this.id} class="comment-content text${this.isDeleted? " hided":""}">
             ${this.isDeleted? `<div class="delete-reason">${this.deleteReason||"Нет причины удаления"}</div>`:''}
     		${this.isDeleted && LOGGED_IN && (IS_ADMIN || USERNAME == this.author.login) ? `<a href="#" onclick="ls.comments.showDeletedComment(${this.id}); return false;">Раскрыть комментарий</a>` : ""}
     		${this.text}
@@ -117,6 +117,12 @@ export default class Comment {
                                     ${this.countFavourite>0? " "+this.countFavourite : ""}
                                 </span>
                             </span>` : ""}
+    					    
+    					    <span>
+                                <a onclick="ls.comments.hideComment(${this.id}); return false;" href="#" class="comment-hide">
+                                    <i class="fa fa-close" title="Скрыть комментарий"></i>
+                                </a>
+                            </span>
          
     					    ${this.level>0? `<span class="goto-comment-parent">
                                 <a href="#" onclick="ls.comments.goToParentComment(${this.id},${this.parentId}); return false;" title="Перейти к родительскому комментарию">

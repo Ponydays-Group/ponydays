@@ -3,51 +3,42 @@
 
 
 
-{if $aBlogUsers}
-	<form method="post" enctype="multipart/form-data" class="mb-20">
-		<input type="hidden" name="security_ls_key" value="{$LIVESTREET_SECURITY_KEY}" />
-		
-		<table class="table table-users">
-			<thead>
-				<tr>
-					<th class="cell-name">{$aLang.blog_admin_users}</th>
-					<th class="ta-c">{$aLang.blog_admin_users_administrator}</th>
-					<th class="ta-c">{$aLang.blog_admin_users_moderator}</th>
-					<th class="ta-c">{$aLang.blog_admin_users_reader}</th>
-					<th class="ta-c">{$aLang.blog_admin_users_bun}</th>
-				</tr>
-			</thead>
-			
-			<tbody>
-				{foreach from=$aBlogUsers item=oBlogUser}
-					{assign var="oUser" value=$oBlogUser->getUser()}
-					
-					<tr>
-						<td class="cell-name">
-							<a href="{$oUser->getUserWebPath()}"><img src="{$oUser->getProfileAvatarPath(24)}" alt="avatar" class="avatar" /></a>
-							<a href="{$oUser->getUserWebPath()}">{$oUser->getLogin()}</a>
-						</td>
-						
-						{if $oUser->getId()==$oUserCurrent->getId()}
-							<td colspan="3">{$aLang.blog_admin_users_current_administrator}</td>
-						{else}
-							<td class="ta-c"><input type="radio" name="user_rank[{$oUser->getId()}]" value="administrator" {if $oBlogUser->getIsAdministrator()}checked{/if} /></td>
-							<td class="ta-c"><input type="radio" name="user_rank[{$oUser->getId()}]" value="moderator" {if $oBlogUser->getIsModerator()}checked{/if} /></td>
-							<td class="ta-c"><input type="radio" name="user_rank[{$oUser->getId()}]" value="reader" {if $oBlogUser->getUserRole()==$BLOG_USER_ROLE_USER}checked{/if} /></td>
-							<td class="ta-c"><input type="radio" name="user_rank[{$oUser->getId()}]" value="ban" {if $oBlogUser->getUserRole()==$BLOG_USER_ROLE_BAN}checked{/if} /></td>
-						{/if}
-					</tr>
-				{/foreach}
-			</tbody>
-		</table>
+{*{if $aBlogUsers}*}
+	{*<form method="post" enctype="multipart/form-data" class="mb-20">*}
+		{*<input type="hidden" name="security_ls_key" value="{$LIVESTREET_SECURITY_KEY}" />*}
+		{**}
+		{*{include file="actions/ActionBlog/admin_users_table.tpl"}*}
 
-		<button type="submit" name="submit_blog_admin" class="button button-primary">{$aLang.blog_admin_users_submit}</button>
+		{*<button type="submit" name="submit_blog_admin" class="button button-primary">{$aLang.blog_admin_users_submit}</button>*}
+	{*</form>*}
+
+	{*{include file='paging.tpl' aPaging=$aPaging}*}
+{*{else}*}
+	{*{$aLang.blog_admin_users_empty}*}
+{*{/if}*}
+
+<div id="list_wrapper">
+	<form action="" method="POST" id="form-users-search" onsubmit="return false;" class="search search-item">
+		<input name="blog_id" type="hidden" value="{$oBlog->getId()}" />
+		<input id="search-user-login" type="text" placeholder="{$aLang.user_search_title_hint}" autocomplete="off"
+			   name="user_login" value="" class="input-text"
+			   onkeyup="ls.timer.run(ls.user.searchBlogUsers, 'users_search',['form-users-search'],1000);">
 	</form>
 
-	{include file='paging.tpl' aPaging=$aPaging}
-{else}
-	{$aLang.blog_admin_users_empty}
-{/if}
+	<ul id="user-prefix-filter" class="search-abc">
+		<li class="active"><a href="#" class="link-dotted"
+							  onclick="return ls.user.searchBlogUsersByPrefix('',this);">{$aLang.user_search_filter_all}</a>
+		</li>
+        {foreach from=$aPrefixUser item=sPrefixUser}
+			<li><a href="#" class="link-dotted"
+				   onclick="return ls.user.searchBlogUsersByPrefix('{$sPrefixUser}',this);">{$sPrefixUser}</a></li>
+        {/foreach}
+	</ul>
+
+		<div id="users-list-search" class="hidden"></div>
+
+	<div id="users-list-original">{include file="actions/ActionBlog/admin_users_table.tpl"}</div>
+</div>
 
 
 

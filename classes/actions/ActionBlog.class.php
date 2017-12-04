@@ -137,7 +137,8 @@ class ActionBlog extends Action {
 		$this->AddEvent('ajaxrebloginvite', 'AjaxReBlogInvite');
 		$this->AddEvent('ajaxremovebloginvite', 'AjaxRemoveBlogInvite');
 		$this->AddEvent('ajaxbloginfo', 'AjaxBlogInfo');
-		$this->AddEvent('ajaxblogjoin', 'AjaxBlogJoin');
+        $this->AddEvent('ajaxblogjoin', 'AjaxBlogJoin');
+        $this->AddEvent('ajax-search', 'EventAjaxSearch');
 
 		$this->AddEventPreg('/^[\w\-\_]+$/i','/^(\d+)$/i', '/comments/', array('EventShowTopicComments','topic'));
 		$this->AddEventPreg('/^[\w\-\_]+$/i','/^(\d+)$/i',array('EventShowTopic','topic'));
@@ -242,6 +243,72 @@ class ActionBlog extends Action {
 			$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
 		}
 	}
+
+    protected function EventAjaxSearch() {
+        /**
+         * Устанавливаем формат Ajax ответа
+         */
+        $this->Viewer_SetResponseAjax('json');
+        /**
+         * Получаем из реквеста первые быквы для поиска пользователей по логину
+         */
+        $sBlogId=getRequest('blog_id');
+        if (!$oBlog=$this->Blog_GetBlogById($sBlogId)) {
+            return parent::EventNotFound();
+        }
+        if (!$this->User_IsAuthorization()) {
+            $this->Message_AddErrorSingle($this->Lang_Get('not_access'),$this->Lang_Get('error'));
+            return Router::Action('error');
+        }
+        /**
+         * Проверка на право редактировать блог
+         */
+        if (!$this->ACL_IsAllowEditBlog($oBlog, $this->oUserCurrent)) {
+            return parent::EventNotFound();
+        }
+        $sTitle=getRequest('user_login');
+        if (is_string($sTitle) and mb_strlen($sTitle,'utf-8')) {
+            $sTitle=str_replace(array('_','%'),array('\_','\%'),$sTitle);
+        } else {
+            $this->Message_AddErrorSingle($this->Lang_Get('system_error'));
+            return;
+        }
+        /**
+         * Как именно искать: совпадение в любой частилогина, или только начало или конец логина
+         */
+        if (getRequest('isPrefix')) {
+            $sTitle.='%';
+        } elseif (getRequest('isPostfix')) {
+            $sTitle='%'.$sTitle;
+        } else {
+            $sTitle='%'.$sTitle.'%';
+        }
+        /**
+         * Ищем пользователей
+         */
+        $aResult=$this->Blog_GetBlogUsersByBlogIdLike(
+            $oBlog->getId(),
+            array(
+                ModuleBlog::BLOG_USER_ROLE_BAN,
+                ModuleBlog::BLOG_USER_ROLE_RO,
+                ModuleBlog::BLOG_USER_ROLE_USER,
+                ModuleBlog::BLOG_USER_ROLE_MODERATOR,
+                ModuleBlog::BLOG_USER_ROLE_ADMINISTRATOR
+            ),1,Config::Get('module.blog.users_per_page'),$sTitle
+        );
+        /**
+         * Формируем ответ
+         */
+        $oViewer=$this->Viewer_GetLocalViewer();
+        $oViewer->Assign('aBlogUsers',$aResult['collection']);
+        $oViewer->Assign('oUserCurrent',$this->User_GetUserCurrent());
+        $oViewer->Assign('sUserListEmpty',$this->Lang_Get('user_search_empty'));
+        $oViewer->Assign('BLOG_USER_ROLE_BAN',ModuleBlog::BLOG_USER_ROLE_BAN);
+        $oViewer->Assign('BLOG_USER_ROLE_RO',ModuleBlog::BLOG_USER_ROLE_RO);
+        $oViewer->Assign('BLOG_USER_ROLE_USER',ModuleBlog::BLOG_USER_ROLE_USER);
+        $oViewer->Assign('LIVESTREET_SECURITY_KEY',$this->Security_GenerateSessionKey());
+        $this->Viewer_AssignAjax('sText',$oViewer->Fetch("actions/ActionBlog/admin_users_table.tpl"));
+    }
 	/**
 	 * Редактирование блога
 	 *
@@ -456,7 +523,8 @@ class ActionBlog extends Action {
 		 * Формируем постраничность
 		 */
 		$aPaging=$this->Viewer_MakePaging($aResult['count'],$iPage,Config::Get('module.blog.users_per_page'),Config::Get('pagination.pages.count'),Router::GetPath('blog')."admin/{$oBlog->getId()}");
-		$this->Viewer_Assign('aPaging',$aPaging);
+        $this->Viewer_Assign('aPaging',$aPaging);
+        $this->Viewer_Assign('oBlog',$oBlog);
 		/**
 		 * Устанавливаем title страницы
 		 */

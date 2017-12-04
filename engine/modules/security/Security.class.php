@@ -87,7 +87,7 @@ class ModuleSecurity extends Module {
 	 *
 	 * @return string
 	 */
-	protected function GenerateSessionKey() {
+	public function GenerateSessionKey() {
 		return md5($this->Session_GetId().Config::Get('module.security.hash'));
 	}
 	/**

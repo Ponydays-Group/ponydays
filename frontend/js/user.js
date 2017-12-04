@@ -501,12 +501,56 @@ export function searchUsers(form) {
     });
 };
 
+export function searchBlogUsers(form) {
+    var url = aRouter['blog'] + 'ajax-search/';
+    var inputSearch = $('#' + form).find('input');
+    inputSearch.addClass('loader');
+
+    Emitter.emit('searchUsersBefore');
+    Ajax.ajaxSubmit(url, form, function (result) {
+        inputSearch.removeClass('loader');
+        if (result.bStateError) {
+            $('#users-list-search').addClass("hidden");
+            $('#users-list-original').removeClass("hidden");
+        } else {
+            $('#users-list-original').addClass("hidden");
+            $('#users-list-search').html(result.sText).removeClass("hidden");
+            Emitter.emit('ls_user_search_users_after', [form, result]);
+        }
+    });
+};
+
+
+
 /**
  * Поиск пользователей по началу логина
  */
 export function searchUsersByPrefix(sPrefix, obj) {
     obj = $(obj);
     var url = aRouter['people'] + 'ajax-search/';
+    var params = {user_login: sPrefix, isPrefix: 1};
+    $('#search-user-login').addClass('loader');
+
+    Emitter.emit('searchUsersByPrefixBefore');
+    Ajax.ajax(url, params, function (result) {
+        $('#search-user-login').removeClass('loader');
+        $('#user-prefix-filter').find('.active').removeClass('active');
+        obj.parent().addClass('active');
+        if (result.bStateError) {
+            $('#users-list-search').hide();
+            $('#users-list-original').show();
+        } else {
+            $('#users-list-original').hide();
+            $('#users-list-search').html(result.sText).show();
+            Emitter.emit('ls_user_search_users_by_prefix_after', [sPrefix, obj, result]);
+        }
+    });
+    return false;
+};
+
+export function searchBlogUsersByPrefix(sPrefix, obj) {
+    obj = $(obj);
+    var url = aRouter['blog'] + 'ajax-search/';
     var params = {user_login: sPrefix, isPrefix: 1};
     $('#search-user-login').addClass('loader');
 

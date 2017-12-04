@@ -182,45 +182,88 @@ class ModuleBlog_MapperBlog extends Mapper {
 	 * @param int $iPerPage		Количество элементов на одну страницу
 	 * @return array
 	 */
-	public function GetBlogUsers($aFilter,&$iCount=null,$iCurrPage=null,$iPerPage=null) {
-		$sWhere=' 1=1 ';
-		if (isset($aFilter['blog_id'])) {
-			$sWhere.=" AND bu.blog_id =  ".(int)$aFilter['blog_id'];
-		}
-		if (isset($aFilter['user_id'])) {
-			$sWhere.=" AND bu.user_id =  ".(int)$aFilter['user_id'];
-		}
-		if (isset($aFilter['user_role'])) {
-			if(!is_array($aFilter['user_role'])) {
-				$aFilter['user_role']=array($aFilter['user_role']);
-			}
-			$sWhere.=" AND bu.user_role IN ('".join("', '",$aFilter['user_role'])."')";
-		} else {
-			$sWhere.=" AND bu.user_role>".ModuleBlog::BLOG_USER_ROLE_GUEST;
-		}
+    public function GetBlogUsers($aFilter,&$iCount=null,$iCurrPage=null,$iPerPage=null) {
+        $sWhere=' 1=1 ';
+        if (isset($aFilter['blog_id'])) {
+            $sWhere.=" AND bu.blog_id =  ".(int)$aFilter['blog_id'];
+        }
+        if (isset($aFilter['user_id'])) {
+            $sWhere.=" AND bu.user_id =  ".(int)$aFilter['user_id'];
+        }
+        if (isset($aFilter['user_role'])) {
+            if(!is_array($aFilter['user_role'])) {
+                $aFilter['user_role']=array($aFilter['user_role']);
+            }
+            $sWhere.=" AND bu.user_role IN ('".join("', '",$aFilter['user_role'])."')";
+        } else {
+            $sWhere.=" AND bu.user_role>".ModuleBlog::BLOG_USER_ROLE_GUEST;
+        }
 
-		$sql = "SELECT
+        $sql = "SELECT
 					bu.*				
 				FROM 
 					".Config::Get('db.table.blog_user')." as bu
 				WHERE 
 					".$sWhere." ";
 
-		if (is_null($iCurrPage)) {
-			$aRows=$this->oDb->select($sql);
-		} else {
-			$sql.=" LIMIT ?d, ?d ";
-			$aRows=$this->oDb->selectPage($iCount,$sql,($iCurrPage-1)*$iPerPage, $iPerPage);
-		}
+        if (is_null($iCurrPage)) {
+            $aRows=$this->oDb->select($sql);
+        } else {
+            $sql.=" LIMIT ?d, ?d ";
+            $aRows=$this->oDb->selectPage($iCount,$sql,($iCurrPage-1)*$iPerPage, $iPerPage);
+        }
 
-		$aBlogUsers=array();
-		if ($aRows) {
-			foreach ($aRows as $aUser) {
-				$aBlogUsers[]=Engine::GetEntity('Blog_BlogUser',$aUser);
-			}
-		}
-		return $aBlogUsers;
-	}
+        $aBlogUsers=array();
+        if ($aRows) {
+            foreach ($aRows as $aUser) {
+                $aBlogUsers[]=Engine::GetEntity('Blog_BlogUser',$aUser);
+            }
+        }
+        return $aBlogUsers;
+    }
+
+    public function GetBlogUsersLike($aFilter,&$iCount=null,$iCurrPage=null,$iPerPage=null) {
+        $sWhere=' 1=1 ';
+        if (isset($aFilter['blog_id'])) {
+            $sWhere.=" AND bu.blog_id =  ".(int)$aFilter['blog_id'];
+        }
+        if (isset($aFilter['user_id'])) {
+            $sWhere.=" AND bu.user_id =  ".(int)$aFilter['user_id'];
+        }
+        if (isset($aFilter['user_login'])) {
+            $sWhere.=" AND bu.user_id IN (SELECT user_id FROM ".Config::Get('db.table.user')." WHERE user_login LIKE \"".$aFilter['user_login']."\")  ";
+        }
+        if (isset($aFilter['user_role'])) {
+            if(!is_array($aFilter['user_role'])) {
+                $aFilter['user_role']=array($aFilter['user_role']);
+            }
+            $sWhere.=" AND bu.user_role IN ('".join("', '",$aFilter['user_role'])."')";
+        } else {
+            $sWhere.=" AND bu.user_role>".ModuleBlog::BLOG_USER_ROLE_GUEST;
+        }
+
+        $sql = "SELECT
+					bu.*				
+				FROM 
+					".Config::Get('db.table.blog_user')." as bu
+				WHERE 
+					".$sWhere." ";
+
+        if (is_null($iCurrPage)) {
+            $aRows=$this->oDb->select($sql);
+        } else {
+            $sql.=" LIMIT ?d, ?d ";
+            $aRows=$this->oDb->selectPage($iCount,$sql,($iCurrPage-1)*$iPerPage, $iPerPage);
+        }
+
+        $aBlogUsers=array();
+        if ($aRows) {
+            foreach ($aRows as $aUser) {
+                $aBlogUsers[]=Engine::GetEntity('Blog_BlogUser',$aUser);
+            }
+        }
+        return $aBlogUsers;
+    }
 	/**
 	 * Получает список отношений пользователя к блогам
 	 *

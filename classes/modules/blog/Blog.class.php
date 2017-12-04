@@ -401,47 +401,99 @@ class ModuleBlog extends Module {
 	 * @param int $iPerPage	Количество элементов на одну страницу
 	 * @return array
 	 */
-	public function GetBlogUsersByBlogId($sBlogId,$iRole=null,$iPage=1,$iPerPage=100) {
-		$aFilter=array(
-			'blog_id'=> $sBlogId,
-		);
-		if($iRole!==null) {
-			$aFilter['user_role']=$iRole;
-		}
-		$s=serialize($aFilter);
-		if (false === ($data = $this->Cache_Get("blog_relation_user_by_filter_{$s}_{$iPage}_{$iPerPage}"))) {
-			$data = array('collection'=>$this->oMapperBlog->GetBlogUsers($aFilter,$iCount,$iPage,$iPerPage),'count'=>$iCount);
-			$this->Cache_Set($data, "blog_relation_user_by_filter_{$s}_{$iPage}_{$iPerPage}", array("blog_relation_change_blog_{$sBlogId}"), 60*60*24*3);
-		}
-		/**
-		 * Достаем дополнительные данные, для этого формируем список юзеров и делаем мульти-запрос
-		 */
-		if ($data['collection']) {
-			$aUserId=array();
-			foreach ($data['collection'] as $oBlogUser) {
-				$aUserId[]=$oBlogUser->getUserId();
-			}
-			$aUsers=$this->User_GetUsersAdditionalData($aUserId);
-			$aBlogs=$this->Blog_GetBlogsAdditionalData($sBlogId);
+    public function GetBlogUsersByBlogId($sBlogId,$iRole=null,$iPage=1,$iPerPage=100, $sLoginFilter=null) {
+        $aFilter=array(
+            'blog_id'=> $sBlogId,
+        );
+        if($iRole!==null) {
+            $aFilter['user_role']=$iRole;
+        }
+        if($sLoginFilter!==null) {
+            $aFilter['user_role']=$iRole;
+        }
 
-			$aResults=array();
-			foreach ($data['collection'] as $oBlogUser) {
-				if (isset($aUsers[$oBlogUser->getUserId()])) {
-					$oBlogUser->setUser($aUsers[$oBlogUser->getUserId()]);
-				} else {
-					$oBlogUser->setUser(null);
-				}
-				if (isset($aBlogs[$oBlogUser->getBlogId()])) {
-					$oBlogUser->setBlog($aBlogs[$oBlogUser->getBlogId()]);
-				} else {
-					$oBlogUser->setBlog(null);
-				}
-				$aResults[$oBlogUser->getUserId()]=$oBlogUser;
-			}
-			$data['collection']=$aResults;
-		}
-		return $data;
-	}
+        $s=serialize($aFilter);
+        if (false === ($data = $this->Cache_Get("blog_relation_user_by_filter_{$s}_{$iPage}_{$iPerPage}"))) {
+            $data = array('collection'=>$this->oMapperBlog->GetBlogUsers($aFilter,$iCount,$iPage,$iPerPage),'count'=>$iCount);
+            $this->Cache_Set($data, "blog_relation_user_by_filter_{$s}_{$iPage}_{$iPerPage}", array("blog_relation_change_blog_{$sBlogId}"), 60*60*24*3);
+        }
+        /**
+         * Достаем дополнительные данные, для этого формируем список юзеров и делаем мульти-запрос
+         */
+        if ($data['collection']) {
+            $aUserId=array();
+            foreach ($data['collection'] as $oBlogUser) {
+                $aUserId[]=$oBlogUser->getUserId();
+            }
+            $aUsers=$this->User_GetUsersAdditionalData($aUserId);
+            $aBlogs=$this->Blog_GetBlogsAdditionalData($sBlogId);
+
+            $aResults=array();
+            foreach ($data['collection'] as $oBlogUser) {
+                if (isset($aUsers[$oBlogUser->getUserId()])) {
+                    $oBlogUser->setUser($aUsers[$oBlogUser->getUserId()]);
+                } else {
+                    $oBlogUser->setUser(null);
+                }
+                if (isset($aBlogs[$oBlogUser->getBlogId()])) {
+                    $oBlogUser->setBlog($aBlogs[$oBlogUser->getBlogId()]);
+                } else {
+                    $oBlogUser->setBlog(null);
+                }
+                $aResults[$oBlogUser->getUserId()]=$oBlogUser;
+            }
+            $data['collection']=$aResults;
+        }
+        return $data;
+    }
+
+    public function GetBlogUsersByBlogIdLike($sBlogId,$iRole=null,$iPage=1,$iPerPage=100, $sLoginFilter=null) {
+        $aFilter=array(
+            'blog_id'=> $sBlogId,
+        );
+        if($iRole!==null) {
+            $aFilter['user_role']=$iRole;
+        }
+        if($sLoginFilter!==null) {
+//        	echo "NOT NULL!";
+            $aFilter['user_login']=$sLoginFilter;
+//            var_dump($aFilter);
+        }
+
+        $s=serialize($aFilter);
+        if (false === ($data = $this->Cache_Get("blog_relation_user_by_filter_{$s}_{$iPage}_{$iPerPage}"))) {
+            $data = array('collection'=>$this->oMapperBlog->GetBlogUsersLike($aFilter,$iCount,$iPage,$iPerPage),'count'=>$iCount);
+            $this->Cache_Set($data, "blog_relation_user_by_filter_{$s}_{$iPage}_{$iPerPage}", array("blog_relation_change_blog_{$sBlogId}"), 60*60*24*3);
+        }
+        /**
+         * Достаем дополнительные данные, для этого формируем список юзеров и делаем мульти-запрос
+         */
+        if ($data['collection']) {
+            $aUserId=array();
+            foreach ($data['collection'] as $oBlogUser) {
+                $aUserId[]=$oBlogUser->getUserId();
+            }
+            $aUsers=$this->User_GetUsersAdditionalData($aUserId);
+            $aBlogs=$this->Blog_GetBlogsAdditionalData($sBlogId);
+
+            $aResults=array();
+            foreach ($data['collection'] as $oBlogUser) {
+                if (isset($aUsers[$oBlogUser->getUserId()])) {
+                    $oBlogUser->setUser($aUsers[$oBlogUser->getUserId()]);
+                } else {
+                    $oBlogUser->setUser(null);
+                }
+                if (isset($aBlogs[$oBlogUser->getBlogId()])) {
+                    $oBlogUser->setBlog($aBlogs[$oBlogUser->getBlogId()]);
+                } else {
+                    $oBlogUser->setBlog(null);
+                }
+                $aResults[$oBlogUser->getUserId()]=$oBlogUser;
+            }
+            $data['collection']=$aResults;
+        }
+        return $data;
+    }
 	/**
 	 * Получает отношения юзера к блогам(состоит в блоге или нет)
 	 *

@@ -22,9 +22,12 @@ export function preview(form, preview) {
     });
 };
 
-export function insertImageToEditor(sUrl, sAlign, sTitle) {
+export function insertImageToEditor(sUrl, bSpoil, sAlign, sTitle) {
     sAlign = sAlign == 'center' ? 'class="image-center"' : 'align="' + sAlign + '"';
-    $.markItUp({replaceWith: '<img src="' + sUrl + '" title="' + sTitle + '" ' + sAlign + ' />'});
+    $.markItUp({replaceWith:
+        (bSpoil? '<span class="spoiler"><span class="spoiler-title spoiler-close">'+prompt('Спойлер')+'</span><span class="spoiler-body">':'') +
+        '<img src="' + sUrl + '" title="' + sTitle + '" ' + sAlign + ' />'
+        +(bSpoil?'</span></span>':'')});
     $('#window_upload_img').find('input[type="text"]').val('');
     $('#window_upload_img').jqmHide();
     return false;

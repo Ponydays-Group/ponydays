@@ -129,7 +129,11 @@ export async function ajaxUploadImg(form, sToLoad) {
             if (!data.sText.length) {
                 Msg.error("Ошибка", "Сервер не отдал картинку");
             }
-            $.markItUp({replaceWith: data.sText});
+            if ($(form).find("#img_spoil").prop('checked')) {
+                $.markItUp({replaceWith: '<span class="spoiler"><span class="spoiler-title spoiler-close">'+prompt('Спойлер')+'</span><span class="spoiler-body">'+data.sText+'</span></span>'});
+            } else {
+                $.markItUp({replaceWith: data.sText});
+            }
             $('#window_upload_img').find('input[type="text"], input[type="file"]').val('');
             $('#window_upload_img').jqmHide();
             Emitter.emit('ajaxUploadImgAfter');

@@ -274,12 +274,24 @@ class ModuleText extends Module {
 	}
 
     public function RelativeLinkParser(string $sText) : string {
-        $sText = str_replace("href=\"https://alpha.lunavod.ru","href=\"", $sText);
-        $sText = str_replace("href=\"https://bunker.lunavod.ru","href=\"", $sText);
-        $sText = str_replace("href=\"http://alpha.lunavod.ru","href=\"", $sText);
-        $sText = str_replace("href=\"http://bunker.lunavod.ru","href=\"", $sText);
-        $sText = str_replace("href=\"alpha.lunavod.ru","href=\"", $sText);
-        $sText = str_replace("href=\"bunker.lunavod.ru","href=\"", $sText);
+        $sText = str_replace("href=\"".Config::Get("path.root.web"),"href=\"", $sText);
+        $sText = str_replace("href='".Config::Get("path.root.web"),"href='", $sText);
+
+        return $sText;
+	}
+
+	public function CommentParser($oComment) {
+		$sText = $oComment->getText();
+
+        if ($oComment->getTargetType()=="topic") {
+        	$oTarget = $this->Topic_GetTopicById($oComment->getTargetId());
+		} else {
+            $oTarget = $this->Talk_GetTalkById($oComment->getTargetId());
+		}
+
+        $sText = str_replace('href="'.$oTarget->getUrl(),"href=\"", $sText);
+        $sText = str_replace("href='".$oTarget->getUrl(),"href='", $sText);
+
         return $sText;
 	}
 }

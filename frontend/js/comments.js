@@ -55,7 +55,7 @@ export let lastNewComment = 0
 export async function loadComments() {
 	let url = ""
 
-	if ((DIR_WEB_ROOT + location.pathname).startsWith(aRouter["talk"])) {
+	if ((location.pathname).startsWith(aRouter["talk"])) {
 		url = location.href.replace("read", "readcomments")
 	} else {
 		url = window.location.pathname + "/comments"

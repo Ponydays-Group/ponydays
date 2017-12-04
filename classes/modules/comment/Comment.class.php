@@ -478,8 +478,7 @@ class ModuleComment extends Module {
 			$sId=$this->oMapper->AddCommentTree($oComment);
 			$this->Cache_Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG,array("comment_update"));
 		} else {
-			$sHost = preg_replace('/(http:\/\/|https:\/\/|\/\/)/', '', iconv_substr(Config::Get('path.root.web'), 0, -1));
-			$oComment->setText(preg_replace('/href="(http|https):\/\/'.$sHost.'(\/)/', 'href="/', $oComment->getText()));
+            $oComment->setText($this->Text_CommentParser($oComment));
 			$sId=$this->oMapper->AddComment($oComment);
 		}
 		if ($sId) {

@@ -30,38 +30,38 @@
             </ul>
             <ul class="nav navbar-nav navbar-right" id="navbar-right-big">
                 {if $oUserCurrent}
-                    <li id="head_collaps">
+                    <li id="head_collaps" title="Свернуть/развернуть шапку">
                         <i class="material-icons">keyboard_arrow_up</i>
                     </li>
                     <li>
-                        <a class="iconic" href="{router page='topic'}add/" id="modal_write_show"><i
+                        <a class="iconic" title="Написать пост" href="{router page='topic'}add/" id="modal_write_show"><i
                                     class="material-icons">mode_edit</i></a>
                     </li>
                     <li>
-                        <a class="iconic" href="{router page='feedbacks'}"><i class="material-icons">question_answer</i></a>
+                        <a class="iconic" title="Ответы" href="{router page='feedbacks'}"><i class="material-icons">question_answer</i></a>
                     </li>
                     <li>
-                        <a class="iconic" href="{$oUserCurrent->getUserWebPath()}favourites/topics/"><i
+                        <a class="iconic" title="Избранное" href="{$oUserCurrent->getUserWebPath()}favourites/topics/"><i
                                     class="material-icons">favorite</i></a>
                     </li>
                     <li>
-                        <a class="iconic" href="{router page='settings'}profile/"><i class="material-icons">settings</i></a>
+                        <a class="iconic" title="Настройки" href="{router page='settings'}profile/"><i class="material-icons">settings</i></a>
                     </li>
                     <li>
-                        <a class="iconic"
+                        <a class="iconic" title="Выход"
                            href="{router page='login'}exit/?security_ls_key={$LIVESTREET_SECURITY_KEY}"><i
                                     class="material-icons">exit_to_app</i></a>
                     </li>
                 {else}
-                    <li id="head_collaps">
+                    <li id="head_collaps"  title="Свернуть/развернуть шапку">
                         <i class="material-icons">keyboard_arrow_up</i>
                     </li>
-                    <li><a href="{router page='login'}" class="js-login-form-show">{$aLang.user_login_submit}</a></li>
-                    <li><a href="{router page='registration'}"
+                    <li><a title="Войти" href="{router page='login'}" class="js-login-form-show">{$aLang.user_login_submit}</a></li>
+                    <li><a title="Регистрация" href="{router page='registration'}"
                            class="js-registration-form-show">{$aLang.registration_submit}</a></li>
                 {/if}
                 <li>
-                    <a href="{if $oUserCurrent}{$oUserCurrent->getUserWebPath()}{/if}"
+                    <a href="{if $oUserCurrent}{$oUserCurrent->getUserWebPath()}{/if}"  title="{if $oUserCurrent}{$oUserCurrent->getLogin()}{/if}"
                        class="user-wrapper {if $oUserCurrent}with-login{/if}">{if $oUserCurrent}{$oUserCurrent->getLogin()}{/if}
                         <span class="avatar-wrapper"><img
                                     src="{if $oUserCurrent}{$oUserCurrent->getProfileAvatarPath(48)}{else}https://chenhan1218.github.io/img/profile.png{/if}"
@@ -77,35 +77,34 @@
                                     alt="avatar" class="avatar"/></span></a>
                     <ul class="dropd">
                         {if $oUserCurrent}
-                            <li id="head_collaps">
+                            <li id="head_collaps" title="Свернуть/развернуть шапку">
                                 <i class="material-icons">keyboard_arrow_up</i>
                             </li>
                             <li>
-                                <a class="iconic" href="{router page='topic'}add/" id="modal_write_show"><i
+                                <a class="iconic" title="Написать пост" href="{router page='topic'}add/" id="modal_write_show"><i
                                             class="material-icons">mode_edit</i></a>
                             </li>
                             <li>
-                                <a class="iconic" href="{router page='feedbacks'}"><i class="material-icons">question_answer</i></a>
+                                <a class="iconic" title="Ответы" href="{router page='feedbacks'}"><i class="material-icons">question_answer</i></a>
                             </li>
                             <li>
-                                <a class="iconic" href="{$oUserCurrent->getUserWebPath()}favourites/topics/"><i
+                                <a class="iconic" title="Избранное" href="{$oUserCurrent->getUserWebPath()}favourites/topics/"><i
                                             class="material-icons">favorite</i></a>
                             </li>
                             <li>
-                                <a class="iconic" href="{router page='settings'}profile/"><i class="material-icons">settings</i></a>
+                                <a class="iconic" title="Настройки" href="{router page='settings'}profile/"><i class="material-icons">settings</i></a>
                             </li>
                             <li>
-                                <a class="iconic"
+                                <a class="iconic" title="Выход"
                                    href="{router page='login'}exit/?security_ls_key={$LIVESTREET_SECURITY_KEY}"><i
                                             class="material-icons">exit_to_app</i></a>
                             </li>
                         {else}
-                            <li id="head_collaps">
+                            <li id="head_collaps"  title="Свернуть/развернуть шапку">
                                 <i class="material-icons">keyboard_arrow_up</i>
                             </li>
-                            <li><a href="{router page='login'}"
-                                   class="js-login-form-show">{$aLang.user_login_submit}</a></li>
-                            <li><a href="{router page='registration'}"
+                            <li><a title="Войти" href="{router page='login'}" class="js-login-form-show">{$aLang.user_login_submit}</a></li>
+                            <li><a title="Регистрация" href="{router page='registration'}"
                                    class="js-registration-form-show">{$aLang.registration_submit}</a></li>
                         {/if}
                     </ul>

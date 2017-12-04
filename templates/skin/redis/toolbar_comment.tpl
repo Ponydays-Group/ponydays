@@ -2,7 +2,7 @@
     {assign var=aPagingCmt value=$params.aPagingCmt}
     <div class="rightbar-item delim-top" id="prevcomment">
         <a href="#" id="prev_new" class="update-comments disabled"
-           onclick="ls.comments.goToPrevComment(); return false;" title="Прошлый новый комментарий"><i id="go-back"
+           onclick="ls.comments.goToPrevComment(); return false;" title="Предыдущий комментарий"><i id="go-back"
                                                                                                        class="material-icons">keyboard_arrow_up</i></a>
     </div>
     <div class="rightbar-item" id="update" style="{if $aPagingCmt and $aPagingCmt.iCountPage > 1}display: none;{/if}">

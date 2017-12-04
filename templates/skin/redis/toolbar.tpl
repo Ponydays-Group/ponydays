@@ -2,7 +2,7 @@
     <div id="rightbar_menu_top">
 
         <div class="rightbar-item with_dropd user_item">
-            <a href="{if $oUserCurrent}{$oUserCurrent->getUserWebPath()}{/if}">
+            <a href="{if $oUserCurrent}{$oUserCurrent->getUserWebPath()}{/if}"  title="${$oUserCurrent->getLogin()}">
                 <img
                         src="{if $oUserCurrent}{$oUserCurrent->getProfileAvatarPath(48)}{else}https://chenhan1218.github.io/img/profile.png{/if}"
                         alt="avatar" class="avatar"/>
@@ -10,19 +10,19 @@
             {if $oUserCurrent}
                 <div class="dropd">
                     <div class="dropd-item">
-                        <a href="{router page='topic'}add/" id="modal_write_show"><i class="material-icons">mode_edit</i></a>
+                        <a href="{router page='topic'}add/" title="Написать пост" id="modal_write_show"><i class="material-icons">mode_edit</i></a>
                     </div>
                     <div class="dropd-item">
-                        <a href="{router page='feedbacks'}"><i class="material-icons">question_answer</i></a>
+                        <a href="{router page='feedbacks'}" title="Ответы"><i class="material-icons">question_answer</i></a>
                     </div>
                     <div class="dropd-item">
-                        <a href="{$oUserCurrent->getUserWebPath()}favourites/topics/"><i class="material-icons">favorite</i></a>
+                        <a href="{$oUserCurrent->getUserWebPath()}favourites/topics/" title="Избранное"><i class="material-icons">favorite</i></a>
                     </div>
                     <div class="dropd-item">
-                        <a href="{router page='settings'}profile/"><i class="material-icons">settings</i></a>
+                        <a href="{router page='settings'}profile/" title="Настройки"><i class="material-icons">settings</i></a>
                     </div>
                     <div class="dropd-item">
-                        <a href="{router page='login'}exit/?security_ls_key={$LIVESTREET_SECURITY_KEY}"><i class="material-icons">exit_to_app</i></a>
+                        <a href="{router page='login'}exit/?security_ls_key={$LIVESTREET_SECURITY_KEY}"  title="Выход"><i class="material-icons">exit_to_app</i></a>
                     </div>
                 </div>
             {/if}
@@ -53,7 +53,7 @@
 
     <div id="rightbar_menu_bottom">
 
-        <div class="rightbar-item keyboard_shortcuts_trigger">
+        <div class="rightbar-item keyboard_shortcuts_trigger"  title="Клавиатурные сокращения">
             <a href="#" title="Shortcuts" onclick="return false;">
                 <i class="material-icons">keyboard</i>
             </a>

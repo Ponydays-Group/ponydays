@@ -478,6 +478,7 @@ class ActionSettings extends Action {
 					if (getRequestStr('password')==getRequestStr('password_confirm')) {
 						if (checkPassword($this->oUserCurrent->getPassword(), getRequestStr('password_now'))) {
 							$this->oUserCurrent->setPassword(encryptPassword(getRequestStr('password')));
+                            $this->ModuleUser_Authorization($this->oUserCurrent);
 						} else {
 							$bError=true;
 							$this->Message_AddError($this->Lang_Get('settings_profile_password_current_error'),$this->Lang_Get('error'));

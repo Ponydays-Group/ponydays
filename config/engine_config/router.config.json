@@ -33,7 +33,8 @@
             "feedbacks": "ActionFeedbacks",
             "page": "ActionPage",
             "quotes": "ActionQuotes",
-            "server": "ActionServer"
+            "server": "ActionServer",
+            "info": "ActionInfo"
         },
         "config": {
             "action_default": "index",

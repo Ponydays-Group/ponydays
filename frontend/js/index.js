@@ -1,4 +1,4 @@
-window.getCookie = function(name) {
+window.getCookie = function (name) {
     var matches = document.cookie.match(new RegExp(
         "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
     ));
@@ -6,7 +6,7 @@ window.getCookie = function(name) {
 }
 
 
-window.switchTheme = function() {
+window.switchTheme = function () {
     let date = new Date;
     date.setDate(date.getDate() + 100);
     if (getCookie("SiteStyle") == "Dark") {
@@ -18,11 +18,11 @@ window.switchTheme = function() {
 }
 
 
-String.prototype.tr = function(a, p) {
+String.prototype.tr = function (a, p) {
     var k;
     var p = typeof(p) == 'string' ? p : '';
     var s = this;
-    jQuery.each(a, function(k) {
+    jQuery.each(a, function (k) {
         var tk = p ? p.split('/') : [];
         tk[tk.length] = k;
         var tp = tk.join('/');
@@ -30,12 +30,13 @@ String.prototype.tr = function(a, p) {
             s = s.tr(a[k], tp);
         } else {
             s = s.replace((new RegExp('%%' + tp + '%%', 'g')), a[k]);
-        };
+        }
+        ;
     });
     return s;
 };
 
-let extend = function(self, obj) {
+let extend = function (self, obj) {
     for (var i in obj) {
         if (obj.hasOwnProperty(i)) {
             self[i] = obj[i];
@@ -110,3 +111,129 @@ console.log(ls)
 window.ls = ls;
 
 console.log("Hello, world!")
+
+window.lastWindow = 0
+window.info = {action: "", target: null, visible: false, currentWindow: 0}
+
+async function handler(e) {
+    let profile_exp = /\/profile\/[a-zA-Zа-яА-Я_0-9]+$/
+    let profile_exp_s = /\/profile\/[a-zA-Zа-яА-Я_0-9]+\/$/
+    // let blog_exp = /\/blog\/[a-zA-Z]+$/
+    // let blog_exp_s = /\/blog\/[a-zA-Z]+\/$/
+    let topic_exp = /\/blog\/[a-zA-Z]+\/\d+$/
+    // let talk_exp = /\/talk\/read\/\d+$/
+    // let talk_exp_s = /\/talk\/read\/\d+\/$/
+    let comment_exp = /#comment\d+$/
+
+    function cb(target, el, windowid) {
+        if (info.target != target && !$(info.target).parents(`[data-floatwindowid="${windowid}"]`).length) {
+            // console.log("REMOVE", windowid, info.currentWindow)
+            info.visible = false
+            el.animate({opacity: 0}, 100)
+            setTimeout(() => el.remove(), 100)
+            return
+        }
+        // console.log("TIMEOUT")
+        setTimeout(cb.bind({}, target, el, windowid), 1000)
+    }
+
+    info.action = ""
+
+    if (e.target.tagName == "A" || $(e.target).parents("a").length) {
+        if (e.target == info.target) {
+            return
+        }
+        info.target = e.target
+        let s = e.target.getAttribute("href") ||$(e.target).parents("a")[0].getAttribute("href")
+        if (s.match(profile_exp))
+            info.action = "profile"
+        if (s.match(profile_exp_s))
+            info.action = "profile"
+        // if (s.match(blog_exp))
+        //     info.action = "blog"
+        // if (s.match(blog_exp_s))
+        //     info.action = "blog"
+        if (s.match(topic_exp))
+            info.action = "topic"
+        // if (s.match(talk_exp))
+        //     info.action = "talk"
+        // if (s.match(talk_exp_s))
+        //     info.action = "talk"
+        if (s.match(comment_exp))
+            info.action = "comment"
+
+        // console.log(window.info.currentWindow, info.currentWindow)
+        let data = {}
+        switch (info.action) {
+            case "topic":
+                data = {iTopicId: s.match(/\d+/)[0]}
+                break
+            case "comment":
+                data = {iCommentId: s.match(/\d+$/)[0]}
+                break
+            case "profile":
+                data = {sLogin: (s.match(/\/profile\/[a-zA-Zа-яА-Я_0-9]+$/) || s.match(/\/profile\/[a-zA-Zа-яА-Я_0-9]+\/$/))[0].replace("/profile/", "").replace("/", "")}
+                break
+            default:
+                return
+        }
+
+        await new Promise(function (resolve) {
+            setTimeout(() => resolve(), parseInt(localStorage.getItem("float_window_wait"))||1000)
+        })
+
+        if (info.target != e.target) {
+            return
+        }
+
+        if ((info.currentWindow == $(e.target).data('floatwindow')) && info.visible) {
+            let el = $(`[data-floatwindowid="${$(e.target).data('floatwindow')}"]`)
+            el.css({left: (e.pageX>($(window).width()/2)? e.pageX-el.width()+10 : e.pageX-10) + "px"})
+            return
+        }
+
+        let resp = await Ajax.asyncAjax("/info/" + info.action, data)
+        console.log("AJAX Loaded")
+
+        lastWindow += 1
+        info.currentWindow = lastWindow
+
+        $(e.target).data('floatwindow', info.currentWindow)
+
+        let el = $(`
+                <div class="float-info" data-floatwindowid="${info.currentWindow}">
+                    ${resp.sText}
+                </div>
+            `)
+        el.appendTo(document.body)
+        el.css({
+            position: "absolute",
+            maxWidth: "500px",
+            zIndex: 1000,
+            opacity: 0
+        })
+        if (e.clientY>($(window).height()/2) && (e.pageY-el.height())>0) {
+            // console.log("BOTTOM")
+            el.css({
+                bottom: $(window).height() - e.pageY + "px",
+                left: (e.pageX > ($(window).width() / 2) ? e.pageX - el.width() : e.pageX) + "px",
+            })
+        } else {
+            // console.log("TOP")
+            el.css({
+                top: e.pageY + 5 + "px",
+                left: (e.pageX > ($(window).width() / 2) ? e.pageX - el.width() : e.pageX) + "px",
+            })
+        }
+        el.animate({opacity: 1}, 300)
+
+        setTimeout(cb.bind({}, e.target, el, info.currentWindow), 1000)
+
+        info.visible = true
+    }
+
+    info.target = e.target
+
+}
+
+$(document).ready(() => document.body.onmouseover = document.body.onmouseout = handler)

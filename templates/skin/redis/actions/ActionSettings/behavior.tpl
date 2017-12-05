@@ -15,6 +15,9 @@
 	
 	<label for="min_comment_width">{$aLang.min_comment_width_behavior_label}</label>
 	<input type="number" min=100 max=700 value=250 name="min_comment_width" class="input-width-300" data-save=1 /><br/>
+
+	<label for="float_window_wait">Ожидание до отображения всплывающего окна (мс)</label>
+	<input type="number" min=100 max=99999 value=1000 name="float_window_wait" class="input-width-300" data-save=1 /><br/>
 	
 	<fieldset>
 <span class="checkbox">

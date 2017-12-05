@@ -26,6 +26,12 @@
                         <span class="favourite-count" id="fav_count_comment_{$oComment->getId()}">{if $oComment->getCountFavourite() > 0}{$oComment->getCountFavourite()}{/if}</span>
                     </li>
                 {/if}
+                {if $oComment->getPid()}
+                    <li>
+                    <a href="{$oTarget->GetUrl()}#comment{$oComment->getPid()}" title="Перейти к родительскому комментарию">
+                        ↑
+                    </a></li>
+                {/if}
                 <li id="vote_area_comment_{$oComment->getId()}" class="vote 
 																		{if $oComment->getRating() > 0}
 																			vote-count-positive

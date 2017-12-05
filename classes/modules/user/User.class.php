@@ -594,7 +594,12 @@ class ModuleUser extends Module
             return;
         }
         if (isset($_COOKIE['key']) and is_string($_COOKIE['key']) and $sKey = $_COOKIE['key']) {
-            if ($oUser = $this->GetUserBySessionKey($sKey) && $sKey == $this->GenerateUserKey($oUser)) {
+            $oUser = $this->GetUserBySessionKey($sKey);
+            if ($oUser == null) {
+                $this->Logout();
+                return;
+            }
+            if ($sKey == $this->GenerateUserKey($oUser)) {
                 $this->Authorization($oUser);
             } else {
                 $this->Logout();

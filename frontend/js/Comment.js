@@ -125,7 +125,7 @@ export default class Comment {
                             </span>
          
     					    ${this.level>0? `<span class="goto-comment-parent">
-                                <a href="#" onclick="ls.comments.goToParentComment(${this.id},${this.parentId}); return false;" title="Перейти к родительскому комментарию">
+                                <a href="#comment${this.parentId}" onclick="ls.comments.goToParentComment(${this.id},${this.parentId}); return false;" title="Перейти к родительскому комментарию">
                                     ↑
                                 </a>
                             </span>`:""}

@@ -444,7 +444,7 @@ export function goToParentComment(id, pid) {
 		$(this).parent("." + thisObj.options.classes.comment_goto_child).hide()
 		thisObj.scrollToComment(id)
 		return false
-	})
+	}).attr("href", "#comment"+id)
 	oCommentParent.data("cid", id)
 	scrollToComment(pid)
 	return false

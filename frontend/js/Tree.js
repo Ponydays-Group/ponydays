@@ -397,7 +397,7 @@ export default class Tree {
                 ids.push(id)
                 pids.push(comments[id].parentId)
                 this.state.aComments[id] = new Comment(comments[id])
-                if (lastReadComment) {
+                if (lastReadComment && !LOGGED_IN) {
                     this.state.aComments[id].isNew = parseInt(id)>lastReadComment
                 }
             }

@@ -420,6 +420,7 @@ export default class Tree {
         Emitter.on('socket-edit-comment', (data)=>this.updateCommentEdited(data.commentData.id, data.commentData.text))
         Emitter.on('socket-delete-comment', (data)=>this.updateCommentDeleted(data.commentData.id, parseInt(data.delete), data.deleteReason))
         Emitter.on('socket-new-comment', (data)=>{
+            return
             if (!document.getElementById('autoload').checked)
                 return
             let a = {}

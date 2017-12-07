@@ -7,7 +7,7 @@ function getCookie(name) {
 
 const io = require("socket.io-client")
 
-window.sock = io("http://sock.dev", {
+window.sock = io(SOCKET_URL, {
     query: {
         token: localStorage.getItem("sKey")
     }

@@ -18,7 +18,7 @@ class ModuleNower extends Module {
     public function Get($sUrl, $aData=array()) {
         $myCurl = curl_init();
         curl_setopt_array($myCurl, array(
-            CURLOPT_URL => Config::Get("sys.nower_url").$sUrl."?".http_build_query($aData),
+            CURLOPT_URL => Config::Get("nower_url").$sUrl."?".http_build_query($aData),
             CURLOPT_RETURNTRANSFER => true,
         ));
         curl_exec($myCurl);
@@ -28,7 +28,7 @@ class ModuleNower extends Module {
     public function Delete($sUrl, $aData=array()) {
         $myCurl = curl_init();
         curl_setopt_array($myCurl, array(
-            CURLOPT_URL => Config::Get("sys.nower_url").$sUrl."?".http_build_query($aData),
+            CURLOPT_URL => Config::Get("nower_url").$sUrl."?".http_build_query($aData),
             CURLOPT_CUSTOMREQUEST => "DELETE",
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_POSTFIELDS => http_build_query($aData)
@@ -40,7 +40,7 @@ class ModuleNower extends Module {
     public function Patch($sUrl, $aData=array()) {
         $myCurl = curl_init();
         curl_setopt_array($myCurl, array(
-            CURLOPT_URL => Config::Get("sys.nower_url").$sUrl."?".http_build_query($aData),
+            CURLOPT_URL => Config::Get("nower_url").$sUrl."?".http_build_query($aData),
             CURLOPT_CUSTOMREQUEST => "PATCH",
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_POSTFIELDS => http_build_query($aData)

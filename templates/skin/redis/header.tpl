@@ -54,6 +54,8 @@
 		var USER_ID = {if $oUserCurrent}{$oUserCurrent->getId()}{else}0{/if};
 		var IS_ADMIN = {if $oUserCurrent}{$oUserCurrent->getIsAdministrator()}{else}false{/if};
 
+		var SOCKET_URL = "{$oConfig->GetValue("sockets_url")}"
+
 		var TINYMCE_LANG = 'en';
 		{if $oConfig->GetValue('lang.current') == 'russian'}
 			TINYMCE_LANG = 'ru';

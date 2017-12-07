@@ -3,7 +3,7 @@ var dateFormat = require('dateformat');
 
 export default class Comment {
     constructor(data) {
-        this.id = data.id
+        this.id = parseInt(data.id)
         this.author = data.author
         this.date = data.date
         this.text = data.text
@@ -18,7 +18,7 @@ export default class Comment {
         this.targetType = data.targetType
         this.targetId = data.targetId
         this.level = parseInt(data.level)
-        this.parentId = data.parentId
+        this.parentId = data.parentId!=null?parseInt(data.parentId):null
         this.isNew = data.isNew
         this.editCount = parseInt(data.editCount)
     }
@@ -74,7 +74,7 @@ export default class Comment {
     		
     		<div id=${"comment_content_id_"+this.id} class="comment-content text${this.isDeleted? " hided":""}">
             ${this.isDeleted? `<div class="delete-reason">${this.deleteReason||"Нет причины удаления"}</div>`:''}
-    		${this.isDeleted && LOGGED_IN && (IS_ADMIN || USERNAME == this.author.login) ? `<a href="#" onclick="ls.comments.showDeletedComment(${this.id}); return false;">Раскрыть комментарий</a>` : ""}
+    		${this.isDeleted && LOGGED_IN && (IS_ADMIN || USERNAME == this.author.login) ? `<a href="#" onclick="ls.comments.showHiddenComment(${this.id}); return false;">Раскрыть комментарий</a>` : ""}
     		${this.text}
     		</div>
 

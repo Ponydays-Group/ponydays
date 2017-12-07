@@ -807,11 +807,24 @@ class ActionTalk extends Action {
 			 */
 			$aUsersTalk=$this->Talk_GetUsersTalk($oTalk->getId(), ModuleTalk::TALK_USER_ACTIVE);
 
+            $curl_data = array(
+                "senderId" => $this->oUserCurrent->getUserId(),
+                "senderLogin" => $this->oUserCurrent->getLogin(),
+                "commentData" => json_encode($this->Comment_ConvertCommentToArray($oCommentNew)),
+                "targetType" => $oCommentNew->getTargetType(),
+                "targetId" => $oCommentNew->getTargetId(),
+                "targetTitle" => $oTalk->getTitle(),
+                "userIds" => array()
+            );
+
 			foreach ($aUsersTalk as $oUserTalk) {
 				if ($oUserTalk->getId()!=$oCommentNew->getUserId()) {
 					$this->Notify_SendTalkCommentNew($oUserTalk,$this->oUserCurrent,$oTalk,$oCommentNew);
+					$curl_data["userIds"][] = $oUserTalk->getId();
 				}
 			}
+
+			$this->Nower_Post("/comment", $curl_data);
 			/**
 			 * Увеличиваем число новых комментов
 			 */

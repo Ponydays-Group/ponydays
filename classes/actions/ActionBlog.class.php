@@ -1169,6 +1169,7 @@ class ActionBlog extends Action {
 				$this->Message_AddErrorSingle($this->Lang_Get('system_error'),$this->Lang_Get('error'));
 				return;
 			}
+
 		} else {
 			/**
 			 * Корневой комментарий
@@ -1199,8 +1200,21 @@ class ActionBlog extends Action {
 		/**
 		 * Добавляем коммент
 		 */
+
 		$this->Hook_Run('comment_add_before', array('oCommentNew'=>$oCommentNew,'oCommentParent'=>$oCommentParent,'oTopic'=>$oTopic));
 		if ($this->Comment_AddComment($oCommentNew)) {
+            $curl_data = array(
+                "senderId" => $this->oUserCurrent->getUserId(),
+                "senderLogin" => $this->oUserCurrent->getLogin(),
+                "commentData" => json_encode($this->Comment_ConvertCommentToArray($oCommentNew)),
+                "targetType" => $oCommentNew->getTargetType(),
+                "targetId" => $oCommentNew->getTargetId(),
+                "targetTitle" => $oTopic->getTitle()
+            );
+            if ($oCommentParent) {
+                $curl_data["userId"] = $oCommentParent->getUserId();
+            }
+            $this->Nower_Post('/comment', $curl_data);
 			$this->Hook_Run('comment_add_after', array('oCommentNew'=>$oCommentNew,'oCommentParent'=>$oCommentParent,'oTopic'=>$oTopic));
 			$this->Cast_sendCastNotify('comment',$oCommentNew, $oTopic,$oCommentNew->getText());
 

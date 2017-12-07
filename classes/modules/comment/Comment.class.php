@@ -1004,10 +1004,11 @@ class ModuleComment extends Module {
 		return $this->GetCommentsByArrayId($aCommentId);
 	}
 	
-	public function ConvertCommentToArray($oComment, $sReadlast, $bIgnoreDelete=false) {
+	public function ConvertCommentToArray($oComment, $sReadlast=null, $bIgnoreDelete=false) {
+		$oUser = $this->User_GetUserById($oComment->getUserId());
 		$aComment = array();
-		$aComment['id'] = $oComment->getId();
-		$aComment['author'] = array("id"=>$oComment->getUserId(), "login"=>$oComment->getUser()->getLogin(), "avatar"=>$oComment->getUser()->getProfileAvatarPath(48));
+		$aComment['id'] = (int)$oComment->getId();
+		$aComment['author'] = array("id"=>$oComment->getUserId(), "login"=>$oUser->getLogin(), "avatar"=>$oUser->getProfileAvatarPath(48));
 		$aComment['date'] = gmdate('c',strtotime($oComment->getDate()));
 		$aComment['text'] = $oComment->getText();
 		if ($oComment->getDelete() && !$bIgnoreDelete) {
@@ -1037,8 +1038,8 @@ class ModuleComment extends Module {
 		$aComment['targetType'] = $oComment->getTargetType();
 		$aComment['targetId'] = $oComment->getTargetId();
 		$aComment['level'] = $oComment->getLevel();
-		$aComment['parentId'] = $oComment->getPid();
-		$aComment['isNew'] = $sReadlast <= $oComment->getDate();
+		$aComment['parentId'] = (int)$oComment->getPid();
+		$aComment['isNew'] = $sReadlast? $sReadlast <= $oComment->getDate():true;
 		$aComment['editCount'] = $oComment->getEditCount();
 		return $aComment;
 	}

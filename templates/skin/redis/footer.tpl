@@ -84,5 +84,7 @@
 
 {hook run='body_end'}
 
+<script src="/static/{cfg name="frontend.version"}/sockets.bundle.js"></script>
+
 </body>
 </html>

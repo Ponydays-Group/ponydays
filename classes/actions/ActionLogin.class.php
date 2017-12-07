@@ -106,7 +106,8 @@ class ActionLogin extends Action {
 				if (getRequestStr('return-path')) {
 					$sUrl=getRequestStr('return-path');
 				}
-				$this->Viewer_AssignAjax('sUrlRedirect',$sUrl ? $sUrl : Config::Get('path.root.web'));
+                $this->Viewer_AssignAjax('sUrlRedirect',$sUrl ? $sUrl : Config::Get('path.root.web'));
+                $this->Viewer_AssignAjax('sKey',$this->User_GenerateUserKey($oUser));
 				return;
 			}
 		}

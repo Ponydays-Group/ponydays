@@ -399,6 +399,9 @@ export function login(form) {
             if (result.sUrlRedirect) {
                 window.location = result.sUrlRedirect;
             }
+            if (result.sKey) {
+                localStorage.setItem("sKey", result.sKey)
+            }
             Emitter.emit('ls_user_login_after', [form, result]);
         }
     }.bind(this));

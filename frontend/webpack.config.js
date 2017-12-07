@@ -33,6 +33,7 @@ let config = {
         vendor: vendors,
         light: path.resolve(__dirname, 'css', 'light.scss'),
         dark: path.resolve(__dirname, 'css', 'dark.scss'),
+        sockets: path.resolve(__dirname, 'js', 'sockets.js'),
     },
     output: {
         path: path.join(__dirname, '..', 'static', '[hash]'),

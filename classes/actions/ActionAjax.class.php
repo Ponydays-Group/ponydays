@@ -1472,6 +1472,19 @@ class ActionAjax extends Action
             $sTextToggle = $this->Lang_Get('comment_delete');
         }
 
+        $curl_data = array(
+            "senderId" => $this->oUserCurrent->getUserId(),
+            "senderLogin" => $this->oUserCurrent->getLogin(),
+            "userId" => $oComment->getUserId(),
+            "commentId" => $oComment->getId(),
+            "targetType" => $oComment->getTargetType(),
+            "targetId" => $oComment->getTargetId(),
+            "targetTitle" => $oComment->getTarget()->getTitle(),
+            "deleteReason" => $oComment->getDeleteReason(),
+            "delete" => (bool)$oComment->getDelete()
+        );
+        $this->Nower_Delete('/comment', $curl_data);
+
         /**
          * Обновление события в ленте активности
          */
@@ -1878,6 +1891,16 @@ class ActionAjax extends Action
             else
                 $this->Message_AddErrorSingle($this->Lang_Get('error'));
         }
+        $curl_data = array(
+            "senderId" => $this->oUserCurrent->getUserId(),
+            "senderLogin" => $this->oUserCurrent->getLogin(),
+            "userId" => $oComment->getUserId(),
+            "commentData" => json_encode($this->Comment_ConvertCommentToArray($oComment)),
+            "targetType" => $oComment->getTargetType(),
+            "targetId" => $oComment->getTargetId(),
+            "targetTitle" => $oComment->getTarget()->getTitle()
+        );
+        $this->Nower_Patch('/comment', $curl_data);
         $sLogText = $this->oUserCurrent->getLogin()." редактировал коммент ".$oComment->getId()." ".$ip;
         $this->Logger_Notice($sLogText);
         $this->Viewer_AssignAjax('bCanEditMore', $this->ACL_UserCanEditComment($this->oUserCurrent, $oComment, PHP_INT_MAX) === true);

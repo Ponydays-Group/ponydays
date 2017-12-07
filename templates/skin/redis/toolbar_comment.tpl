@@ -21,12 +21,3 @@
            onclick="ls.comments.goToNextComment(); return false;" title="Следующий новый комментарий"><i id="go-back"
                                                                                                          class="material-icons">keyboard_arrow_down</i></a>
     </div>
-    <script>
-        function autoload() {
-            if (document.getElementById('autoload').checked) {
-                ls.comments.load({$params.iTargetId}, '{$params.sTargetType}', null, true)
-            }
-        }
-
-        console.log(setInterval(autoload, 10000))
-    </script>

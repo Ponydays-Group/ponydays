@@ -94,5 +94,6 @@
     "autosubscribe": [
         2
     ],
-    "deploy_token": "testgithubconfig"
+    "deploy_token": "testgithubconfig",
+    "nower_url": "127.0.0.1:3000"
 }

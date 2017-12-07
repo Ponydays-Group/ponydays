@@ -1,4 +1,4 @@
-import * as Msg from './msg'
+﻿import * as Msg from './msg'
 import $ from 'jquery'
 import * as Tools from './tools'
 import Emitter from './emitter'

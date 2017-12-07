@@ -139,6 +139,34 @@ export default class Tree {
         Emitter.on("comments-calc-nesting", this.updateNesting.bind(this))
     }
 
+    updateCommentDeleted(id, deleted, reason) {
+        let cmt = $(`[data-id="${id}"]`)
+        if (!cmt.length) {
+            return
+        }
+        if (deleted) {
+            cmt.addClass("comment-deleted")
+            cmt.find(".comment-content").html(`
+        <div class="delete-reason">
+            ${reason || "Нет причины удаления"}
+        </div>
+
+            ${LOGGED_IN && (IS_ADMIN || cmt.hasClass("comment-self")) ? `<a href="#" onclick="ls.comments.showHiddenComment(${this.id}); return false;">Раскрыть комментарий</a>` : ""}`)
+        } else {
+            cmt.removeClass("comment-deleted")
+            Comments.showHiddenComment(id)
+        }
+    }
+
+    updateCommentEdited(id, sText) {
+        let cmt = $(`[data-id="${id}"]`)
+        if (!cmt.length) {
+            return
+        }
+        cmt.find(".comment-edited").css("display", "inline-block")
+        cmt.find('.comment-content').html(sText)
+    }
+
     calcNesting() {
         let minWidth = parseInt(localStorage.getItem("min_comment_width"))
 
@@ -166,7 +194,7 @@ export default class Tree {
                 return
             }
 
-            if (DEBUG && $(`[data-id=${id}]`).length) {
+            if ($(`[data-id=${id}]`).length) {
                 console.log("Comment already exists!")
                 return;
             }
@@ -258,12 +286,12 @@ export default class Tree {
         let aUnsortedPids = []
 
         for (let id in aNewComments) {
-            if (aNewComments.hasOwnProperty(id)) {
+            id = parseInt(id)
+            if (aNewComments.hasOwnProperty(id) && !this.state.aComments.hasOwnProperty(id)) {
                 let oComment = aNewComments[id]
 
                 // вычисление уловня вложенности
                 oComment.level = oComment.parentId ? 1 + this.state.aComments[oComment.parentId].level : 0
-
                 this.state.aComments[id] = new Comment(oComment)
 
                 aUnsortedIds.push(id)
@@ -379,8 +407,26 @@ export default class Tree {
     }
 
     mount(obj, comments, lastReadComment = 0) {
-        console.log("LAST READ COMMENT", lastReadComment)
+        $('#autoload').change(function(){
+            if (this.checked) {
+                ls.comments.load(targetId, targetType, false, true)
+            }
+        })
         lastReadComment = parseInt(lastReadComment)
+
+        if (targetType=="topic")
+            sock.emit("listenTopic", {id: targetId})
+
+        Emitter.on('socket-edit-comment', (data)=>this.updateCommentEdited(data.commentData.id, data.commentData.text))
+        Emitter.on('socket-delete-comment', (data)=>this.updateCommentDeleted(data.commentData.id, parseInt(data.delete), data.deleteReason))
+        Emitter.on('socket-new-comment', (data)=>{
+            if (!document.getElementById('autoload').checked)
+                return
+            let a = {}
+            a[data.commentData.id]=data.commentData
+            this.handleNewComments(a, false,true)
+        })
+
         function applyNesting() {
             this.calcNesting()
             this.render()
@@ -393,6 +439,7 @@ export default class Tree {
         let pids = []
 
         for (let id in comments) {
+            id = parseInt(id)
             if (comments.hasOwnProperty(id)) {
                 ids.push(id)
                 pids.push(comments[id].parentId)
@@ -405,7 +452,7 @@ export default class Tree {
 
         console.log("Before sort", dateFormat(new Date(), "HH:MM:ss:l"))
         this.state.aSortedIds = this.updateSortTree(ids, pids)
-        console.log("Aftre sort", dateFormat(new Date(), "HH:MM:ss:l"))
+        console.log("After sort", dateFormat(new Date(), "HH:MM:ss:l"))
 
         // this.state.aComments = comments
 

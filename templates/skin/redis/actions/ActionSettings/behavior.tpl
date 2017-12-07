@@ -22,14 +22,36 @@
 	<fieldset>
 <span class="checkbox">
 	<span>
-		<input type="checkbox" id="square_avatars" name="square_avatars" data-save=1 class="input-checkbox" /> <label for="square_avatars">Включить квадратные аватарки</label></span></span>
+		<input type="checkbox" id="square_avatars" name="square_avatars" data-default=0 data-save=1 class="input-checkbox"/> <label
+				for="square_avatars">Включить квадратные аватарки</label></span></span></fieldset>
+	<fieldset>
+		<span class="checkbox"><span>
+			<input type="checkbox" id="notice_talk_reply" name="notice_talk_reply" data-default=1 data-save=1 class="input-checkbox" />
+			<label for="notice_talk_reply">Уведомления о новых комментариях в ЛС</label>
+		</span></span>
+		<span class="checkbox"><span>
+			<input type="checkbox" id="notice_reply" name="notice_reply" data-default=1 data-save=1 class="input-checkbox" />
+			<label for="notice_reply">Уведомления об ответах</label>
+		</span></span>
+		<span class="checkbox"><span>
+			<input type="checkbox" id="notice_comment_edit" name="notice_comment_edit" data-default=1 data-save=1 class="input-checkbox" />
+			<label for="notice_comment_edit">Уведомления о редактировании ваших комментариев</label>
+		</span></span>
+		<span class="checkbox"><span>
+			<input type="checkbox" id="notice_comment_delette" name="notice_comment_delette" data-default=1 data-save=1 class="input-checkbox" />
+			<label for="notice_comment_delette">Уведомления об удалении/восстановлении ваших комментариев</label>
+		</span></span>
+	</fieldset>
 	
     {literal}
 	<script>
 	    $('#behavior-form  [data-save=1]').each(function(k,v){
 	    	if (v.type=="checkbox") {
-	    		console.log("Chackbox:", localStorage.getItem(v.name))
+	    		console.log("Chуckbox:", localStorage.getItem(v.name))
 	    		v.checked = parseInt(localStorage.getItem(v.name))
+				if (localStorage.getItem(v.name)==null) {
+	    		    v.checked = parseInt(v.dataset.default)
+                }
 	    		return
 	    	}
 	    	v.value = localStorage.getItem(v.name)

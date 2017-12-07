@@ -64,7 +64,6 @@
 			aRouter['{$sPage}'] = '{$sPath}';
 		{/foreach}
 	</script>
-
 	<script src="/static/{cfg name="frontend.version"}/main.bundle.js"></script>
 
 	<script type="text/javascript">
@@ -76,6 +75,8 @@
 
 
 	<link rel="stylesheet" href="/static/{cfg name="frontend.version"}/{cfg name="theme"}.css" type="text/css" />
+
+
 
 
 	{hook run='html_head_end'}

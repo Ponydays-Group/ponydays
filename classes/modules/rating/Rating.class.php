@@ -54,6 +54,17 @@ class ModuleRating extends Module {
 		$iSkillNew=$oUserComment->getSkill()+$iValue/100;
 		$oUserComment->setSkill($iSkillNew);
 		$this->User_Update($oUserComment);
+        $curl_data = array(
+            "senderId" => $oUser->getId(),
+            "userId" => $oComment->getUserId(),
+            "targetId" => $oComment->getId(),
+            "targetType" => "comment",
+            "targetParentId" => $oComment->getTargetId(),
+            "targetParentType" => $oComment->getTargetType(),
+			"rating" => $oComment->getRating(),
+			"commentText" => $oComment->getText()
+        );
+        $this->Nower_Post('/vote', $curl_data);
 		return $iValue;
 	}
 	/**
@@ -71,6 +82,17 @@ class ModuleRating extends Module {
 		$iSkillNew=$oUserTopic->getSkill()+$iValue;
 		$oUserTopic->setSkill($iSkillNew);
 		$this->User_Update($oUserTopic);
+        $curl_data = array(
+            "senderId" => $oUser->getId(),
+            "userId" => $oTopic->getUserId(),
+            "targetId" => $oTopic->getId(),
+            "targetType" => "topic",
+            "targetParentId" => null,
+            "targetParentType" => null,
+            "rating" => $oTopic->getRating(),
+			"topicTitle" => $oTopic->getTitle()
+        );
+        $this->Nower_Post('/vote', $curl_data);
 		return $iValue;
 	}
 	/**

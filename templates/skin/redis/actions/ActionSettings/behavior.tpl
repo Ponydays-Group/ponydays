@@ -41,6 +41,10 @@
 			<input type="checkbox" id="notice_comment_delete" name="notice_comment_delete" data-default=1 data-save=1 class="input-checkbox" />
 			<label for="notice_comment_delete">Уведомления об удалении/восстановлении ваших комментариев</label>
 		</span></span>
+		<span class="checkbox"><span>
+			<input type="checkbox" id="notice_vote" name="notice_vote" data-default=1 data-save=1 class="input-checkbox" />
+			<label for="notice_vote">Уведомления о голосовании за ваши посты/комментарии</label>
+		</span></span>
 	</fieldset>
 	<fieldset>
 		<span class="checkbox"><span>

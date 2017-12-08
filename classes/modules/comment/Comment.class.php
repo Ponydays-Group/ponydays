@@ -1007,7 +1007,7 @@ class ModuleComment extends Module {
 	public function ConvertCommentToArray($oComment, $sReadlast=null, $bIgnoreDelete=false) {
 		$oUser = $this->User_GetUserById($oComment->getUserId());
 		$aComment = array();
-		$aComment['id'] = (int)$oComment->getId();
+		$aComment['id'] = (string)$oComment->getId();
 		$aComment['author'] = array("id"=>$oComment->getUserId(), "login"=>$oUser->getLogin(), "avatar"=>$oUser->getProfileAvatarPath(48));
 		$aComment['date'] = gmdate('c',strtotime($oComment->getDate()));
 		$aComment['text'] = $oComment->getText();
@@ -1038,7 +1038,7 @@ class ModuleComment extends Module {
 		$aComment['targetType'] = $oComment->getTargetType();
 		$aComment['targetId'] = $oComment->getTargetId();
 		$aComment['level'] = $oComment->getLevel();
-		$aComment['parentId'] = (int)$oComment->getPid();
+		$aComment['parentId'] = (string)$oComment->getPid();
 		$aComment['isNew'] = $sReadlast? $sReadlast <= $oComment->getDate():true;
 		$aComment['editCount'] = $oComment->getEditCount();
 		return $aComment;

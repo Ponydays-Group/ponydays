@@ -286,7 +286,6 @@ export default class Tree {
         let aUnsortedPids = []
 
         for (let id in aNewComments) {
-            id = parseInt(id)
             if (aNewComments.hasOwnProperty(id) && !this.state.aComments.hasOwnProperty(id)) {
                 let oComment = aNewComments[id]
 
@@ -295,7 +294,7 @@ export default class Tree {
                 this.state.aComments[id] = new Comment(oComment)
 
                 aUnsortedIds.push(id)
-                aUnsortedPids.push(oComment.parentId)
+                aUnsortedPids.push(oComment.parentId+"")
             }
         }
 
@@ -439,7 +438,6 @@ export default class Tree {
         let pids = []
 
         for (let id in comments) {
-            id = parseInt(id)
             if (comments.hasOwnProperty(id)) {
                 ids.push(id)
                 pids.push(comments[id].parentId)

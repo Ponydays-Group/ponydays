@@ -1477,6 +1477,7 @@ class ActionAjax extends Action
             "senderLogin" => $this->oUserCurrent->getLogin(),
             "userId" => $oComment->getUserId(),
             "commentId" => $oComment->getId(),
+            "commentText" => $oComment->getText(),
             "targetType" => $oComment->getTargetType(),
             "targetId" => $oComment->getTargetId(),
             "targetTitle" => $oComment->getTarget()->getTitle(),

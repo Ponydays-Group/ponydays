@@ -32,7 +32,15 @@
 	box-shadow: 0px 0px 6px rgba(0,0,0,0.4);
 
 	cursor: pointer;
+	display: block !important;
+
+	.close {
+		position: absolute;
+		right: 5px;
+		top: 5px;
+	}
 }
+
 #notifier .n-box h3 { color: $main-color; font-size: 14px; font-weight: 400; margin-bottom: 3px; }
 #notifier .n-box p { margin: 0; font-weight: 300;}
 

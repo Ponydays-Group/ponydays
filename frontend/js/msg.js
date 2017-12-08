@@ -15,8 +15,8 @@ export let options = {
 /**
  * Отображение информационного сообщения
  */
-export function notice(title, msg) {
-    $.notifier.broadcast(title, msg, this.options.class_notice);
+export function notice(title, msg, url, blank) {
+    $.notifier.broadcast(title, msg, this.options.class_notice, url, blank);
 }
 
 /**

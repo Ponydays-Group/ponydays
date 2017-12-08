@@ -6,12 +6,12 @@
 			notice_class: 		"n-notice",
 			error_class: 		"n-error",
 			close_class: 		"n-close",
-			duration:			4000
+			duration:			10000
 		},
 		notices:{},
 
 
-		broadcast: function(title, message, type){
+		broadcast: function(title, message, type, url, blank){
 			this.core();
 
 			var id = "notice-" + this.timestamp();
@@ -21,7 +21,9 @@
 			let notice = {
 				id: id,
 				ttl: title,
-				msg: message
+				msg: message,
+				url: url,
+				blank: blank
 			}
 
 			// box
@@ -46,7 +48,12 @@
 
 
 		box: function(notice){
-			var box	= $("<div id=\"" + notice.id + "\" class=\"" + this.options.box_class + "\"></div>");
+			var box	= $(`<a id="${notice.id}" class="${this.options.box_class}" href="${notice.url}" ${notice.blank?`target="_blank"`:""}></a>`);
+			$(`<a onclick="return false;" href="#"><i class="close material-icons">close</i></a>`).appendTo(box).click(function(){
+                var seed = $(this).parent('.n-box').attr("id");
+                $.notifier.destroy(seed, true);
+                return false;
+			})
 			if (notice.ttl != null) box.append($("<h3></h3>").append(notice.ttl));
 			box.append($("<p></p>").append(notice.msg));
 			box.hide().show();
@@ -58,17 +65,10 @@
 
 		events: function(box, seed){
 			$(box).bind(
-				'click',
-				function(){
-					var seed = $(this).attr("id");
-					$.notifier.destroy(seed, true);
-				}
-			)
-			$(box).bind(
 				'mouseover',
 				function(){
 					if($.notifier.notices[$(this).attr("id")].interval){
-						var seed = $(this).attr("id");
+						let seed = $(this).attr("id");
 						$.notifier.destroy(seed)
 					}
 				}

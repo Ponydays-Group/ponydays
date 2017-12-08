@@ -30,7 +30,13 @@ nAudio.src = "http://freesound.org/data/previews/245/245645_1038806-lq.mp3"
 sock.on("reply-info", function(data){
     console.log("DATA:",data)
     if (checkPerm("notice_reply")) {
-        ls.msg.notice(data.senderLogin+" ответил вам в посте "+data.targetTitle, data.commentData.text)
+        let url = "/blog/undefined/"+data.targetId+"#comment"+data.commentData.id
+        let blank = true
+        if (location.pathname.startsWith("/blog/")&&location.pathname.endsWith(data.targetId)) {
+            url = "#comment"+data.commentData.id
+            blank = false
+        }
+        ls.msg.notice(data.senderLogin+" ответил вам в посте "+data.targetTitle, data.commentData.text, url, blank)
         if (checkPerm("sound_notice"))
             nAudio.play()
     }
@@ -39,7 +45,13 @@ sock.on("reply-info", function(data){
 sock.on("edit-comment-info", function(data){
     console.log("DATA:",data)
     if (checkPerm("notice_comment_delete")) {
-        ls.msg.notice(data.senderLogin + " отредактировал ваш комментарий", data.commentData.text)
+        let url = "/blog/undefined/"+data.targetId+"#comment"+data.commentData.id
+        let blank = true
+        if (location.pathname.startsWith("/blog/")&&location.pathname.endsWith(data.targetId)) {
+            url = "#comment"+data.commentData.id
+            blank = false
+        }
+        ls.msg.notice(data.senderLogin + " отредактировал ваш комментарий", data.commentData.text, url, blank)
         if (checkPerm("sound_notice"))
             nAudio.play()
     }
@@ -49,10 +61,16 @@ sock.on("delete-comment-info", function(data){
     console.log("DATA:", data)
     data.delete =parseInt(data.delete)
     if (checkPerm("notice_comment_delete")) {
+        let url = "/blog/undefined/"+data.targetId+"#comment"+data.commentId
+        let blank = true
+        if (location.pathname.startsWith("/blog/")&&location.pathname.endsWith(data.targetId)) {
+            url = "#comment"+data.commentId
+            blank = false
+        }
         if (data.delete) {
-            ls.msg.notice(data.senderLogin + " удалил ваш комментарий", data.deleteReason)
+            ls.msg.notice(data.senderLogin + " удалил ваш комментарий", data.deleteReason, url, blank)
         } else {
-            ls.msg.notice(data.senderLogin + " восстановил ваш комментарий")
+            ls.msg.notice(data.senderLogin + " восстановил ваш комментарий", data.commentText, url, blank)
         }
         if (checkPerm("sound_notice"))
             nAudio.play()
@@ -62,7 +80,13 @@ sock.on("delete-comment-info", function(data){
 sock.on("talk-answer", function(data){
     console.log("DATA:",data)
     if (checkPerm("notice_talk_reply")) {
-        ls.msg.notice("Новый комментарий в " + data.targetTitle + ", от "+data.senderLogin, data.commentText)
+        let url = "/talk/read/"+data.targetId+"#comment"+data.commentData.id
+        let blank = true
+        if (location.pathname.startsWith("/talk/")&&(location.pathname.endsWith(data.targetId)||location.pathname.endsWith(data.targetId+"/"))) {
+            url = "#comment"+data.commentData.id
+            blank = false
+        }
+        ls.msg.notice("Новый комментарий в " + data.targetTitle + ", от "+data.senderLogin, data.commentText, url, blank)
         if (checkPerm("sound_notice"))
             nAudio.play()
     }
@@ -71,7 +95,12 @@ sock.on("talk-answer", function(data){
 sock.on("vote-info", function(data){
     console.log("DATA:",data)
     if (checkPerm("notice_vote")) {
-        ls.msg.notice("За ваш "+(data.targetType=="comment"?"комментарий":"пост")+" проголосовали", data.commentText||data.topicTitle)
+        let url = "/blog/undefined/"+data.targetId
+        let blank = true
+        if (data.targetParentId) {
+            url = "/blog/undefined/"+data.targetParentId+"#comment"+data.targetId
+        }
+        ls.msg.notice("За ваш "+(data.targetType=="comment"?"комментарий":"пост")+" проголосовали", data.commentText||data.topicTitle, url, blank)
         if (checkPerm("sound_notice"))
             nAudio.play()
     }

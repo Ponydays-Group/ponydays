@@ -413,8 +413,10 @@ export default class Tree {
         })
         lastReadComment = parseInt(lastReadComment)
 
-        if (targetType=="topic")
+        if (targetType=="topic") {
             sock.emit("listenTopic", {id: targetId})
+            sock.on("reconnect", ()=>sock.emit("listenTopic", {id: targetId}))
+        }
 
         Emitter.on('socket-edit-comment', (data)=>this.updateCommentEdited(data.commentData.id, data.commentData.text))
         Emitter.on('socket-delete-comment', (data)=>this.updateCommentDeleted(data.commentData.id, parseInt(data.delete), data.deleteReason))

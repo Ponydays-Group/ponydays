@@ -576,7 +576,7 @@ class ModuleUser extends Module
          * Ставим куку
          */
         if ($bRemember) {
-            setcookie('key', $sKey, time() + Config::Get('sys.cookie.time'), Config::Get('sys.cookie.path'), Config::Get('sys.cookie.host'), false, true);
+            setcookie('key', $sKey, time() + Config::Get('sys.cookie.time'), Config::Get('sys.cookie.path'), Config::Get('sys.cookie.host'), false, false);
         }
         return true;
     }

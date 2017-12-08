@@ -100,6 +100,14 @@ sock.on("vote-info", function(data){
         if (data.targetParentId) {
             url = "/blog/undefined/"+data.targetParentId+"#comment"+data.targetId
         }
+        if (location.pathname.startsWith("/blog/")&&(location.pathname.endsWith(data.targetParentId)||location.pathname.endsWith(data.targetParentId+"/"))) {
+            url = "#comment"+data.targetId
+            blank = false
+        }
+        if (location.pathname.startsWith("/blog/")&&(location.pathname.endsWith(data.targetId)||location.pathname.endsWith(data.targetId+"/"))&&data.targetType=="topic") {
+            url = "#"
+            blank = false
+        }
         ls.msg.notice("За ваш "+(data.targetType=="comment"?"комментарий":"пост")+" проголосовали", data.commentText||data.topicTitle, url, blank)
         if (checkPerm("sound_notice"))
             nAudio.play()

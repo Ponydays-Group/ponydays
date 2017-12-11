@@ -25,7 +25,7 @@ function checkPerm(key) {
 }
 
 window.nAudio = new Audio()
-nAudio.src = "http://freesound.org/data/previews/245/245645_1038806-lq.mp3"
+nAudio.src = localStorage.getItem("notice_sound_url")||"http://freesound.org/data/previews/245/245645_1038806-lq.mp3"
 
 sock.on("reply-info", function(data){
     console.log("DATA:",data)

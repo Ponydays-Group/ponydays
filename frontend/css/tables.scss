@@ -8,6 +8,7 @@
 .table tr.active td 	{ background: #CBF4BC; font-size: 14px !important; }
 
 .table tr {border-bottom: $second-border;}
+.table tr.info td {background: $second !important;}
 
 .table a.asc:after		{ content: "▲"; }
 .table a.desc:after		{ content: "▼"; }

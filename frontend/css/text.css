@@ -157,6 +157,7 @@
     max-width: 100%;
     opacity: $image-opacity;
     transition: opacity .3s;
+    vertical-align: bottom;
 }
 
 .text img:hover {

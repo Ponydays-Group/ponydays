@@ -190,30 +190,30 @@ export function cancelAvatar() {
  * @param input
  */
 export function uploadFoto(form, input) {
-    if (!form && input) {
-        var form = $('<form method="post" enctype="multipart/form-data"></form>').css({
+        var form = $('<form method="post" enctype="multipart/form-data"><input type="file" name="foto" id="upload-foto-input" /></form>').css({
             'display': 'none'
         }).appendTo('body');
-        var clone = input.clone(true);
-        input.hide();
-        clone.insertAfter(input);
-        input.appendTo(form);
-    }
-
-    Ajax.ajaxSubmit(aRouter['settings'] + 'profile/upload-foto/', form, function (data) {
-        if (data.bStateError) {
-            Msg.error(data.sMsgTitle, data.sMsg);
-        } else {
-            this.showResizeFoto(data.sTmpFile);
-        }
-    }.bind(this));
+        // var clone = input.clone(true);
+        // input.hide();
+        // clone.insertAfter(input);
+        // input.appendTo(form);
+    $("#upload-foto-input")[0].click()
+    $("#upload-foto-input").change(()=> {
+        Ajax.ajaxSubmit(aRouter['settings'] + 'profile/upload-foto/', form, function (data) {
+            if (data.bStateError) {
+                Msg.error(data.sMsgTitle, data.sMsg);
+            } else {
+                this.showResizeFoto(data.sTmpFile, data.iHeight);
+            }
+        }.bind(this));
+    })
 };
 
 /**
  * Показывает форму для ресайза фотки
  * @param sImgFile
  */
-export function showResizeFoto(sImgFile) {
+export function showResizeFoto(sImgFile, h) {
     if (this.jcropFoto) {
         this.jcropFoto.destroy();
     }
@@ -221,10 +221,11 @@ export function showResizeFoto(sImgFile) {
     $('#foto-resize').jqmShow();
     var $this = this;
     $('#foto-resize-original-img').Jcrop({
-        minSize: [32, 32]
+        minSize: [400, h],
+        maxSize: [400, h],
     }, function () {
         $this.jcropFoto = this;
-        this.setSelect([0, 0, 500, 500]);
+        this.setSelect([0, 0, 400, 40]);
     });
 };
 
@@ -248,6 +249,7 @@ export function resizeFoto() {
             $('#foto-remove').show();
             $('#foto-upload').text(result.sTitleUpload);
             Emitter.emit('ls_user_resize_foto_after', [params, result]);
+            location.reload()
         }
     });
 
@@ -270,6 +272,7 @@ export function removeFoto() {
             $('#foto-remove').hide();
             $('#foto-upload').text(result.sTitleUpload);
             Emitter.emit('ls_user_remove_foto_after', [params, result]);
+            location.reload()
         }
     });
 

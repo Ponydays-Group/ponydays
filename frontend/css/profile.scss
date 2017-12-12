@@ -220,6 +220,12 @@
         background-image: url(http://imagine.pics/images/512/512109.jpg);
         min-height: 200px;
         position: relative;
+
+        .upload-photo {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+        }
     }
     #user_background_grad {
         position: absolute;

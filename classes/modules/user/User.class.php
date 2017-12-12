@@ -1349,43 +1349,12 @@ class ModuleUser extends Module
                 return false;
             }
 
-            $iWSource = $oImage->get_image_params('width');
-            $iHSource = $oImage->get_image_params('height');
-            /**
-             * Достаем переменные x1 и т.п. из $aSize
-             */
             extract($aSize, EXTR_PREFIX_SAME, 'ops');
-            if ($x1 > $x2) {
-                // меняем значения переменных
-                $x1 = $x1 + $x2;
-                $x2 = $x1 - $x2;
-                $x1 = $x1 - $x2;
-            }
-            if ($y1 > $y2) {
-                $y1 = $y1 + $y2;
-                $y2 = $y1 - $y2;
-                $y1 = $y1 - $y2;
-            }
-            if ($x1 < 0) {
-                $x1 = 0;
-            }
-            if ($y1 < 0) {
-                $y1 = 0;
-            }
-            if ($x2 > $iWSource) {
-                $x2 = $iWSource;
-            }
-            if ($y2 > $iHSource) {
-                $y2 = $iHSource;
-            }
 
-            $iW = $x2 - $x1;
-            // Допускаем минимальный клип в 32px (исключая маленькие изображения)
-            if ($iW < 32 && $x1 + 32 <= $iWSource) {
-                $iW = 32;
+            if (($y1+200*($x2/1340))>$y2) {
+                $y1 = $y2-200*($x2/1340);
             }
-            $iH = $y2 - $y1;
-            $oImage->crop($iW, $iH, $x1, $y1);
+            $oImage->crop($x2, 200*($x2/1340), 0, $y1);
             $oImage->output(null, $sFileTmp);
         }
 

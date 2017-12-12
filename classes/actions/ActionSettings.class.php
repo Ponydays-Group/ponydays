@@ -111,14 +111,17 @@ class ActionSettings extends Action {
 		 * Храним две копии - мелкую для показа пользователю и крупную в качестве исходной для ресайза
 		 */
 		$sDir=Config::Get('path.uploads.images')."/tmp/fotos/{$this->oUserCurrent->getId()}";
-		if ($sFile=$this->Image_Resize($sFileTmp,$sDir,'original',Config::Get('view.img_max_width'),Config::Get('view.img_max_height'),1000,null,true)) {
-			if ($sFilePreview=$this->Image_Resize($sFileTmp,$sDir,'preview',Config::Get('view.img_max_width'),Config::Get('view.img_max_height'),200,null,true)) {
+		if ($sFile=$this->Image_Resize($sFileTmp,$sDir,'original',Config::Get('view.img_max_width'),Config::Get('view.img_max_height'),10000,null,true)) {
+			if ($sFilePreview=$this->Image_Resize($sFileTmp,$sDir,'preview',Config::Get('view.img_max_width'),Config::Get('view.img_max_height'),400,null,true)) {
 				/**
 				 * Сохраняем в сессии временный файл с изображением
 				 */
+                $oImage = $this->Image_CreateImageObject($sFile);
+                $iHSource = $oImage->get_image_params('height');
 				$this->Session_Set('sFotoFileTmp',$sFile);
 				$this->Session_Set('sFotoFilePreviewTmp',$sFilePreview);
-				$this->Viewer_AssignAjax('sTmpFile',$this->Image_GetWebPath($sFilePreview));
+                $this->Viewer_AssignAjax('sTmpFile',$this->Image_GetWebPath($sFilePreview));
+                $this->Viewer_AssignAjax('iHeight',400*(200/1340));
 				unlink($sFileTmp);
 				return;
 			}
@@ -148,10 +151,9 @@ class ActionSettings extends Action {
 		 */
 		$fRation=1;
 		if ($aSizeFile=getimagesize($sFile) and isset($aSizeFile[0])) {
-			$fRation=$aSizeFile[0]/200; // 200 - размер превью по которой пользователь определяет область для ресайза
-			if ($fRation<1) {
+			$fRation=$aSizeFile[0]/400; // 200 - размер превью по которой пользователь определяет область для ресайза
+			if ($fRation<1)
 				$fRation=1;
-			}
 		}
 		/**
 		 * Получаем размер области из параметров
@@ -173,7 +175,6 @@ class ActionSettings extends Action {
 			 */
 			$this->oUserCurrent->setProfileFoto($sFileWeb);
 			$this->User_Update($this->oUserCurrent);
-
 			$this->Image_RemoveFile($sFilePreview);
 			/**
 			 * Удаляем из сессии

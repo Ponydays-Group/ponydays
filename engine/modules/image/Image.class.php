@@ -343,7 +343,7 @@ class ModuleImage extends Module {
 	 * @return bool
 	 */
 	public function RemoveFile($sFile) {
-		if (file_exists($sFile)) {
+		if (file_exists($sFile) && !is_dir($sFile)) {
 			return unlink($sFile);
 		}
 		return false;

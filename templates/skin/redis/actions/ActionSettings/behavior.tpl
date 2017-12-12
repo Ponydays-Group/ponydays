@@ -73,11 +73,12 @@
 	        $('#behavior-form  [data-save=1]').each(function(k,v){
 	        	if (v.type=="checkbox") {
 	        		console.log("Chackbox:", v.checked)
-	    		localStorage.setItem(v.name, v.checked?1:0)
-	    		return
-	    	}
-	        	localStorage.setItem(v.name, v.value||v.checked)
-	        	
+	    			localStorage.setItem(v.name, v.checked?1:0)
+	    			return
+	    		} else {
+                    localStorage.setItem(v.name, v.value || v.dataset.default)
+                    console.log(v.name, v.value, v.dataset.default)
+                }
 	        })
 	        ls.msg.notice('','Настройки сохранены')
 	        return false;

@@ -72,7 +72,7 @@ class ActionServer extends Action
         if (getRequest('token')!=Config::Get('deploy_token')) {
             return false;
         }
-        $this->Viewer_SetResponseAjax('json', true, false);
+
         $oUser = $this->User_GetUserBySessionKey(getRequest("key"));
         if (!$oUser) {
             return;
@@ -86,14 +86,16 @@ class ActionServer extends Action
             $this->Viewer_AssignAjax("bAccess", false);
             return;
         }
-        $this->Viewer_SetResponseAjax('json', true, false);
+
+        $sUserId = getRequest("userId");
+
         $oUser = $this->User_GetUserById(getRequest("userId"));
         $oTopic = $this->Topic_GetTopicById(getRequest("topicId"));
-        if (!$oUser) {
-//            echo "!u", getRequest("topicId");
-            $this->Viewer_AssignAjax("bAccess", false);
-            return;
-        }
+//        if (!$oUser) {
+////            echo "!u", getRequest("topicId");
+//            $this->Viewer_AssignAjax("bAccess", false);
+//            return;
+//        }
         if (!$oTopic) {
             $this->Viewer_AssignAjax("bAccess", false);
             return;
@@ -101,6 +103,15 @@ class ActionServer extends Action
         /**
          * Проверяем права на просмотр топика
          */
+        if (!$oUser) {
+            if ($oTopic->getPublish() && $oTopic->getBlog()->getType()=="open") {
+                $this->Viewer_AssignAjax("bAccess", true);
+                return;
+            } else {
+                $this->Viewer_AssignAjax("bAccess", "NOOOO");
+                return;
+            }
+        }
         if (!$oTopic->getPublish() and (!$oUser or ($oUser->getId()!=$oTopic->getUserId() and !$oUser->isAdministrator()))) {
 //            echo "PBL";
             $this->Viewer_AssignAjax("bAccess", false);

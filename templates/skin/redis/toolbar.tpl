@@ -2,7 +2,7 @@
     <div id="rightbar_menu_top">
 
         <div class="rightbar-item with_dropd user_item">
-            <a href="{if $oUserCurrent}{$oUserCurrent->getUserWebPath()}{/if}"  title="${$oUserCurrent->getLogin()}">
+            <a href="{if $oUserCurrent}{$oUserCurrent->getUserWebPath()}{/if}"  title="{if $oUserCurrent}{$oUserCurrent->getLogin()}{/if}">
                 <img
                         src="{if $oUserCurrent}{$oUserCurrent->getProfileAvatarPath(48)}{else}https://chenhan1218.github.io/img/profile.png{/if}"
                         alt="avatar" class="avatar"/>

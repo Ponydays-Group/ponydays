@@ -1,6 +1,6 @@
 <div id="top_block_users">
     <div id="user_background" style="background: url({$oUserProfile->getProfileFoto()});">
-        {if $oUserCurrent->getId()==$oUserProfile->getId()}
+        {if $oUserCurrent && $oUserCurrent->getId()==$oUserProfile->getId()}
         <p class="upload-photo">
             <a href="#" onclick="ls.user.uploadFoto(); return false;"><i class="material-icons">file_upload</i></a>&nbsp;&nbsp;&nbsp;
             <a href="#" id="foto-remove" onclick="return ls.user.removeFoto();" style="{if !$oUserCurrent->getProfileFoto()}display:none;{/if}"><i class="material-icons">delete</i></a>

@@ -64,7 +64,7 @@ class ActionServer extends Action
         }
         $this->Viewer_SetResponseAjax('json', true, false);
         shell_exec('cd '.dirname(__FILE__)."/../../frontend/".' && git pull && webpack .');
-        $this->Nower_Post('/site-update');
+//        $this->Nower_Post('/site-update');
     }
 
     function EventGetUserByKey() {

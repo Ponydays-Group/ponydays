@@ -39,6 +39,7 @@ $button-primary-border-color: #d44545;
 	text-transform: uppercase;
 	font-family: "Roboto";
 	border: 1px solid darken(#009688, 15%);
+	box-shadow: $first-shadow;
 }
 .button:hover, .button.hovered { text-decoration: none; color: $main-color; background: #00695C; }
 .button:active {

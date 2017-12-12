@@ -75,6 +75,8 @@
 		ls.registry.set('block_stream_show_tip',{json var=$oConfig->Get('block.stream.show_tip')});
 	</script>
 
+	<script src='https://www.google.com/recaptcha/api.js'></script>
+
 
 	<link rel="stylesheet" href="/static/{cfg name="frontend.version"}/{cfg name="theme"}.css" type="text/css" />
 

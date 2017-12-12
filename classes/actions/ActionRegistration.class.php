@@ -146,6 +146,25 @@ class ActionRegistration extends Action {
 		 * Устанавливаем формат Ajax ответа
 		 */
 		$this->Viewer_SetResponseAjax('json');
+        $sCaptchaResponse = getRequest('g-recaptcha-response');
+
+        $myCurl = curl_init();
+        curl_setopt_array($myCurl, array(
+            CURLOPT_URL => 'https://www.google.com/recaptcha/api/siteverify',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => http_build_query(array(
+                "secret" => Config::Get('reCaptcha.secret'),
+                "response" => $sCaptchaResponse
+            ))
+        ));
+        $captchaData = json_decode(curl_exec($myCurl));
+        curl_close($myCurl);
+
+        if (!$captchaData->success) {
+            $this->Message_AddErrorSingle($this->Lang_Get('system_error'));
+            return;
+		}
 		/**
 		 * Создаем объект пользователя и устанавливаем сценарий валидации
 		 */
@@ -158,7 +177,6 @@ class ActionRegistration extends Action {
 		$oUser->setMail(getRequestStr('mail'));
 		$oUser->setPassword(getRequestStr('password'));
 		$oUser->setPasswordConfirm(getRequestStr('password_confirm'));
-		$oUser->setCaptcha(getRequestStr('captcha'));
 		$oUser->setDateRegister(date("Y-m-d H:i:s"));
 		$oUser->setIpRegister(func_getIp());
 		/**
@@ -183,7 +201,7 @@ class ActionRegistration extends Action {
 				/**
 				 * Убиваем каптчу
 				 */
-				unset($_SESSION['captcha_keystring']);
+//				unset($_SESSION['captcha_keystring']);
 				/**
 				 * Подписываем пользователя на дефолтные события в ленте активности
 				 */

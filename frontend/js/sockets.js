@@ -137,3 +137,9 @@ sock.on('new-vote', function(data){
         $("#vote_total_"+data.targetType+"_"+data.targetId).html(data.rating)
     }
 })
+
+sock.on('site-update', function(){
+    ls.msg.notice('Сайт был обновлен', 'Рекомендуется перезагрузить страницу')
+    if (checkPerm("sound_notice"))
+        nAudio.play()
+})

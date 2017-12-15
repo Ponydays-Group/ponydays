@@ -759,10 +759,47 @@ export function init() {
 	updateNesting()
 	toggleCommentForm(iCurrentShowFormComment)
 
+    Emitter.on('socket-edit-comment', (data)=>updateCommentEdited(data.commentData.id, data.commentData.text))
+    Emitter.on('socket-delete-comment', (data)=>updateCommentDeleted(data.commentData.id, parseInt(data.delete), data.deleteReason))
+    Emitter.on('socket-new-comment', (data)=>{
+        if (!document.getElementById('autoload').checked)
+            return
+        ls.comments.load(targetId, targetType, false, true)
+    })
+
+
 	if (typeof(options.wysiwyg) !== "number") {
 		options.wysiwyg = Boolean(BLOG_USE_TINYMCE && tinyMCE)
 	}
 	//Emitter.emit('ls_comments_init_after',[],this)
+}
+
+export function updateCommentDeleted(id, deleted, reason) {
+    let cmt = $(`[data-id="${id}"]`)
+    if (!cmt.length) {
+        return
+    }
+    if (deleted) {
+        cmt.addClass("comment-deleted")
+        cmt.find(".comment-content").html(`
+        <div class="delete-reason">
+            ${reason || "Нет причины удаления"}
+        </div>
+
+            ${LOGGED_IN && (IS_ADMIN || cmt.hasClass("comment-self")) ? `<a href="#" onclick="ls.comments.showHiddenComment(${this.id}); return false;">Раскрыть комментарий</a>` : ""}`)
+    } else {
+        cmt.removeClass("comment-deleted")
+        Comments.showHiddenComment(id)
+    }
+}
+
+export function updateCommentEdited(id, sText) {
+    let cmt = $(`[data-id="${id}"]`)
+    if (!cmt.length) {
+        return
+    }
+    cmt.find(".comment-edited").css("display", "inline-block")
+    cmt.find('.comment-content').html(sText)
 }
 
 export function initEvent() {

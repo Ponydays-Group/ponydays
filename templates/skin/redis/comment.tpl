@@ -78,7 +78,7 @@
                     </a>
 				</span>
 
-				{if $cmtlevel>0}
+				{if $oComment->getPid()}
 					<span class="goto-comment-parent">
                 		<a href="#comment{$oComment->getPid()}" onclick="ls.comments.goToParentComment({$oComment->getId()},{$oComment->getPid()}); return false;" title="Перейти к родительскому комментарию">
                 			↑

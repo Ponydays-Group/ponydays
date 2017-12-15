@@ -71,10 +71,27 @@ export function updateNesting() {
 
     let aComments = $(".comment")
 
+    let foldings = localStorage.getItem('foldings_' + targetType + '_' + targetId) //||"".split(',') || []
+    if (!foldings) {
+        foldings = []
+    } else {
+        foldings = foldings.split(',')
+    }
+
+	let prev = null
+
     aComments.each(function (i, comment) {
+    	if (prev)
+    		if (parseInt(prev.dataset.level)<parseInt(comment.dataset.level))
+    			$(prev).addClass('comment-foldable')
         let level = +$(comment).attr("data-level") > iMaxNesting ? iMaxNesting : +$(comment).attr("data-level")
 
         $(comment).css("margin-left", level * 20 + "px")
+
+        if (foldings.indexOf(comment.dataset.id.toString())>=0)
+        	foldBranch(comment.dataset.id)
+
+		prev = comment
     }.bind(this))
 
 }
@@ -297,6 +314,7 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
 				let cmt = aCmt[i]
 				let parent = $(`[data-id="${cmt.idParent}"]`)
 				if (parent.length) {
+					parent.addClass("comment-foldable")
                     let level = (parseInt(parent.data("level")) + 1)
                     let prev = null
 					let next = null
@@ -317,12 +335,12 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
                     	continue
 					}
 					if (prev) {
-                        $(cmt.html).insertAfter(prev).css("margin-left", level * 20 + "px").data("level", level)
+                        $(cmt.html).insertAfter(prev).css("margin-left", level * 20 + "px").attr("data-level", level)
 					} else {
-                        $(cmt.html).insertAfter(parent).css("margin-left", level * 20 + "px").data("level", level)
+                        $(cmt.html).insertAfter(parent).css("margin-left", level * 20 + "px").attr("data-level", level)
                     }
                 } else {
-                    $(cmt.html).appendTo("#comments-tree").data("level", 0)
+                    $(cmt.html).appendTo("#comments-tree").attr("data-level", 0)
 				}
 			}
 
@@ -670,7 +688,7 @@ export function initShortcuts() {
                 this.state.aCommentsNew.splice(this.state.aCommentsNew.indexOf("" + id), 1)
             }
         }
-        this.updateCommentsNewCount()
+        calcNewComments()
     }
 
     function voteUp() {
@@ -722,7 +740,7 @@ export function initShortcuts() {
     oFormText.off("keydown", shortcuts["ctrl+home"])
 
     window.foldBranch = function (id) {
-        let foldings = localStorage.getItem('foldings_' + this.state.aComments[this.state.aSortedIds[0]].targetType + '_' + targetId) //||"".split(',') || []
+        let foldings = localStorage.getItem('foldings_' + targetType + '_' + targetId) //||"".split(',') || []
         if (!foldings) {
             foldings = []
         } else {
@@ -734,35 +752,37 @@ export function initShortcuts() {
         if ($("#folded_branch_" + id).length > 0) {
             $("#folded_branch_" + id).addClass("folded")
             $("#comment_id_" + id).addClass("comment-folding-start")
-            this.updateCommentsNewCount()
+            calcNewComments()
             return
         }
-        let comment = this.state.aComments[id]
+        let comment = $(`[data-id="${id}"]`)
         let to_fold = []
         let found = false;
-        for (let i = this.state.aSortedIds.indexOf(id) + 1; !found; i++) {
-            if (this.state.aComments[this.state.aSortedIds[i]].level > comment.level) {
-                to_fold.push(this.state.aSortedIds[i])
+        window.cel = comment
+        comment.nextAll('.comment').each(function(k,v){
+            if (!found && parseInt(v.dataset.level) > parseInt(comment.attr("data-level"))) {
+                to_fold.push(v)
+				console.log("TO FOLD:",v)
             } else {
                 found = true
             }
-        }
-        $("#comment_id_" + to_fold.join(", #comment_id_")).wrapAll(`<div class='folding-comments'></div>`)
-        $(`#comment_id_${to_fold[0]}`).parent().wrap(`<div class='folding folded' id="folded_branch_${id}" data-commentid='${id}'></div>`)
+        })
+        $(to_fold).wrapAll(`<div class='folding-comments'></div>`)
+        $(to_fold[0]).parent().wrap(`<div class='folding folded' id="folded_branch_${id}" data-commentid='${id}'></div>`)
         $("#comment_id_" + id).addClass("comment-folding-start")
-        this.updateCommentsNewCount()
-        console.log("#comment_id_" + to_fold.join(", #comment_id_"))
+        calcNewComments()
+        console.log(to_fold)
 
     }.bind(this)
 
     window.unfoldBranch = function (id) {
-        let foldings = localStorage.getItem('foldings_' + this.state.aComments[this.state.aSortedIds[0]].targetType + '_' + targetId).split(',') || []
+        let foldings = localStorage.getItem('foldings_' + targetType + '_' + targetId).split(',') || []
         foldings.pop(id)
         localStorage.setItem('foldings_' + targetType + '_' + targetId, foldings.join(','))
         console.log(id)
         $("#folded_branch_" + id).removeClass("folded")
         $("#comment_id_" + id).removeClass("comment-folding-start")
-        this.updateCommentsNewCount()
+        calcNewComments()
     }.bind(this)
 }
 

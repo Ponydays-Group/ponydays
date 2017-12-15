@@ -50,6 +50,7 @@ export let iCurrentViewComment = null
 // export let bSuccessLoaded = true
 // export let bStopAutoload = false
 export let aCommentNew = []
+export let aCommentNewOld = []
 export let aCommentOld = []
 export let lastNewComment = 0
 
@@ -469,11 +470,17 @@ export function calcNewComments() {
 // Переход к следующему комментарию
 export function goToNextComment() {
 	Emitter.emit("go-to-next-comment")
-	scrollToComment($('.comment-new')[0].dataset.id)
+	let id = $('.comment-new')[0].dataset.id
+	scrollToComment(id)
 }
 
 export function goToPrevComment() {
+	if ($("#prev_new").hasClass("disabled"))
+		return
 	Emitter.emit("go-to-prev-comment")
+	scrollToComment(aCommentNewOld.splice(-2,1)[0])
+	if (aCommentNewOld.length<2)
+    	$("#prev_new").addClass("disabled")
 }
 
 // Прокрутка к комментарию
@@ -496,7 +503,12 @@ export function scrollToComment(id, offset, speed) {
     }
 
     oComment.addClass("comment-current")
-    oComment.removeClass("comment-new")
+	if (oComment.hasClass("comment-new")) {
+        aCommentNewOld.push(oComment.data("id"))
+		if (aCommentNewOld.length>1)
+			$("#prev_new").removeClass("disabled")
+        oComment.removeClass("comment-new")
+    }
 	Emitter.emit("go-to-comment", id)
 	calcNewComments()
 }
@@ -559,7 +571,7 @@ export function collapseCommentAll() {
 }
 
 export function initShortcuts() {
-    function goToPrevComment() {
+    function goToPrevCommentS() {
         scrollToComment($(".comment-current").prevAll('.comment')[0].dataset.id)
     }
 
@@ -672,7 +684,7 @@ export function initShortcuts() {
     let shortcuts = {
         "ctrl+space": goToNextComment,
         "ctrl+shift+space": goToPrevComment,
-        "ctrl+up": goToPrevComment,
+        "ctrl+up": goToPrevCommentS,
         "ctrl+down": goToNextCommentS,
         "ctrl+end": goToLastComment,
         "ctrl+home": goToFirstComment,

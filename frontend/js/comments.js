@@ -791,21 +791,24 @@ export function init() {
 	initShortcuts()
 	calcNewComments()
 	checkFolding()
-	updateNesting()
-	toggleCommentForm(iCurrentShowFormComment)
+	if (location.pathname.match(/\/blog\/[a-zA-Z]+\/\d+/)) {
+        updateNesting()
+        toggleCommentForm(iCurrentShowFormComment)
 
-    if (targetType=="topic") {
-        sock.emit("listenTopic", {id: targetId})
-        sock.on("reconnect", ()=>sock.emit("listenTopic", {id: targetId}))
+        if (targetType == "topic") {
+            sock.emit("listenTopic", {id: targetId})
+            sock.on("reconnect", () => sock.emit("listenTopic", {id: targetId}))
+        }
+
+        Emitter.on('socket-edit-comment', (data) => updateCommentEdited(data.commentData.id, data.commentData.text))
+        Emitter.on('socket-delete-comment', (data) => updateCommentDeleted(data.commentData.id, parseInt(data.delete), data.deleteReason))
+        Emitter.on('socket-new-comment', (data) => {
+            if (!document.getElementById('autoload').checked)
+                return
+            ls.comments.load(targetId, targetType, false, true)
+        })
     }
 
-    Emitter.on('socket-edit-comment', (data)=>updateCommentEdited(data.commentData.id, data.commentData.text))
-    Emitter.on('socket-delete-comment', (data)=>updateCommentDeleted(data.commentData.id, parseInt(data.delete), data.deleteReason))
-    Emitter.on('socket-new-comment', (data)=>{
-        if (!document.getElementById('autoload').checked)
-            return
-        ls.comments.load(targetId, targetType, false, true)
-    })
 
 
 	if (typeof(options.wysiwyg) !== "number") {

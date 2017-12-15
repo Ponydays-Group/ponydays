@@ -61,7 +61,9 @@ function showFloatBlock($) {
             }
         }
     }
-    $(window).bind('scroll resize', reinit);
+    if ($(window).width()>1000)
+        $(window).bind('scroll resize', reinit);
+
     reinit();
 }
 
@@ -125,7 +127,8 @@ export default function init() {
 
         $("#scroll_up").click(scrollTop)
 
-        document.addEventListener("scroll", checkSidebarPadding)
+        if ($("#rightbar").width()>40)
+            document.addEventListener("scroll", checkSidebarPadding)
 
         checkCollapse()
         $("#head_collaps").click(

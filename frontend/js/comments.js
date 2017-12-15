@@ -7,6 +7,7 @@ import * as Msg from "./msg"
 import * as Ajax from "./ajax"
 
 import Tree from "./Tree"
+import * as Vote from "./vote";
 
 var dateFormat = require("dateformat")
 
@@ -65,22 +66,25 @@ export async function loadComments() {
 }
 
 export async function renderComments() {
-    lastNewComment = parseInt(localStorage.getItem('lastcomment_'+targetType+'_'+targetId)) || 0
-	let CommentsTree = new Tree()
-
-	let result = await loadComments()
-	let comments = result.aComments
-
-	CommentsTree.mount($("#comments-tree"), comments, lastNewComment)
-	if (!LOGGED_IN)
-    	lastNewComment = result.iMaxIdComment
-	localStorage.setItem('lastcomment_'+targetType+'_'+targetId, lastNewComment)
-
-	if (location.hash.startsWith("#comment") && location.hash !== "#comments") {
-		setTimeout(scrollToComment(location.hash.replace("#comment", ""), 0, 350), 2000)
-	}
-
-	console.log("finish:", dateFormat(new Date(), "HH:MM:ss:l"))
+	// let url = window.location.pathname + "/comments"
+	// let data = await Ajax.asyncAjax(url, {})
+	// $("#comments-tree").html(data.sText)
+    // lastNewComment = parseInt(localStorage.getItem('lastcomment_'+targetType+'_'+targetId)) || 0
+	// let CommentsTree = new Tree()
+    //
+	// let result = await loadComments()
+	// let comments = result.aComments
+    //
+	// CommentsTree.mount($("#comments-tree"), comments, lastNewComment)
+	// if (!LOGGED_IN)
+    	// lastNewComment = result.iMaxIdComment
+	// localStorage.setItem('lastcomment_'+targetType+'_'+targetId, lastNewComment)
+    //
+	// if (location.hash.startsWith("#comment") && location.hash !== "#comments") {
+	// 	setTimeout(scrollToComment(location.hash.replace("#comment", ""), 0, 350), 2000)
+	// }
+    //
+	// console.log("finish:", dateFormat(new Date(), "HH:MM:ss:l"))
 }
 
 // Добавляет комментарий
@@ -173,6 +177,10 @@ export function _toggleCommentForm(idComment, bNoFocus) {
 export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
 	// bSuccessLoaded = false;
 
+	if (parseInt(lastNewComment)==0) {
+        lastNewComment = $("#comment_last_id").val()
+	}
+
 	if (aCommentNew !== []) {
 		aCommentOld = aCommentNew
 	}
@@ -223,9 +231,6 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
 				lastNewComment = result.iMaxIdComment
                 localStorage.setItem('lastcomment_'+targetType+'_'+targetId, lastNewComment)
 				console.log("after", lastNewComment)
-
-				let countComments = $("#count-comments")
-				countComments.text(parseInt(countComments.text()) + Object.keys(aCmt).length)
 			}
 
 			Emitter.emit("comments-new-loaded", result.aComments, selfIdComment, bNotFlushNew)
@@ -256,6 +261,47 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
 			//  Emitter.emit('ls_comments_load_after', [idTarget, typeTarget, selfIdComment, bNotFlushNew, result])
 			// }
 
+            function next(el,selector){
+                let l = []
+                while(el.next(selector).length){el = el.next(selector);if(el.length){l.push(el)}}
+                return l
+            }
+
+			for (let i=0;i<aCmt.length;i++) {
+				let cmt = aCmt[i]
+				let parent = $(`[data-id="${cmt.idParent}"]`)
+				if (parent.length) {
+                    let level = (parseInt(parent.data("level")) + 1)
+                    let prev = null
+					let next = null
+					console.warn(parent.next('.comment'))
+					window.pel = parent
+                    pel.nextAll('.comment').each(function(k,v){
+						v=$(v)
+						console.warn(v.data("level"))
+						if(next==null && parseInt(v.data("level"))>(level-1)){
+							prev = v
+						} else if (next==null && parseInt(v.data("level"))<=(level-1)) {
+							next = v
+						}
+					})
+					console.warn(prev, parent)
+					if (prev) {
+                        $(cmt.html).insertAfter(prev).css("margin-left", level * 20 + "px").data("level", level)
+					} else {
+                        $(cmt.html).insertAfter(parent).css("margin-left", level * 20 + "px").data("level", level)
+                    }
+                } else {
+                    $(cmt.html).appendTo("#comments-tree").data("level", 0)
+				}
+			}
+
+            if (selfIdComment && $("#comment_id_" + selfIdComment).length) {
+                scrollToComment(selfIdComment)
+            }
+
+			calcNewComments()
+
 			let new_messages = $("#new_messages .new-comments")
 			let pm_title = ""
 
@@ -273,6 +319,8 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
 			// new_messages.childNodes[0].textContent = pm_title
 			// new_messages.parentNode.title = pm_title
 			console.log("Ajax done", dateFormat(new Date(), "HH:MM:ss:l"))
+            let countComments = $("#count-comments")
+            countComments.text($(".comment").length)
 		}
 
 		let curItemBlock = Blocks.getCurrentItem("stream")
@@ -281,6 +329,7 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
 			Blocks.load(curItemBlock, "stream")
 			console.log("Load done", dateFormat(new Date(), "HH:MM:ss:l"))
 		}
+
 	}.bind(this))
 }
 
@@ -332,11 +381,11 @@ export function toggle(obj, commentId) {
 			oComment.removeClass(options.classes.comment_new + " " + options.classes.comment_deleted + " " + options.classes.comment_current)
 			if (result.bState) {
 				oComment.addClass(options.classes.comment_deleted)
-				oComment.find('.comment-content')[0].innerHTML = `<div class="delete-reason">${deleteReason}</div><a href="#" onclick="ls.comments.showHiddenComment(${commentId}); return false;">Раскрыть комментарий</a>`
+				oComment.find('.comment-content')[0].innerHTML = `<div class="delete-reason">${deleteReason}</div><a href="#" onclick="ls.showHiddenComment(${commentId}); return false;">Раскрыть комментарий</a>`
 			} else {
 				oComment.find('.delete-reason').remove()
 				if (!LOGGED_IN)
-                	ls.comments.showHiddenComment(commentId)
+                	ls.showHiddenComment(commentId)
 			}
 			Emitter.emit("ls_comments_toggle_after", [obj, commentId, result])
 		}
@@ -366,51 +415,32 @@ export function isCollapsed(el) {
 
 // Устанавливает число новых комментариев
 export function setCountNewComment(count) {
-	// // TODO that will work good only if there are no any other title modificators!
-	// if (!options.pageTitle)
-	//     options.pageTitle = document.title
-	// if (count > 0) {
-	//     $('#new_comments_counter').show().text(count)
-	//     if (document.getElementById('autoload').checked) {
-	//         document.title = '(' + count + ') ' + options.pageTitle
-	//     }
-	// } else {
-	//     $('#new_comments_counter').text(0).hide()
-	//     document.title = options.pageTitle
+    let oCounter = document.getElementById("new_comments_counter")
+    if (!oCounter) return
+
+    count = $('.comment-new:visible').length
+    if (count) {
+        oCounter.style.display = ""
+        oCounter.innerHTML = count
+
+        document.title = `(${count}) ` + TITLE
+        $("#next_new").removeClass("disabled")
+    } else {
+        oCounter.style.display = "none"
+        $("#next_new").addClass("disabled")
+        document.title = TITLE
+    }
 }
 
 // Вычисляет кол-во новых комментариев
 export function calcNewComments() {
-	let aCommentsNew = $("." + options.classes.comment + "." + options.classes.comment_new)
-	$.each(aCommentsNew, function (k, v) {
-		//console.log(isCollapsed(v))
-	}.bind(this))
-
-	let count = aCommentsNew.length
-	$.each(aCommentsNew, function (k, v) {
-		if (!isCollapsed(v)) {
-			aCommentNew.push(parseInt($(v).attr("id").replace("comment_id_", "")))
-		} else {
-			count--
-		}
-	}.bind(this))
-	setCountNewComment(count)
+	setCountNewComment()
 }
 
 // Переход к следующему комментарию
 export function goToNextComment() {
 	Emitter.emit("go-to-next-comment")
-	// if (lastNewComment>0) {
-	//     aCommentOld.push(lastNewComment)
-	// }
-	// if (aCommentNew[0]) {
-	//     if ($('#comment_id_' + aCommentNew[0]).length) {
-	//         scrollToComment(aCommentNew[0])
-	//         $('#comment_id_' + aCommentNew[0]).removeClass(options.classes.comment_new)
-	//     }
-	//     lastNewComment = aCommentNew.shift()
-	// }
-	// setCountNewComment(aCommentNew.length)
+	scrollToComment($('.comment-new')[0].dataset.id)
 }
 
 export function goToPrevComment() {
@@ -418,20 +448,28 @@ export function goToPrevComment() {
 }
 
 // Прокрутка к комментарию
-export function scrollToComment(idComment, offset, speed) {
-	// offset = offset || 250
-	// speed = speed || 150
-	// $('html, body').animate({
-	//     scrollTop: $('#comment_id_' + idComment).offset().top - offset
-	// }, speed)
+export function scrollToComment(id, offset, speed) {
+    let oComment = $(`[data-id=${id}]`)
+    let oCommentCurrent = $(".comment-current")
 
-	// if (iCurrentViewComment) {
-	//     $('#comment_id_' + iCurrentViewComment).removeClass(options.classes.comment_current)
-	//     $('#comment_id_' + iCurrentViewComment).removeClass(options.classes.comment_new)
-	// }
-	// $('#comment_id_' + idComment).addClass(options.classes.comment_current)
-	// iCurrentViewComment = idComment
-	Emitter.emit("go-to-comment", idComment)
+    if (!oComment.length) {
+        return false
+    }
+
+    let body = $("html, body")
+    body.stop()
+    body.animate({
+        scrollTop: oComment.offset().top - 250,
+    }, 150)
+
+    if (oCommentCurrent.length) {
+        oCommentCurrent.removeClass("comment-current")
+    }
+
+    oComment.addClass("comment-current")
+    oComment.removeClass("comment-new")
+	Emitter.emit("go-to-comment", id)
+	calcNewComments()
 }
 
 // Прокрутка к родительскому комментарию
@@ -491,8 +529,205 @@ export function collapseCommentAll() {
 	}.bind(this))
 }
 
+export function initShortcuts() {
+    function goToPrevComment() {
+        scrollToComment($(".comment-current").prevAll('.comment')[0].dataset.id)
+    }
+
+    function goToNextCommentS() {
+        scrollToComment($(".comment-current").nextAll('.comment')[0].dataset.id)
+    }
+
+    function goToLastComment() {
+        scrollToComment($('.comment')[$('.comment').length-1].dataset.id)
+    }
+
+    function goToFirstComment() {
+        scrollToComment($('.comment')[0].dataset.id)
+    }
+
+    function goToNextBranch() {
+    	let done = false
+        $(".comment-current").nextAll('.comment').each(function(k,v){
+        	console.log(v,k)
+        	if (!done && parseInt(v.dataset.level)==0) {
+        		done = true
+                scrollToComment(v.dataset.id)
+			}
+		})
+    }
+
+    function goToPrevBranch() {
+        let done = false
+        $(".comment-current").prevAll('.comment').each(function(k,v){
+            console.log(v,k)
+            if (!done && parseInt(v.dataset.level)==0) {
+                done = true
+                scrollToComment(v.dataset.id)
+            }
+        })
+    }
+
+    function toggleReplyOnCurrent() {
+        toggleCommentForm($(".comment-current").data("id"))
+    }
+
+    function updateComments() {
+        load(window.targetId, window.targetType)
+    }
+
+    function updateCommentsSoft() {
+        load(window.targetId, window.targetType, null, true)
+    }
+
+    function toggleReplyOnRoot() {
+        toggleCommentForm(0)
+    }
+
+    function editCommentCurrent() {
+        editComment($(".comment-current").data("id"))
+    }
+
+    function goToParent() {
+        let oCommentCurrent = $(".comment-current")
+        goToParentComment(oCommentCurrent.data("id"), oCommentCurrent.data("pid"))
+    }
+
+    function goToChild() {
+        let oCommentCurrent = $(".comment-current")
+
+        oCommentCurrent.find("." + options.classes.comment_goto_child).hide()
+        scrollToComment(oCommentCurrent.data("cid"))
+    }
+
+    let despoilComment = function () {
+        let current = $(".comment-current")
+        let despoiled = current.hasClass("comment-despoiled")
+        current.find(".spoiler-body").each(function (k, v) {
+            if (v.style.display !== "block") {
+                if (!despoiled) window.openSpoiler(v)
+            } else {
+                if (despoiled) window.closeSpoiler(v)
+            }
+        })
+        current.toggleClass("comment-despoiled")
+    }.bind(this)
+
+    function markAllChildAsRead() {
+        let oCommentCurrent = $(".comment-current")
+
+        let ids = this.state.aSortedIds.slice(this.state.aSortedIds.indexOf("" + oCommentCurrent.data("id")) + 1)
+        let level = oCommentCurrent.data("level")
+        for (let i in ids) {
+            if (ids.hasOwnProperty(i)) {
+                let id = ids[i]
+                let cmt = this.state.aComments[id]
+                if (cmt.level <= level) {
+                    break
+                }
+                $(`[data-id=${id}]`).removeClass("comment-new")
+                this.state.aCommentsNew.splice(this.state.aCommentsNew.indexOf("" + id), 1)
+            }
+        }
+        this.updateCommentsNewCount()
+    }
+
+    function voteUp() {
+        Vote.vote($(".comment-current").data("id"), this, 1, "comment")
+    }
+
+    function voteDown() {
+        Vote.vote($(".comment-current").data("id"), this, -1, "comment")
+    }
+
+    let shortcuts = {
+        "ctrl+space": goToNextComment,
+        "ctrl+shift+space": goToPrevComment,
+        "ctrl+up": goToPrevComment,
+        "ctrl+down": goToNextCommentS,
+        "ctrl+end": goToLastComment,
+        "ctrl+home": goToFirstComment,
+        "alt+pagedown": goToNextBranch,
+        "alt+pageup": goToPrevBranch,
+        "alt+r": toggleReplyOnCurrent,
+        "alt+u": updateComments,
+        "alt+shift+u": updateCommentsSoft,
+        "alt+shift+d": window.despoil,
+        "alt+shift+s": despoilComment,
+        "alt+n": toggleReplyOnRoot,
+        "alt+shift+e": editCommentCurrent,
+        "alt+shift+p": goToParent,
+        "alt+shift+c": goToChild,
+        "alt+shift+m": markAllChildAsRead,
+        "alt+shift+w": window.widemode,
+        "alt+up": voteUp,
+        "alt+down": voteDown,
+    }
+
+    let oFormText = $("#form_comment_text")
+
+    for (let i in shortcuts) {
+        $(document).on("keydown", null, i, function (e) {
+            shortcuts[i].apply(this);
+            e.preventDefault();
+        }.bind(this))
+        oFormText.on("keydown", null, i, function (e) {
+            shortcuts[i].apply(this);
+            e.preventDefault();
+        }.bind(this))
+    }
+
+    oFormText.off("keydown", shortcuts["ctrl+end"])
+    oFormText.off("keydown", shortcuts["ctrl+home"])
+
+    window.foldBranch = function (id) {
+        let foldings = localStorage.getItem('foldings_' + this.state.aComments[this.state.aSortedIds[0]].targetType + '_' + targetId) //||"".split(',') || []
+        if (!foldings) {
+            foldings = []
+        } else {
+            foldings = foldings.split(',')
+        }
+        foldings.push(id)
+        console.log("FOLDINGS", foldings)
+        localStorage.setItem('foldings_' + targetType + '_' + targetId, foldings.join(','))
+        if ($("#folded_branch_" + id).length > 0) {
+            $("#folded_branch_" + id).addClass("folded")
+            $("#comment_id_" + id).addClass("comment-folding-start")
+            this.updateCommentsNewCount()
+            return
+        }
+        let comment = this.state.aComments[id]
+        let to_fold = []
+        let found = false;
+        for (let i = this.state.aSortedIds.indexOf(id) + 1; !found; i++) {
+            if (this.state.aComments[this.state.aSortedIds[i]].level > comment.level) {
+                to_fold.push(this.state.aSortedIds[i])
+            } else {
+                found = true
+            }
+        }
+        $("#comment_id_" + to_fold.join(", #comment_id_")).wrapAll(`<div class='folding-comments'></div>`)
+        $(`#comment_id_${to_fold[0]}`).parent().wrap(`<div class='folding folded' id="folded_branch_${id}" data-commentid='${id}'></div>`)
+        $("#comment_id_" + id).addClass("comment-folding-start")
+        this.updateCommentsNewCount()
+        console.log("#comment_id_" + to_fold.join(", #comment_id_"))
+
+    }.bind(this)
+
+    window.unfoldBranch = function (id) {
+        let foldings = localStorage.getItem('foldings_' + this.state.aComments[this.state.aSortedIds[0]].targetType + '_' + targetId).split(',') || []
+        foldings.pop(id)
+        localStorage.setItem('foldings_' + targetType + '_' + targetId, foldings.join(','))
+        console.log(id)
+        $("#folded_branch_" + id).removeClass("folded")
+        $("#comment_id_" + id).removeClass("comment-folding-start")
+        this.updateCommentsNewCount()
+    }.bind(this)
+}
+
 export function init() {
 	initEvent()
+	initShortcuts()
 	calcNewComments()
 	checkFolding()
 	toggleCommentForm(iCurrentShowFormComment)
@@ -593,7 +828,7 @@ export function hideComment(idComment) {
 	if (hidden.indexOf(idComment)<0)
 		hidden.push(idComment)
     localStorage.setItem('comments_hide', hidden)
-	cmt.addClass('content-hidden').html(`<a href="#" onclick="ls.comments.showHiddenComment(${idComment}); return false;">Раскрыть комментарий</a>`)
+	cmt.addClass('content-hidden').html(`<a href="#" onclick="ls.showHiddenComment(${idComment}); return false;">Раскрыть комментарий</a>`)
 }
 
 export function editComment(idComment) {
@@ -604,11 +839,11 @@ export function editComment(idComment) {
 
 	if (!(iCurrentShowFormComment === idComment && reply.is(":visible"))) {
 		let thisObj = this
-		$("#comment_content_id_" + idComment).addClass(thisObj.options.classes.form_loader)
+		$("#comment_content_id_" + idComment).addClass(options.classes.form_loader)
 		Ajax.ajax(aRouter.ajax + "editcomment-getsource/", {
 			"idComment": idComment,
 		}, function (result) {
-			$("#comment_content_id_" + idComment).removeClass(thisObj.options.classes.form_loader)
+			$("#comment_content_id_" + idComment).removeClass(options.classes.form_loader)
 			if (!result) {
 				Msg.error("Error", "Please try again later")
 				return
@@ -631,12 +866,12 @@ export function editComment(idComment) {
 					return false
 				})
 
-				cbs.after($(thisObj.options.cancel_button_code))
+				cbs.after($(options.cancel_button_code))
 
-				cbs.after($(thisObj.options.edit_button_code))
-				ls.comments.setFormText(result.sCommentSource)
+				cbs.after($(options.edit_button_code))
+				setFormText(result.sCommentSource)
 
-				thisObj.enableFormComment()
+				enableFormComment()
 			}
 		})
 	} else {
@@ -741,8 +976,3 @@ export function showHistory(cId) {
 		}
 	}.bind(this))
 }
-
-// export function init_editcomment = function () {
-//        toggleCommentForm = that.superior("toggleCommentForm")
-//        ls.comments.toggleCommentForm = mytoggleCommentForm
-//    }

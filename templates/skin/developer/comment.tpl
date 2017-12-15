@@ -11,7 +11,7 @@
 															comment-deleted
 														{elseif $oUserCurrent and $oComment->getUserId() == $oUserCurrent->getId()}
 															comment-self
-														{elseif $sDateReadLast <= $oComment->getDate()}
+														{elseif $sDateReadLast <= $oComment->getDate() && !($oUserCurrent and $oComment->getUserId() == $oUserCurrent->getId())}
 															comment-new
 														{/if}">
 	{if !$oComment->getDelete() or $bOneComment or ($oUserCurrent and $oUserCurrent->isAdministrator())}

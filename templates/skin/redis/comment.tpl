@@ -1,77 +1,101 @@
 {assign var="oUser" value=$oComment->getUser()}
-{assign var="oVote" value=$oComment->getVote()}
+
+<section
+		id="comment_id_{$oComment->getId()}"
+		data-author="{$oComment->getUser()->getLogin()}"
+		data-id="{$oComment->getId()}"
+		data-level="{$cmtlevel}"
+		data-pid="{$oComment->getPid()}"
+		style="margin-left: {$cmtlevel*20}px"
+		class="comment
+			{if $sDateReadLast <= $oComment->getDate()}comment-new{/if}
+			{if $oUserCurrent && $oComment->getUserId()==$oUserCurrent->getId()}comment-self{/if}
+			{if $oComment->getDelete()}comment-deleted{/if}">
+
+	<a name="comment{$oComment->getId()}"></a>
+
+	<a href="{$oUser->getWebPath()}" target="_blank"><img src="{$oUser->getProfileAvatarPath(48)}" alt="avatar" class="comment-avatar" /></a>
+
+	<div class="fold" onclick="foldBranch('{$oComment->getId()}')"><i class='material-icons'>keyboard_arrow_up</i></div>
+	<div class="unfold" onclick="unfoldBranch('{$oComment->getId()}')"><i class='material-icons'>keyboard_arrow_down</i></div>
 
 
-<section id="comment_id_{$oComment->getId()}" class="comment
-														{if $oComment->isBad()}
-															comment-bad
-														{/if}
+	<ul class="comment-info">
+		<li class="comment-author"><a href="{$oUser->getWebPath()}" target="_blank">{$oUser->getLogin()}</a></li>
+	</ul>
 
-														{if $oComment->getDelete()}
-															comment-deleted
-														{elseif $oUserCurrent and $oComment->getUserId() == $oUserCurrent->getId()}
-															comment-self
-														{elseif $sDateReadLast <= $oComment->getDate()}
-															comment-new
-														{/if}">
-	{if !$oComment->getDelete() or $bOneComment or ($oUserCurrent and $oUserCurrent->isAdministrator())}
-		<a name="comment{$oComment->getId()}"></a>
+	<div id="comment_content_id_{$oComment->getId()}" class="comment-content text {if $oComment->getDelete()}hided{/if}">
+		{if $oComment->getDelete()}<div class="delete-reason">{if $oComment->getDeleteReason()}{$oComment->getDeleteReason()}{else}Нет причины удаления{/if}</div>{/if}
+		{if $oUserCurrent && (($oComment->getDelete() && ($oUserCurrent->isAdministrator() || $oUserCurrent->isGlobalModerator())) || $oUserCurrent->getId()==$oComment->getId())}
+			<a href="#" onclick="ls.comments.showHiddenComment({$oComment->getId()}); return false;">Раскрыть комментарий</a>
+		{/if}
+		{if !$oComment->getDelete()}
+			{$oComment->getText()}
+		{/if}
+	</div>
 
+	<div class="comment-actions-wrapper">
+		<ul class="comment-actions">
+			<li class="comment-date">
+				<a href="#comment"{$oComment->getId()} onclick="ls.comments.scrollToComment({$oComment->getId()}); return false;" title="Ссылка на комментарий">
+					<time dateTime="{$oComment->getDate()}">{$oComment->getDate()}</time>
+				</a>
+			</li>
+			<li class="comment-edited" {if $oComment->getEditCount()}style="display: inline-block;"{/if}>(edited)</li>
+			{if $oUserCurrent}<span><a href="#" onclick="ls.comments.toggleCommentForm({$oComment->getId()}); return false;" class="reply-link">Ответить</a></span>{/if}
+			<li class="action-hidden">
+                {if $oUserCurrent && ($oUserCurrent->getId()==$oComment->getUserId() || $oUserCurrent->isAdministrator() || ($oUserCurrent->isGlobalModerator() && $oComment->getTarget()->getBlog()->getType()=="open"))}
+					<span>
+                		<a href="#" class="editcomment_editlink" title="Редактировать комментарий" onclick="ls.comments.editComment({$oComment->getId()}); return false;">
+                			<i class="fa fa-pencil" title="Редактировать комментарий"></i>
+                		</a>
+                	</span>
+					<span>
+                		<a href="#" class="editcomment_historylink" title="История редактирования" onclick="ls.comments.showHistory({$oComment->getId()}); return false;">
+                			<i class="fa fa-history" title="История редактирования"></i>
+                		</a>
+                	</span>
+				{/if}
 
-		<a href="{$oUser->getUserWebPath()}" target="_blank"><img src="{$oUser->getProfileAvatarPath(48)}" 
-alt="avatar" 
-class="comment-avatar" /></a>
+                {if $oUserCurrent && ($oUserCurrent->isAdministrator() || ($oUserCurrent->isGlobalModerator() && $oComment->getTarget()->getBlog()->getType()=="open"))}
+					<span>
+                		<a onclick="ls.comments.toggle(this,{$oComment->getId()}); return false;" href="#" class="comment-delete">
+			                <i class="fa fa-trash" title="Удалить/восстановить комментарий"></i>
+            		    </a>
+                	</span>
+				{/if}
 
+				{if $oUserCurrent && $oComment->getTargetType()!="talk"}
+                	<span class="comment-favourite">
+                		<div onclick="return ls.favourite.toggle({$oComment->getId()},this,'comment');" id="comment_favourite_{$oComment->getId()}" class="fa fa-heart-o favourite {if $oComment->getIsFavourite()}active{/if}"></div>
+						<span class="favourite-count" id="fav_count_comment_"{$oComment->getId()}>{if $oComment->getCountFavourite()}{$oComment->getCountFavourite()}{/if}</span>
+                	</span>
+				{/if}
 
-		<ul class="comment-info">
-			<li class="comment-author"><a href="{$oUser->getUserWebPath()}" target="_blank">{$oUser->getLogin()}</a></li>
+				<span>
+					<a onclick="ls.comments.hideComment({$oComment->getId()}); return false;" href="#" class="comment-hide">
+						<i class="fa fa-close" title="Скрыть комментарий"></i>
+                    </a>
+				</span>
+
+				{if $cmtlevel>0}
+					<span class="goto-comment-parent">
+                		<a href="#comment{$oComment->getPid()}" onclick="ls.comments.goToParentComment({$oComment->getId()},{$oComment->getPid()}); return false;" title="Перейти к родительскому комментарию">
+                			↑
+		                </a>
+        	        </span>
+				{/if}
+
+				<span style="display: none" class="goto-comment-child">
+					<a href="#" title="Вернуться к дочернему">
+						↓
+					</a>
+				</span>
+			</li>
 		</ul>
 
-
-		<div id="comment_content_id_{$oComment->getId()}" class="comment-content text">
-			{$oComment->getText()}
-		</div>
-
-
-
-			<ul class="comment-actions">
-				<li class="comment-date">
-					<a href="{if $oConfig->GetValue('module.comment.nested_per_page')}{router page='comments'}{else}#comment{/if}{$oComment->getId()}" class="" title="{$aLang.comment_url_notice}">
-						<time datetime="{date_format date=$oComment->getDate() format='c'}">{date_format date=$oComment->getDate() format="j F Y, H:i"}</time>
-					</a>
-				</li>
-				{if $oUserCurrent}
-
-				{if !$oComment->getDelete() and !$bAllowNewComment}
-					<li><a href="#" onclick="ls.comments.toggleCommentForm({$oComment->getId()}); return false;" class="reply-link">{$aLang.comment_answer}</a></li>
-				{/if}
-
-				{if !$oComment->getDelete() and $oUserCurrent and $oUserCurrent->isAdministrator()}
-					<li><a href="#" class="comment-delete action-hidden" onclick="ls.comments.toggle(this,{$oComment->getId()}); return false;"><i class="fa fa-trash" title="{$aLang.comment_delete}"></i></a></li>
-				{/if}
-
-				{if $oComment->getDelete() and $oUserCurrent and $oUserCurrent->isAdministrator()}
-					<li><a href="#" class="comment-repair action-hidden" onclick="ls.comments.toggle(this,{$oComment->getId()}); return false;">{$aLang.comment_repair}</a></li>
-				{/if}
-
-                {hook run='comment_action' comment=$oComment}
-
-                {if $oUserCurrent and !$bNoCommentFavourites}
-					<li class="comment-favourite action-hidden">
-						<div onclick="return ls.favourite.toggle({$oComment->getId()},this,'comment');" class="fa fa-heart-o favourite {if $oComment->getIsFavourite()}active{/if}"></div>
-						<span class="favourite-count" id="fav_count_comment_{$oComment->getId()}">{if $oComment->getCountFavourite() > 0}{$oComment->getCountFavourite()}{/if}</span>
-					</li>
-                {/if}
-								{/if}
-
-                {if $oComment->getPid()}
-					<li class="goto-comment-parent action-hidden"><a href="#" onclick="ls.comments.goToParentComment({$oComment->getId()},{$oComment->getPid()}); return false;" title="{$aLang.comment_goto_parent}">↑</a></li>
-                {/if}
-				<li class="goto-comment-child action-hidden"><a href="#" title="{$aLang.comment_goto_child}">↓</a></li>
-
-                {if $oComment->getTargetType() != 'talk'}
-					<li id="vote_area_comment_{$oComment->getId()}" class="vote
-																		{if $oComment->getRating() == 0}
+		<ul class="comment-actions">
+			<li id="vote_area_comment_{$oComment->getId()}" class="vote {if $oComment->getRating() == 0}
 																			action-hidden
 																		{/if}
 																		{if $oComment->getRating() > 0}
@@ -89,13 +113,19 @@ class="comment-avatar" /></a>
 																				voted-down
 																			{/if}
 																		{/if}">
-						{if $oUserCurrent}<div class="vote-down fa fa-minus-square-o" onclick="return ls.vote.vote({$oComment->getId()},this,-1,'comment');"></div>{/if}
-						<span class="vote-count" id="vote_total_comment_{$oComment->getId()}">{if $oComment->getRating() > 0}+{/if}{$oComment->getRating()}</span>
-						{if $oUserCurrent}<div class="vote-up fa fa-plus-square-o" onclick="return ls.vote.vote({$oComment->getId()},this,1,'comment');"></div>{/if}
-					</li>
-                {/if}
-			</ul>
-	{else}
-		{$aLang.comment_was_delete}
-	{/if}
+
+				{if $oUserCurrent}
+                <div class="vote-up" onclick="return ls.vote.vote({$oComment->getId()},this,1,'comment');">
+                <i class="material-icons">keyboard_arrow_up</i>
+                </div>
+				<span class="vote-count" onclick="ls.vote.getVotes({$oComment->getId()},'comment',this); return false;" id="vote_total_comment_{$oComment->getId()}">
+    						    {$oComment->getRating()}
+    					    </span>
+                <div class="vote-down" onclick="return ls.vote.vote({$oComment->getId()},this,-1,'comment');">
+                <i class="material-icons">keyboard_arrow_down</i>
+                </div>
+				{/if}
+			</li>
+		</ul>
+	</div>
 </section>

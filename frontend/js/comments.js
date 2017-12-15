@@ -794,6 +794,11 @@ export function init() {
 	updateNesting()
 	toggleCommentForm(iCurrentShowFormComment)
 
+    if (targetType=="topic") {
+        sock.emit("listenTopic", {id: targetId})
+        sock.on("reconnect", ()=>sock.emit("listenTopic", {id: targetId}))
+    }
+
     Emitter.on('socket-edit-comment', (data)=>updateCommentEdited(data.commentData.id, data.commentData.text))
     Emitter.on('socket-delete-comment', (data)=>updateCommentDeleted(data.commentData.id, parseInt(data.delete), data.deleteReason))
     Emitter.on('socket-new-comment', (data)=>{

@@ -77,10 +77,9 @@
 
 {include file='toolbar.tpl'}
 
-<div id="scroller">
-    <div id="scroll_up"><i class="material-icons">keyboard_arrow_up</i></div>
-    <div id="scroll_down"><i class="material-icons">keyboard_arrow_down</i></div>
-</div>
+
+<div id="scroll_up"><i class="material-icons">keyboard_arrow_up</i></div>
+<div id="scroll_down"><i class="material-icons">keyboard_arrow_down</i></div>
 
 {hook run='body_end'}
 

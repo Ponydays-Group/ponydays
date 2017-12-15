@@ -1,19 +1,12 @@
-
 @media screen and (max-width: 1600px) {
-  #scroller {
-    display: flex;
-    justify-content: space-between;
-    flex-direction: column;
-
-    #scroll_down, #scroll_up {
-      height: 50px;
-    }
+  #scroll_down, #scroll_up {
+    height: 50px;
   }
+}
 
-  #container {
-    padding-right: 64px;
-    padding-left: 0px;
-  }
+#container {
+  padding-right: 64px;
+  padding-left: 0px;
 }
 
 #navbar-right-small {
@@ -34,7 +27,7 @@
         width: 0px;
         overflow: hidden;
         background: #404d9b;
-        box-shadow: inset 0px 0px 6px rgba(0,0,0,0.3);
+        box-shadow: inset 0px 0px 6px rgba(0, 0, 0, 0.3);
         transition: width .2s;
       }
 
@@ -104,18 +97,12 @@
 }
 
 @media screen and (max-width: 530px) {
-  #scroller {
-    display: flex;
-    justify-content: space-between;
-    flex-direction: column;
+  #scroll_down, #scroll_up {
+    height: 50px;
+  }
 
-    #scroll_down, #scroll_up {
-      height: 50px;
-    }
-
-    #scroll_down {
-      margin-bottom: 50px;
-    }
+  #scroll_down {
+    margin-bottom: 40px;
   }
 
   #container {

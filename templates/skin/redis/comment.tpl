@@ -8,7 +8,7 @@
 		data-pid="{$oComment->getPid()}"
 		style="margin-left: {$cmtlevel*20}px"
 		class="comment
-			{if $sDateReadLast <= $oComment->getDate()}comment-new{/if}
+			{if $sDateReadLast <= $oComment->getDate() && !($oUserCurrent and $oComment->getUserId() == $oUserCurrent->getId())}comment-new{/if}
 			{if $oUserCurrent && $oComment->getUserId()==$oUserCurrent->getId()}comment-self{/if}
 			{if $oComment->getDelete()}comment-deleted{/if}">
 

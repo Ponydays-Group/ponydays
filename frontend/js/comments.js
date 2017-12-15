@@ -53,6 +53,31 @@ export let aCommentNew = []
 export let aCommentOld = []
 export let lastNewComment = 0
 
+export function calcNesting() {
+    let minWidth = parseInt(localStorage.getItem("min_comment_width"))
+
+    if (!minWidth) {
+        localStorage.setItem("min_comment_width", 250)
+        minWidth = 250
+    }
+
+    window.iMaxNesting = parseInt(($("#comments").width() - minWidth) / 20)
+}
+
+export function updateNesting() {
+
+	calcNesting()
+
+    let aComments = $(".comment")
+
+    aComments.each(function (i, comment) {
+        let level = +$(comment).attr("data-level") > iMaxNesting ? iMaxNesting : +$(comment).attr("data-level")
+
+        $(comment).css("margin-left", level * 20 + "px")
+    }.bind(this))
+
+}
+
 export async function loadComments() {
 	let url = ""
 
@@ -286,6 +311,7 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
 						}
 					})
 					console.warn(prev, parent)
+					level = level<window.iMaxNesting?level:window.iMaxNesting
 					if (prev) {
                         $(cmt.html).insertAfter(prev).css("margin-left", level * 20 + "px").data("level", level)
 					} else {
@@ -730,6 +756,7 @@ export function init() {
 	initShortcuts()
 	calcNewComments()
 	checkFolding()
+	updateNesting()
 	toggleCommentForm(iCurrentShowFormComment)
 
 	if (typeof(options.wysiwyg) !== "number") {

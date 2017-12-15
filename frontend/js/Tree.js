@@ -745,7 +745,14 @@ export default class Tree {
     }
 
     updateNesting() {
-        this.calcNesting()
+        let minWidth = parseInt(localStorage.getItem("min_comment_width"))
+
+        if (!minWidth) {
+            localStorage.setItem("min_comment_width", 250)
+            minWidth = 250
+        }
+
+        window.iMaxNesting = parseInt(($("#comments").width() - minWidth) / 20)
 
         let aComments = $(".comment")
 

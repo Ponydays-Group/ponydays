@@ -312,6 +312,9 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
 
 			for (let i=0;i<aCmt.length;i++) {
 				let cmt = aCmt[i]
+                if ($(`[data-id="${cmt.id}"]`).length) {
+                    continue
+                }
 				let parent = $(`[data-id="${cmt.idParent}"]`)
 				if (parent.length) {
 					parent.addClass("comment-foldable")
@@ -331,9 +334,6 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
 					})
 					console.warn(prev, parent)
 					level = level<window.iMaxNesting?level:window.iMaxNesting
-					if ($(`[data-id="${cmt.id}"]`).length) {
-                    	continue
-					}
 					if (prev) {
                         $(cmt.html).insertAfter(prev).css("margin-left", level * 20 + "px").attr("data-level", level)
 					} else {

@@ -37,8 +37,8 @@
 	<div class="comment-actions-wrapper">
 		<ul class="comment-actions">
 			<li class="comment-date">
-				<a href="#comment"{$oComment->getId()} onclick="ls.comments.scrollToComment({$oComment->getId()}); return false;" title="Ссылка на комментарий">
-					<time dateTime="{$oComment->getDate()}">{$oComment->getDate()}</time>
+				<a href="#comment{$oComment->getId()}" onclick="ls.comments.scrollToComment({$oComment->getId()}); return false;" title="Ссылка на комментарий">
+					<time dateTime="{date_format date=$oComment->getDate() format='c'}">{date_format date=$oComment->getDate() format="j F Y, H:i"}</time>
 				</a>
 			</li>
 			<li class="comment-edited" {if $oComment->getEditCount()}style="display: inline-block;"{/if}>(edited)</li>

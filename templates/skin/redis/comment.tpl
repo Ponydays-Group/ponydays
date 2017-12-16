@@ -44,7 +44,7 @@
 			<li class="comment-edited" {if $oComment->getEditCount()}style="display: inline-block;"{/if}>(edited)</li>
 			{if $oUserCurrent}<span><a href="#" onclick="ls.comments.toggleCommentForm({$oComment->getId()}); return false;" class="reply-link">Ответить</a></span>{/if}
 			<li class="action-hidden">
-                {if $oUserCurrent && ($oUserCurrent->getId()==$oComment->getUserId() || $oUserCurrent->isAdministrator() || ($oUserCurrent->isGlobalModerator() && $oComment->getTarget()->getBlog()->getType()=="open"))}
+                {if $oUserCurrent && ($oUserCurrent->getId()==$oComment->getUserId() || ($oComment->getTargetType()!="talk" && $oUserCurrent->isAdministrator() || ($oUserCurrent->isGlobalModerator() && $oComment->getTarget()->getBlog()->getType()=="open")))}
 					<span>
                 		<a href="#" class="editcomment_editlink" title="Редактировать комментарий" onclick="ls.comments.editComment({$oComment->getId()}); return false;">
                 			<i class="fa fa-pencil" title="Редактировать комментарий"></i>
@@ -57,7 +57,7 @@
                 	</span>
 				{/if}
 
-                {if $oUserCurrent && ($oUserCurrent->isAdministrator() || ($oUserCurrent->isGlobalModerator() && $oComment->getTarget()->getBlog()->getType()=="open"))}
+                {if $oUserCurrent && ($oUserCurrent->getId()==$oComment->getUserId() || ($oComment->getTargetType()!="talk" && $oUserCurrent->isAdministrator() || ($oUserCurrent->isGlobalModerator() && $oComment->getTarget()->getBlog()->getType()=="open")))}
 					<span>
                 		<a onclick="ls.comments.toggle(this,{$oComment->getId()}); return false;" href="#" class="comment-delete">
 			                <i class="fa fa-trash" title="Удалить/восстановить комментарий"></i>

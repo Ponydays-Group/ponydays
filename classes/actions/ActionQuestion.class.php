@@ -165,7 +165,13 @@ class ActionQuestion extends Action {
 		/**
 		 * Загружаем переменные в шаблон
 		 */
-		$this->Viewer_Assign('aBlogsAllow',$this->Blog_GetBlogsAllowByUser($this->oUserCurrent));
+		$aBlogs = $this->Blog_GetBlogsAllowByUser($this->oUserCurrent);
+        function myCmp($a, $b) {
+            if (strcasecmp($a->getTitle(), $b->getTitle()) == 0) return 0;
+            return strcasecmp($a->getTitle(), $b->getTitle()) > 0 ? 1 : -1;
+        }
+        usort($aBlogs, "myCmp");
+		$this->Viewer_Assign('aBlogsAllow',$aBlogs);
 		$this->Viewer_Assign('bEditDisabled',false);
 		$this->Viewer_AddHtmlTitle($this->Lang_Get('topic_question_title_create'));
 		/**

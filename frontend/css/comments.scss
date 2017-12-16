@@ -394,69 +394,6 @@ button#comment-button-history {
     background-color: #777;
 }
 
-#comment-shortcuts-wrapper {
-    position: fixed;
-    right: 10px;
-    bottom: 10px;
-    z-index: 100501;
-    display: flex;
-    //flex-flow: reverse;
-    flex-direction: column-reverse;
-    justify-content: inherit;
-    align-items: flex-end;
-    
-    #comment-shortcuts-description {
-        position: absolute;
-        bottom: 50px;
-        right: -495px;
-        width:480px;
-        transition: .6s;
-        background: #edf1f2;
-        padding: 10px;
-        border: 1px solid #bbbbbb;
-        border-radius: 3px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.16);
-        color: #707b85;
-        
-        ul li {
-            padding-bottom: 5px;
-            
-            .shortcut {
-                background: #38a6a6;
-                color: white;
-                padding: 2px 4px;
-                display: inline-block;
-                border-radius: 3px;
-            }
-        }
-    }
-    
-    .placeholder {
-        width:40px;
-        height:10px;
-    }
-    
-    #comment-shortcuts-icon {
-        float: right;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.42);
-        display: flex;
-        width: 40px;
-        background: #38a6b1;
-        height: 40px;
-        border-radius: 20px;
-        justify-content: center;
-        align-items: center;
-        font-size: 20px;
-        color: white;
-    }
-    
-    &:hover{
-        #comment-shortcuts-description {
-            right: 0;
-        }
-    }
-}
-
 @media screen and (max-width: 500px) {
     #comment-shortcuts-wrapper {
 	display: none;

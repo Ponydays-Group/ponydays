@@ -545,11 +545,11 @@ img {
 #comment-shortcuts-description {
   display: inline-block;
   padding: 10px;
-  background: rgb(255, 255, 255);
+  background: $first;
   position: fixed;
   bottom: 10px;
   border-radius: 20px;
-  border: 0.5px solid rgb(229, 229, 229);
+  border: $second-border;
   box-sizing: border-box;
   width: 450px;
   right: -450px;
@@ -564,10 +564,10 @@ img {
       .shortcut {
         padding: 3px 5px;
         display: inline-block;
-        background: #f9f9f9;
+        background: $second;
         color: #5d67bb;
         border-radius: 10px;
-        border: 0.5px solid #e0e0e0;
+        border: $second-border;
       }
     }
   }

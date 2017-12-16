@@ -378,6 +378,8 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
 			console.log("Load done", dateFormat(new Date(), "HH:MM:ss:l"))
 		}
 
+        Emitter.emit('ls_comments_load_after', [idTarget, typeTarget, selfIdComment, bNotFlushNew, result])
+
 	}.bind(this))
 }
 

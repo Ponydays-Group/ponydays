@@ -679,19 +679,16 @@ export function initShortcuts() {
     function markAllChildAsRead() {
         let oCommentCurrent = $(".comment-current")
 
-        let ids = this.state.aSortedIds.slice(this.state.aSortedIds.indexOf("" + oCommentCurrent.data("id")) + 1)
-        let level = oCommentCurrent.data("level")
-        for (let i in ids) {
-            if (ids.hasOwnProperty(i)) {
-                let id = ids[i]
-                let cmt = this.state.aComments[id]
-                if (cmt.level <= level) {
-                    break
-                }
-                $(`[data-id=${id}]`).removeClass("comment-new")
-                this.state.aCommentsNew.splice(this.state.aCommentsNew.indexOf("" + id), 1)
-            }
-        }
+        let cmts = oCommentCurrent.nextAll('.comment')
+        let level = parseInt(oCommentCurrent.data("level"))
+		let found = false
+		cmts.each(function(k,v){
+			if (!found && parseInt(v.dataset.level)>level) {
+				$(v).removeClass("comment-new")
+			} else {
+				found = true
+			}
+		})
         calcNewComments()
     }
 
@@ -735,13 +732,12 @@ export function initShortcuts() {
             e.preventDefault();
         }.bind(this))
         oFormText.on("keydown", null, i, function (e) {
+        	if (i=="ctrl+end" || i=="ctrl+home")
+        		return
             shortcuts[i].apply(this);
             e.preventDefault();
         }.bind(this))
     }
-
-    oFormText.off("keydown", shortcuts["ctrl+end"])
-    oFormText.off("keydown", shortcuts["ctrl+home"])
 
     window.foldBranch = function (id) {
         let foldings = localStorage.getItem('foldings_' + targetType + '_' + targetId) //||"".split(',') || []

@@ -47,7 +47,7 @@
 
 
 
-			
+
 
 			<li class="action-hidden">
                 {if $oUserCurrent && (($oComment->getTargetType()=="talk" && $oUserCurrent->getId()==$oComment->getUserId()) || ($oComment->getTargetType()!="talk" && $oUserCurrent->getId()==$oComment->getUserId()||($oUserCurrent->isAdministrator()||($oUserCurrent->isGlobalModerator()&&$oComment->getTarget()&&$oComment->getTarget()->getBlog()->getType()=="open"))))}

@@ -67,8 +67,6 @@ export function calcNesting() {
 
 export function updateNesting() {
 
-	calcNesting()
-
     let aComments = $(".comment")
 
     let foldings = localStorage.getItem('foldings_' + targetType + '_' + targetId) //||"".split(',') || []
@@ -791,7 +789,8 @@ export function init() {
 	initShortcuts()
 	calcNewComments()
 	checkFolding()
-	if (location.pathname.match(/\/blog\/[a-zA-Z]+\/\d+/)) {
+    calcNesting()
+	if (location.pathname.match(/\/blog\/[a-zA-Z]+\/\d+/) || location.pathname.match(/\/talk\/read\/\d+/)) {
         updateNesting()
         toggleCommentForm(iCurrentShowFormComment)
 

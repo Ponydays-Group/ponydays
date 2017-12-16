@@ -20,10 +20,20 @@
 	<input type="number" min=100 max=99999 value=1000 name="float_window_wait" class="input-width-300" data-save=1 /><br/>
 	
 	<fieldset>
-<span class="checkbox">
-	<span>
-		<input type="checkbox" id="square_avatars" name="square_avatars" data-default=0 data-save=1 class="input-checkbox"/> <label
-				for="square_avatars">Включить квадратные аватарки</label></span></span></fieldset>
+		<span class="checkbox">
+			<span>
+				<input type="checkbox" id="square_avatars" name="square_avatars" data-default=0 data-save=1 class="input-checkbox"/>
+				<label for="square_avatars">Включить квадратные аватарки</label>
+			</span>
+		</span>
+		<span class="checkbox">
+			<span>
+				<input type="checkbox" id="grey_panel" name="grey_panel" data-default=0 data-save=1 class="input-checkbox"/>
+				<label for="grey_panel">Серый цвет панелей в темной теме</label>
+			</span>
+		</span>
+	</fieldset>
+
 	<fieldset>
 		<span class="checkbox"><span>
 			<input type="checkbox" id="notice_talk_reply" name="notice_talk_reply" data-default=1 data-save=1 class="input-checkbox" />

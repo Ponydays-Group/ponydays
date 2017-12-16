@@ -524,31 +524,6 @@ export default function init() {
 
         updateImgs()
 
-        if (parseInt(localStorage.getItem('square_avatars'))) {
-            $(document.body).append(`
-            <style>
-            .comment .comment-avatar {
-                border-radius: 0px !important;
-            }
-            .item-list li .avatar {
-                border-radius: 0px !important;
-            }
-            .user-avatar, .avatar {
-                border-radius: 0px !important;
-            }
-            .topic-author-avatar {
-                border-radius: 0px !important;
-            }
-            .topic.topic-type-talk .topic-header .topic-info .avatar {
-                border-radius: 0px !important;
-            }
-            .topic .topic-header .topic-data-wrapper .topic-author-avatar {
-                margin-left: 10px;
-            }
-            </style>
-            `)
-        }
-
         if (getCookie("SiteStyle")=="Dark") {
             $("#change_theme").css("transform", "rotate(180deg)")
         }

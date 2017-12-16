@@ -487,6 +487,8 @@ export function calcNewComments() {
 
 // Переход к следующему комментарию
 export function goToNextComment() {
+	if ($("#next_new").hasClass("disabled"))
+		return false
 	Emitter.emit("go-to-next-comment")
 	let id = $('.comment-new')[0].dataset.id
 	scrollToComment(id)
@@ -494,7 +496,7 @@ export function goToNextComment() {
 
 export function goToPrevComment() {
 	if ($("#prev_new").hasClass("disabled"))
-		return
+		return false
 	Emitter.emit("go-to-prev-comment")
 	scrollToComment(aCommentNewOld.splice(-2,1)[0])
 	if (aCommentNewOld.length<2)

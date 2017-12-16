@@ -47,11 +47,9 @@
 
 
 
-
-			{if $oComment->getTargetType()=="talk"}false{/if}
+			
 
 			<li class="action-hidden">
-				{*{if $oUserCurrent*}
                 {if $oUserCurrent && (($oComment->getTargetType()=="talk" && $oUserCurrent->getId()==$oComment->getUserId()) || ($oComment->getTargetType()!="talk" && $oUserCurrent->getId()==$oComment->getUserId()||($oUserCurrent->isAdministrator()||($oUserCurrent->isGlobalModerator()&&$oComment->getTarget()&&$oComment->getTarget()->getBlog()->getType()=="open"))))}
 					<span>
                 		<a href="#" class="editcomment_editlink" title="Редактировать комментарий" onclick="ls.comments.editComment({$oComment->getId()}); return false;">

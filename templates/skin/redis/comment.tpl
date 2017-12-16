@@ -119,7 +119,7 @@
                 <i class="material-icons">keyboard_arrow_up</i>
                 </div>
 				<span class="vote-count" onclick="ls.vote.getVotes({$oComment->getId()},'comment',this); return false;" id="vote_total_comment_{$oComment->getId()}">
-    						    {if $oComment->getRating()>0}+{elseif $oComment->getRating()<0}-{/if}{$oComment->getRating()}
+    						    {if $oComment->getRating()>0}+{/if}{$oComment->getRating()}
     					    </span>
                 <div class="vote-down" onclick="return ls.vote.vote({$oComment->getId()},this,-1,'comment');">
                 <i class="material-icons">keyboard_arrow_down</i>

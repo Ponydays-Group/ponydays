@@ -96,7 +96,7 @@
     ],
     "deploy_token": "testgithubconfig",
     "nower_url": "127.0.0.1:3000",
-    "sockets_url": "http://sock.dev",
+    "sockets_url": "http://sock.local",
     "reCaptcha": {
         "secret": "",
         "key": ""

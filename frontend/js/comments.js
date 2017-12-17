@@ -786,12 +786,26 @@ export function initShortcuts() {
     }.bind(this)
 }
 
+export function update_hidden() {
+    let hidden = localStorage.getItem('comments_hide')
+    if (hidden==null) {
+        hidden = []
+    } else {
+        hidden = hidden.split(",")
+    }
+    console.log("hidden", hidden)
+    for (let i=0; i<hidden.length; i++) {
+        hideComment(hidden[i])
+    }
+}
+
 export function init() {
 	initEvent()
 	initShortcuts()
 	calcNewComments()
 	checkFolding()
 	if (location.pathname.match(/\/blog\/[a-zA-Z]+\/\d+/)) {
+		update_hidden()
         updateNesting()
         toggleCommentForm(iCurrentShowFormComment)
 
@@ -935,7 +949,7 @@ export function hideComment(idComment) {
 	if (hidden.indexOf(idComment)<0)
 		hidden.push(idComment)
     localStorage.setItem('comments_hide', hidden)
-	cmt.addClass('content-hidden').html(`<a href="#" onclick="ls.showHiddenComment(${idComment}); return false;">Раскрыть комментарий</a>`)
+	cmt.addClass('content-hidden').html(`<a href="#" onclick="ls.comments.showHiddenComment(${idComment}); return false;">Раскрыть комментарий</a>`)
 }
 
 export function editComment(idComment) {

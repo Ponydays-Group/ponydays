@@ -29,7 +29,7 @@
 		<span class="checkbox">
 			<span>
 				<input type="checkbox" id="grey_panel" name="grey_panel" data-default=0 data-save=1 class="input-checkbox"/>
-				<label for="grey_panel">Серый цвет панелей в темной теме</label>
+				<label for="grey_panel">Серый цвет панелей</label>
 			</span>
 		</span>
 	</fieldset>

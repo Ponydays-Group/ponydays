@@ -804,7 +804,6 @@ export function init() {
 	checkFolding()
     calcNesting()
 	if (location.pathname.match(/\/blog\/[a-zA-Z]+\/\d+/) || location.pathname.match(/\/talk\/read\/\d+/)) {
-	if (location.pathname.match(/\/blog\/[a-zA-Z]+\/\d+/)) {
 		update_hidden()
         updateNesting()
         toggleCommentForm(iCurrentShowFormComment)
@@ -828,7 +827,7 @@ export function init() {
 	if (typeof(options.wysiwyg) !== "number") {
 		options.wysiwyg = Boolean(BLOG_USE_TINYMCE && tinyMCE)
 	}
-	//Emitter.emit('ls_comments_init_after',[],this)
+	Emitter.emit('ls_comments_init_after',[],this)
 }
 
 export function updateCommentDeleted(id, deleted, reason) {

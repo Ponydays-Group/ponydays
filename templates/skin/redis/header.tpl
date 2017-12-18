@@ -79,7 +79,7 @@
 
 
 	<link rel="stylesheet" href="/static/{cfg name="frontend.version"}/{cfg name="theme"}.css" type="text/css" />
-
+	{*<script src="https://simplewebrtc.com/latest-v2.js"></script>*}
 
 
 

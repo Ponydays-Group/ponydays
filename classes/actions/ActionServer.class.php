@@ -78,6 +78,8 @@ class ActionServer extends Action
             return;
         }
         $this->Viewer_AssignAjax("iUserId", $oUser->getId());
+        $this->Viewer_AssignAjax("sUserAvatar", $oUser->getProfileAvatar());
+        $this->Viewer_AssignAjax("sUserLogin", $oUser->getLogin());
     }
 
     function EventHasTopicAccess() {

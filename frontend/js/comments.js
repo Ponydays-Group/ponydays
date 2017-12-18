@@ -808,6 +808,10 @@ export function init() {
         updateNesting()
         toggleCommentForm(iCurrentShowFormComment)
 
+        if (location.hash.startsWith("#comment") && location.hash !== "#comments") {
+			setTimeout(scrollToComment(location.hash.replace("#comment", ""), 0, 350), 2000)
+		}
+
         if (targetType == "topic") {
             sock.emit("listenTopic", {id: targetId})
             sock.on("reconnect", () => sock.emit("listenTopic", {id: targetId}))

@@ -317,7 +317,7 @@
         </table>
     </div>
 </section>
-{if $oUserCurrent && ($oUserCurrent->isAdministrator() || $oUserCurrent->isGlobalModerator()) && !$oUserProfile->isBanned()}
+{if $oUserCurrent && $oUserCurrent->getId()!=$oUserProfile->getId() && ($oUserCurrent->isAdministrator() || $oUserCurrent->isGlobalModerator()) && !$oUserProfile->isBanned()}
     <section class="block">
         <header class="block-header">
             <h3>Забанить</h3>
@@ -339,7 +339,7 @@
             </form>
         </div>
     </section>
-{elseif $oUserCurrent && ($oUserCurrent->isAdministrator() || $oUserCurrent->isGlobalModerator()) && $oUserProfile->isBanned()}
+{elseif $oUserCurrent && $oUserCurrent->getId()!=$oUserProfile->getId() && ($oUserCurrent->isAdministrator() || $oUserCurrent->isGlobalModerator()) && $oUserProfile->isBanned()}
     <section class="block">
         <header class="block-header">
             <h3>Разбанить</h3>

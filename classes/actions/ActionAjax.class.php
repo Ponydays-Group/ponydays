@@ -102,6 +102,10 @@ class ActionAjax extends Action
 
         $iUserId = (int)getRequest('iUserId');
 
+        if ((int)$this->oUserCurrent->getId()==$iUserId) {
+            return Router::Action('error');
+        }
+
         if ((int)getRequest('iUnban')) {
             $this->User_Unban($iUserId);
             return;

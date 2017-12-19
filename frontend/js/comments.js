@@ -406,10 +406,13 @@ export function inject(idCommentParent, idComment, sHtml) {
 // Удалить/восстановить комментарий
 export function toggle(obj, commentId) {
     let oComment = $("#comment_id_" + commentId)
-	let deleteReason = ""
+	let deleteReason = false
 	if (!oComment.hasClass(options.classes.comment_deleted)) {
         deleteReason = prompt("Delete reason:")
+        if (!deleteReason)
+            return
 	}
+
 	let url = aRouter["ajax"] + "comment/delete/"
 	let params = {
 		idComment: commentId,
@@ -429,11 +432,10 @@ export function toggle(obj, commentId) {
 			oComment.removeClass(options.classes.comment_new + " " + options.classes.comment_deleted + " " + options.classes.comment_current)
 			if (result.bState) {
 				oComment.addClass(options.classes.comment_deleted)
-				oComment.find('.comment-content')[0].innerHTML = `<div class="delete-reason">${deleteReason}</div><a href="#" onclick="ls.showHiddenComment(${commentId}); return false;">Раскрыть комментарий</a>`
+				oComment.find('.comment-content')[0].innerHTML = `<div class="delete-reason">${deleteReason}</div><a href="#" onclick="ls.comments.showHiddenComment(${commentId}); return false;">Раскрыть комментарий</a>`
 			} else {
 				oComment.find('.delete-reason').remove()
-				if (!LOGGED_IN)
-                	ls.showHiddenComment(commentId)
+				ls.comments.showHiddenComment(commentId)
 			}
 			Emitter.emit("ls_comments_toggle_after", [obj, commentId, result])
 		}

@@ -161,8 +161,28 @@ if (LOGGED_IN && location.pathname.match(/\/voice\/voice/)) {
         $("#voice-users").html(Object.values(rtcUsers).map((data) => `<span class="user" id="voice-user-${data.id}"><img src="${data.avatar}" class="avatar" width=40 height=40 />${data.login} <i ${data.audio? 'style="display: none"':""} class="material-icons">mic_off</i></span>`))
     }
     window.rtcUsers = []
+    async function startRTC() {
+        let canVideo = false
+        let canAudio = false
 
-    initWRTC({audio: true, video: true})
+        try {
+            let stream = await navigator.mediaDevices.getUserMedia({video: true})
+            canVideo = true;
+            stream.stop()
+        } catch(e) {
+            console.info("No video")
+        }
+        try {
+            let stream = await navigator.mediaDevices.getUserMedia({audio: true})
+            canAudio = true;
+            stream.stop()
+        } catch(e) {
+            console.info("No audio")
+        }
+
+        initWRTC({audio: canAudio, video: canVideo})
+    }
+    startRTC()
 
     sock.on('user joined', updateRTCusers)
     sock.on('user leaved', updateRTCusers)
@@ -183,6 +203,14 @@ if (LOGGED_IN && location.pathname.match(/\/voice\/voice/)) {
     sock.emit('getRTC')
 
     sock.on('reconnect', function(){
+        sock.emit("joinRTC")
+        sock.emit('getRTC')
+    })
+    sock.on('connect', function(){
+        sock.emit("joinRTC")
+        sock.emit('getRTC')
+    })
+    sock.on('connection', function(){
         sock.emit("joinRTC")
         sock.emit('getRTC')
     })
@@ -263,4 +291,21 @@ function initWRTC(media, join) {
 
     wrtc.on('speaking', ()=>console.error("Started speaking"));
     wrtc.on('stoppedSpeaking', ()=>console.error("Stopped speaking"));
+
+    wrtc.on('mute', function (data) {
+        wrtc.getPeers(data.id).forEach(function (peer) {
+            if (data.name == 'video') {
+                $('#videocontainer_' + wrtc.getDomId(peer) + ' .paused').show();
+                $('#videocontainer_' + wrtc.getDomId(peer) + ' video').hide();
+            }
+        });
+    });
+    wrtc.on('unmute', function (data) {
+        wrtc.getPeers(data.id).forEach(function (peer) {
+            if (data.name == 'video') {
+                $('#videocontainer_' + wrtc.getDomId(peer) + ' video').show();
+                $('#videocontainer_' + wrtc.getDomId(peer) + ' .paused').hide();
+            }
+        });
+    });
 }

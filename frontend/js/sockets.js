@@ -158,7 +158,9 @@ function changeRTCstatus(status) {
 if (LOGGED_IN && location.pathname.match(/\/voice\/voice/)) {
     function updateRTCusers(users) {
         rtcUsers = users
-        $("#voice-users").html(Object.values(rtcUsers).map((data) => `<span class="user" id="voice-user-${data.id}"><img src="${data.avatar}" class="avatar" width=40 height=40 />${data.login} <i ${data.audio? 'style="display: none"':""} class="material-icons">mic_off</i></span>`))
+        $("#voice-users").html(Object.values(rtcUsers).map((data) => `<span class="user" id="voice-user-${data.id}"><img src="${data.avatar}" class="avatar" width=40 height=40 />${data.login} <i ${data.audio? 'style="display: none"':""} class="material-icons">mic_off</i>${data.id!=USER_ID?`<input type="range" id="voice_${data.id}" min="0" value="1" max="1" step="0.05"></span>`:""}`))
+        Object.values(rtcUsers).map((data) => {if(data.id!=USER_ID){$("#voice_"+data.id).on('change', (e)=>$("video[data-userid='"+data.id+"']").each((k,v)=>v.volume=e.target.value))}})
+
     }
     window.rtcUsers = []
     async function startRTC() {
@@ -167,7 +169,7 @@ if (LOGGED_IN && location.pathname.match(/\/voice\/voice/)) {
 
         try {
             let stream = await navigator.mediaDevices.getUserMedia({video: true})
-            canVideo = true;
+            canVideo = {width: 1280, height: 720}//true;
             stream.stop()
         } catch(e) {
             console.info("No video")
@@ -266,11 +268,12 @@ function initWRTC(media, join) {
         // the id/element dom element that will hold "our" video
         localVideoEl: 'localVideo',
         // the id/element dom element that will hold remote videos
-        remoteVideosEl: 'remotesVideos',//'remotesVideos',
+        remoteVideosEl: '',//'remotesVideos',
         // immediately ask for camera access
         autoRequestMedia: true,
         media: media,
-        url: 'https://sockets.lunavod.ru/'
+        url: 'https://sockets.lunavod.ru/',
+        nick: USER_ID
     });
 
     wrtc.on('readyToCall', cb)
@@ -293,19 +296,49 @@ function initWRTC(media, join) {
     wrtc.on('stoppedSpeaking', ()=>console.error("Stopped speaking"));
 
     wrtc.on('mute', function (data) {
+        console.error(data.id)
         wrtc.getPeers(data.id).forEach(function (peer) {
             if (data.name == 'video') {
-                $('#videocontainer_' + wrtc.getDomId(peer) + ' .paused').show();
-                $('#videocontainer_' + wrtc.getDomId(peer) + ' video').hide();
+                $('video#' + wrtc.getDomId(peer) + '').hide();
             }
         });
     });
     wrtc.on('unmute', function (data) {
+        console.error(data.id)
         wrtc.getPeers(data.id).forEach(function (peer) {
             if (data.name == 'video') {
-                $('#videocontainer_' + wrtc.getDomId(peer) + ' video').show();
-                $('#videocontainer_' + wrtc.getDomId(peer) + ' .paused').hide();
+                $('video#' + wrtc.getDomId(peer) + '').show();
             }
         });
+    });
+
+    wrtc.on('videoAdded', function (video, peer) {
+        console.error("ADD VIDEO", video, peer)
+        var remotes = $("#remotesMain video:visible").length<2?$("#remotesMain")[0]:$("#remotesSecondary")[0]
+
+        if (remotes) {
+            // var container = document.createElement('div');
+            // container.className = 'videoContainer';
+            // container.id = 'container_' + wrtc.getDomId(peer);
+            // if (remotes.id=="remotesMain")
+            //     video.width = $(remotes).width()/2+"px"
+            // else
+            //     video.height = $($("#remotesSecondary")[0]).height()+"px"
+            // container.appendChild(video);
+
+            // suppress contextmenu
+            video.oncontextmenu = function () { return false; };
+            video.setAttribute('data-userid', peer.nick)
+
+            remotes.appendChild(video);
+        }
+    });
+    wrtc.on('videoRemoved', function (video, peer) {
+        console.log('video removed ', peer);
+        var remotes = $("#remotesMain video:visible").length<2?$("#remotesMain")[0]:$("#remotesSecondary")[0]
+        console.error("REMOVE VIDEO", remotes, el)
+        if (remotes) {
+            remotes.removeChild(video);
+        }
     });
 }

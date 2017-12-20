@@ -32,7 +32,8 @@
     </div>
     <div id="voice-video">
         <video autoplay="true" id="localVideo"></video>
-        <div id="remotesVideos"></div>
+        <div id="remotesMain"></div>
+        <div id="remotesSecondary"></div>
     </div>
 </div>
 {include file='footer.tpl'}

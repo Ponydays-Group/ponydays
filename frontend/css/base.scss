@@ -745,4 +745,24 @@ img {
     justify-content: space-around;
   }
 
+  #remotesMain {
+    display: flex;
+    justify-content: space-around;
+    position: relative;
+    width: 100%;
+
+    video {
+      width: 48%;
+    }
+  }
+
+  #remotesSecondary {
+    height: 100px;
+    padding:15px;
+
+    video {
+      height: 100px;
+    }
+  }
+
 }

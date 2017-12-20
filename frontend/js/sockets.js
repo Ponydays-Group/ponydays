@@ -334,10 +334,11 @@ function initWRTC(media, join) {
         }
     });
     wrtc.on('videoRemoved', function (video, peer) {
-        console.log('video removed ', peer);
+        console.error('video removed ', peer);
         var remotes = $("#remotesMain video:visible").length<2?$("#remotesMain")[0]:$("#remotesSecondary")[0]
         console.error("REMOVE VIDEO", remotes)
         if (remotes) {
+            $(video).hide()
             remotes.removeChild(video);
         }
     });

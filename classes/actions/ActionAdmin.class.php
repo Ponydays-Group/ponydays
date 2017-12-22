@@ -80,7 +80,7 @@ class ActionAdmin extends Action {
     protected function EventAdminConfigSave() {
         $this->Viewer_SetResponseAjax('json');
         $values = getRequest('values');
-        Config::LoadFromFile("/mnt/c/ponydays/config/local.config.json",true,'adminsave');
+        Config::LoadFromFile(dirname(__FILE__)."/../../config/local.config.json",true,'adminsave');
         foreach ($values as $key=>$val) {
             if ($val=="1") {
                 $val = true;
@@ -90,8 +90,7 @@ class ActionAdmin extends Action {
             }
             Config::Set($key, $val,'adminsave');
         }
-//        var_dump($values);
-        file_put_contents("/mnt/c/ponydays/config/local.config.json",json_encode(Config::getInstance('adminsave')->aConfig, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+        file_put_contents(dirname(__FILE__)."/../../config/local.config.json",json_encode(Config::getInstance('adminsave')->aConfig, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
     }
 
 	protected function EventAdminConfig() {

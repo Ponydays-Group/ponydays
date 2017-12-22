@@ -169,3 +169,20 @@ export function LoadMoreActions(LastActionId){
 	});
 
 };
+
+export function saveConfig(){
+    let changed={};
+    $('.config-param').each(
+        function(k,v){
+            let input=$(v).find("input")[0];
+            if(v.dataset.val!=(input.type=="checkbox"?input.checked:input.value)){
+                changed[v.dataset.name] = (input.type=="checkbox"?input.checked?1:0:input.value)
+                if (v.dataset.separator)
+                    changed[v.dataset.name] = input.value.split(', ')
+            }
+        }
+    )
+    console.log(changed)
+    asyncAjax("/admin/save", {values:changed}).then((r)=>console.log(r))
+}
+saveConfig()

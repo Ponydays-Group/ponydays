@@ -46,7 +46,7 @@ class Config {
 	 *
 	 * @var array
 	 */
-	protected $aConfig=array();
+	public $aConfig=array();
 
 	/**
 	 * Disabled constract process

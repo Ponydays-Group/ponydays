@@ -1,6 +1,17 @@
 {assign var="oSession" value=$oUserProfile->getSession()}
 {assign var="oVote" value=$oUserProfile->getVote()}
 {assign var="oGeoTarget" value=$oUserProfile->getGeoTarget()}
+{if $oUserCurrent && $oUserCurrent->isAdministrator()}
+    <section class="block block-profile-admin">
+        <header class="block-header">
+            <h3>Инфа для админов</h3>
+        </header>
+        <label for="admin_id">User ID: {$oUserProfile->getId()}</label>
+        <label for="admin_id">User email:</label>
+        <span id="admin_id">{$oUserProfile->getMail()}</span>
+    </section>
+{/if}
+
 {if $oUserProfile->getProfileAbout()}
     <section class="block block-profile-about">
         <header class="block-header">
@@ -304,14 +315,18 @@
 
             <tr>
                 <td class="cell-label">{$aLang.profile_date_registration}:</td>
-                <td>{date_format date=$oUserProfile->getDateRegister()}</td>
+                <td>{date_format date=$oUserProfile->getDateRegister()}{if $oUserCurrent && ($oUserCurrent->isAdministrator() || $oUserCurrent->isGlobalModerator())}
+                        ({$oUserProfile->getIpRegister()})
+                    {/if}</td>
             </tr>
 
 
             {if $oSession}
                 <tr>
                     <td class="cell-label">{$aLang.profile_date_last}:</td>
-                    <td>{date_format date=$oSession->getDateLast()}</td>
+                    <td>{date_format date=$oSession->getDateLast()}{if $oUserCurrent && ($oUserCurrent->isAdministrator() || $oUserCurrent->isGlobalModerator())}
+                            ({$oSession->getIpLast()})
+                        {/if}</td>
                 </tr>
             {/if}
         </table>

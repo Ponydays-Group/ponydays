@@ -62,7 +62,9 @@ class ActionAdmin extends Action {
 		$this->AddEvent('recalcfavourite','EventRecalculateFavourite');
 		$this->AddEvent('recalcvote','EventRecalculateVote');
 		$this->AddEvent('recalctopic','EventRecalculateTopic');
-		$this->AddEvent('jsonconfiglocal','EventJsonConfigLocal');
+        $this->AddEvent('jsonconfiglocal','EventJsonConfigLocal');
+        $this->AddEvent('config','EventAdminConfig');
+        $this->AddEvent('save','EventAdminConfigSave');
 	}
 
 
@@ -70,10 +72,98 @@ class ActionAdmin extends Action {
 	 ************************ РЕАЛИЗАЦИЯ ЭКШЕНА ***************************************
 	 **********************************************************************************
 	 */
-	 
-	protected function EventUsers() {
-		
-	}
+
+    protected function EventUsers() {
+
+    }
+
+    protected function EventAdminConfigSave() {
+        $this->Viewer_SetResponseAjax('json');
+        $values = getRequest('values');
+        Config::LoadFromFile("/mnt/c/ponydays/config/local.config.json",true,'adminsave');
+        foreach ($values as $key=>$val) {
+            if ($val=="1") {
+                $val = true;
+            }
+            if ($val=="0") {
+                $val = false;
+            }
+            Config::Set($key, $val,'adminsave');
+        }
+//        var_dump($values);
+        file_put_contents("/mnt/c/ponydays/config/local.config.json",json_encode(Config::getInstance('adminsave')->aConfig, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+    }
+
+	protected function EventAdminConfig() {
+	    $params = [
+	        "sep1" => ["type"=>"separator", "description"=>"Настройки сайта"],
+            "general.close" => [
+                "type" => "bool",
+                "description" => "Закрытый режим работы сайта",
+            ],
+            "general.reg.invite" => [
+                "type" => "bool",
+                "description" => "Регистрация по инвайтам",
+            ],
+            "general.reg.activation" => [
+                "type" => "bool",
+                "description" => "Активация по почте",
+            ],
+            "view.name" => [
+                "type" => "string",
+                "description" => "Название сайта",
+            ],
+            "path.root.web" => [
+                "type" => "string",
+                "description" => "URL сайта",
+            ],
+            "sep2" => ["type"=>"separator", "description"=>"Картинки"],
+            "module.image.use_anon" => [
+                "type" => "bool",
+                "description" => "Использовать анонимайзер при загрузке изображений",
+            ],
+            "sep" => ["type"=>"separator", "description"=>"БД"],
+            "db.params.host" => [
+                "type" => "string",
+                "description" => "Хост БД",
+            ],
+            "db.params.port" => [
+                "type" => "int",
+                "description" => "Порт БД",
+            ],
+            "db.params.user" => [
+                "type" => "string",
+                "description" => "Пользователь БД",
+            ],
+            "db.params.pass" => [
+                "type" => "password",
+                "description" => "Пароль БД",
+            ],
+            "db.params.type" => [
+                "type" => "string",
+                "description" => "Тип БД",
+            ],
+            "db.params.dbname" => [
+                "type" => "string",
+                "description" => "Название базы",
+            ],
+            "sep3" => ["type"=>"separator", "description"=>"Модераторы"],
+            "moderator" => [
+                "type" => "list",
+                "description" => "Модераторы",
+            ],
+            "sep4" => ["type"=>"separator", "description"=>"Почтовик"],
+            "sys.mail.from_email" => [
+                "type" => "string",
+                "description" => "Адрес для почтовика",
+            ],
+            "sys.mail.from_name" => [
+                "type" => "string",
+                "description" => "Имя отправителя в почтовике",
+            ],
+        ];
+	    $this->Viewer_Assign("aConfig", $params);
+    }
 
 	/**
 	 * Отображение главной страницы админки

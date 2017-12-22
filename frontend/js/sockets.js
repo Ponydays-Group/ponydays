@@ -5,6 +5,10 @@ function getCookie(name) {
     return matches ? decodeURIComponent(matches[1]) : undefined;
 }
 
+if (!(getCookie("key")||getCookie("wskey"))&&LOGGED_IN) {
+    ls.msg.error("Необходимо войти в аккаунт еще раз.", "Были внесены изменения в механизм входа")
+}
+
 const SimpleWebRTC = require("simplewebrtc")
 const hark = require("hark")
 const io = require("socket.io-client")
@@ -17,14 +21,9 @@ window.sock = io(SOCKET_URL, {
 
 sock.on('reconnect_attempt', () => {
     sock.io.opts.query = {
-        token: getCookie("key")
+        token: getCookie("key")||getCookie("wskey")
     }
 });
-
-function checkPerm(key) {
-    let perm = localStorage.getItem(key)
-    return (perm == null || parseInt(perm))
-}
 
 window.nAudio = new Audio()
 nAudio.src = localStorage.getItem("notice_sound_url") || "http://freesound.org/data/previews/245/245645_1038806-lq.mp3"

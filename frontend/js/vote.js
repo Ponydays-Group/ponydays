@@ -136,6 +136,9 @@ export function onVoteUser(idTarget, objVote, value, type, result) {
 }
 
 export function getVotes(targetId, targetType, el) {
+    let perm = localStorage.getItem("no_show_vote")
+    if (perm!=null&&parseInt(perm))
+        return
     var params = {};
     params['targetId'] = targetId;
     params['targetType'] = targetType;

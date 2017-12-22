@@ -577,6 +577,7 @@ class ModuleUser extends Module
          */
         if ($bRemember) {
             setcookie('key', $sKey, time() + Config::Get('sys.cookie.time'), Config::Get('sys.cookie.path'), Config::Get('sys.cookie.host'), false, false);
+            setcookie('wskey', $sKey, time() + Config::Get('sys.cookie.time'), Config::Get('sys.cookie.path'), Config::Get('sys.cookie.host'), false, false);
         }
         return true;
     }
@@ -651,6 +652,7 @@ class ModuleUser extends Module
          * Дропаем куку
          */
         setcookie('key', '', 1, Config::Get('sys.cookie.path'), Config::Get('sys.cookie.host'));
+        setcookie('wskey', '', 1, Config::Get('sys.cookie.path'), Config::Get('sys.cookie.host'));
     }
 
     /**

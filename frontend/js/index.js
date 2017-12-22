@@ -18,6 +18,13 @@ window.switchTheme = function () {
 }
 
 
+
+window.checkPerm = function (key) {
+    let perm = localStorage.getItem(key)
+    return (perm == null || parseInt(perm))
+}
+
+
 String.prototype.tr = function (a, p) {
     var k;
     var p = typeof(p) == 'string' ? p : '';

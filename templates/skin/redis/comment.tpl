@@ -39,7 +39,7 @@
 
 	<div id="comment_content_id_{$oComment->getId()}" class="comment-content text {if $oComment->getDelete()}hided{/if}">
 		{if $oComment->getDelete()}<div class="delete-reason">{if $oComment->getDeleteReason()}{$oComment->getDeleteReason()}{else}Нет причины удаления{/if}</div>{/if}
-		{if $oUserCurrent && (($oComment->getDelete() && ($oUserCurrent->isAdministrator() || $oUserCurrent->isGlobalModerator())) || $oUserCurrent->getId()==$oUser->getId())}
+		{if $oUserCurrent && ($oComment->getDelete() && ($bCanDelete || $oUserCurrent->getId()==$oUser->getId()))}
 			<a href="#" onclick="ls.comments.showHiddenComment({$oComment->getId()}); return false;">Раскрыть комментарий</a>
 		{/if}
 		{if !$oComment->getDelete()}

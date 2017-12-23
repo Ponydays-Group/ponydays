@@ -1209,6 +1209,10 @@ class ActionBlog extends Action
                 $this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
                 return;
             }
+            if ($oCommentParent->getDelete()) {
+                $this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+                return;
+            }
 
         } else {
             /**

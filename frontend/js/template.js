@@ -38,7 +38,6 @@ function showFloatBlock($) {
             //bottomPos += floatBlock.outerHeight();
         }
         if (window.pageYOffset > bottomPos) {
-            console.log("Yup", bottomPos)
             if (!showFloat) {
                 floatBlock.addClass('stream-fixed');
                 floatBlock.css("width", sidebar.width());
@@ -54,7 +53,6 @@ function showFloatBlock($) {
             }
         }
         else {
-            console.log("Nope", bottomPos)
             if (showFloat) {
                 floatBlock.removeClass('stream-fixed');
                 showFloat = false;

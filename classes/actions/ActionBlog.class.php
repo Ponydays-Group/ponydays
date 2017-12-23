@@ -659,7 +659,8 @@ class ActionBlog extends Action
         if (in_array(getRequestStr('period'), array(1, 7, 30, 'all'))) {
             $sPeriod = getRequestStr('period');
         }
-        $sShowType = 'newall';
+        $sShowType=$this->sCurrentEvent;
+        echo "TESTTTTT";
         if (!in_array($sShowType, array('discussed', 'top'))) {
             $sPeriod = 'all';
         }
@@ -990,7 +991,7 @@ class ActionBlog extends Action
             $sPeriod = getRequestStr('period');
         }
         $sBlogUrl = $this->sCurrentEvent;
-        $sShowType = 'newall';
+        $sShowType = in_array($this->GetParamEventMatch(0,0),array('bad','new','newall','discussed','top')) ? $this->GetParamEventMatch(0,0) : 'good';
         if (!in_array($sShowType, array('discussed', 'top'))) {
             $sPeriod = 'all';
         }

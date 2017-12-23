@@ -532,7 +532,7 @@ class ModuleTopic_MapperTopic extends Mapper {
 	protected function buildFilter($aFilter) {
 		$sWhere='';
 		if (isset($aFilter['topic_date_more'])) {
-			$sWhere.=" AND t.topic_date_add >  '".mysql_real_escape_string($aFilter['topic_date_more'])."'";
+			$sWhere.=" AND t.topic_date_add >  '".$aFilter['topic_date_more']."'";
 		}
 		if (isset($aFilter['topic_publish'])) {
 			$sWhere.=" AND t.topic_publish =  ".(int)$aFilter['topic_publish'];
@@ -589,7 +589,7 @@ class ModuleTopic_MapperTopic extends Mapper {
 			if(!is_array($aFilter['topic_type'])) {
 				$aFilter['topic_type']=array($aFilter['topic_type']);
 			}
-			$sWhere.=" AND t.topic_type IN ('".join("','",array_map('mysql_real_escape_string',$aFilter['topic_type']))."')";
+			$sWhere.=" AND t.topic_type IN ('".join("','",array_map('mysqli::real_escape_string',$aFilter['topic_type']))."')";
 		}
 		if (isset($aFilter['not_user_id'])) {
             $sWhere .= " AND t.user_id NOT IN(" . implode(', ', $aFilter['not_user_id']) . ")";

@@ -1443,7 +1443,7 @@ class ActionAjax extends Action
             return;
         }
 
-        if (!$this->ACL_CanDeleteComment($this->oUserCurrent, $oComment)) {
+        if (!$this->ACL_UserCanDeleteComment($this->oUserCurrent, $oComment, 1)) {
             $this->Message_AddErrorSingle($this->Lang_Get('not_access') , $this->Lang_Get('error'));
             return;
         }

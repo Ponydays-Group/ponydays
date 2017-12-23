@@ -256,7 +256,7 @@ class ActionPeople extends Action {
 		 * Получаем список юзеров
 		 */
 		$aResult=$this->User_GetUsersByFilter($aFilter,array($sOrder=>$sOrderWay),$iPage,Config::Get('module.user.per_page'));
-		$aUsers=$aResult['collection'];
+		$aUsers=$aUsersLast=$this->User_GetUsersByDateLast(15);
 		/**
 		 * Формируем постраничность
 		 */

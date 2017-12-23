@@ -26,10 +26,10 @@
             <thead>
             <tr>
                 <th class="cell-name">{$aLang.user}</th>
+                <th class="cell-date">{$aLang.user_date_last}</th>
                 {if $oUserCurrent}{if $oUserCurrent->isAdministrator() || $oUserCurrent->isGlobalModerator()}
                     <th class="cell-email">Email</th>
                 {/if}{/if}
-                <th class="cell-date">{$aLang.user_date_last}</th>
                 <th class="cell-date">{$aLang.user_date_registration}</th>
                 <th class="cell-skill">{$aLang.user_skill}</th>
                 <th class="cell-rating">{$aLang.user_rating}</th>

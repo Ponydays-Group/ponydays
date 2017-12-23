@@ -31,7 +31,7 @@
 .icon-heart              { background-position: -96px  0; }
 .icon-star               { background-position: -120px 0; }
 .icon-star-empty         { background-position: -144px 0; }
-.icon-user               { background-position: -168px 0; }
+.icon-user               { font-size: 18px; width: 18px; height: 18px; }
 .icon-film               { background-position: -192px 0; }
 .icon-th-large           { background-position: -216px 0; }
 .icon-th                 { background-position: -240px 0; }

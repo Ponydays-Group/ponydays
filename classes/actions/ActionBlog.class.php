@@ -1068,7 +1068,7 @@ class ActionBlog extends Action
         /**
          * Получаем список юзеров блога
          */
-        $aBlogUsersResult = $this->Blog_GetBlogUsersByBlogId($oBlog->getId(), ModuleBlog::BLOG_USER_ROLE_USER, 1, Config::Get('module.blog.users_per_page'));
+        $aBlogUsersResult = $this->Blog_GetBlogUsersByBlogId($oBlog->getId(), ModuleBlog::BLOG_USER_ROLE_USER, 1, 25);
         $aBlogUsers = $aBlogUsersResult['collection'];
         $aBlogModeratorsResult = $this->Blog_GetBlogUsersByBlogId($oBlog->getId(), ModuleBlog::BLOG_USER_ROLE_MODERATOR);
         $aBlogModerators = $aBlogModeratorsResult['collection'];

@@ -243,4 +243,5 @@ async function handler(e) {
 
 }
 
-$(document).ready(() => document.body.onmouseover = document.body.onmouseout = handler)
+if(!(/Mobi/i.test(navigator.userAgent) || /Android/i.test(navigator.userAgent)))
+    $(document).ready(() => document.body.onmouseover = document.body.onmouseout = handler)

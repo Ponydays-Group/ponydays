@@ -660,7 +660,6 @@ class ActionBlog extends Action
             $sPeriod = getRequestStr('period');
         }
         $sShowType=$this->sCurrentEvent;
-        echo "TESTTTTT";
         if (!in_array($sShowType, array('discussed', 'top'))) {
             $sPeriod = 'all';
         }

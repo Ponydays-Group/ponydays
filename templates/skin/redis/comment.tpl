@@ -50,7 +50,7 @@
 
 
 			<li class="action-hidden">
-                {if $oUserCurrent && (($oComment->getTargetType()=="talk" && $oUserCurrent->getId()==$oComment->getUserId()) || ($oComment->getTargetType()!="talk" && $oUserCurrent->getId()==$oComment->getUserId()||($oUserCurrent->isAdministrator()||($oUserCurrent->isGlobalModerator()&&$oComment->getTarget()&&$oComment->getTarget()->getBlog()->getType()=="open"))))}
+                {if $oUserCurrent && (($oComment->getTargetType()=="talk" && $oUserCurrent->getId()==$oComment->getUserId()) || ($oComment->getTargetType()!="talk" && $bAdmin))}
 					<span>
                 		<a href="#" class="editcomment_editlink" title="Редактировать комментарий" onclick="ls.comments.editComment({$oComment->getId()}); return false;">
                 			<i class="fa fa-pencil" title="Редактировать комментарий"></i>
@@ -63,7 +63,7 @@
                 	</span>
 				{/if}
 
-                {if $oUserCurrent && (($oComment->getTargetType()!="talk" && $oUserCurrent->isAdministrator() || ($oUserCurrent->isGlobalModerator() && $oComment->getTarget() && $oComment->getTarget()->getBlog()->getType()=="open")))}
+                {if $oUserCurrent && ($oComment->getTargetType()!="talk" && $bAdmin)}
 					<span>
                 		<a onclick="ls.comments.toggle(this,{$oComment->getId()}); return false;" href="#" class="comment-delete">
 			                <i class="fa fa-trash" title="Удалить/восстановить комментарий"></i>

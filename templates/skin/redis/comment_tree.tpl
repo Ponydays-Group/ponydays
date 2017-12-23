@@ -28,6 +28,10 @@
 <div id="comments-tree">
     {foreach from=$aComments item=oComment name=rublist}
     {assign var="cmtlevel" value=$oComment->getLevel()}
+		{if $sTargetType!="talk"}
+        	{assign var="oBlog" value=$oTopic->getBlog()}
+			{assign var="bAdmin" value=($oUserCurrent&&(($oUserCurrent->isGlobalModerator() and $oBlog->getType() == "open") or $oBlog->getUserIsAdministrator() or $oBlog->getUserIsModerator() or $oBlog->getOwnerId()==$oUserCurrent->getId() or $oUserCurrent->isAdministrator()))}
+		{/if}
 
     {if $cmtlevel>$oConfig->GetValue('module.comment.max_tree')}
         {assign var="cmtlevel" value=$oConfig->GetValue('module.comment.max_tree')}

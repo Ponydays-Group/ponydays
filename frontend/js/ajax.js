@@ -117,7 +117,7 @@ export function ajaxSubmit(url, form, callback, more) {
 /**
  * Загрузка изображения
  */
-export async function ajaxUploadImg(form, sToLoad) {
+export async function ajaxUploadImg(form, sToLoad, spoilSelector) {
     $("#"+form+"_submit").attr("disabled", true)
     $("#"+form+"_submit").toggleClass("hovered")
     let result = await ajaxSubmit('upload/image/', form, function (data) {
@@ -129,7 +129,7 @@ export async function ajaxUploadImg(form, sToLoad) {
             if (!data.sText.length) {
                 Msg.error("Ошибка", "Сервер не отдал картинку");
             }
-            if ($("#img_spoil").prop('checked')) {
+            if ($(spoilSelector).prop('checked')) {
                 let s = prompt('Спойлер', 'Спойлер')
                 if (s)
                     $.markItUp({replaceWith: '<span class="spoiler"><span class="spoiler-title spoiler-close">'+s+'</span><span class="spoiler-body">'+data.sText+'</span></span>'});

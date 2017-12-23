@@ -120,6 +120,9 @@ class ActionAjax extends Action
         } else {
             $this->User_Ban($iUserId, $this->oUserCurrent->getId(), null, 1, $sBanComment);
         }
+
+        $sLogText = $this->oUserCurrent->getLogin()." забанил пользователя ".$iUserId;
+        $this->Logger_Notice($sLogText);
     }
 
     /**
@@ -1500,6 +1503,9 @@ class ActionAjax extends Action
         $this->Message_AddNoticeSingle($sMsg, $this->Lang_Get('attention'));
         $this->Viewer_AssignAjax('bState', $bState);
         $this->Viewer_AssignAjax('sTextToggle', $sTextToggle);
+
+        $sLogText = $this->oUserCurrent->getLogin()." удалил комментарий ".$oComment->getId();
+        $this->Logger_Notice($sLogText);
     }
 
     protected

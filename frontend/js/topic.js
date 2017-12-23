@@ -24,10 +24,13 @@ export function preview(form, preview) {
 
 export function insertImageToEditor(sUrl, bSpoil, sAlign, sTitle) {
     sAlign = sAlign == 'center' ? 'class="image-center"' : 'align="' + sAlign + '"';
+    let s = false
+    if (bSpoil)
+        s = prompt('Спойлер','Спойлер')
     $.markItUp({replaceWith:
-        (bSpoil? '<span class="spoiler"><span class="spoiler-title spoiler-close">'+prompt('Спойлер')+'</span><span class="spoiler-body">':'') +
+        (bSpoil&&s? '<span class="spoiler"><span class="spoiler-title spoiler-close">'+s+'</span><span class="spoiler-body">':'') +
         '<img src="' + sUrl + '" title="' + sTitle + '" ' + sAlign + ' />'
-        +(bSpoil?'</span></span>':'')});
+        +(bSpoil&&s?'</span></span>':'')});
     $('#window_upload_img').find('input[type="text"]').val('');
     $('#window_upload_img').jqmHide();
     return false;

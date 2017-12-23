@@ -130,7 +130,11 @@ export async function ajaxUploadImg(form, sToLoad) {
                 Msg.error("Ошибка", "Сервер не отдал картинку");
             }
             if ($("#img_spoil").prop('checked')) {
-                $.markItUp({replaceWith: '<span class="spoiler"><span class="spoiler-title spoiler-close">'+prompt('Спойлер')+'</span><span class="spoiler-body">'+data.sText+'</span></span>'});
+                let s = prompt('Спойлер', 'Спойлер')
+                if (s)
+                    $.markItUp({replaceWith: '<span class="spoiler"><span class="spoiler-title spoiler-close">'+s+'</span><span class="spoiler-body">'+data.sText+'</span></span>'});
+                else
+                    $.markItUp({replaceWith: data.sText});
             } else {
                 $.markItUp({replaceWith: data.sText});
             }

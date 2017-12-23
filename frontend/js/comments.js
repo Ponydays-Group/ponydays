@@ -820,7 +820,7 @@ export function init() {
         }
 
         Emitter.on('socket-edit-comment', (data) => updateCommentEdited(data.commentData.id, data.commentData.text))
-        Emitter.on('socket-delete-comment', (data) => updateCommentDeleted(data.commentData.id, parseInt(data.delete), data.deleteReason))
+        Emitter.on('socket-delete-comment', (data) => updateCommentDeleted(data.commentId, parseInt(data.delete), data.deleteReason))
         Emitter.on('socket-new-comment', (data) => {
             if (!document.getElementById('autoload').checked)
                 return
@@ -848,10 +848,10 @@ export function updateCommentDeleted(id, deleted, reason) {
             ${reason || "Нет причины удаления"}
         </div>
 
-            ${LOGGED_IN && (IS_ADMIN || cmt.hasClass("comment-self")) ? `<a href="#" onclick="ls.comments.showHiddenComment(${this.id}); return false;">Раскрыть комментарий</a>` : ""}`)
+            ${LOGGED_IN && (IS_ADMIN || cmt.hasClass("comment-self")) ? `<a href="#" onclick="ls.comments.showHiddenComment(${id}); return false;">Раскрыть комментарий</a>` : ""}`)
     } else {
         cmt.removeClass("comment-deleted")
-        Comments.showHiddenComment(id)
+        showHiddenComment(id)
     }
 }
 

@@ -1,5 +1,18 @@
 {assign var="oUser" value=$oComment->getUser()}
-
+{assign var="bCanEdit" value=$LS->ACL_UserCanEditComment($oUserCurrent, $oComment,1)}
+{assign var="bCanDelete" value=$LS->ACL_UserCanDeleteComment($oUserCurrent, $oComment,1)}
+{if $oComment->isBad()}
+<section
+		id="comment_id_{$oComment->getId()}"
+		data-author="{$oComment->getUser()->getLogin()}"
+		data-id="{$oComment->getId()}"
+		data-level="{$cmtlevel}"
+		data-pid="{$oComment->getPid()}"
+		style="margin-left: {$cmtlevel*20}px"
+		class="bad-placeholder">
+	<span>...</span>
+</section>
+{else}
 <section
 		id="comment_id_{$oComment->getId()}"
 		data-author="{$oComment->getUser()->getLogin()}"
@@ -50,7 +63,7 @@
 
 
 			<li class="action-hidden">
-                {if $oUserCurrent && (($oComment->getTargetType()=="talk" && $oUserCurrent->getId()==$oComment->getUserId()) || ($oComment->getTargetType()!="talk" && $bAdmin))}
+                {if $bCanEdit}
 					<span>
                 		<a href="#" class="editcomment_editlink" title="Редактировать комментарий" onclick="ls.comments.editComment({$oComment->getId()}); return false;">
                 			<i class="fa fa-pencil" title="Редактировать комментарий"></i>
@@ -63,7 +76,7 @@
                 	</span>
 				{/if}
 
-                {if $oUserCurrent && ($oComment->getTargetType()!="talk" && $bAdmin)}
+                {if $bCanDelete}
 					<span>
                 		<a onclick="ls.comments.toggle(this,{$oComment->getId()}); return false;" href="#" class="comment-delete">
 			                <i class="fa fa-trash" title="Удалить/восстановить комментарий"></i>
@@ -135,3 +148,4 @@
 		</ul>
 	</div>
 </section>
+{/if}

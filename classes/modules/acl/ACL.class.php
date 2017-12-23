@@ -645,13 +645,13 @@ class ModuleACL extends Module {
 
         if (!$iCheckMask)
             return true;
-        
+
         if (!$oUser || !$oComment)
-            return $this->Lang_Get('not_access');
-        
+            return false;
+
         if ($oUser->isAdministrator())
             return true;
-        
+
         $aUsers=Config::Get('comment_editors');
         if (is_array($aUsers) && in_array($oUser->getId(),$aUsers))
             return true;
@@ -671,38 +671,71 @@ class ModuleACL extends Module {
         if ($oUser->getUserIsAdministrator())
             return true;
         if ($oComment->getTargetType() != "talk"){
-	        if ($oUser->isGlobalModerator() and $oComment->getTarget()->getBlog()->getType() == "open") {
-	            return true;
-	        }
+            if ($oUser->isGlobalModerator() and $oComment->getTarget()->getBlog()->getType() == "open") {
+                return true;
+            }
         }
         if ($oUser->getUserId() != $oComment->getUserId() && !$oUser->isAdministrator())
-            return $this->Lang_Get('not_access');
-        
+            return false;
+
         if ($iCheckMask & ModuleACL::ACL_EC_CHECK_MAX_EDIT_COUNT != 0 && Config::Get('max_edit_count'))
         {
             if ($oComment->getEditCount() > Config::Get('max_edit_count'))
-                return $this->Lang_Get('err_max_edit_count');
+                return false;
         }
-        
+
         if ($iCheckMask & ModuleACL::ACL_EC_CHECK_MAX_EDIT_PERIOD != 0 && Config::Get('max_edit_period'))
         {
             if (strtotime('+' . Config::Get('max_edit_period') . ' second', strtotime($oComment->getEditDate())) < time())
-                return $this->Lang_Get('err_max_edit_period');
+                return false;
         }
-        
+
         if ($iCheckMask & ModuleACL::ACL_EC_CHECK_DENY_WITH_ANSWERS != 0 && Config::Get('deny_with_answers'))
         {
             if ($this->Editcomment_HasAnswers($oComment->getId()))
-                return $this->Lang_Get('err_deny_with_asnwers');
+                return false;
         }
-        
+
         if ($iCheckMask & ModuleACL::ACL_EC_CHECK_USER_RATING != 0)
         {
             if ($oUser->getRating() < Config::Get('min_user_rating'))
-                return $this->Lang_Get('err_min_user_rating');
+                return false;
         }
-        
+
         return true;
+    }
+    function UserCanDeleteComment($oUser,$oComment,$iCheckMask=0)
+    {
+
+        if (!$iCheckMask)
+            return true;
+
+        if (!$oUser || !$oComment)
+            return false;
+
+        if ($oUser->isAdministrator())
+            return true;
+
+        if ($oComment->getTargetType() != 'talk') {
+            if($oComment->getTarget()->getBlog()->getType() != 'personal') {
+                $oBlog = $oComment->getTarget()->getBlog()->Blog_GetBlogUserByBlogIdAndUserId($oComment->getTarget()->getBlog()->getId(), $oUser->getId());
+                if ($oBlog) {
+                    if ($oBlog->getIsModerator() or $oBlog->getIsAdministrator())
+                        return true;
+                }
+                if ($oComment->getTarget()->getBlog()->getOwnerId() == $oUser->getId()){
+                    return true;
+                }
+            }
+            if ($oUser->isGlobalModerator() and $oComment->getTarget()->getBlog()->getType() == "open") {
+                return true;
+            }
+        }
+
+        if ($oUser->getUserIsAdministrator())
+            return true;
+
+        return false;
     }
 }
 ?>

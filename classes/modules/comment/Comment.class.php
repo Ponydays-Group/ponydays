@@ -1011,7 +1011,7 @@ class ModuleComment extends Module {
 		$aComment['author'] = array("id"=>$oComment->getUserId(), "login"=>$oUser->getLogin(), "avatar"=>$oUser->getProfileAvatarPath(48));
 		$aComment['date'] = gmdate('c',strtotime($oComment->getDate()));
 		$aComment['text'] = $oComment->getText();
-		if ($oComment->getDelete() && !$bIgnoreDelete) {
+		if ($oComment->getDelete() && !$bIgnoreDelete && !$this->ACL_UserCanDeleteComment($this->oUserCurrent, $oComment)) {
 			$aComment['text'] = "";
 		}
 		/*if ($this->oUserCurrent) {

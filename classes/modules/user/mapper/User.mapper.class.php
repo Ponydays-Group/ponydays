@@ -82,7 +82,8 @@ class ModuleUser_MapperUser extends Mapper
 				user_settings_notice_new_talk = ?	,
 				user_settings_notice_reply_comment = ? ,
 				user_settings_notice_new_friend = ? ,
-				user_settings_timezone = ?
+				user_settings_timezone = ? ,
+				user_rank = ?
 			WHERE user_id = ?
 		";
         if ($this->oDb->query($sql, $oUser->getPassword(),
@@ -110,6 +111,7 @@ class ModuleUser_MapperUser extends Mapper
             (int)$oUser->getSettingsNoticeReplyComment(),
             (int)$oUser->getSettingsNoticeNewFriend(),
             $oUser->getSettingsTimezone(),
+            $oUser->getRank(),
             $oUser->getId())
         ) {
             return true;

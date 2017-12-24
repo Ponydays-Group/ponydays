@@ -65,6 +65,7 @@ class ActionAdmin extends Action {
         $this->AddEvent('jsonconfiglocal','EventJsonConfigLocal');
         $this->AddEvent('config','EventAdminConfig');
         $this->AddEvent('save','EventAdminConfigSave');
+        $this->AddEvent('user','EventSaveUser');
 	}
 
 
@@ -74,7 +75,18 @@ class ActionAdmin extends Action {
 	 */
 
     protected function EventUsers() {
+    }
 
+    protected function EventSaveUser() {
+        $this->Viewer_SetResponseAjax('json');
+        if (!$oUser = $this->User_GetUserById(getRequest('user_id'))) {
+            return false;
+        }
+        $sRank = getRequest('user_rank');
+        $sMail = getRequest('user_mail');
+        $oUser->setRank($sRank);
+        $oUser->setMail($sMail);
+        $this->User_Update($oUser);
     }
 
     protected function EventAdminConfigSave() {

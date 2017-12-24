@@ -539,6 +539,7 @@ class ModuleUser extends Module
         //чистим зависимые кеши
         $this->Cache_Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array('user_update'));
         $this->Cache_Delete("user_{$oUser->getId()}");
+//        echo $oUser->getRank();
         return $this->oMapper->Update($oUser);
     }
 

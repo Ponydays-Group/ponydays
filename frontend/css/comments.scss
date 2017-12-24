@@ -226,6 +226,16 @@
 
 .comment .comment-info li.comment-author a {
     font-weight: bold;
+    padding: 3px;
+    display: inline-block;
+}
+
+.author-rank {
+    padding: 3px;
+    border-radius: 5px;
+    background: $brand;
+    color: white;
+    margin-left: -5px;
 }
 
 .comment .comment-info li.comment-author .comment-topic-author {

@@ -90,9 +90,13 @@ class ModuleUser_EntityUser extends Entity {
 	 *
 	 * @return int|null
 	 */
-	public function getId() {
-		return $this->_getDataOne('user_id');
-	}
+    public function getId() {
+        return $this->_getDataOne('user_id');
+    }
+    public function getRank() {
+        return $this->_getDataOne('user_rank');
+    }
+
 	/**
 	 * Возвращает логин
 	 *
@@ -534,6 +538,10 @@ class ModuleUser_EntityUser extends Entity {
 	public function setPassword($data) {
 		$this->_aData['user_password']=$data;
 	}
+
+    public function setRank($data) {
+        $this->_aData['user_rank']=$data;
+    }
 	/**
 	 * Устанавливает емайл
 	 *

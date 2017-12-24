@@ -6,9 +6,15 @@
         <header class="block-header">
             <h3>Инфа для админов</h3>
         </header>
-        <label for="admin_id">User ID: {$oUserProfile->getId()}</label>
-        <label for="admin_id">User email:</label>
-        <span id="admin_id">{$oUserProfile->getMail()}</span>
+        <form id="user_admin">
+            <label for="admin_id">User ID: {$oUserProfile->getId()}</label>
+            <input type="hidden" value="{$oUserProfile->getId()}" id="user_id" name="user_id" />
+            <label for="admin_mail">User email:</label>
+            <input id="user_mail" style="margin-bottom: 10px;" name="user_mail" value="{$oUserProfile->getMail()}" />
+            <label for="user_rank">User rank:</label>
+            <input id="user_rank" style="margin-bottom: 10px;" name="user_rank" value="{$oUserProfile->getRank()}" />
+            <button class="button button-primary" type="submit" onclick="ls.ajax.saveUserAdmin(); return false;">Save</button>
+        </form>
     </section>
 {/if}
 

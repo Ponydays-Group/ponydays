@@ -189,4 +189,7 @@ export function saveConfig(){
     console.log(changed)
     asyncAjax("/admin/save", {values:changed}).then((r)=>console.log(r))
 }
-saveConfig()
+
+export function saveUserAdmin() {
+    ajaxSubmit("/admin/user", "user_admin")
+}

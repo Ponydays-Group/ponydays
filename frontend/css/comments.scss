@@ -230,6 +230,14 @@
     display: inline-block;
 }
 
+.author-rank {
+    padding: 3px;
+    border-radius: 5px;
+    background: $rank-bg;
+    color: white;
+    font-size: 0.8em;
+}
+
 .comment .comment-info li.comment-author .comment-topic-author {
     background: #C9A518;
     color: #fff;

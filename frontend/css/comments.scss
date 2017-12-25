@@ -217,7 +217,7 @@
 
 .comment .comment-info li {
     float: left;
-    margin-right: 10px;
+    margin-right: 5px;
 }
 
 .comment .comment-info li a {
@@ -233,9 +233,9 @@
 .author-rank {
     padding: 3px;
     border-radius: 5px;
-    background: rgba($brand, 0.62);
+    background: $rank-bg;
     color: white;
-    margin-left: -5px;
+    font-size: 0.8em;
 }
 
 .comment .comment-info li.comment-author .comment-topic-author {

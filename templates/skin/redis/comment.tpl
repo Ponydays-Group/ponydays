@@ -35,7 +35,7 @@
 
 	<ul class="comment-info">
 		<li class="comment-author"><a href="{$oUser->getUserWebPath()}" target="_blank">{$oUser->getLogin()}</a></li>
-        {if $oUser->getRank()}<li class="author-rank">{$oUser->getRank()}</li>{/if}
+        {*{if $oUser->getRank()}<li class="author-rank">{$oUser->getRank()}</li>{/if}*}
 	</ul>
 
 	<div id="comment_content_id_{$oComment->getId()}" class="comment-content text {if $oComment->getDelete()}hided{/if}">

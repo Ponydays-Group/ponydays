@@ -233,8 +233,8 @@
 .author-rank {
     padding: 3px;
     border-radius: 5px;
-    background: $rank-bg;
-    color: white;
+    border: 1px solid $rank-bg;
+    color: $rank-bg;
     font-size: 0.8em;
 }
 

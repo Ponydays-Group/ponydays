@@ -7,7 +7,7 @@
         </p>
         {/if}
         <img src="{$oUserProfile->getProfileAvatar(100)}" class="avatar {if $oUserProfile->isOnline()}online{/if}" />
-        <div id="user_background_grad">{$oUserProfile->getLogin()}{*{if $oUserProfile->getRank()}<span style="font-size: 0.8em; margin-left: 10px;" class="author-rank">{$oUserProfile->getRank()}</span>{/if}*}</div>
+        <div id="user_background_grad">{$oUserProfile->getLogin()}{if $oUserProfile->getRank()}<span style="font-size: 0.8em; margin-left: 10px;" class="author-rank">{$oUserProfile->getRank()}</span>{/if}</div>
     </div>
 
     <ul class="profile-tabs">

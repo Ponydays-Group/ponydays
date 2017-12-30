@@ -103,12 +103,12 @@ class ActionApi extends Action
                      * Авторизуем
                      */
                     if ($this->User_Authorization($oUser,true)){
-                        $aResult["notice"] = "Authenfication complete!";
                         if (getRequest('device_uid')){
                             if ($sKey = $this->ModuleApi_setKey($oUser->getId(), getRequest('device_uid'))){
                                 $this->Viewer_AssignAjax('newKey', $sKey);
                             }
                         }
+                        $this->Viewer_AssignAjax('notice', "Authenfication complete!");
                     } else {
                         $this->Viewer_AssignAjax('message', 'Authenfication faild');
                         return;

@@ -1611,48 +1611,58 @@ class ModuleTopic extends Module {
 	 * @return string|int
 	 */
 	public function UploadTopicImageUrl($sUrl, $oUser) {
-		$anon = "";
-		if (Config::Get("module.image.use_anon")) {
-			$anon = Config::Get("module.image.anon_url");
-		}
-		/**
-		 * Проверяем, является ли файл изображением
-		 */
-		if(!@getimagesize($anon.urlencode($sUrl))) {
-			return ModuleImage::UPLOAD_IMAGE_ERROR_TYPE;
-		}
-		/**
-		 * Открываем файловый поток и считываем файл поблочно,
-		 * контролируя максимальный размер изображения
-		 */
-		$oFile=fopen($anon.urlencode($sUrl),'r');
-		if(!$oFile) {
-			return ModuleImage::UPLOAD_IMAGE_ERROR_READ;
-		}
-
-		$iMaxSizeKb=Config::Get('view.img_max_size_url');
-		$iSizeKb=0;
-		$sContent='';
-		while (!feof($oFile) and $iSizeKb<$iMaxSizeKb) {
-			$sContent.=fread($oFile ,1024*1);
-			$iSizeKb++;
-		}
-		/**
-		 * Если конец файла не достигнут,
-		 * значит файл имеет недопустимый размер
-		 */
-		if(!feof($oFile)) {
-			return ModuleImage::UPLOAD_IMAGE_ERROR_SIZE;
-		}
-		fclose($oFile);
-		/**
-		 * Создаем tmp-файл, для временного хранения изображения
-		 */
-		$sFileTmp=Config::Get('sys.cache.dir').func_generator();
-
-		$fp=fopen($sFileTmp,'w');
-		fwrite($fp,$sContent);
-		fclose($fp);
+        $ch = curl_init();
+        // Url
+        curl_setopt($ch, CURLOPT_URL, $sUrl);
+        // Browser/user agent
+        curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:42.0) Gecko/20100101 Firefox/42.0");
+        // Automatically follow Location: headers (ie redirects)
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        // Auto set the referer in the event of a redirect
+        curl_setopt($ch, CURLOPT_AUTOREFERER, true);
+        // Make sure we dont get stuck in a loop
+        curl_setopt($ch, CURLOPT_MAXREDIRS, 5);
+        // 10s timeout time for cURL connection
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 10);
+        // allow https verification if true
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        // check common name and verify with host name
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        // Set SSL version
+        curl_setopt($ch, CURLOPT_SSLVERSION, CURL_SSLVERSION_DEFAULT);
+        // Return data to variable
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        // Set buffer to 100k
+        curl_setopt($ch, CURLOPT_BUFFERSIZE, 1024*100);
+        // Manual progress handling
+        curl_setopt($ch, CURLOPT_NOPROGRESS, false);
+        // Abort upload too large files
+        curl_setopt($ch, CURLOPT_PROGRESSFUNCTION, function(
+            $DownloadSize, $Downloaded, $UploadSize, $Uploaded
+        ){
+            return 0;
+        });
+        $data = curl_exec($ch);
+        $error = curl_error($ch);
+        if ($error) {
+            if (curl_errno($ch) == CURLE_ABORTED_BY_CALLBACK) {
+                return ModuleImage::UPLOAD_IMAGE_ERROR_SIZE;
+            }
+            return ModuleImage::UPLOAD_IMAGE_ERROR_READ;
+        }
+        curl_close($ch);
+        if (!$data) {
+            return ModuleImage::UPLOAD_IMAGE_ERROR;
+        }
+        /**
+         * Создаем tmp-файл, для временного хранения изображения
+         */
+        $sFileTmp=Config::Get('sys.cache.dir').func_generator();
+        $fp=fopen($sFileTmp,'w');
+        if (!fwrite($fp, $data)) {
+            return ModuleImage::UPLOAD_IMAGE_ERROR;
+        }
+        fclose($fp);
 
 		$sDirSave=$this->Image_GetIdDir($oUser->getId());
 		$aParams=$this->Image_BuildParams('topic');

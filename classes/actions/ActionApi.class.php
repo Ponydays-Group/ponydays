@@ -109,6 +109,7 @@ class ActionApi extends Action
                             }
                         }
                         $this->Viewer_AssignAjax('notice', "Authenfication complete!");
+                        $this->Viewer_AssignAjax('ls_key', $this->Security_GenerateSessionKey());
                     } else {
                         $this->Viewer_AssignAjax('message', 'Authenfication faild');
                         return;

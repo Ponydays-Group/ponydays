@@ -690,3 +690,16 @@ a.inactive {
 .float-info > *{
   box-shadow: 0px 1px 3px rgba(0,0,0,0.2);
 }
+
+#timer_wrapper {
+  background: white;
+  border-radius: 20px;
+  box-sizing: border-box;
+  padding: 15px;
+  margin: 15px;
+  width: calc(100% - 30px);
+  border: 1px solid #e5e5e5;
+  box-shadow: 0px 1px 6px rgba(0, 0, 0, 0.08);
+  display: flex;
+  justify-content: space-between;
+}

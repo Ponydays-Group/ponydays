@@ -1918,6 +1918,15 @@ class ActionAjax extends Action
                 return;
             }
             $curl_data['targetTitle'] = $oTalk->getTitle();
+            $curl_data['userIds'] = array();
+            $aUsersTalk = $this->Talk_GetUsersTalk($oTalk->getId(), ModuleTalk::TALK_USER_ACTIVE);
+            foreach ($aUsersTalk as $oUserTalk) {
+                //if ($oUserTalk->getId() != $oComment->getUserId()) {
+                //    $this->Notify_SendTalkCommentNew($oUserTalk, $this->oUserCurrent, $oTalk, $oComment);
+                //    $curl_data['userIds'][] = $oUserTalk->getId();
+                //}
+                $curl_data['userIds'][] = $oUserTalk->getId();
+            }
         }
         $this->Nower_Patch('/comment', $curl_data);
         $sLogText = $this->oUserCurrent->getLogin()." редактировал коммент ".$oComment->getId()." ".$ip;

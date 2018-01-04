@@ -1910,15 +1910,15 @@ class ActionAjax extends Action
             "targetType" => $oComment->getTargetType(),
             "targetId" => $oComment->getTargetId(),
         );
-		if($oComment->getTargetType() == 'topic') {
+        if($oComment->getTargetType() == 'topic') {
             $curl_data['targetTitle'] = $oComment->getTarget()->getTitle();
-		} else if($oComment->getTargetType() == 'talk') {
-			if (!($oTalk = $this->Talk_GetTalkById($oComment->getTargetId()))) {
+        } else if($oComment->getTargetType() == 'talk') {
+            if (!($oTalk = $this->Talk_GetTalkById($oComment->getTargetId()))) {
                 $this->Message_AddErrorSingle($this->Lang_Get('error'));
-				return;
-			}
+                return;
+            }
             $curl_data['targetTitle'] = $oTalk->getTitle();
-		}
+        }
         $this->Nower_Patch('/comment', $curl_data);
         $sLogText = $this->oUserCurrent->getLogin()." редактировал коммент ".$oComment->getId()." ".$ip;
         $this->Logger_Notice($sLogText);

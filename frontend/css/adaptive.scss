@@ -97,6 +97,11 @@
 }
 
 @media screen and (max-width: 530px) {
+  #notifier {
+    bottom: 40px;
+    left: 10px;
+  }
+
   #scroll_down, #scroll_up {
     height: 50px;
   }

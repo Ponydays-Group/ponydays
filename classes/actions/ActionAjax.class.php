@@ -1909,8 +1909,25 @@ class ActionAjax extends Action
             "commentData" => json_encode($this->Comment_ConvertCommentToArray($oComment)),
             "targetType" => $oComment->getTargetType(),
             "targetId" => $oComment->getTargetId(),
-            "targetTitle" => $oComment->getTarget()->getTitle()
         );
+        if($oComment->getTargetType() == 'topic') {
+            $curl_data['targetTitle'] = $oComment->getTarget()->getTitle();
+        } else if($oComment->getTargetType() == 'talk') {
+            if (!($oTalk = $this->Talk_GetTalkById($oComment->getTargetId()))) {
+                $this->Message_AddErrorSingle($this->Lang_Get('error'));
+                return;
+            }
+            $curl_data['targetTitle'] = $oTalk->getTitle();
+            $curl_data['userIds'] = array();
+            $aUsersTalk = $this->Talk_GetUsersTalk($oTalk->getId(), ModuleTalk::TALK_USER_ACTIVE);
+            foreach ($aUsersTalk as $oUserTalk) {
+                //if ($oUserTalk->getId() != $oComment->getUserId()) {
+                //    $this->Notify_SendTalkCommentNew($oUserTalk, $this->oUserCurrent, $oTalk, $oComment);
+                //    $curl_data['userIds'][] = $oUserTalk->getId();
+                //}
+                $curl_data['userIds'][] = $oUserTalk->getId();
+            }
+        }
         $this->Nower_Patch('/comment', $curl_data);
         $sLogText = $this->oUserCurrent->getLogin()." редактировал коммент ".$oComment->getId()." ".$ip;
         $this->Logger_Notice($sLogText);

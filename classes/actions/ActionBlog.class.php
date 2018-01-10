@@ -847,31 +847,29 @@ class ActionBlog extends Action
         $this->SetTemplateAction('topic');
     }
 
-    protected function EventShowTopicComments()
-    {
-        $sBlogUrl = '';
-        if ($this->GetParamEventMatch(0, 1)) {
+    protected function EventShowTopicComments() {
+        $sBlogUrl='';
+        if ($this->GetParamEventMatch(0,1)) {
             // из коллективного блога
-            $sBlogUrl = $this->sCurrentEvent;
-            $iTopicId = $this->GetParamEventMatch(0, 1);
+            $sBlogUrl=$this->sCurrentEvent;
+            $iTopicId=$this->GetParamEventMatch(0,1);
         } else {
             // из персонального блога
-            $iTopicId = $this->GetEventMatch(1);
+            $iTopicId=$this->GetEventMatch(1);
         }
-        if (!($oTopic = $this->Topic_GetTopicById($iTopicId))) {
+        if (!($oTopic=$this->Topic_GetTopicById($iTopicId))) {
             return parent::EventNotFound();
         }
         /**
          * Проверяем права на просмотр топика
          */
-        if (!$oTopic->getPublish() and (!$this->oUserCurrent or ($this->oUserCurrent->getId() != $oTopic->getUserId() and !$this->oUserCurrent->isAdministrator()))) {
+        if (!$oTopic->getPublish() and (!$this->oUserCurrent or ($this->oUserCurrent->getId()!=$oTopic->getUserId() and !$this->oUserCurrent->isAdministrator()))) {
             return parent::EventNotFound();
         }
-
         /**
          * Определяем права на отображение записи из закрытого блога
          */
-        if (in_array($oTopic->getBlog()->getType(), array('close', 'invite'))
+        if(in_array($oTopic->getBlog()->getType(), array('close', 'invite'))
             and (!$this->oUserCurrent
                 || !in_array(
                     $oTopic->getBlog()->getId(),
@@ -879,38 +877,33 @@ class ActionBlog extends Action
                 )
             )
         ) {
-            $this->Message_AddErrorSingle($this->Lang_Get('blog_close_show'), $this->Lang_Get('not_access'));
+            $this->Message_AddErrorSingle($this->Lang_Get('blog_close_show'),$this->Lang_Get('not_access'));
             return Router::Action('error');
         }
         //Router::Location($oTopic->getUrl());
-        if ($sBlogUrl == '') {
+        if ($sBlogUrl=='') {
             Router::Location($oTopic->getUrl());
         }
-
         /**
          * Достаём комменты к топику
          */
         if (!Config::Get('module.comment.nested_page_reverse') and Config::Get('module.comment.use_nested') and Config::Get('module.comment.nested_per_page')) {
-            $iPageDef = ceil($this->Comment_GetCountCommentsRootByTargetId($oTopic->getId(), 'topic') / Config::Get('module.comment.nested_per_page'));
+            $iPageDef=ceil($this->Comment_GetCountCommentsRootByTargetId($oTopic->getId(),'topic')/Config::Get('module.comment.nested_per_page'));
         } else {
-            $iPageDef = 1;
+            $iPageDef=1;
         }
-        $iPage = getRequest('cmtpage', 0) ? (int)getRequest('cmtpage', 0) : $iPageDef;
-        $aReturn = $this->Comment_GetCommentsByTargetId($oTopic->getId(), 'topic');
+        $iPage=getRequest('cmtpage',0) ? (int)getRequest('cmtpage',0) : $iPageDef;
+        $aReturn=$this->Comment_GetCommentsByTargetId($oTopic->getId(),'topic');
         $iMaxIdComment = $aReturn['iMaxIdComment'];
-        $aComments = $aReturn['comments'];
-
-//		$aResult = array();
-
+        $aComments=$aReturn['comments'];
+        $aResult = array();
         $sReadlast = $oTopic->getDateRead();
-
-//		foreach($aComments as $oComment) {
-//			$aComment = $this->Comment_ConvertCommentToArray($oComment, $sReadlast);
-//			$aResult[$aComment['id']] = $aComment;
-//		}
-
+        foreach($aComments as $oComment) {
+            $aComment = $this->Comment_ConvertCommentToArray($oComment, $sReadlast);
+            $aResult[$aComment['id']] = $aComment;
+        }
         if ($this->oUserCurrent) {
-            $oTopicRead = Engine::GetEntity('Topic_TopicRead');
+            $oTopicRead=Engine::GetEntity('Topic_TopicRead');
             $oTopicRead->setTopicId($oTopic->getId());
             $oTopicRead->setUserId($this->oUserCurrent->getId());
             $oTopicRead->setCommentCountLast($oTopic->getCountComment());
@@ -918,13 +911,7 @@ class ActionBlog extends Action
             $oTopicRead->setDateRead(date("Y-m-d H:i:s"));
             $this->Topic_SetTopicRead($oTopicRead);
         }
-
-        $oViewerLocal = $this->Viewer_GetLocalViewer();
-        $oViewerLocal->Assign('aComments', $aComments);
-        $oViewerLocal->Assign("oUserCurrent", $this->oUserCurrent);
-        $sText = $oViewerLocal->Fetch('new_comments_tree.tpl');
-
-        $this->Viewer_AssignAjax("sText", $sText);
+        $this->Viewer_AssignAjax("aComments", $aResult);
         $this->Viewer_AssignAjax("sReadlast", $sReadlast);
         $this->Viewer_AssignAjax("iMaxIdComment", $iMaxIdComment);
         $this->Viewer_DisplayAjax();
@@ -1253,7 +1240,8 @@ class ActionBlog extends Action
                 "commentData" => json_encode($this->Comment_ConvertCommentToArray($oCommentNew)),
                 "targetType" => $oCommentNew->getTargetType(),
                 "targetId" => $oCommentNew->getTargetId(),
-                "targetTitle" => $oTopic->getTitle()
+                "targetTitle" => $oTopic->getTitle(),
+                "targetParentType" => $oTopic->getBlog()->getType()
             );
             if ($oCommentParent) {
                 $curl_data["userId"] = $oCommentParent->getUserId();

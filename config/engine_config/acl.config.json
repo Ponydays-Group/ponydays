@@ -43,9 +43,28 @@
                 "rating": -1
             }
         },
-        "vote_state": {
+        "vote_list": {
             "comment": {
+                "date_sort": 1,
                 "oe_end": 1470700800,
+                "oe_enable_level": 1,
+                "ne_enable_level": 1
+            },
+            "topic": {
+                "date_sort": 1,
+                "oe_end": 0,
+                "oe_enable_level": 1,
+                "ne_enable_level": 1
+            },
+            "blog": {
+                "date_sort": 1,
+                "oe_end": 0,
+                "oe_enable_level": 1,
+                "ne_enable_level": 1
+            },
+            "user": {
+                "date_sort": 1,
+                "oe_end": 0,
                 "oe_enable_level": 1,
                 "ne_enable_level": 1
             }

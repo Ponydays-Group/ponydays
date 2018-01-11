@@ -1559,24 +1559,47 @@ class ActionAjax extends Action
     protected
     function EventGetObjectVotes()
     {
-        $ne_enable_level = Config::Get('acl.vote_state.comment.ne_enable_level');
+        $targetId = (int)getRequestStr('targetId', null, 'post');
+        $targetType = getRequestStr('targetType', null, 'post');
+        switch($targetType) {
+            case 'comment':
+                $oTarget = $this->Comment_GetCommentById($targetId);
+                $ne_enable_level = Config::Get('acl.vote_list.comment.ne_enable_level');
+                $oe_enable_level = Config::Get('acl.vote_list.comment.oa_enable_level');
+                $oe_end = Config::Get('acl.vote_list.comment.oe_end');
+                $date_sort = Config::Get('acl.vote_list.comment.date_sort');
+                break;
+            case 'topic':
+                $oTarget = $this->Topic_GetTopicById($targetId);
+                $ne_enable_level = Config::Get('acl.vote_list.topic.ne_enable_level');
+                $oe_enable_level = Config::Get('acl.vote_list.topic.oa_enable_level');
+                $oe_end = Config::Get('acl.vote_list.topic.oe_end');
+                $date_sort = Config::Get('acl.vote_list.topic.date_sort');
+                break;
+            case 'blog':
+                $oTarget = $this->Blog_GetBlogById($targetId);
+                $ne_enable_level = Config::Get('acl.vote_list.blog.ne_enable_level');
+                $oe_enable_level = Config::Get('acl.vote_list.blog.oa_enable_level');
+                $oe_end = Config::Get('acl.vote_list.blog.oe_end');
+                $date_sort = Config::Get('acl.vote_list.blog.date_sort');
+                break;
+            case 'user':
+                $oTarget = $this->User_GetUserById($targetId);
+                $ne_enable_level = Config::Get('acl.vote_list.user.ne_enable_level');
+                $oe_enable_level = Config::Get('acl.vote_list.user.oa_enable_level');
+                $oe_end = Config::Get('acl.vote_list.user.oe_end');
+                $date_sort = Config::Get('acl.vote_list.user.date_sort');
+                break;
+            default:
+                $this->Message_AddErrorSingle($this->Lang_Get('system_error'),$this->Lang_Get('error'));
+                return;
+        }
+
         /**
          * Пользователь авторизован?
          */
         if (!$this->oUserCurrent && $ne_enable_level < 8) {
             $this->Message_AddErrorSingle($this->Lang_Get('need_authorization') , $this->Lang_Get('error'));
-            return;
-        }
-
-        $targetId = (int)getRequestStr('targetId', null, 'post');
-        $targetType = getRequestStr('targetType', null, 'post');
-        switch ($targetType) {
-        case 'comment':
-            $oTarget = $this->Comment_GetCommentById($targetId);
-            break;
-
-        default:
-            $this->Message_AddErrorSingle($this->Lang_Get('system_error') , $this->Lang_Get('error'));
             return;
         }
 
@@ -1597,7 +1620,7 @@ class ActionAjax extends Action
         $aResult = array();
         foreach($aVotes as $oVote) {
             $oUser = $this->User_GetUserById($oVote->getVoterId());
-            $bShowUser = $oUser && (strtotime($oVote->getDate()) > Config::Get('acl.vote_state.comment.oe_end') || $this->ACL_CheckSimpleAccessLevel(Config::Get('acl.vote_state.comment.oe_enable_level') , $this->oUserCurrent, $oTarget, $targetType));
+            $bShowUser = $oUser && (strtotime($oVote->getDate()) > $oe_end || $this->ACL_CheckSimpleAccessLevel($oe_enable_level, $this->oUserCurrent, $oTarget, $targetType));
             $aResult[] = array(
                 'voterName' => $bShowUser ? $oUser->getLogin() : null,
                 'voterAvatar' => $bShowUser ? $oUser->getProfileAvatarPath() : null,
@@ -1606,7 +1629,7 @@ class ActionAjax extends Action
             );
         }
 
-        usort($aResult, '_gov_s_date_asc');
+        usort($aResult, $date_sort<0 ? '_gov_s_date_desc' : '_gov_s_date_asc');
         $this->Viewer_AssignAjax('aVotes', $aResult);
     }
     

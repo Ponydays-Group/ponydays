@@ -84,7 +84,8 @@ export function onVote(idTarget, objVote, value, type, result) {
             divVoting.removeClass(this.options.classes.hidden);
         }
         if (value == 0) {
-            divVoting.addCLass(this.options.classes.hidden);
+            //divVoting.addCLass(this.options.classes.hidden);
+            divVoting.removeClass(this.options.classes.hidden);
             divVoting.addClass(this.options.classes.voted_zero);
         }
 
@@ -143,8 +144,8 @@ export function getVotes(targetId, targetType, el) {
     params['targetId'] = targetId;
     params['targetType'] = targetType;
     var url = aRouter['ajax'] + 'get-object-votes';
-    Ajax.ajax(url, params, this.onGetVotes.bind({"orig": this, "control": el}));
-    el.dataset.queryState = "query";
+    Ajax.ajax(url, params, this.onGetVotes.bind({"orig": this, "control": el, "targetType": targetType}));
+    el.classList.add("in-progress");
     return false;
 }
 
@@ -167,6 +168,7 @@ export function __makeProfileLink(path, data) {
 }
 
 export function onGetVotes(result) {
+    console.log("CALLED: vote.js/onGetVotes");
     if (result.bStateError) {
         Msg.error(null, result.sMsg);
     } else {
@@ -178,12 +180,14 @@ export function onGetVotes(result) {
                 var vote = result.aVotes[i];
                 voteSum += vote.value;
                 var line = document.createElement("div");
+                line.className = "vote-list-item";
                 var profileLink = __makeProfileLink(vote.voterName, {
                     name: vote.voterName,
                     avatar: vote.voterAvatar
                 });
+                profileLink.classList.add("vote-list-item-component");
                 line.appendChild(profileLink);
-
+                
                 var time = document.createElement("time");
                 time.datetime = vote.date;
                 var date = new Date(Date.parse(vote.date));
@@ -193,53 +197,76 @@ export function onGetVotes(result) {
                     date.getMonth() != now.getMonth() ||
                     date.getFullYear() != now.getFullYear()
                 ) ? date.toLocaleString() : date.toLocaleTimeString()));
+                time.className = "vote-list-item-component";
                 line.appendChild(time);
-
+                
                 var voteValue = document.createElement("span");
                 voteValue.dataset.value = vote.value == 0 ? "0" : (vote.value > 0 ? "+" : "−") + Math.abs(vote.value).toString();
-                voteValue.className = "vote";
+                voteValue.className = "vote-list-item-component vote";
                 line.appendChild(voteValue);
-
+                
                 vl.appendChild(line);
             }
+            var vl_box = document.createElement("div");
+            vl_box.className = "vote-list-box hidden for-"+this.targetType;
+            var vl_closeButton = document.createElement("a");
+            vl_closeButton.className = "close-button";
+            vl_closeButton.href = "javascript://";
+            vl_closeButton.textContent = "Закрыть"; // ! locale-specific
             var vl_wrapper = document.createElement("div");
-            vl_wrapper.className = "vote-list-wrapper hidden";
+            vl_wrapper.className = "vote-list-wrapper";
             vl_wrapper.appendChild(vl);
-            if (this.control.parentNode.parentNode.classList.contains("comment-actions")) this.control.parentNode.insertBefore(vl_wrapper, this.control.parentNode.firstChild);
-            else this.control.parentNode.parentNode.parentNode.insertBefore(vl_wrapper, this.control.parentNode.parentNode.nextSibling);
-            setTimeout(DOMTokenList.prototype.remove.bind(vl_wrapper.classList), 10, "hidden");
-
+            vl_box.appendChild(vl_closeButton);
+            vl_box.appendChild(vl_wrapper);
+            switch(this.targetType) {
+                case "comment":
+                    this.control.parentNode.insertBefore(vl_box, this.control);
+                    break;
+                case "topic":
+                    this.control.parentNode.parentNode.parentNode.insertBefore(vl_box, this.control.parentNode.parentNode);
+                    break;
+            }
+            setTimeout(DOMTokenList.prototype.remove.bind(vl_box.classList), 10, "hidden");
+			/*
+            if(vl_box.scrollHeight > vl_box.clientHeight) {
+                vl_box.style.width = (vl_box.clientWidth + 24) + "px";
+                vl_box.style.overflowY = "scroll";
+            }
+			*/
+            
             var context = {
-                "target": vl_wrapper,
+                "target": vl_box,
                 "eventTarget": window
             };
             context.callback = this.orig.onVotesListLeaved.bind(context);
             context.eventTarget.addEventListener("click", context.callback);
         }
-
+        
         if (parseInt(this.control.dataset.count) != result.aVotes.length) {
             this.control.parentNode.classList.remove(this.orig.options.classes.negative);
             this.control.parentNode.classList.remove(this.orig.options.classes.positive);
             this.control.parentNode.classList.remove(this.orig.options.classes.mixed);
+            var textContent = voteSum.toString();
             if (voteSum > 0) {
-                this.control.textContent = "+" + voteSum.toString();
+                textContent = "+" + textContent;
                 this.control.parentNode.classList.add(this.orig.options.classes.positive);
+            } else if (voteSum < 0) {
+                this.control.parentNode.classList.add(this.orig.options.classes.negative);
+            } else if (result.aVotes.length > 0) {
+                this.control.parentNode.classList.add(this.orig.options.classes.mixed);
             } else {
-                this.control.textContent = voteSum.toString();
-                if (voteSum < 0) this.control.parentNode.classList.add(this.orig.options.classes.negative);
-                else this.control.parentNode.classList.add(this.orig.options.classes.mixed);
+                this.control.parentNode.classList.add(this.orig.options.classes.zero);
             }
+            this.control.textContent = textContent;
             this.control.dataset.count = result.aVotes.length.toString();
         }
     }
-    delete this.control.dataset.queryState;
+    this.control.classList.remove("in-progress");
 }
 
 export function onVotesListLeaved(e) {
     console.log("CLICKED OUT!!!", this.target, this.eventTarget)
-    if (this.target != e.target && (
-            e.target.tagName != "A" && !this.target.contains(e.target)
-        )) {
+    if (e.target.classList.contains("close-button") || (this.target != e.target && (e.target.tagName != "A" /*Костыль для совместимости с <a> в качестве счётчика голосов топика:*/|| e.target.classList.contains("vote-count")) && !this.target.contains(e.target))) {
         this.target.classList.add("hidden");
         //setTimeout(Element.prototype.remove.bind(this.target), 500);
         setTimeout(Node.prototype.removeChild.bind(this.target.parentNode), 500, this.target);

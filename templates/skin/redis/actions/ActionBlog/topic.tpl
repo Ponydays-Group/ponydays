@@ -14,6 +14,8 @@
 	sNoticeCommentAdd=$aLang.topic_comment_add
 	bAllowSubscribe=true
 	oSubscribeComment=$oTopic->getSubscribeNewComment()
-	aPagingCmt=$aPagingCmt}
+	aPagingCmt=$aPagingCmt
+	bEnableCommentsVoteInfo=$LS->ACL_CheckSimpleAccessLevel(Config::Get('acl.vote_list.comment.ne_enable_level'), $oUserCurrent, $oTopic, 'topic')
+	}
 
 {include file='footer.tpl'}

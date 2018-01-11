@@ -6,7 +6,7 @@
 }
 {hook run='comment_tree_begin' iTargetId=$iTargetId sTargetType=$sTargetType}
 
-<div class="comments" id="comments">
+<div class="comments {if $bEnableCommentsVoteInfo}vote-info-enable{/if}" id="comments">
 	<header class="comments-header">
 		<h3><span id="count-comments">{$iCountComment}</span> {$iCountComment|declension:$aLang.comment_declension:'russian'}</h3>
 

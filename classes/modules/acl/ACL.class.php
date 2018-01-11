@@ -592,20 +592,28 @@ class ModuleACL extends Module {
 		if($req >= 1) {
 			if($oUser->isAdministrator()) return true;
 			if($req >= 2) {
-				if($sTargetType === 'comment') {
-					if($oTarget->getTargetType() === 'topic') {
-						$oTopic = $oTarget->getTarget();
-					} else if($oTarget->getTargetType() === 'talk') {
-						$oTalk = $oTarget->getTarget();
-					}
-				} else if($sTargetType === 'topic') {
-					$oTopic = $oTarget;
-				} else if($sTargetType === 'talk') {
-					$oTalk = $oTarget;
-				} else if($sTargetType === 'blog') {
-					$oBlog = $oTarget;
-				} else if($sTargetType === 'user') {
-					$oTargetUser = $oTarget;
+				switch($sTargetType) {
+					case 'comment':
+						if($oTarget->getTargetType() === 'topic') {
+							$oTopic = $oTarget->getTarget();
+						} else if($oTarget->getTargetType() === 'talk') {
+							$oTalk = $oTarget->getTarget();
+						}
+						break;
+					case 'topic':
+						$oTopic = $oTarget;
+						break;
+					case 'talk':
+						$oTalk = $oTarget;
+						break;
+					case 'blog':
+						$oBlog = $oTarget;
+						break;
+					case 'user':
+						$oTargetUser = $oTarget;
+						break;
+					default:
+						return false;
 				}
 				if(isset($oTopic) || isset($oBlog)) {
 					if(!isset($oBlog) && $oTopic) $oBlog = $oTopic->getBlog();
@@ -626,14 +634,16 @@ class ModuleACL extends Module {
 						}
 					}
 				}
+				else
 				if(isset($oTalk)) {
 					if($req >= 5 && $this->ModuleTalk_GetTalkUser($oTalk->getId(),$oUser->getId())) {
 						if($req == 6) return true;
 						if($req == 5 && $oTarget->getUserId() == $oUser->getId()) return true;
 					}
 				}
+				else
 				if(isset($oTargetUser)) {
-					// ...
+					//return true;
 				}
 			}
 		}

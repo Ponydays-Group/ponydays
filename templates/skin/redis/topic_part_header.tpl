@@ -2,7 +2,6 @@
 {assign var="oUser" value=$oTopic->getUser()}
 {assign var="oVote" value=$oTopic->getVote()}
 {assign var="bAllowLockControl" value=$oTopic->testAllowLockControl($oUserCurrent)}
-{assign var="bVoteInfoEnabled" value=$LS->ACL_CheckSimpleAccessLevel(Config::Get('acl.vote_state.comment.ne_enable_level'), $oUserCurrent, $oTopic, 'topic')}
 
 
 <article class="topic topic-type-{$oTopic->getType()} js-topic">

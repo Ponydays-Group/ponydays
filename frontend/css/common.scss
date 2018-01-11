@@ -654,11 +654,11 @@ a.inactive {
   opacity: 0.6
 }
 
-.ls-user.has-avatar img {
+.ls-user.has-avatar>img {
   width: 14px;
   height: 14px;
   margin-right: 3px;
-  vertical-align: text-bottom;
+  vertical-align: middle;
 }
 
 .ls-user.has-avatar:before {

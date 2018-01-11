@@ -62,6 +62,7 @@ class ModuleRating extends Module {
             "targetParentId" => $oComment->getTargetId(),
             "targetParentType" => $oComment->getTargetType(),
 			"rating" => $oComment->getRating(),
+			"voteCount" => $oComment->getCountVote() + /*Т.к. сначала вызывается Rating_VoteComment, а затем счётчик увеличивается, локально увеличиваем его здесь.*/1,
 			"commentText" => $oComment->getText()
         );
         $this->Nower_Post('/vote', $curl_data);
@@ -90,6 +91,7 @@ class ModuleRating extends Module {
             "targetParentId" => null,
             "targetParentType" => null,
             "rating" => $oTopic->getRating(),
+			"voteCount" => $oTopic->getCountVote() + /*Т.к. сначала вызывается Rating_VoteTopic, а затем счётчик увеличивается, локально увеличиваем его здесь.*/1,
 			"topicTitle" => $oTopic->getTitle()
         );
         $this->Nower_Post('/vote', $curl_data);

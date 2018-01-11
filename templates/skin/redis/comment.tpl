@@ -117,13 +117,17 @@
 		</ul>
 
 		<ul class="comment-actions">
-			<li id="vote_area_comment_{$oComment->getId()}" class="vote {if $oComment->getRating() == 0}
+			<li id="vote_area_comment_{$oComment->getId()}" class="vote {if $oComment->getCountVote() == 0}
 																			action-hidden
 																		{/if}
 																		{if $oComment->getRating() > 0}
 																			vote-count-positive
 																		{elseif $oComment->getRating() < 0}
 																			vote-count-negative
+																		{elseif $oComment->getCountVote() > 0}
+																			vote-count-mixed
+																		{else}
+																			vote-count-zero
 																		{/if}
 
 																		{if $oVote}
@@ -140,7 +144,7 @@
                 <div class="vote-up" onclick="return ls.vote.vote({$oComment->getId()},this,1,'comment');">
                 <i class="material-icons">keyboard_arrow_up</i>
                 </div>
-				<span class="vote-count" onclick="ls.vote.getVotes({$oComment->getId()},'comment',this); return false;" id="vote_total_comment_{$oComment->getId()}">
+				<span class="vote-count" onclick="ls.vote.getVotes({$oComment->getId()},'comment',this); return false;" data-count="{$oComment->getCountVote()}" id="vote_total_comment_{$oComment->getId()}">
     						    {if $oComment->getRating()>0}+{/if}{$oComment->getRating()}
     					    </span>
                 <div class="vote-down" onclick="return ls.vote.vote({$oComment->getId()},this,-1,'comment');">

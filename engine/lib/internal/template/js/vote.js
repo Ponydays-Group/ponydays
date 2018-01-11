@@ -135,7 +135,7 @@ ls.vote = (function ($) {
 		params['targetType'] = targetType;
 		var url = aRouter['ajax']+'get-object-votes';
 		ls.ajax(url, params, this.onGetVotes.bind({"orig":this,"control":el}));
-		el.dataset.queryState = "query";
+		el.classList.add("in-progress");
 		return false;
 	}
 	
@@ -223,7 +223,7 @@ ls.vote = (function ($) {
 				this.control.dataset.count = result.aVotes.length.toString();
 			}
 		}
-		delete this.control.dataset.queryState;
+		this.control.classList.remove("in-progress");
 	}
 	this.onVotesListLeaved = function(e) {
 		if(this.target != e.target && (

@@ -1,4 +1,4 @@
-<div class="comments comment-list">
+<div class="comments comment-list {if $bEnableCommentsVoteInfo}vote-info-enable{/if}">
 	{foreach from=$aComments item=oComment}
 		{assign var="oUser" value=$oComment->getUser()}
 		{assign var="oTopic" value=$oComment->getTarget()}
@@ -35,8 +35,12 @@
 																			vote-count-positive
 																		{elseif $oComment->getRating() < 0}
 																			vote-count-negative
+																		{elseif $oComment->getCountVote() > 0}
+																			vote-count-mixed
+																		{else}
+																			vote-count-zero
 																		{/if}">
-					<span class="vote-count" onclick="ls.vote.getVotes({$oComment->getId()},'comment',this); return false;" id="vote_total_comment_{$oComment->getId()}">{$oComment->getRating()}</span>
+					<span class="vote-count" onclick="ls.vote.getVotes({$oComment->getId()},'comment',this); return false;" data-count="{$oComment->getCountVote()}" id="vote_total_comment_{$oComment->getId()}">{$oComment->getRating()}</span>
 				</li>
 			</ul>
 					

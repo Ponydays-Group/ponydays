@@ -62,7 +62,9 @@
 	iCountComment=$oTalk->getCountComment()
 	sDateReadLast=$oTalkUser->getDateLast()
 	sNoticeCommentAdd=$aLang.topic_comment_add
-	bNoCommentFavourites=true}
+	bNoCommentFavourites=true
+	bEnableCommentsVoteInfo=$LS->ACL_CheckSimpleAccessLevel(Config::Get('acl.vote_list.comment.ne_enable_level'), $oUserCurrent, $oTalk, 'talk')
+	}
 {/if}
 			
 			

@@ -126,19 +126,26 @@ sock.on('new-vote', function (data) {
     console.log("VOTE!", data)
     let area = data.targetType == "comment" ? $("#vote_area_" + data.targetType + "_" + data.targetId) : $("#vote_total_" + data.targetType + "_" + data.targetId)
     if (data.rating == 0) {
+        area.addClass("vote-count-mixed")
         area.removeClass("vote-count-positive")
         area.removeClass("vote-count-negative")
+        area.removeClass("action-hidden")
         $("#vote_total_" + data.targetType + "_" + data.targetId).html(data.rating)
     } else if (data.rating > 0) {
         area.addClass("vote-count-positive")
         area.removeClass("vote-count-negative")
+        area.removeClass("vote-count-mixed")
         area.removeClass("action-hidden")
         $("#vote_total_" + data.targetType + "_" + data.targetId).html("+" + data.rating)
     } else {
         area.addClass("vote-count-negative")
         area.removeClass("vote-count-positive")
+        area.removeClass("vote-count-mixed")
         area.removeClass("action-hidden")
         $("#vote_total_" + data.targetType + "_" + data.targetId).html(data.rating)
+    }
+    if (isFinite(data.voteCount)) {
+        area.data("count", data.voteCount);
     }
 })
 

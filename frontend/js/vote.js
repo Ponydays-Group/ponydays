@@ -136,22 +136,19 @@ export function onVoteUser(idTarget, objVote, value, type, result) {
     $('#user_skill_' + idTarget).text(result.iSkill);
 }
 
-export function getVotes(targetId, targetType, el, useToggle) {
+export function getVotes(targetId, targetType, el, toggleControl) {
     let perm = localStorage.getItem("no_show_vote")
     if (perm!=null&&parseInt(perm))
         return
     var params = {};
+    if (toggleControl && el.classList.contains("toggled")) {
+        el.classList.remove("toggled");
+        return;
+    }
     params['targetId'] = targetId;
     params['targetType'] = targetType;
-    if (useToggle) {
-        if (el.classList.contains("toggled")) {
-            el.classList.remove("toggled");
-            return;
-        }
-        el.classList.add("toggled");
-    }
     var url = aRouter['ajax'] + 'get-object-votes';
-    Ajax.ajax(url, params, this.onGetVotes.bind({"orig": this, "control": el, "targetType": targetType}));
+    Ajax.ajax(url, params, this.onGetVotes.bind({"orig": this, "control": el, "targetType": targetType, "toggleControl": toggleControl}));
     el.classList.add("in-progress");
     return false;
 }
@@ -239,11 +236,15 @@ export function onGetVotes(result) {
                 vl_box.style.overflowY = "scroll";
             }
             */
+            if (this.toggleControl) {
+                this.control.classList.add("toggled");
+            }
             
             var context = {
                 "target": vl_box,
                 "eventTarget": window,
                 "control": this.control,
+                "toggleControl": this.toggleControl,
             };
             context.callback = this.orig.onVotesListLeaved.bind(context);
             context.eventTarget.addEventListener("click", context.callback);
@@ -298,7 +299,9 @@ export function onVotesListLeaved(e) {
         )
     ) {
         this.target.classList.add("hidden");
-        this.control.classList.remove("toggled");
+        if (this.toggleControl) {
+            this.control.classList.remove("toggled");
+        }
         //setTimeout(Element.prototype.remove.bind(this.target), 500);
         setTimeout(Node.prototype.removeChild.bind(this.target.parentNode), 500, this.target);
         this.eventTarget.removeEventListener(e.type, this.callback);

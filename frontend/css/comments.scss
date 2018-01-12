@@ -525,7 +525,7 @@ button#comment-button-history {
                 color: #4CAF50;
             }
             &[data-value^="−"]::before {
-                color: #B71C1C;
+                color: #F44336;
             }
         }
     }
@@ -546,7 +546,7 @@ button#comment-button-history {
     .vote-count-mixed {
         >.vote-count, 
         &.vote-count {
-            &:not(.in-progress) {
+            &:not(.in-progress):not(.toggled) {
                 cursor: help;
             }
         }

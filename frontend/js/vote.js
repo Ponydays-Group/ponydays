@@ -143,9 +143,14 @@ export function getVotes(targetId, targetType, el) {
     var params = {};
     params['targetId'] = targetId;
     params['targetType'] = targetType;
+    if (el.classList.contains("toggled")) {
+        el.classList.remove("toggled");
+        return;
+    }
     var url = aRouter['ajax'] + 'get-object-votes';
     Ajax.ajax(url, params, this.onGetVotes.bind({"orig": this, "control": el, "targetType": targetType}));
     el.classList.add("in-progress");
+    el.classList.add("toggled");
     return false;
 }
 
@@ -235,7 +240,8 @@ export function onGetVotes(result) {
             
             var context = {
                 "target": vl_box,
-                "eventTarget": window
+                "eventTarget": window,
+                "control": this.control,
             };
             context.callback = this.orig.onVotesListLeaved.bind(context);
             context.eventTarget.addEventListener("click", context.callback);
@@ -290,6 +296,7 @@ export function onVotesListLeaved(e) {
         )
     ) {
         this.target.classList.add("hidden");
+        this.control.classList.remove("toggled");
         //setTimeout(Element.prototype.remove.bind(this.target), 500);
         setTimeout(Node.prototype.removeChild.bind(this.target.parentNode), 500, this.target);
         this.eventTarget.removeEventListener(e.type, this.callback);

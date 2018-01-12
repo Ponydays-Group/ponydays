@@ -228,6 +228,10 @@
             }
 
         }
+
+        &.toggled {
+            background: $second-toggled;
+        }
     }
 }
 

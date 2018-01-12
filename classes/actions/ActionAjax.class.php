@@ -1565,28 +1565,28 @@ class ActionAjax extends Action
             case 'comment':
                 $oTarget = $this->Comment_GetCommentById($targetId);
                 $ne_enable_level = Config::Get('acl.vote_list.comment.ne_enable_level');
-                $oe_enable_level = Config::Get('acl.vote_list.comment.oa_enable_level');
+                $oe_enable_level = Config::Get('acl.vote_list.comment.oe_enable_level');
                 $oe_end = Config::Get('acl.vote_list.comment.oe_end');
                 $date_sort = Config::Get('acl.vote_list.comment.date_sort');
                 break;
             case 'topic':
                 $oTarget = $this->Topic_GetTopicById($targetId);
                 $ne_enable_level = Config::Get('acl.vote_list.topic.ne_enable_level');
-                $oe_enable_level = Config::Get('acl.vote_list.topic.oa_enable_level');
+                $oe_enable_level = Config::Get('acl.vote_list.topic.oe_enable_level');
                 $oe_end = Config::Get('acl.vote_list.topic.oe_end');
                 $date_sort = Config::Get('acl.vote_list.topic.date_sort');
                 break;
             case 'blog':
                 $oTarget = $this->Blog_GetBlogById($targetId);
                 $ne_enable_level = Config::Get('acl.vote_list.blog.ne_enable_level');
-                $oe_enable_level = Config::Get('acl.vote_list.blog.oa_enable_level');
+                $oe_enable_level = Config::Get('acl.vote_list.blog.oe_enable_level');
                 $oe_end = Config::Get('acl.vote_list.blog.oe_end');
                 $date_sort = Config::Get('acl.vote_list.blog.date_sort');
                 break;
             case 'user':
                 $oTarget = $this->User_GetUserById($targetId);
                 $ne_enable_level = Config::Get('acl.vote_list.user.ne_enable_level');
-                $oe_enable_level = Config::Get('acl.vote_list.user.oa_enable_level');
+                $oe_enable_level = Config::Get('acl.vote_list.user.oe_enable_level');
                 $oe_end = Config::Get('acl.vote_list.user.oe_end');
                 $date_sort = Config::Get('acl.vote_list.user.date_sort');
                 break;

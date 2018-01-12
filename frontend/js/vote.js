@@ -84,7 +84,7 @@ export function onVote(idTarget, objVote, value, type, result) {
             divVoting.removeClass(this.options.classes.hidden);
         }
         if (value == 0) {
-            //divVoting.addCLass(this.options.classes.hidden);
+            //divVoting.addClass(this.options.classes.hidden);
             divVoting.removeClass(this.options.classes.hidden);
             divVoting.addClass(this.options.classes.voted_zero);
         }
@@ -168,7 +168,6 @@ export function __makeProfileLink(path, data) {
 }
 
 export function onGetVotes(result) {
-    console.log("CALLED: vote.js/onGetVotes");
     if (result.bStateError) {
         Msg.error(null, result.sMsg);
     } else {
@@ -227,12 +226,12 @@ export function onGetVotes(result) {
                     break;
             }
             setTimeout(DOMTokenList.prototype.remove.bind(vl_box.classList), 10, "hidden");
-			/*
+            /*
             if(vl_box.scrollHeight > vl_box.clientHeight) {
                 vl_box.style.width = (vl_box.clientWidth + 24) + "px";
                 vl_box.style.overflowY = "scroll";
             }
-			*/
+            */
             
             var context = {
                 "target": vl_box,
@@ -243,9 +242,11 @@ export function onGetVotes(result) {
         }
         
         if (parseInt(this.control.dataset.count) != result.aVotes.length) {
+            let classZero = this.targetType == "comment" ? this.orig.options.classes.hidden : this.orig.options.classes.zero;
             this.control.parentNode.classList.remove(this.orig.options.classes.negative);
             this.control.parentNode.classList.remove(this.orig.options.classes.positive);
             this.control.parentNode.classList.remove(this.orig.options.classes.mixed);
+            this.control.parentNode.classList.remove(classZero);
             var textContent = voteSum.toString();
             if (voteSum > 0) {
                 textContent = "+" + textContent;
@@ -255,7 +256,7 @@ export function onGetVotes(result) {
             } else if (result.aVotes.length > 0) {
                 this.control.parentNode.classList.add(this.orig.options.classes.mixed);
             } else {
-                this.control.parentNode.classList.add(this.orig.options.classes.zero);
+                this.control.parentNode.classList.add(classZero);
             }
             this.control.textContent = textContent;
             this.control.dataset.count = result.aVotes.length.toString();
@@ -266,7 +267,28 @@ export function onGetVotes(result) {
 
 export function onVotesListLeaved(e) {
     console.log("CLICKED OUT!!!", this.target, this.eventTarget)
-    if (e.target.classList.contains("close-button") || (this.target != e.target && (e.target.tagName != "A" /*Костыль для совместимости с <a> в качестве счётчика голосов топика:*/|| e.target.classList.contains("vote-count")) && !this.target.contains(e.target))) {
+    let eventTarget = e.target;
+    if (
+        eventTarget.classList.contains("close-button")
+        ||
+        (
+            (
+                (
+                    this.target != eventTarget
+                    &&
+                    eventTarget.tagName != "A"
+                )
+                ||
+                /*Костыль для совместимости с <a> в качестве счётчика голосов топика:*/
+                eventTarget.classList.contains("vote-count")
+                ||
+                /*Костыль для совместимости с <a> в качестве кнопок действий с href="#":*/
+                (eventTarget.attributes.href && eventTarget.attributes.href.value == "#")
+            )
+            &&
+            !this.target.contains(eventTarget)
+        )
+    ) {
         this.target.classList.add("hidden");
         //setTimeout(Element.prototype.remove.bind(this.target), 500);
         setTimeout(Node.prototype.removeChild.bind(this.target.parentNode), 500, this.target);

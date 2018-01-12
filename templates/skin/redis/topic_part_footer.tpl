@@ -35,10 +35,12 @@
 
 		<div class="topic-info {if $bEnableTopicVoteInfo}vote-info-enable{/if}">
 				<a href="#" class="vote-up {if $oVote}{if $oVote->getDirection() > 0}voted{/if}{/if}" onclick="return ls.vote.vote({$oTopic->getId()},this,1,'topic');"><i class="material-icons">keyboard_arrow_up</i></a>
-				<a href="#" class="vote-count {if $oTopic->getRating() > 0}
+				<a nohref="nohref" class="vote-count {if $oTopic->getRating() > 0}
 																		vote-count-positive
 																	{elseif $oTopic->getRating() < 0}
 																		vote-count-negative
+																	{elseif $oTopic->getRating() == 0 and $oTopic->getCountVote() > 0}
+																		vote-count-mixed
 																	{/if} {if false and $bEnableTopicVoteInfo}js-infobox-vote-topic{/if}" {if $bEnableTopicVoteInfo}onclick="ls.vote.getVotes({$oTopic->getId()},'topic',this); return false;" data-count="{$oTopic->getCountVote()}"{/if} id="vote_total_topic_{$oTopic->getId()}" title="{$aLang.topic_vote_count}: {$oTopic->getCountVote()}">
 						{if $oTopic->getRating() > 0}+{/if}{$oTopic->getRating()}
 				</a>

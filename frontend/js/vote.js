@@ -143,14 +143,16 @@ export function getVotes(targetId, targetType, el, useToggle) {
     var params = {};
     params['targetId'] = targetId;
     params['targetType'] = targetType;
-    if (useToggle && el.classList.contains("toggled")) {
-        el.classList.remove("toggled");
-        return;
+    if (useToggle) {
+        if (el.classList.contains("toggled")) {
+            el.classList.remove("toggled");
+            return;
+        }
+        el.classList.add("toggled");
     }
     var url = aRouter['ajax'] + 'get-object-votes';
     Ajax.ajax(url, params, this.onGetVotes.bind({"orig": this, "control": el, "targetType": targetType}));
     el.classList.add("in-progress");
-    el.classList.add("toggled");
     return false;
 }
 

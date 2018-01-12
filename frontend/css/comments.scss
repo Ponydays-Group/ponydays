@@ -540,18 +540,27 @@ button#comment-button-history {
 .vote-count {
     cursor: default;
 }
-.vote-info-enable .vote-count {
-    &[data-count]:not([data-count="0"]):not(.in-progress) {
-        cursor: help;
+.vote-info-enable {
+    .vote-count-positive, 
+    .vote-count-negative, 
+    .vote-count-mixed {
+        >.vote-count, 
+        &.vote-count {
+            &:not(.in-progress) {
+                cursor: help;
+            }
+        }
     }
 }
 .vote-count.in-progress {
     cursor: progress;
 }
 
+/*
 .ls-user-role-admin .comment .vote .vote-count {
     cursor: help;
 }
+*/
 
 .bad-placeholder {
     color: darken($comment-deleted-background, 5%);

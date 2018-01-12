@@ -125,11 +125,17 @@ sock.on('new-comment', (data) => {
 sock.on('new-vote', function (data) {
     console.log("VOTE!", data)
     let area = data.targetType == "comment" ? $("#vote_area_" + data.targetType + "_" + data.targetId) : $("#vote_total_" + data.targetType + "_" + data.targetId)
-    if (data.rating == 0) {
+    if (data.rating == 0 && data.voteCount > 0) {
         area.addClass("vote-count-mixed")
         area.removeClass("vote-count-positive")
         area.removeClass("vote-count-negative")
         area.removeClass("action-hidden")
+        $("#vote_total_" + data.targetType + "_" + data.targetId).html(data.rating)
+    } else if (data.rating == 0) {
+        area.addClass("action-hidden")
+        area.removeClass("vote-count-positive")
+        area.removeClass("vote-count-negative")
+        area.removeClass("vote-count-mixed")
         $("#vote_total_" + data.targetType + "_" + data.targetId).html(data.rating)
     } else if (data.rating > 0) {
         area.addClass("vote-count-positive")

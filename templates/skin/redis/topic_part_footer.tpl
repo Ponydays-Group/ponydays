@@ -35,7 +35,7 @@
 
 		<div class="topic-info {if $bEnableTopicVoteInfo}vote-info-enable{/if}">
 				<a href="#" class="vote-up {if $oVote}{if $oVote->getDirection() > 0}voted{/if}{/if}" onclick="return ls.vote.vote({$oTopic->getId()},this,1,'topic');"><i class="material-icons">keyboard_arrow_up</i></a>
-				<a nohref="nohref" class="vote-count {if $oTopic->getRating() > 0}
+				<a href="javascript://" class="vote-count {if $oTopic->getRating() > 0}
 																		vote-count-positive
 																	{elseif $oTopic->getRating() < 0}
 																		vote-count-negative

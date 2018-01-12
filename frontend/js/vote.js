@@ -84,7 +84,7 @@ export function onVote(idTarget, objVote, value, type, result) {
             divVoting.removeClass(this.options.classes.hidden);
         }
         if (value == 0) {
-            //divVoting.addCLass(this.options.classes.hidden);
+            //divVoting.addClass(this.options.classes.hidden);
             divVoting.removeClass(this.options.classes.hidden);
             divVoting.addClass(this.options.classes.voted_zero);
         }
@@ -168,7 +168,6 @@ export function __makeProfileLink(path, data) {
 }
 
 export function onGetVotes(result) {
-    console.log("CALLED: vote.js/onGetVotes");
     if (result.bStateError) {
         Msg.error(null, result.sMsg);
     } else {

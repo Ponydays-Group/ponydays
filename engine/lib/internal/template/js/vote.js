@@ -158,6 +158,7 @@ ls.vote = (function ($) {
 	}
 	
 	this.onGetVotes = function(result) {
+		// ToDo: Перенести новые изменения, связанные с получением списка голосов.
 		if(result.bStateError) {
 			ls.msg.error(null, result.sMsg);
 		} else {

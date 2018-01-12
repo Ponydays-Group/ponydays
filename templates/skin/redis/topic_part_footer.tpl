@@ -41,7 +41,7 @@
 																		vote-count-negative
 																	{elseif $oTopic->getRating() == 0 and $oTopic->getCountVote() > 0}
 																		vote-count-mixed
-																	{/if} {if false and $bEnableTopicVoteInfo}js-infobox-vote-topic{/if}" {if $bEnableTopicVoteInfo}onclick="ls.vote.getVotes({$oTopic->getId()},'topic',this); return false;" data-count="{$oTopic->getCountVote()}"{/if} id="vote_total_topic_{$oTopic->getId()}" title="{$aLang.topic_vote_count}: {$oTopic->getCountVote()}">
+																	{/if} {if false and $bEnableTopicVoteInfo}js-infobox-vote-topic{/if}" {if $bEnableTopicVoteInfo}onclick="ls.vote.getVotes({$oTopic->getId()},'topic',this,true); return false;" data-count="{$oTopic->getCountVote()}"{/if} id="vote_total_topic_{$oTopic->getId()}" title="{$aLang.topic_vote_count}: {$oTopic->getCountVote()}">
 						{if $oTopic->getRating() > 0}+{/if}{$oTopic->getRating()}
 				</a>
 				<a href="#" class="vote-down {if $oVote}{if $oVote->getDirection() < 0}voted{/if}{/if}"

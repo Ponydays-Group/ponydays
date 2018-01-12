@@ -136,14 +136,14 @@ export function onVoteUser(idTarget, objVote, value, type, result) {
     $('#user_skill_' + idTarget).text(result.iSkill);
 }
 
-export function getVotes(targetId, targetType, el) {
+export function getVotes(targetId, targetType, el, useToggle) {
     let perm = localStorage.getItem("no_show_vote")
     if (perm!=null&&parseInt(perm))
         return
     var params = {};
     params['targetId'] = targetId;
     params['targetType'] = targetType;
-    if (el.classList.contains("toggled")) {
+    if (useToggle && el.classList.contains("toggled")) {
         el.classList.remove("toggled");
         return;
     }

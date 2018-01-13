@@ -179,6 +179,19 @@
     height: 40px;
     display: flex;
 
+    &.voted-up > .vote-up, 
+    &.voted-down > .vote-down {
+        border-color: $brand;
+    }
+
+    &.vote-count-positive > .vote-count {
+        color: #1B5E20;
+    }
+
+    &.vote-count-negative > .vote-count {
+        color: #B71C1C;
+    }
+
     a {
         background: $second;
         border: $second-border;
@@ -196,14 +209,6 @@
 
         &.vote-count {
             color: #9E9E9E;
-
-            &.vote-count-positive {
-                color: #1B5E20;
-            }
-
-            &.vote-count-negative {
-                color: #B71C1C;
-            }
         }
 
         &.vote-down {

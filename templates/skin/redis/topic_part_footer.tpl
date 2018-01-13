@@ -5,7 +5,7 @@
 	{assign var="bEnableTopicVoteInfo" value=$LS->ACL_CheckSimpleAccessLevel(Config::Get('acl.vote_list.topic.ne_enable_level'), $oUserCurrent, $oTopic, 'topic')}
 
 
-	<footer class="topic-footer">
+	<footer class="topic-footer {if $bEnableTopicVoteInfo}vote-info-enable{/if}">
 		<ul class="topic-tags js-favourite-insert-after-form js-favourite-tags-topic-{$oTopic->getId()}">
 			<li>{$aLang.topic_tags}:</li>
 			
@@ -32,20 +32,32 @@
 			{/strip}
 		</ul>
 
-
-		<div class="topic-info {if $bEnableTopicVoteInfo}vote-info-enable{/if}">
-				<a href="#" class="vote-up {if $oVote}{if $oVote->getDirection() > 0}voted{/if}{/if}" onclick="return ls.vote.vote({$oTopic->getId()},this,1,'topic');"><i class="material-icons">keyboard_arrow_up</i></a>
-				<a href="javascript://" class="vote-count {if $oTopic->getRating() > 0}
-																		vote-count-positive
-																	{elseif $oTopic->getRating() < 0}
-																		vote-count-negative
-																	{elseif $oTopic->getRating() == 0 and $oTopic->getCountVote() > 0}
-																		vote-count-mixed
-																	{/if} {if false and $bEnableTopicVoteInfo}js-infobox-vote-topic{/if}" {if $bEnableTopicVoteInfo}onclick="ls.vote.getVotes({$oTopic->getId()},'topic',this,true); return false;" data-count="{$oTopic->getCountVote()}"{/if} id="vote_total_topic_{$oTopic->getId()}" title="{$aLang.topic_vote_count}: {$oTopic->getCountVote()}">
+		<div class="
+			topic-info
+			{if $oVote}
+				{if $oVote->getDirection() > 0}
+					voted-up
+				{elseif $oVote->getDirection() < 0}
+					voted-down
+				{/if}
+			{/if}
+			{if $oTopic->getCountVote() > 0}
+				{if $oTopic->getRating() > 0}
+					vote-count-positive
+				{elseif $oTopic->getRating() < 0}
+					vote-count-negative
+				{else}
+					vote-count-mixed
+				{/if}
+			{/if}
+			"
+			id="vote_area_topic_{$oTopic->getId()}"
+		>
+				<a href="#" class="vote-up" onclick="return ls.vote.vote({$oTopic->getId()},this,1,'topic');"><i class="material-icons">keyboard_arrow_up</i></a>
+				<a href="javascript://" class="vote-count  {if false and $bEnableTopicVoteInfo}js-infobox-vote-topic{/if}" {if $bEnableTopicVoteInfo}onclick="ls.vote.getVotes({$oTopic->getId()},'topic',this,true); return false;" data-count="{$oTopic->getCountVote()}"{/if} id="vote_total_topic_{$oTopic->getId()}" title="{$aLang.topic_vote_count}: {$oTopic->getCountVote()}">
 						{if $oTopic->getRating() > 0}+{/if}{$oTopic->getRating()}
 				</a>
-				<a href="#" class="vote-down {if $oVote}{if $oVote->getDirection() < 0}voted{/if}{/if}"
-					onclick="return ls.vote.vote({$oTopic->getId()},this,-1,'topic');"><i class="material-icons">keyboard_arrow_down</i></a>
+				<a href="#" class="vote-down" onclick="return ls.vote.vote({$oTopic->getId()},this,-1,'topic');"><i class="material-icons">keyboard_arrow_down</i></a>
 				{if false and $bEnableTopicVoteInfo}
 					<div id="vote-info-topic-{$oTopic->getId()}" style="display: none;">
 						+ {$oTopic->getCountVoteUp()}<br/>

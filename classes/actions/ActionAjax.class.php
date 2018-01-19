@@ -314,15 +314,18 @@ class ActionAjax extends Action
          * Голосуем
          */
         $iValueOld = $iValue;
-        $bVoteType = 0; //0 - при добавлении нового голоса, 1 - при его изменении, 2 - при отмене
+        $iVoteType = 0; //0 - при добавлении нового голоса, 1 - при его изменении, 2 - при отмене
+        $iCountVote = 1;
         if ($oTopicCommentVote = $this->Vote_GetVote($oComment->getId(), 'comment', $this->oUserCurrent->getId())) {
             if ($iValue == $oTopicCommentVote->getDirection()) {
                 $iValue -= 2 * $iValue;
                 $iValueOld = 0;
-                $bVoteType = 2;
+                $iVoteType = 2;
+                $iCountVote = -1;
             } else if ($oTopicCommentVote->getDirection() != 0){
                 $iValue += $iValue;
-                $bVoteType = 1;
+                $iVoteType = 1;
+                $iCountVote = 0;
             }
             $this->ModuleVote_DeleteVote($oComment->getId(), 'comment', $this->oUserCurrent->getId());
         }
@@ -333,11 +336,7 @@ class ActionAjax extends Action
         $oTopicCommentVote->setVoterId($this->oUserCurrent->getId());
         $oTopicCommentVote->setDirection($iValueOld);
         $oTopicCommentVote->setDate(date("Y-m-d H:i:s"));
-        if ($iValueOld != 0) {
-            $iVal = (float)$this->Rating_VoteComment($this->oUserCurrent, $oComment, $iValue, $iValueOld, 1, $bVoteType);
-        } else {
-            $iVal = $this->Rating_VoteComment($this->oUserCurrent, $oComment, $iValue, $iValueOld, -1, $bVoteType);
-        }
+        $iVal = (float)$this->Rating_VoteComment($this->oUserCurrent, $oComment, $iValue, $iValueOld, $iCountVote, $iVoteType);
         $oTopicCommentVote->setValue($iVal);
 
         if ($this->Vote_AddVote($oTopicCommentVote) and $this->Comment_UpdateComment($oComment)) {
@@ -422,15 +421,18 @@ class ActionAjax extends Action
          * Голосуем
          */
         $iValueOld = $iValue;
-        $bVoteType = 0; //0 - при добавлении нового голоса, 1 - при его изменении, 2 - при отмене
+        $iCountVote = 1;
+        $iVoteType = 0; //0 - при добавлении нового голоса, 1 - при его изменении, 2 - при отмене
         if ($oTopicVote = $this->Vote_GetVote($oTopic->getId() , 'topic', $this->oUserCurrent->getId())) {
             if ($iValue == $oTopicVote->getDirection()) {
                 $iValue -= 2 * $iValue;
                 $iValueOld = 0;
-                $bVoteType = 2;
+                $iVoteType = 2;
+                $iCountVote = -1;
             } else if ($oTopicVote->getDirection() != 0){
                 $iValue += $iValue;
-                $bVoteType = 1;
+                $iVoteType = 1;
+                $iCountVote = 0;
             }
             $this->ModuleVote_DeleteVote($oTopic->getId(), 'topic', $this->oUserCurrent->getId());
         }
@@ -441,12 +443,7 @@ class ActionAjax extends Action
         $oTopicVote->setVoterId($this->oUserCurrent->getId());
         $oTopicVote->setDirection($iValueOld);
         $oTopicVote->setDate(date("Y-m-d H:i:s"));
-        if ($iValueOld != 0) {
-            $iVal = (float)$this->Rating_VoteTopic($this->oUserCurrent, $oTopic, $iValue, $iValueOld, 1, $bVoteType);
-        } else {
-            $iVal = $this->Rating_VoteTopic($this->oUserCurrent, $oTopic, $iValue, $iValueOld, -1, $bVoteType);
-        }
-
+        $iVal = (float)$this->Rating_VoteTopic($this->oUserCurrent, $oTopic, $iValue, $iValueOld, $iCountVote, $iVoteType);
         $oTopicVote->setValue($iVal);
         if ($iValue == 1) {
             $oTopic->setCountVoteUp($oTopic->getCountVoteUp() + 1);

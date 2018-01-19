@@ -37,11 +37,11 @@ class ModuleRating extends Module {
 	 * @param ModuleComment_EntityComment $oComment	Объект комментария
 	 * @param int $iValue значение оценки
 	 * @param int $iValueOld
-	 * @param int $iCountVote 1 при добавлении оцеки, -1 при ее удалении
-	 * @param int $bVoteType 0 - при добавлении нового голоса, 1 - при его изменении, 2 - при отмене
+	 * @param int $iCountVote 1 при добавлении оцеки, -1 при ее удалении, 0 при переголосовании
+	 * @param int $iVoteType 0 - при добавлении нового голоса, 1 - при его изменении, 2 - при отмене
 	 * @return int
 	 */
-	public function VoteComment(ModuleUser_EntityUser $oUser, ModuleComment_EntityComment $oComment, $iValue, $iValueOld, $iCountVote, $bVoteType) {
+	public function VoteComment(ModuleUser_EntityUser $oUser, ModuleComment_EntityComment $oComment, $iValue, $iValueOld, $iCountVote, $iVoteType) {
 		/**
 		 * Устанавливаем рейтинг комментария
 		 */
@@ -71,7 +71,7 @@ class ModuleRating extends Module {
             "targetParentType" => $oComment->getTargetType(),
 			"rating" => $oComment->getRating(),
 			"voteCount" => $oComment->getCountVote() + $iCountVote,
-            "voteType" => $bVoteType,
+            "voteType" => $iVoteType,
             "voteValue" => $iValueOld,
 			"commentText" => $oComment->getText()
         );
@@ -85,10 +85,11 @@ class ModuleRating extends Module {
 	 * @param ModuleTopic_EntityTopic $oTopic	Объект топика
 	 * @param int $iValue
 	 * @param int $iValueOld
-     * @param int $bVoteType 0 - при добавлении нового голоса, 1 - при его изменении, 2 - при отмене
+	 * @param int $iCountVote 1 при добавлении оцеки, -1 при ее удалении, 0 при переголосовании
+     * @param int $iVoteType 0 - при добавлении нового голоса, 1 - при его изменении, 2 - при отмене
 	 * @return int
 	 */
-	public function VoteTopic(ModuleUser_EntityUser $oUser, ModuleTopic_EntityTopic $oTopic, $iValue, $iValueOld, $iCountVote, $bVoteType) {
+	public function VoteTopic(ModuleUser_EntityUser $oUser, ModuleTopic_EntityTopic $oTopic, $iValue, $iValueOld, $iCountVote, $iVoteType) {
 		$oTopic->setRating($oTopic->getRating()+$iValue);
 		/**
 		 * Устанавливаем количество оценок
@@ -109,7 +110,7 @@ class ModuleRating extends Module {
             "targetParentType" => null,
             "rating" => $oTopic->getRating(),
 			"voteCount" => $oTopic->getCountVote() + $iCountVote,
-            "voteType" => $bVoteType,
+            "voteType" => $iVoteType,
             "voteValue" => $iValueOld,
 			"topicTitle" => $oTopic->getTitle()
         );

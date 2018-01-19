@@ -360,9 +360,5 @@ class Config {
 		}
 		return $aRes;
 	}
-	
-	static function jsonify() {
-		return json_encode($this->aConfig);
-	}
 }
 ?>

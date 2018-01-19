@@ -262,7 +262,7 @@ class ActionAjax extends Action
          * Пользователь авторизован?
          */
         if (!$this->oUserCurrent) {
-            $this->Message_AddErrorSingle($this->Lang_Get('need_authorization') , $this->Lang_Get('error'));
+            $this->Message_AddErrorSingle($this->Lang_Get('need_authorization'), $this->Lang_Get('error'));
             return;
         }
 
@@ -270,7 +270,7 @@ class ActionAjax extends Action
          * Комментарий существует?
          */
         if (!($oComment = $this->Comment_GetCommentById(getRequestStr('idComment', null, 'post')))) {
-            $this->Message_AddErrorSingle($this->Lang_Get('comment_vote_error_noexists') , $this->Lang_Get('error'));
+            $this->Message_AddErrorSingle($this->Lang_Get('comment_vote_error_noexists'), $this->Lang_Get('error'));
             return;
         }
 
@@ -278,7 +278,7 @@ class ActionAjax extends Action
          * Голосует автор комментария?
          */
         if ($oComment->getUserId() == $this->oUserCurrent->getId()) {
-            $this->Message_AddErrorSingle($this->Lang_Get('comment_vote_error_self') , $this->Lang_Get('attention'));
+            $this->Message_AddErrorSingle($this->Lang_Get('comment_vote_error_self'), $this->Lang_Get('attention'));
             return;
         }
 
@@ -286,7 +286,7 @@ class ActionAjax extends Action
          * Время голосования истекло?
          */
         if (strtotime($oComment->getDate()) <= time() - Config::Get('acl.vote.comment.limit_time')) {
-            $this->Message_AddErrorSingle($this->Lang_Get('comment_vote_error_time') , $this->Lang_Get('attention'));
+            $this->Message_AddErrorSingle($this->Lang_Get('comment_vote_error_time'), $this->Lang_Get('attention'));
             return;
         }
 
@@ -294,7 +294,7 @@ class ActionAjax extends Action
          * Пользователь имеет право голоса?
          */
         if (!$this->ACL_CanVoteComment($this->oUserCurrent, $oComment)) {
-            $this->Message_AddErrorSingle($this->Lang_Get('comment_vote_error') , $this->Lang_Get('attention'));
+            $this->Message_AddErrorSingle($this->Lang_Get('comment_vote_error'), $this->Lang_Get('attention'));
             return;
         }
 
@@ -306,7 +306,7 @@ class ActionAjax extends Action
             '1',
             '-1'
         ))) {
-            $this->Message_AddErrorSingle($this->Lang_Get('comment_vote_error_value') , $this->Lang_Get('attention'));
+            $this->Message_AddErrorSingle($this->Lang_Get('comment_vote_error_value'), $this->Lang_Get('attention'));
             return;
         }
 
@@ -314,14 +314,17 @@ class ActionAjax extends Action
          * Голосуем
          */
         $iValueOld = $iValue;
-        if ($oTopicCommentVote = $this->Vote_GetVote($oComment->getId() , 'comment', $this->oUserCurrent->getId())) {
+        $bVoteType = 0; //0 - при добавлении нового голоса, 1 - при его изменении, 2 - при отмене
+        if ($oTopicCommentVote = $this->Vote_GetVote($oComment->getId(), 'comment', $this->oUserCurrent->getId())) {
             if ($iValue == $oTopicCommentVote->getDirection()) {
-                $this->Message_AddErrorSingle($this->Lang_Get('comment_vote_error_value') , $this->Lang_Get('attention'));
-                return;
+                $iValue -= 2 * $iValue;
+                $iValueOld = 0;
+                $bVoteType = 2;
+            } else if ($oTopicCommentVote->getDirection() != 0){
+                $iValue += $iValue;
+                $bVoteType = 1;
             }
-
-            $this->ModuleVote_DeleteVote($oComment->getId() , 'comment', $this->oUserCurrent->getId());
-            $iValue+= $iValue;
+            $this->ModuleVote_DeleteVote($oComment->getId(), 'comment', $this->oUserCurrent->getId());
         }
 
         $oTopicCommentVote = Engine::GetEntity('Vote');
@@ -330,20 +333,27 @@ class ActionAjax extends Action
         $oTopicCommentVote->setVoterId($this->oUserCurrent->getId());
         $oTopicCommentVote->setDirection($iValueOld);
         $oTopicCommentVote->setDate(date("Y-m-d H:i:s"));
-        $iVal = (float)$this->Rating_VoteComment($this->oUserCurrent, $oComment, $iValue);
+        if ($iValueOld != 0) {
+            $iVal = (float)$this->Rating_VoteComment($this->oUserCurrent, $oComment, $iValue, $iValueOld, 1, $bVoteType);
+        } else {
+            $iVal = $this->Rating_VoteComment($this->oUserCurrent, $oComment, $iValue, $iValueOld, -1, $bVoteType);
+        }
         $oTopicCommentVote->setValue($iVal);
-        $iCountVote = $oComment->getCountVote() + 1;
-        $oComment->setCountVote($iCountVote);
+
         if ($this->Vote_AddVote($oTopicCommentVote) and $this->Comment_UpdateComment($oComment)) {
-            $this->Message_AddNoticeSingle($this->Lang_Get('comment_vote_ok') , $this->Lang_Get('attention'));
+            if ($iValueOld == 0) {
+                $this->ModuleVote_DeleteVote($oComment->getId(), 'comment', $this->oUserCurrent->getId());
+                $this->Message_AddNoticeSingle($this->Lang_Get('comment_vote_deleted'), $this->Lang_Get('attention'));
+            } else {
+                $this->Message_AddNoticeSingle($this->Lang_Get('comment_vote_ok'), $this->Lang_Get('attention'));
+            }
             $this->Viewer_AssignAjax('iRating', $oComment->getRating());
-            $this->Viewer_AssignAjax('iCountVote', $iCountVote);
+            $this->Viewer_AssignAjax('iCountVote', $oComment->getCountVote());
             /**
              * Добавляем событие в ленту
              */
-        }
-        else {
-            $this->Message_AddErrorSingle($this->Lang_Get('comment_vote_error') , $this->Lang_Get('error'));
+        } else {
+            $this->Message_AddErrorSingle($this->Lang_Get('comment_vote_error'), $this->Lang_Get('error'));
             return;
         }
     }
@@ -412,14 +422,17 @@ class ActionAjax extends Action
          * Голосуем
          */
         $iValueOld = $iValue;
+        $bVoteType = 0; //0 - при добавлении нового голоса, 1 - при его изменении, 2 - при отмене
         if ($oTopicVote = $this->Vote_GetVote($oTopic->getId() , 'topic', $this->oUserCurrent->getId())) {
             if ($iValue == $oTopicVote->getDirection()) {
-                $this->Message_AddErrorSingle($this->Lang_Get('comment_vote_error_value') , $this->Lang_Get('attention'));
-                return;
+                $iValue -= 2 * $iValue;
+                $iValueOld = 0;
+                $bVoteType = 2;
+            } else if ($oTopicVote->getDirection() != 0){
+                $iValue += $iValue;
+                $bVoteType = 1;
             }
-
-            $this->ModuleVote_DeleteVote($oTopic->getId() , 'topic', $this->oUserCurrent->getId());
-            $iValue+= $iValue;
+            $this->ModuleVote_DeleteVote($oTopic->getId(), 'topic', $this->oUserCurrent->getId());
         }
 
         $oTopicVote = Engine::GetEntity('Vote');
@@ -428,14 +441,13 @@ class ActionAjax extends Action
         $oTopicVote->setVoterId($this->oUserCurrent->getId());
         $oTopicVote->setDirection($iValueOld);
         $oTopicVote->setDate(date("Y-m-d H:i:s"));
-        $iVal = 0;
-        if ($iValue != 0) {
-            $iVal = (float)$this->Rating_VoteTopic($this->oUserCurrent, $oTopic, $iValue);
+        if ($iValueOld != 0) {
+            $iVal = (float)$this->Rating_VoteTopic($this->oUserCurrent, $oTopic, $iValue, $iValueOld, 1, $bVoteType);
+        } else {
+            $iVal = $this->Rating_VoteTopic($this->oUserCurrent, $oTopic, $iValue, $iValueOld, -1, $bVoteType);
         }
 
         $oTopicVote->setValue($iVal);
-        $iCountVote = $oTopic->getCountVote() + 1;
-        $oTopic->setCountVote($iCountVote);
         if ($iValue == 1) {
             $oTopic->setCountVoteUp($oTopic->getCountVoteUp() + 1);
         }
@@ -448,14 +460,19 @@ class ActionAjax extends Action
 
         if ($this->Vote_AddVote($oTopicVote) and $this->Topic_UpdateTopic($oTopic)) {
             if ($iValue) {
-                $this->Message_AddNoticeSingle($this->Lang_Get('topic_vote_ok') , $this->Lang_Get('attention'));
+                if ($iValueOld == 0) {
+                    $this->ModuleVote_DeleteVote($oTopic->getId(), 'topic', $this->oUserCurrent->getId());
+                    $this->Message_AddNoticeSingle($this->Lang_Get('topic_vote_deleted'), $this->Lang_Get('attention'));
+                } else {
+                    $this->Message_AddNoticeSingle($this->Lang_Get('topic_vote_ok') , $this->Lang_Get('attention'));
+                }
             }
             else {
                 $this->Message_AddNoticeSingle($this->Lang_Get('topic_vote_ok_abstain') , $this->Lang_Get('attention'));
             }
 
             $this->Viewer_AssignAjax('iRating', $oTopic->getRating());
-            $this->Viewer_AssignAjax('iCountVote', $iCountVote);
+            $this->Viewer_AssignAjax('iCountVote', $oTopic->getCountVote());
             /**
              * Добавляем событие в ленту
              */
@@ -497,68 +514,69 @@ class ActionAjax extends Action
             return;
         }
 
-        $iValue = getRequestStr('value', null, 'blog');
-        $iValueOld = $iValue;
-        if ($oBlogVote = $this->Vote_GetVote($oBlog->getId() , 'blog', $this->oUserCurrent->getId())) {
-            if ($iValue == $oBlogVote->getDirection()) {
-                $this->Message_AddErrorSingle($this->Lang_Get('comment_vote_error_value') , $this->Lang_Get('attention'));
-                return;
-            }
-
-            $this->ModuleVote_DeleteVote($oBlog->getId() , 'blog', $this->oUserCurrent->getId());
-            $iValueOld = $iValue;
-            $iValue+= $iValue;
-        }
-
         /**
          * Имеет право на голосование?
          */
         switch ($this->ACL_CanVoteBlog($this->oUserCurrent, $oBlog)) {
-        case ModuleACL::CAN_VOTE_BLOG_TRUE:
-            $iValue = getRequestStr('value', null, 'post');
-            if (in_array($iValue, array(
-                '1',
-                '-1'
-            ))) {
-                $oBlogVote = Engine::GetEntity('Vote');
-                $oBlogVote->setTargetId($oBlog->getId());
-                $oBlogVote->setTargetType('blog');
-                $oBlogVote->setVoterId($this->oUserCurrent->getId());
-                $oBlogVote->setDirection($iValueOld);
-                $oBlogVote->setDate(date("Y-m-d H:i:s"));
-                $iVal = (float)$this->Rating_VoteBlog($this->oUserCurrent, $oBlog, $iValue);
-                $oBlogVote->setValue($iVal);
-                $oBlog->setCountVote($oBlog->getCountVote() + 1);
-                if ($this->Vote_AddVote($oBlogVote) and $this->Blog_UpdateBlog($oBlog)) {
-                    $this->Viewer_AssignAjax('iCountVote', $oBlog->getCountVote());
-                    $this->Viewer_AssignAjax('iRating', $oBlog->getRating());
-                    $this->Message_AddNoticeSingle($this->Lang_Get('blog_vote_ok') , $this->Lang_Get('attention'));
-                    /**
-                     * Добавляем событие в ленту
-                     */
-                }
-                else {
-                    $this->Message_AddErrorSingle($this->Lang_Get('system_error') , $this->Lang_Get('attention'));
-                    return;
-                }
-            }
-            else {
-                $this->Message_AddErrorSingle($this->Lang_Get('system_error') , $this->Lang_Get('attention'));
+            case ModuleACL::CAN_VOTE_BLOG_ERROR_CLOSE:
+                $this->Message_AddErrorSingle($this->Lang_Get('blog_vote_error_close') , $this->Lang_Get('attention'));
                 return;
+                break;
+
+            default:
+            case ModuleACL::CAN_VOTE_BLOG_FALSE:
+                $this->Message_AddErrorSingle($this->Lang_Get('blog_vote_error_acl') , $this->Lang_Get('attention'));
+                return;
+                break;
+        }
+
+        /**
+         * Как именно голосует пользователь
+         */
+        $iValue = getRequestStr('value', null, 'post');
+        if (in_array($iValue, array(
+            '1',
+            '-1'
+        ))) {
+        }
+        else {
+            $this->Message_AddErrorSingle($this->Lang_Get('system_error') , $this->Lang_Get('attention'));
+            return;
+        }
+
+        /**
+         * Голосуем
+         */
+        $iValueOld = $iValue;
+        if ($oBlogVote = $this->Vote_GetVote($oBlog->getId() , 'blog', $this->oUserCurrent->getId())) {
+            if ($iValue == $oBlogVote->getDirection()) {
+                $iValue -= 2 * $iValue;
+                $iValueOld = 0;
+            } else if ($oBlogVote->getDirection() != 0){
+                $iValue += $iValue;
             }
-
-            break;
-
-        case ModuleACL::CAN_VOTE_BLOG_ERROR_CLOSE:
-            $this->Message_AddErrorSingle($this->Lang_Get('blog_vote_error_close') , $this->Lang_Get('attention'));
+            $this->ModuleVote_DeleteVote($oBlog->getId(), 'comment', $this->oUserCurrent->getId());
+        }
+        $oBlogVote = Engine::GetEntity('Vote');
+        $oBlogVote->setTargetId($oBlog->getId());
+        $oBlogVote->setTargetType('blog');
+        $oBlogVote->setVoterId($this->oUserCurrent->getId());
+        $oBlogVote->setDirection($iValueOld);
+        $oBlogVote->setDate(date("Y-m-d H:i:s"));
+        $iVal = (float)$this->Rating_VoteBlog($this->oUserCurrent, $oBlog, $iValue);
+        $oBlogVote->setValue($iVal);
+        $oBlog->setCountVote($oBlog->getCountVote() + 1);
+        if ($this->Vote_AddVote($oBlogVote) and $this->Blog_UpdateBlog($oBlog)) {
+            $this->Viewer_AssignAjax('iCountVote', $oBlog->getCountVote());
+            $this->Viewer_AssignAjax('iRating', $oBlog->getRating());
+            $this->Message_AddNoticeSingle($this->Lang_Get('blog_vote_ok') , $this->Lang_Get('attention'));
+            /**
+             * Добавляем событие в ленту
+             */
+        }
+        else {
+            $this->Message_AddErrorSingle($this->Lang_Get('system_error') , $this->Lang_Get('attention'));
             return;
-            break;
-
-        default:
-        case ModuleACL::CAN_VOTE_BLOG_FALSE:
-            $this->Message_AddErrorSingle($this->Lang_Get('blog_vote_error_acl') , $this->Lang_Get('attention'));
-            return;
-            break;
         }
     }
 
@@ -594,15 +612,6 @@ class ActionAjax extends Action
         }
 
         /**
-         * Уже голосовал?
-         */
-
-        //		if ($oUserVote=$this->Vote_GetVote($oUser->getId(),'user',$this->oUserCurrent->getId())) {
-        //			$this->Message_AddErrorSingle($this->Lang_Get('user_vote_error_already'),$this->Lang_Get('attention'));
-        //			return;
-        //		}
-
-        /**
          * Имеет право на голосование?
          */
         if (!$this->ACL_CanVoteUser($this->oUserCurrent, $oUser)) {
@@ -625,12 +634,12 @@ class ActionAjax extends Action
         $iValueOld = $iValue;
         if ($oUserVote = $this->Vote_GetVote($oUser->getId() , 'user', $this->oUserCurrent->getId())) {
             if ($iValue == $oUserVote->getDirection()) {
-                $this->Message_AddErrorSingle($this->Lang_Get('comment_vote_error_value') , $this->Lang_Get('attention'));
-                return;
+                $iValue -= 2 * $iValue;
+                $iValueOld = 0;
+            } else if ($oUserVote->getDirection() != 0){
+                $iValue += $iValue;
             }
-
             $this->ModuleVote_DeleteVote($oUser->getId() , 'user', $this->oUserCurrent->getId());
-            $iValue+= $iValue;
         }
 
         /**
@@ -645,11 +654,18 @@ class ActionAjax extends Action
         $iVal = (float)$this->Rating_VoteUser($this->oUserCurrent, $oUser, $iValue);
         $oUserVote->setValue($iVal);
 
-        // $oUser->setRating($oUser->getRating()+$iValue);
-
-        $oUser->setCountVote($oUser->getCountVote() + 1);
+        if ($iValueOld != 0) {
+            $oUser->setCountVote($oUser->getCountVote() + 1);
+        } else {
+            $oUser->setCountVote($oUser->getCountVote() - 1);
+        }
         if ($this->Vote_AddVote($oUserVote) and $this->User_Update($oUser)) {
-            $this->Message_AddNoticeSingle($this->Lang_Get('user_vote_ok') , $this->Lang_Get('attention'));
+            if ($iValueOld == 0) {
+                $this->ModuleVote_DeleteVote($oUser->getId() , 'user', $this->oUserCurrent->getId());
+                $this->Message_AddNoticeSingle($this->Lang_Get('user_vote_deleted'), $this->Lang_Get('attention'));
+            } else {
+                $this->Message_AddNoticeSingle($this->Lang_Get('user_vote_ok'), $this->Lang_Get('attention'));
+            }
             $this->Viewer_AssignAjax('iRating', $oUser->getRating());
             $this->Viewer_AssignAjax('iSkill', $oUser->getSkill());
             $this->Viewer_AssignAjax('iCountVote', $oUser->getCountVote());

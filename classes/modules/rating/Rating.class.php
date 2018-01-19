@@ -35,14 +35,21 @@ class ModuleRating extends Module {
 	 *
 	 * @param ModuleUser_EntityUser $oUser	Объект пользователя, который голосует
 	 * @param ModuleComment_EntityComment $oComment	Объект комментария
-	 * @param int $iValue
+	 * @param int $iValue значение оценки
+	 * @param int $iValueOld
+	 * @param int $iCountVote 1 при добавлении оцеки, -1 при ее удалении
+	 * @param int $bVoteType 0 - при добавлении нового голоса, 1 - при его изменении, 2 - при отмене
 	 * @return int
 	 */
-	public function VoteComment(ModuleUser_EntityUser $oUser, ModuleComment_EntityComment $oComment, $iValue) {
+	public function VoteComment(ModuleUser_EntityUser $oUser, ModuleComment_EntityComment $oComment, $iValue, $iValueOld, $iCountVote, $bVoteType) {
 		/**
 		 * Устанавливаем рейтинг комментария
 		 */
 		$oComment->setRating($oComment->getRating()+$iValue);
+		/**
+		 * Устанавливаем количество оценок
+		 */
+   		$oComment->setCountVote($oComment->getCountVote() + $iCountVote);
 		/**
 		 * Начисляем силу автору коммента, используя логарифмическое распределение
 		 */
@@ -56,13 +63,16 @@ class ModuleRating extends Module {
 		$this->User_Update($oUserComment);
         $curl_data = array(
             "senderId" => $oUser->getId(),
+            "senderName" => $oUser->getLogin(),
             "userId" => $oComment->getUserId(),
             "targetId" => $oComment->getId(),
             "targetType" => "comment",
             "targetParentId" => $oComment->getTargetId(),
             "targetParentType" => $oComment->getTargetType(),
 			"rating" => $oComment->getRating(),
-			"voteCount" => $oComment->getCountVote() + /*Т.к. сначала вызывается Rating_VoteComment, а затем счётчик увеличивается, локально увеличиваем его здесь.*/1,
+			"voteCount" => $oComment->getCountVote() + $iCountVote,
+            "voteType" => $bVoteType,
+            "voteValue" => $iValueOld,
 			"commentText" => $oComment->getText()
         );
         $this->Nower_Post('/vote', $curl_data);
@@ -74,10 +84,16 @@ class ModuleRating extends Module {
 	 * @param ModuleUser_EntityUser $oUser	Объект пользователя, который голосует
 	 * @param ModuleTopic_EntityTopic $oTopic	Объект топика
 	 * @param int $iValue
+	 * @param int $iValueOld
+     * @param int $bVoteType 0 - при добавлении нового голоса, 1 - при его изменении, 2 - при отмене
 	 * @return int
 	 */
-	public function VoteTopic(ModuleUser_EntityUser $oUser, ModuleTopic_EntityTopic $oTopic, $iValue) {
+	public function VoteTopic(ModuleUser_EntityUser $oUser, ModuleTopic_EntityTopic $oTopic, $iValue, $iValueOld, $iCountVote, $bVoteType) {
 		$oTopic->setRating($oTopic->getRating()+$iValue);
+		/**
+		 * Устанавливаем количество оценок
+		 */
+        $oTopic->setCountVote($oTopic->getCountVote() + $iCountVote);
 		$skill=$oUser->getSkill();
 		$oUserTopic=$this->User_GetUserById($oTopic->getUserId());
 		$iSkillNew=$oUserTopic->getSkill()+$iValue;
@@ -85,13 +101,16 @@ class ModuleRating extends Module {
 		$this->User_Update($oUserTopic);
         $curl_data = array(
             "senderId" => $oUser->getId(),
+            "senderName" => $oUser->getLogin(),
             "userId" => $oTopic->getUserId(),
             "targetId" => $oTopic->getId(),
             "targetType" => "topic",
             "targetParentId" => null,
             "targetParentType" => null,
             "rating" => $oTopic->getRating(),
-			"voteCount" => $oTopic->getCountVote() + /*Т.к. сначала вызывается Rating_VoteTopic, а затем счётчик увеличивается, локально увеличиваем его здесь.*/1,
+			"voteCount" => $oTopic->getCountVote() + $iCountVote,
+            "voteType" => $bVoteType,
+            "voteValue" => $iValueOld,
 			"topicTitle" => $oTopic->getTitle()
         );
         $this->Nower_Post('/vote', $curl_data);

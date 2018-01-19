@@ -324,6 +324,7 @@ return array(
 	'topic_vote_error_acl' => "You don't have enough rating or power to vote!",
 	'topic_vote_no' => 'No one voted yet',
 	'topic_vote_ok' => 'Your vote counted',
+    'topic_vote_deleted' => 'Your vote deleted',
 	'topic_vote_ok_abstain' => 'You\'ve abstained in order to view topic raiting',
 	'topic_vote_count' => 'All votes',
 	/**
@@ -371,7 +372,7 @@ return array(
 	'comment_delete_ok' => 'Comment deleted',
 	'comment_repair' => 'Restore',
 	'comment_repair_ok' => 'Comment restored',
-	'comment_was_delete' => 'comment deleted',
+	'comment_was_delete' => 'Comment deleted',
 	'comment_add' => 'Add',
 	'comment_preview' => 'Preview',
 	'comment_unregistered' => 'Only registered users can comment.',
@@ -388,6 +389,7 @@ return array(
 	'comment_vote_error_self' => "You can't vote for your own comment!",
 	'comment_vote_error_noexists' => "You're voting for comment wich doesn't exist!",
 	'comment_vote_ok' => 'Your vote counted',
+	'comment_vote_deleted' => 'Your vote deleted',
 	'comment_favourite_add' => 'Add to favoutites',
 	'comment_favourite_add_ok' => 'Comment added to favourites',
 	'comment_favourite_add_no' => 'This comment is not in your favourites',
@@ -520,6 +522,7 @@ return array(
 	'user_vote_error_guest' => 'You have to logon before voting',
 	'user_vote_error_acl' => 'You don\'t have enough rating and power to vote!',
 	'user_vote_ok' => 'Your vote counted',
+    'user_vote_deleted' => 'Your vote deleted',
 	'user_vote_count' => 'Votes',
 	/**
 	 * User profile menu

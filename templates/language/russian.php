@@ -331,6 +331,7 @@ return array(
 	'topic_vote_error_acl' => 'У вас не хватает рейтинга и силы для голосования!',
 	'topic_vote_no' => 'пока никто не голосовал',
 	'topic_vote_ok' => 'Ваш голос учтен',
+    'topic_vote_deleted' => 'Ваш голос удален',
 	'topic_vote_ok_abstain' => 'Вы воздержались для просмотра рейтинга топика',
 	'topic_vote_count' => 'всего проголосовало',
 	/**
@@ -395,6 +396,7 @@ return array(
 	'comment_vote_error_self' => 'Вы не можете голосовать за свой комментарий!',
 	'comment_vote_error_noexists' => 'Вы голосуете за несуществующий комментарий!',
 	'comment_vote_ok' => 'Ваш голос учтен',
+	'comment_vote_deleted' => 'Ваш голос удален',
 	'comment_favourite_add' => 'добавить в избранное',
 	'comment_favourite_add_ok' => 'Комментарий добавлен в избранное',
 	'comment_favourite_add_no' => 'Этого комментария нет в вашем избранном',
@@ -529,6 +531,7 @@ return array(
 	'user_vote_error_guest' => 'для голосования необходимо авторизоваться',
 	'user_vote_error_acl' => 'У вас не хватает рейтинга и силы для голосования!',
 	'user_vote_ok' => 'Ваш голос учтен',
+    'user_vote_deleted' => 'Ваш голос удален',
 	'user_vote_count' => 'голосов',
 	/**
 	 * Меню профиля пользователя

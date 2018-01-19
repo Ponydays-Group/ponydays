@@ -12,9 +12,11 @@ import * as Ajax from './ajax'
  */
 export let options = {
     classes: {
+        vote: 'vote',
         voted: 'voted',
         plus: 'voted-up',
         minus: 'voted-down',
+        vote_count: 'vote-count',
         positive: 'vote-count-positive',
         negative: 'vote-count-negative',
         mixed: 'vote-count-mixed',
@@ -72,14 +74,21 @@ export function onVote(idTarget, objVote, value, type, result) {
         var divVoting = $('#' + this.options.prefix_area + type + '_' + idTarget);
 
         divVoting.addClass(this.options.classes.voted);
-
         if (value > 0) {
-            divVoting.addClass(this.options.classes.plus);
+            if (divVoting.hasClass(this.options.classes.plus)) {
+                divVoting.removeClass(this.options.classes.plus);
+            } else {
+                divVoting.addClass(this.options.classes.plus);
+            }
             divVoting.removeClass(this.options.classes.minus);
             divVoting.removeClass(this.options.classes.hidden);
         }
         if (value < 0) {
-            divVoting.addClass(this.options.classes.minus);
+            if (divVoting.hasClass(this.options.classes.plus)) {
+                divVoting.removeClass(this.options.classes.minus);
+            } else {
+                divVoting.addClass(this.options.classes.minus);
+            }
             divVoting.removeClass(this.options.classes.plus);
             divVoting.removeClass(this.options.classes.hidden);
         }

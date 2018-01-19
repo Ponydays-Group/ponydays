@@ -1,3 +1,5 @@
+import {options} from "./vote"
+
 function getCookie(name) {
     var matches = document.cookie.match(new RegExp(
         "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
@@ -109,7 +111,35 @@ sock.on("vote-info", function (data) {
             url = "#"
             blank = false
         }
-        ls.msg.notice("За ваш " + (data.targetType == "comment" ? "комментарий" : "пост") + " проголосовали", data.commentText || data.topicTitle, url, blank)
+        switch (data.voteType*1) {
+            case 0:
+                ls.msg.notice("Пользователь " + data.senderName + " проголосовал за ваш " +
+                    (data.targetType == "comment" ? "комментарий" : "пост") + ", поставив " +
+                    (data.voteValue > 0 ?
+                        "<span><span class=\""+ options.classes.vote + " " + options.classes.positive + "\"><span class=\"" + options.classes.vote_count +"\">+"+ data.voteValue +"</span></span></span>" :
+                        "<span><span class=\""+ options.classes.vote + " " + options.classes.negative + "\"><span class=\"" + options.classes.vote_count +"\">"+ data.voteValue +"</span></span></span>"),
+                    data.commentText || data.topicTitle,
+                    url,
+                    blank)
+                break;
+            case 1:
+                ls.msg.notice("Пользователь " + data.senderName + " изменил голос за ваш " +
+                    (data.targetType == "comment" ? "комментарий" : "пост") + " на " +
+                    (data.voteValue > 0 ?
+                        "<span><span class=\""+ options.classes.vote + " " + options.classes.positive + "\"><span class=\"" + options.classes.vote_count +"\">+"+ data.voteValue +"</span></span></span>" :
+                        "<span><span class=\""+ options.classes.vote + " " + options.classes.negative + "\"><span class=\"" + options.classes.vote_count +"\">"+ data.voteValue +"</span></span></span>"),
+                    data.commentText || data.topicTitle,
+                    url,
+                    blank)
+                break;
+            case 2:
+                ls.msg.notice("Пользователь " + data.senderName + " отменил свой голос за ваш " +
+                    (data.targetType == "comment" ? "комментарий" : "пост"),
+                    data.commentText || data.topicTitle,
+                    url,
+                    blank)
+                break;
+        }
         if (checkPerm("sound_notice"))
             nAudio.play()
     }

@@ -84,7 +84,7 @@ export function onVote(idTarget, objVote, value, type, result) {
             divVoting.removeClass(this.options.classes.hidden);
         }
         if (value < 0) {
-            if (divVoting.hasClass(this.options.classes.plus)) {
+            if (divVoting.hasClass(this.options.classes.minus)) {
                 divVoting.removeClass(this.options.classes.minus);
             } else {
                 divVoting.addClass(this.options.classes.minus);

@@ -936,6 +936,14 @@ class ActionAjax extends Action
         }
 
         /**
+         * Запрет на добавление удаленного комментария
+         */
+        if ($iType === '1' and $oComment->getDelete()) {
+            $this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+            return;
+        }
+
+        /**
          * Комментарий уже в избранном?
          */
         $oFavouriteComment = $this->Comment_GetFavouriteComment($oComment->getId() , $this->oUserCurrent->getId());
@@ -1984,6 +1992,13 @@ class ActionAjax extends Action
 			$this->Message_AddErrorSingle($this->Lang_Get('system_error') , $this->Lang_Get('error'));
 			return;
 		}
+		/**
+         * Проверяет коммент на удаленность и отдает его только автору, и тем, у кого есть права на удаление.
+		*/
+        if (!($this->oUserCurrent && ($oComment->getDelete() && ($this->ACL_UserCanDeleteComment($this->oUserCurrent, $oComment,1) || $this->oUserCurrent->getId()==$oComment->getUserId())))) {
+            $this->Message_AddErrorSingle($this->Lang_Get('blog_close_show'),$this->Lang_Get('not_access'));
+            return Router::Action('error');
+        }
 		if(in_array($oTopic->getBlog()->getType(), array('close', 'invite'))
 			and (!$this->oUserCurrent
 				|| !in_array(

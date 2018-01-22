@@ -9,7 +9,7 @@
         {*</div>*}
 
 
-        <section class="comment">
+        <section class="comment {if $oComment->getDelete()}comment-deleted{/if}">
             <a href="{$oUser->getUserWebPath()}"><img src="{$oUser->getProfileAvatarPath(48)}" alt="avatar" class="comment-avatar" /></a>
 
 
@@ -32,7 +32,7 @@
                         ↑
                     </a></li>
                 {/if}
-                <li id="vote_area_comment_{$oComment->getId()}" class="vote 
+                <li id="vote_area_comment_{$oComment->getId()}" class="vote
 																		{if $oComment->getRating() > 0}
 																			vote-count-positive
 																		{elseif $oComment->getRating() < 0}
@@ -47,10 +47,12 @@
             </ul>
 
 
-            <div class="comment-content text">
-                {if $oComment->isBad()}
-                    {$oComment->getText()}
-                {else}
+            <div id="comment_content_id_{$oComment->getId()}" class="comment-content text {if $oComment->getDelete()}hided{/if}">
+                {if $oComment->getDelete()}<div class="delete-reason">{if $oComment->getDeleteReason()}{$oComment->getDeleteReason()}{else}Нет причины удаления{/if}</div>{/if}
+                {if $oUserCurrent && ($oComment->getDelete() && ($bCanDelete || $oUserCurrent->getId()==$oUser->getId()))}
+                    <a href="#" onclick="ls.comments.showHiddenComment({$oComment->getId()}); return false;">Раскрыть комментарий</a>
+                {/if}
+                {if !$oComment->getDelete()}
                     {$oComment->getText()}
                 {/if}
             </div>

@@ -47,7 +47,9 @@
     "classnames": "^2.2.5",
     "dateformat": "^2.0.0",
     "eventemitter3": "^2.0.2",
+    "hark": "^1.1.6",
     "jquery.hotkeys": "^0.1.0",
+    "simplewebrtc": "^3.0.1",
     "socket.io-client": "^2.0.4"
   }
 }

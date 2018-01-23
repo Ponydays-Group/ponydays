@@ -57,7 +57,7 @@
 					<time dateTime="{date_format date=$oComment->getDate() format='c'}">{date_format date=$oComment->getDate() format="j F Y, H:i"}</time>
 				</a>
 			</li>
-			<li class="comment-edited" {if $oComment->getEditCount()}style="display: inline-block;"{/if}>(edited)</li>
+			<li class="comment-edited" {if $oComment->getEditCount()}style="display: inline-block;"{/if}>(Отредактировано)</li>
 			{if $oUserCurrent}<span><a href="#" onclick="ls.comments.toggleCommentForm({$oComment->getId()}); return false;" class="reply-link">Ответить</a></span>{/if}
 
 

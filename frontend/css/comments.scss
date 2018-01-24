@@ -430,14 +430,14 @@ button#comment-button-history {
         .close-button {
             display: none;
         }
-        &.for-comment {
+        &.for-comment.for-tree-comment {
             right: 12px;
             bottom: 38px;
             border-radius: 8px;
         }
         &.for-comment.for-lone-comment {
             right: 26px;
-            bottom: 50px;
+            top: -10px;
             border-radius: 8px;
         }
         &.for-topic {

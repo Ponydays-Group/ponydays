@@ -40,7 +40,7 @@
 																		{else}
 																			vote-count-zero
 																		{/if}">
-					<span class="vote-count" onclick="ls.vote.getVotes({$oComment->getId()},'comment',this); return false;" data-count="{$oComment->getCountVote()}" id="vote_total_comment_{$oComment->getId()}">{$oComment->getRating()}</span>
+					<span class="vote-count" {if $bEnableCommentsVoteInfo}onclick="ls.vote.getVotes({$oComment->getId()},'comment',this); return false;" data-count="{$oComment->getCountVote()}"{/if} id="vote_total_comment_{$oComment->getId()}">{$oComment->getRating()}</span>
 				</li>
 			</ul>
 					

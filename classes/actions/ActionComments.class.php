@@ -84,6 +84,7 @@ class ActionComments extends Action {
 		 */
 		$this->Viewer_Assign('aPaging',$aPaging);
 		$this->Viewer_Assign("aComments",$aComments);
+		$this->Viewer_Assign('bEnableCommentsVoteInfo',$this->ACL_CheckSimpleAccessLevel(Config::Get('acl.vote_list.comment.ne_enable_level'), $this->oUserCurrent, null, '__non_checkable_visible__'));
 		/**
 		 * Устанавливаем title страницы
 		 */

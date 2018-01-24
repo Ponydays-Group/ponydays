@@ -430,9 +430,14 @@ button#comment-button-history {
         .close-button {
             display: none;
         }
-        &.for-comment {
+        &.for-comment.for-tree-comment {
             right: 12px;
             bottom: 38px;
+            border-radius: 8px;
+        }
+        &.for-comment.for-lone-comment {
+            right: 26px;
+            top: -10px;
             border-radius: 8px;
         }
         &.for-topic {
@@ -496,12 +501,14 @@ button#comment-button-history {
         }
         >.vote-list-item-component {
             display: table-cell;
+            white-space: nowrap;
             &:not(:last-child) {
                 padding-right: 10px;
             }
         }
         >time.vote-list-item-component {
             color: #9e9e9e;
+            text-align: right;
             >.fa {
                 float: left;
                 margin-right: 3px;

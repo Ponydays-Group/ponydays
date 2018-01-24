@@ -612,6 +612,11 @@ class ModuleACL extends Module {
 					case 'user':
 						$oTargetUser = $oTarget;
 						break;
+					case '__non_checkable_visible__':
+						// костыль
+						// * Данный псевдотип пригоден только для нетребовательных к безопасности функций, таких как установка bEnableCommentsVoteInfo для последующего отображения требуемого курсора мыши.
+						if($oTarget === null) $isNonCheckableVisibleObject = true;
+						break;
 					default:
 						return false;
 				}
@@ -644,6 +649,12 @@ class ModuleACL extends Module {
 				else
 				if(isset($oTargetUser)) {
 					//return true;
+				}
+				else
+				if(isset($isNonCheckableVisibleObject) && $isNonCheckableVisibleObject === true) {
+					// Не поддерживаются: администраторы блогов (req==3), модераторы блогов (req==4), авторы объектов (req==5)
+					if($oUser->isGlobalModerator()) return true;
+					if($req == 6) return true;
 				}
 			}
 		}

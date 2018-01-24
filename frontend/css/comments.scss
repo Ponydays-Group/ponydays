@@ -435,6 +435,11 @@ button#comment-button-history {
             bottom: 38px;
             border-radius: 8px;
         }
+        &.for-comment.for-lone-comment {
+            right: 26px;
+            bottom: 50px;
+            border-radius: 8px;
+        }
         &.for-topic {
             bottom: 60px;
             max-height: calc(100% - 153px);

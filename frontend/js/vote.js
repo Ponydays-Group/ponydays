@@ -232,7 +232,12 @@ export function onGetVotes(result) {
             vl_box.appendChild(vl_wrapper);
             switch(this.targetType) {
                 case "comment":
+                    if (this.control.parentNode.parentNode.classList.contains("comment-actions")) 
                     this.control.parentNode.insertBefore(vl_box, this.control);
+                    else {
+                        vl_box.classList.add("for-lone-comment");
+                        this.control.parentNode.parentNode.parentNode.insertBefore(vl_box, this.control.parentNode.parentNode);
+                    }
                     break;
                 case "topic":
                     this.control.parentNode.parentNode.parentNode.insertBefore(vl_box, this.control.parentNode.parentNode);

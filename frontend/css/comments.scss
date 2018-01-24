@@ -501,6 +501,7 @@ button#comment-button-history {
         }
         >.vote-list-item-component {
             display: table-cell;
+            white-space: nowrap;
             &:not(:last-child) {
                 padding-right: 10px;
             }

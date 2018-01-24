@@ -13,7 +13,7 @@
             <a href="{$oUser->getUserWebPath()}"><img src="{$oUser->getProfileAvatarPath(48)}" alt="avatar" class="comment-avatar" /></a>
 
 
-            <ul class="comment-info clearfix">
+            <ul class="comment-info clearfix {if $bEnableVoteInfo}vote-info-enable{/if}">
                 <li class="comment-author"><a href="{$oUser->getUserWebPath()}">{$oUser->getLogin()}</a></li>
                 <li class="comment-date">
                     <a href="{if $oConfig->GetValue('module.comment.nested_per_page')}{router page='comments'}{else}{$oTarget->getUrl()}#comment{/if}{$oComment->getId()}" class="link-dotted" title="{$aLang.comment_url_notice}">
@@ -42,7 +42,7 @@
 																		{else}
 																			vote-count-zero
 																		{/if}">
-                    <span class="vote-count" onclick="ls.vote.getVotes({$oComment->getId()},'comment',this); return false;" data-count="{$oComment->getCountVote()}" id="vote_total_comment_{$oComment->getId()}">{$oComment->getRating()}</span>
+                    <span class="vote-count" {if $bEnableVoteInfo}onclick="ls.vote.getVotes({$oComment->getId()},'comment',this); return false;" data-count="{$oComment->getCountVote()}"{/if} id="vote_total_comment_{$oComment->getId()}">{$oComment->getRating()}</span>
                 </li>
             </ul>
 

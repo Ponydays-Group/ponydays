@@ -72,6 +72,8 @@
                 			<i class="fa fa-pencil" title="Редактировать комментарий"></i>
                 		</a>
                 	</span>
+				{/if}
+                {if $bCanDelete || !$oComment->getDelete()}
 					<span>
                 		<a href="#" class="editcomment_historylink" title="История редактирования" onclick="ls.comments.showHistory({$oComment->getId()}); return false;">
                 			<i class="fa fa-history" title="История редактирования"></i>

@@ -1779,13 +1779,36 @@ class ActionAjax extends Action
             $this->Message_AddErrorSingle($this->Lang_Get('not_access'));
             return;
         }
-        
-        $sCheckResult=$this->ACL_UserCanEditComment($this->oUserCurrent, $oComment, PHP_INT_MAX);
-        if ($sCheckResult !== true)
-        {
-            $this->Message_AddErrorSingle($sCheckResult);
-            return;
-        }
+
+		if ($oComment->getTargetType()!='topic' or !($oTopic=$oComment->getTarget())) {
+			$this->Message_AddErrorSingle($this->Lang_Get('system_error') , $this->Lang_Get('error'));
+			return;
+		}
+		if (!$oTopic->getPublish() and (!$this->oUserCurrent or ($this->oUserCurrent->getId()!=$oTopic->getUserId() and !$this->oUserCurrent->isAdministrator()))) {
+			$this->Message_AddErrorSingle($this->Lang_Get('system_error') , $this->Lang_Get('error'));
+			return;
+		}
+		/**
+		 * Проверяет коммент на удаленность и отдает его только автору, и тем, у кого есть права на удаление.
+		 */
+		if ((!$this->oUserCurrent || ($oComment->getDelete() && !($this->ACL_UserCanDeleteComment($this->oUserCurrent, $oComment,1) || $this->oUserCurrent->getId()==$oComment->getUserId())))) {
+			$this->Message_AddErrorSingle($this->Lang_Get('not_access'),$this->Lang_Get('not_access'));
+			return Router::Action('error');
+		}
+		/**
+		 * Проверяет коммент на доступность из закрытых блогов.
+		 */
+		if(in_array($oTopic->getBlog()->getType(), array('close', 'invite'))
+			and (!$this->oUserCurrent
+				|| !in_array(
+					$oTopic->getBlog()->getId(),
+					$this->Blog_GetAccessibleBlogsByUser($this->oUserCurrent)
+				)
+			)
+		) {
+			$this->Message_AddErrorSingle($this->Lang_Get('blog_close_show'),$this->Lang_Get('not_access'));
+			return Router::Action('error');
+		}
         
         $aData=$this->Editcomment_GetDataItemsByCommentId($oComment->getId(), array('#order'=>array('date_add'=>'desc')));
 
@@ -1882,11 +1905,13 @@ class ActionAjax extends Action
         $sDE=date("Y-m-d H:i:s");
         
         $oOldData=$this->Editcomment_GetLastEditData($oComment->getId());
-        
+
+        $bEdited = false;
         if ($oOldData && $oOldData->getCommentTextSource() == getRequest('comment_text'))
         {
             $this->Message_AddNoticeSingle($this->Lang_Get('editcomment.notice_nothing_changed'));
-            $this->Viewer_AssignAjax('bEdited', false);
+			$bEdited = false;
+            $this->Viewer_AssignAjax('bEdited', $bEdited);
         }
         else
         {
@@ -1941,8 +1966,8 @@ class ActionAjax extends Action
                             $oOldData->delete();
                     }
                 }
-                
-                $this->Viewer_AssignAjax('bEdited', true);
+				$bEdited = true;
+                $this->Viewer_AssignAjax('bEdited', $bEdited);
                 $this->Viewer_AssignAjax('bCanEditMore', $this->ACL_UserCanEditComment($this->oUserCurrent, $oComment, PHP_INT_MAX) === true);
                 $this->Viewer_AssignAjax('sCommentText', $oComment->getText());
             }
@@ -1975,9 +2000,11 @@ class ActionAjax extends Action
                 $curl_data['userIds'][] = $oUserTalk->getId();
             }
         }
-        $this->Nower_Patch('/comment', $curl_data);
-        $sLogText = $this->oUserCurrent->getLogin()." редактировал коммент ".$oComment->getId()." ".$ip;
-        $this->Logger_Notice($sLogText);
+        if ($bEdited) {
+			$this->Nower_Patch('/comment', $curl_data);
+			$sLogText = $this->oUserCurrent->getLogin() . " редактировал коммент " . $oComment->getId() . " " . $ip;
+			$this->Logger_Notice($sLogText);
+		}
         $this->Viewer_AssignAjax('bCanEditMore', $this->ACL_UserCanEditComment($this->oUserCurrent, $oComment, PHP_INT_MAX) === true);
     }
 
@@ -1998,8 +2025,8 @@ class ActionAjax extends Action
 		/**
          * Проверяет коммент на удаленность и отдает его только автору, и тем, у кого есть права на удаление.
 		*/
-        if (!($this->oUserCurrent && ($oComment->getDelete() && ($this->ACL_UserCanDeleteComment($this->oUserCurrent, $oComment,1) || $this->oUserCurrent->getId()==$oComment->getUserId())))) {
-            $this->Message_AddErrorSingle($this->Lang_Get('blog_close_show'),$this->Lang_Get('not_access'));
+        if ((!$this->oUserCurrent || ($oComment->getDelete() && !($this->ACL_UserCanDeleteComment($this->oUserCurrent, $oComment,1) || $this->oUserCurrent->getId()==$oComment->getUserId())))) {
+            $this->Message_AddErrorSingle($this->Lang_Get('not_access'),$this->Lang_Get('not_access'));
             return Router::Action('error');
         }
 		if(in_array($oTopic->getBlog()->getType(), array('close', 'invite'))

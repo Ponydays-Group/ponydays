@@ -214,9 +214,6 @@ async function handler(e) {
             `)
         el.appendTo(document.body)
         el.css({
-            position: "absolute",
-            maxWidth: "500px",
-            zIndex: 1000,
             opacity: 0
         })
         if (e.clientY>($(window).height()/2) && (e.pageY-el.height())>0) {

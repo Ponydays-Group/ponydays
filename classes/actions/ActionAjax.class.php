@@ -1788,9 +1788,12 @@ class ActionAjax extends Action
         }
         
         $aData=$this->Editcomment_GetDataItemsByCommentId($oComment->getId(), array('#order'=>array('date_add'=>'desc')));
-        
-        foreach ($aData as $oData)
-            $oData->setText($this->Text_Parser($oData->getCommentTextSource()));
+
+        foreach ($aData as $oData) {
+			$oUser = $this->User_GetUserById($oData->getUserId());
+			$oData->setText($this->Text_Parser($oData->getCommentTextSource()));
+			$oData->setUserLogin($oUser->getLogin());
+		}
         
         $oViewerLocal=$this->Viewer_GetLocalViewer();
         $oViewerLocal->Assign('aHistory', $aData);

@@ -395,13 +395,19 @@ button#comment-button-history {
 }
 
 .editcomment_history_item {
-    border: 1px solid #777;
-    margin-bottom: 10px;
+    border: $second-border;
+    margin-bottom: 15px;
+    border-radius: 20px;
+}
+.editcomment_history_item header {
+    padding: 5px 15px;
+    background-color: $second;
+    border-radius: 20px 20px 0px 0px;
+    border-bottom: $second-border;
 }
 
-.editcomment_history_item header {
-    padding: 5px;
-    background-color: #777;
+.editcomment_history_item .body {
+    padding: 5px 15px;
 }
 
 @media screen and (max-width: 500px) {

@@ -43,7 +43,7 @@ class ModuleACL extends Module {
     const ACL_EC_BASIC=1;
     
     // Проверка на максимальное количество редактирований
-    const ACL_EC_CHECK_MAX_EDIT_COUNT=2;
+    const ACL_EC_CHECK_MAX_EDIT_COUNT=0;
     
     // Проверка на максимальное прошедшее время
     const ACL_EC_CHECK_MAX_EDIT_PERIOD=4;
@@ -713,7 +713,8 @@ class ModuleACL extends Module {
 
         if ($iCheckMask & ModuleACL::ACL_EC_CHECK_DENY_WITH_ANSWERS != 0 && Config::Get('deny_with_answers'))
         {
-            if ($this->Editcomment_HasAnswers($oComment->getId()))
+        	$oCommentAnswer = $this->Editcomment_GetFirstAnswer($oComment->getId());
+            if ($oCommentAnswer && (time() - strtotime($oCommentAnswer->getDate()))> Config::Get('max_edit_period_from_first_answer'))
                 return false;
         }
 

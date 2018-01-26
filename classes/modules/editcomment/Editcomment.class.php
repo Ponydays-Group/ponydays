@@ -38,5 +38,10 @@ class ModuleEditcomment extends ModuleORM
         return $this->oMapper->HasAnswers($sId);
     }
 
+    public function GetFirstAnswer($sId)
+    {
+        return $this->oMapper->GetFirstAnswer($sId);
+    }
+
 }
 ?>

@@ -11,7 +11,6 @@
 *
 ---------------------------------------------------------
 */
-
 class ModuleEditcomment_MapperEditcomment extends Mapper
 {
     public function HasAnswers($sId)
@@ -29,6 +28,21 @@ class ModuleEditcomment_MapperEditcomment extends Mapper
             return true;
         }
         return false;
+    }
+
+    public function GetFirstAnswer($sId)
+    {
+        $sql="SELECT
+        *
+        FROM
+        " . Config::Get('db.table.comment') . "
+        WHERE
+        comment_pid=?d	and comment_delete=0 and comment_publish=1
+        LIMIT 1;";
+		if ($aRow=$this->oDb->selectRow($sql, $sId)) {
+			return Engine::GetEntity('Comment', $aRow);
+		}
+		return null;
     }
 }
 ?>

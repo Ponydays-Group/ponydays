@@ -9,6 +9,7 @@
     "max_edit_count": 5,
     "max_edit_period": 1200,
     "deny_with_answers": true,
+    "max_edit_period_from_first_answer": 0,
     "add_edit_date": true,
     "change_online": true,
     "donated": true

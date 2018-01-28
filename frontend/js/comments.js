@@ -432,7 +432,9 @@ export function toggle(obj, commentId) {
 			oComment.removeClass(options.classes.comment_new + " " + options.classes.comment_deleted + " " + options.classes.comment_current)
 			if (result.bState) {
 				oComment.addClass(options.classes.comment_deleted)
-				oComment.find('.comment-content')[0].innerHTML = `<div class="delete-reason">${deleteReason}</div><a href="#" onclick="ls.comments.showHiddenComment(${commentId}); return false;">Раскрыть комментарий</a>`
+				oComment.find('.comment-content')[0].innerHTML = `
+					Комментарий удален пользователем <a href="/profile/${USERNAME}/" class="ls-user">${USERNAME}</a><br/><b>По причине:</b><br/>
+					<div class="delete-reason">${deleteReason}</div><a href="#" onclick="ls.comments.showHiddenComment(${commentId}); return false;">Раскрыть комментарий</a>`
 			} else {
 				oComment.find('.delete-reason').remove()
 				ls.comments.showHiddenComment(commentId)
@@ -820,7 +822,7 @@ export function init() {
         }
 
         Emitter.on('socket-edit-comment', (data) => updateCommentEdited(data.commentData.id, data.commentData.text))
-        Emitter.on('socket-delete-comment', (data) => updateCommentDeleted(data.commentId, parseInt(data.delete), data.deleteReason))
+        Emitter.on('socket-delete-comment', (data) => updateCommentDeleted(data.commentId, parseInt(data.delete), data.deleteReason, data.senderLogin))
         Emitter.on('socket-new-comment', (data) => {
             if (!document.getElementById('autoload').checked)
                 return
@@ -836,7 +838,7 @@ export function init() {
 	Emitter.emit('ls_comments_init_after',[],this)
 }
 
-export function updateCommentDeleted(id, deleted, reason) {
+export function updateCommentDeleted(id, deleted, reason, deleteUserLogin) {
     let cmt = $(`[data-id="${id}"]`)
     if (!cmt.length) {
         return
@@ -844,6 +846,7 @@ export function updateCommentDeleted(id, deleted, reason) {
     if (deleted) {
         cmt.addClass("comment-deleted")
         cmt.find(".comment-content").html(`
+		Комментарий удален пользователем <a href="/profile/${deleteUserLogin}/" class="ls-user">${deleteUserLogin}</a><br/><b>По причине:</b><br/>
         <div class="delete-reason">
             ${reason || "Нет причины удаления"}
         </div>

@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.7.20, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 5.5.58, for debian-linux-gnu (x86_64)
 --
--- Host: localhost    Database: beta
+-- Host: 127.0.0.1    Database: bunker
 -- ------------------------------------------------------
--- Server version	5.7.20-0ubuntu0.16.04.1
+-- Server version	5.7.20
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -34,7 +34,7 @@ CREATE TABLE `prefix_adminban` (
   `moder_id` bigint(20) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=119 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=122 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -169,6 +169,7 @@ CREATE TABLE `prefix_comment` (
   `comment_edit_count` int(11) NOT NULL DEFAULT '0',
   `comment_edit_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `delete_reason` text,
+  `delete_user_id` int(11) unsigned DEFAULT NULL,
   PRIMARY KEY (`comment_id`),
   KEY `comment_pid` (`comment_pid`),
   KEY `type_date_rating` (`target_type`,`comment_date`,`comment_rating`),
@@ -186,7 +187,7 @@ CREATE TABLE `prefix_comment` (
   KEY `target_type_comment_delete_comment_publish_target_parent_id` (`target_type`,`comment_delete`,`comment_publish`,`target_parent_id`),
   CONSTRAINT `prefix_topic_comment_fk` FOREIGN KEY (`comment_pid`) REFERENCES `prefix_comment` (`comment_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `topic_comment_fk1` FOREIGN KEY (`user_id`) REFERENCES `prefix_user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=1286698 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1330833 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -207,7 +208,7 @@ CREATE TABLE `prefix_comment_online` (
   KEY `comment_id` (`comment_id`),
   KEY `type_parent` (`target_type`,`target_parent_id`),
   CONSTRAINT `prefix_topic_comment_online_fk1` FOREIGN KEY (`comment_id`) REFERENCES `prefix_comment` (`comment_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=1176020 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1219780 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -229,7 +230,7 @@ CREATE TABLE `prefix_editcomment_data` (
   KEY `fsearch` (`comment_id`,`date_add`),
   CONSTRAINT `prefix_editcomment_data_fk0` FOREIGN KEY (`comment_id`) REFERENCES `prefix_comment` (`comment_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `prefix_editcomment_data_fk3` FOREIGN KEY (`user_id`) REFERENCES `prefix_user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=1315680 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1360783 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -293,7 +294,7 @@ CREATE TABLE `prefix_feedback_actions` (
   KEY `user_id_to` (`user_id_to`),
   KEY `user_id_from` (`user_id_from`),
   KEY `action_type` (`action_type`)
-) ENGINE=InnoDB AUTO_INCREMENT=2016310 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2093904 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -549,7 +550,7 @@ CREATE TABLE `prefix_quotes` (
   `data` text NOT NULL,
   `deleted` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=433 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=445 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -613,7 +614,7 @@ CREATE TABLE `prefix_stream_event` (
   KEY `publish` (`publish`),
   KEY `target_id` (`target_id`),
   CONSTRAINT `prefix_stream_event_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `prefix_user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=515860 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=558641 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -670,7 +671,7 @@ CREATE TABLE `prefix_subscribe` (
   KEY `key` (`key`),
   KEY `target_id` (`target_id`),
   KEY `ip` (`ip`)
-) ENGINE=InnoDB AUTO_INCREMENT=733 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=754 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -698,7 +699,7 @@ CREATE TABLE `prefix_talk` (
   KEY `talk_date_last` (`talk_date_last`),
   KEY `talk_user_id_last` (`talk_user_id_last`),
   CONSTRAINT `prefix_talk_fk` FOREIGN KEY (`user_id`) REFERENCES `prefix_user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5951 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=6014 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -803,7 +804,7 @@ CREATE TABLE `prefix_topic` (
   KEY `topic_count_comment` (`topic_count_comment`),
   CONSTRAINT `prefix_topic_fk` FOREIGN KEY (`blog_id`) REFERENCES `prefix_blog` (`blog_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `prefix_topic_fk1` FOREIGN KEY (`user_id`) REFERENCES `prefix_user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=3214 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3280 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -903,7 +904,7 @@ CREATE TABLE `prefix_topic_tag` (
   CONSTRAINT `prefix_topic_tag_fk` FOREIGN KEY (`topic_id`) REFERENCES `prefix_topic` (`topic_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `prefix_topic_tag_fk1` FOREIGN KEY (`user_id`) REFERENCES `prefix_user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `prefix_topic_tag_fk2` FOREIGN KEY (`blog_id`) REFERENCES `prefix_blog` (`blog_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=10521 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=10684 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -952,7 +953,7 @@ CREATE TABLE `prefix_user` (
   KEY `user_activate` (`user_activate`),
   KEY `user_rating` (`user_rating`),
   KEY `user_profile_sex` (`user_profile_sex`)
-) ENGINE=InnoDB AUTO_INCREMENT=1683 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1743 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -983,7 +984,7 @@ CREATE TABLE `prefix_user_cast_history` (
   `user_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_user_cast_history` (`target`,`target_id`,`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2011 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=2043 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -1165,7 +1166,7 @@ CREATE TABLE `prefix_wall` (
   KEY `user_id` (`user_id`),
   CONSTRAINT `prefix_wall_ibfk_1` FOREIGN KEY (`wall_user_id`) REFERENCES `prefix_user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `prefix_wall_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `prefix_user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=750 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=758 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -1177,4 +1178,4 @@ CREATE TABLE `prefix_wall` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-12-25 18:31:38
+-- Dump completed on 2018-01-29  0:45:26

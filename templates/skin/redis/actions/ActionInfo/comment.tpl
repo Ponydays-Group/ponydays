@@ -48,7 +48,7 @@
 
 
             <div id="comment_content_id_{$oComment->getId()}" class="comment-content text {if $oComment->getDelete()}hided{/if}">
-                {if $oComment->getDelete()}<div class="delete-reason">{if $oComment->getDeleteReason()}{$oComment->getDeleteReason()}{else}Нет причины удаления{/if}</div>{/if}
+                {if $oComment->getDelete()}{if $oComment->getUserDelete() != null} Комментарий удален пользователем <a href="/profile/{$oComment->getUserDelete()->getUserLogin()}/" class="ls-user">{$oComment->getUserDelete()->getUserLogin()}</a><br/><b>По причине:</b><br/>{/if}<div class="delete-reason">{if $oComment->getDeleteReason()}{$oComment->getDeleteReason()}{else}Нет причины удаления{/if}</div>{/if}
                 {if $oUserCurrent && ($oComment->getDelete() && ($bCanDelete || $oUserCurrent->getId()==$oUser->getId()))}
                     <a href="#" onclick="ls.comments.showHiddenComment({$oComment->getId()}); return false;">Раскрыть комментарий</a>
                 {/if}

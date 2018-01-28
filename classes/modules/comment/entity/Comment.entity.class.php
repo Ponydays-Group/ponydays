@@ -187,6 +187,14 @@ class ModuleComment_EntityComment extends Entity {
 		return $this->_getDataOne('user');
 	}
 	/**
+	 * Возвращает объект пользователя, удалившего комментарий
+	 *
+	 * @return ModuleUser_EntityUser|null
+	 */
+	public function getUserDelete() {
+		return $this->_getDataOne('user_delete');
+	}
+	/**
 	 * Возвращает объект владельца
 	 *
 	 * @return mixed|null
@@ -218,7 +226,6 @@ class ModuleComment_EntityComment extends Entity {
 	public function getCountFavourite() {
 		return $this->_getDataOne('comment_count_favourite');
 	}
-
     /**
      * Возвращает причину удаления комментария
      *
@@ -227,9 +234,25 @@ class ModuleComment_EntityComment extends Entity {
 	public function getDeleteReason() {
         return $this->_getDataOne('delete_reason');
     }
+    /**
+     * Возвращает ID пользователя, удалившего комментарий
+     *
+     * @return int|null
+     */
+	public function getDeleteUserId() {
+        return $this->_getDataOne('delete_user_id');
+    }
 
 
 
+    /**
+     * Устанавливает ID пользователя, удалившего комментарий
+     *
+     * @param int $data
+     */
+    public function setDeleteUserId($data) {
+        $this->_aData['delete_user_id']=$data;
+    }
     /**
      * Устанавливает причину удаления
      *
@@ -382,6 +405,14 @@ class ModuleComment_EntityComment extends Entity {
 	 */
 	public function setUser($data) {
 		$this->_aData['user']=$data;
+	}
+	/**
+	 * Устаналвает объект пользователя, удалившего комментарий
+	 *
+	 * @param ModuleUser_EntityUser $data
+	 */
+	public function setUserDelete($data) {
+		$this->_aData['user_delete']=$data;
 	}
 	/**
 	 * Устанавливает объект владельца

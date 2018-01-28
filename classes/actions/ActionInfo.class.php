@@ -135,6 +135,9 @@ class ActionInfo extends Action
         $oViewer = $this->Viewer_GetLocalViewer();
         $oViewer->Assign('oTarget', $oTarget);
         $oViewer->Assign('oComment', $oComment);
+        if ($oComment->getDelete()) {
+			$oComment->setUserDelete($this->User_GetUserById($oComment->getDeleteUserId()));
+		}
         $oViewer->Assign('bEnableVoteInfo', $this->ACL_CheckSimpleAccessLevel(Config::Get('acl.vote_list.comment.ne_enable_level'), $this->oUserCurrent, $oComment, 'comment'));
         $this->Viewer_AssignAjax('sText', $oViewer->Fetch("actions/ActionInfo/comment.tpl"));
     }

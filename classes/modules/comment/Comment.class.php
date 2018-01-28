@@ -101,7 +101,7 @@ class ModuleComment extends Module {
 	 */
 	public function GetCommentsAdditionalData($aCommentId,$aAllowData=null) {
 		if (is_null($aAllowData)) {
-			$aAllowData=array('vote','target','favourite','user'=>array(),'delete_reason');
+			$aAllowData=array('vote','target','favourite','user'=>array(),'delete_reason','delete_user_id');
 		}
 		func_array_simpleflip($aAllowData);
 		if (!is_array($aCommentId)) {
@@ -147,6 +147,9 @@ class ModuleComment extends Module {
 		foreach ($aComments as $oComment) {
 			if (isset($aUsers[$oComment->getUserId()])) {
 				$oComment->setUser($aUsers[$oComment->getUserId()]);
+				if ($oComment->getDelete()) {
+					$oComment->setUserDelete($this->User_GetUserById($oComment->getDeleteUserId()));
+				}
 			} else {
 				$oComment->setUser(null); // или $oComment->setUser(new ModuleUser_EntityUser());
 			}
@@ -1022,6 +1025,7 @@ class ModuleComment extends Module {
 		$aComment['isBad'] = $oComment->isBad();
         $aComment['isDeleted'] = (int)$oComment->getDelete();
         $aComment['deleteReason'] = $oComment->getDeleteReason();
+        $aComment['deleteUserId'] = $oComment->getDeleteUserId();
 		$aComment['isFavourite'] = $oComment->getIsFavourite();
 		$aComment['countFavourite'] = $oComment->getCountFavourite();
 		$aComment['rating'] = $oComment->getRating();

@@ -658,11 +658,12 @@ class ModuleComment_MapperComment extends Mapper {
 				comment_delete = ?d ,
 				delete_reason = ? ,
 				comment_publish = ?d ,
-				comment_text_hash = ?
+				comment_text_hash = ?,
+				delete_user_id = ?d
 			WHERE
 				comment_id = ?d
 		";
-		if ($this->oDb->query($sql,$oComment->getText(),$oComment->getRating(),$oComment->getCountVote(),$oComment->getCountFavourite(),$oComment->getDelete(),$oComment->getDeleteReason(),$oComment->getPublish(),$oComment->getTextHash(),$oComment->getId())) {
+		if ($this->oDb->query($sql,$oComment->getText(),$oComment->getRating(),$oComment->getCountVote(),$oComment->getCountFavourite(),$oComment->getDelete(),$oComment->getDeleteReason(),$oComment->getPublish(),$oComment->getTextHash(),$oComment->getDeleteUserId(),$oComment->getId())) {
 			return $this->UpdateEditCommentData($oComment);
 		}
 		return false;

@@ -1477,6 +1477,7 @@ class ActionAjax extends Action
          */
         $oComment->setDelete(($oComment->getDelete() + 1) % 2);
         $oComment->setDeleteReason($sDeleteReason);
+        $oComment->setDeleteUserId($this->oUserCurrent->getId());
         $this->Hook_Run('comment_delete_before', array(
             'oComment' => $oComment
         ));

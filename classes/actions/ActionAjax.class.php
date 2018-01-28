@@ -108,6 +108,8 @@ class ActionAjax extends Action
 
         if ((int)getRequest('iUnban')) {
             $this->User_Unban($iUserId);
+			$sLogText = $this->oUserCurrent->getLogin()." разбанил пользователя ".$iUserId;
+			$this->Logger_Notice($sLogText);
             return;
         }
 
@@ -1495,10 +1497,14 @@ class ActionAjax extends Action
         if ($bState = (bool)$oComment->getDelete()) {
             $sMsg = $this->Lang_Get('comment_delete_ok');
             $sTextToggle = $this->Lang_Get('comment_repair');
+			$sLogText = $this->oUserCurrent->getLogin()." удалил комментарий ".$oComment->getId();
+			$this->Logger_Notice($sLogText);
         }
         else {
             $sMsg = $this->Lang_Get('comment_repair_ok');
             $sTextToggle = $this->Lang_Get('comment_delete');
+			$sLogText = $this->oUserCurrent->getLogin()." восстановил комментарий ".$oComment->getId();
+			$this->Logger_Notice($sLogText);
         }
 
         $curl_data = array(
@@ -1526,8 +1532,6 @@ class ActionAjax extends Action
         $this->Viewer_AssignAjax('bState', $bState);
         $this->Viewer_AssignAjax('sTextToggle', $sTextToggle);
 
-        $sLogText = $this->oUserCurrent->getLogin()." удалил комментарий ".$oComment->getId();
-        $this->Logger_Notice($sLogText);
     }
 
     protected

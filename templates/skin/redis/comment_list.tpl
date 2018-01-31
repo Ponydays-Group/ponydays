@@ -14,7 +14,7 @@
 		
 		
 		<section class="comment">
-			<a href="{$oUser->getUserWebPath()}"><img src="{$oUser->getProfileAvatarPath(48)}" alt="avatar" class="comment-avatar" /></a>
+			<a href="{$oUser->getUserWebPath()}"><img src="{$oComment->getUserAvatar()}" height="48" width="48" alt="avatar" class="comment-avatar" /></a>
 		
 		
 			<ul class="comment-info clearfix">

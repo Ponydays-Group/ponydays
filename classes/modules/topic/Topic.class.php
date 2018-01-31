@@ -1670,7 +1670,7 @@ class ModuleTopic extends Module {
 		 * Передаем изображение на обработку
 		 */
                 $dir = Config::Get('plugin.staticdomain.static_server').'/';
-                $hash = hash_file("crc32", $sFileTmp);
+                $hash = hash_file("sha1", $sFileTmp);
                 $type = substr($sUrl, strrpos($sUrl, ".")+1);
                 $fullname = $hash . "." . $type;
                 if (!file_exists($dir.$fullname)){

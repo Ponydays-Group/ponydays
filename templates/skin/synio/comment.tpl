@@ -19,7 +19,7 @@
 		
 		<div class="folding"></div>
 		
-		<a href="{$oUser->getUserWebPath()}"><img src="{$oUser->getProfileAvatarPath(48)}" alt="avatar" class="comment-avatar" /></a>
+		<a href="{$oUser->getUserWebPath()}"><img src="{$oComment->getUserAvatar()}" height="48" width="48" alt="avatar" class="comment-avatar" /></a>
 		
 		<div id="comment_content_id_{$oComment->getId()}" class="comment-content">
 			<div class=" text">

@@ -22,6 +22,6 @@
             "plug": "___path.root.engine___/modules/viewer/plugs"
         }
     },
-    "static_web": "//static.lunavod.ru/",
+    "static_web": "//static.frumscepend.com/",
     "static_server": "/var/www/static"
 }

@@ -242,6 +242,22 @@ class ModuleComment_EntityComment extends Entity {
 	public function getDeleteUserId() {
         return $this->_getDataOne('delete_user_id');
     }
+    /**
+     * Возвращает аватар пользователя на момент написания комментария
+     *
+     * @return string|null
+     */
+	public function getUserAvatar() {
+        return $this->_getDataOne('user_avatar');
+    }
+    /**
+     * Возвращает ранк пользователя на момент написания комментария
+     *
+     * @return string|null
+     */
+	public function getUserRank() {
+        return $this->_getDataOne('user_rank');
+    }
 
 
 
@@ -445,6 +461,22 @@ class ModuleComment_EntityComment extends Entity {
 	 */
 	public function setCountFavourite($data) {
 		$this->_aData['comment_count_favourite']=$data;
+	}
+	/**
+	 * Устанавливает аватар пользователя на момент написания комментария
+	 *
+	 * @param string $data
+	 */
+	public function setUserAvatar($data) {
+		$this->_aData['user_avatar']=$data;
+	}
+	/**
+	 * Устанавливает ранк пользователя на момент написания комментария
+	 *
+	 * @param string $data
+	 */
+	public function setUserRank($data) {
+		$this->_aData['user_rank']=$data;
 	}
 }
 ?>

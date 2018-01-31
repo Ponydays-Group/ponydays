@@ -522,11 +522,13 @@ class ModuleComment_MapperComment extends Mapper {
 			comment_date,
 			comment_user_ip,
 			comment_publish,
-			comment_text_hash
+			comment_text_hash,
+			user_rank,
+			user_avatar
 			)
-			VALUES(?, ?d, ?, ?d, ?d, ?, ?, ?, ?d, ?)
+			VALUES(?, ?d, ?, ?d, ?d, ?, ?, ?, ?d, ?, ?, ?)
 		";
-		if ($iId=$this->oDb->query($sql,$oComment->getPid(),$oComment->getTargetId(),$oComment->getTargetType(),$oComment->getTargetParentId(),$oComment->getUserId(),$oComment->getText(),$oComment->getDate(),$oComment->getUserIp(),$oComment->getPublish(),$oComment->getTextHash()))
+		if ($iId=$this->oDb->query($sql,$oComment->getPid(),$oComment->getTargetId(),$oComment->getTargetType(),$oComment->getTargetParentId(),$oComment->getUserId(),$oComment->getText(),$oComment->getDate(),$oComment->getUserIp(),$oComment->getPublish(),$oComment->getTextHash(),$oComment->getUserRank(),$oComment->getUserAvatar()))
 		{
             $oComment->setId($iId);
             $oComment->setEditDate($oComment->getDate());

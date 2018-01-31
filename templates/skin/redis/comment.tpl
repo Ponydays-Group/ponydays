@@ -27,7 +27,7 @@
 
 	<a name="comment{$oComment->getId()}"></a>
 
-	<a href="{$oUser->getUserWebPath()}" target="_blank"><img src="{$oUser->getProfileAvatarPath(48)}" alt="avatar" class="comment-avatar" /></a>
+	<a href="{$oUser->getUserWebPath()}" target="_blank"><img src="{$oComment->getUserAvatar()}" height="48" width="48" alt="avatar" class="comment-avatar" /></a>
 
 	<div class="fold" onclick="foldBranch('{$oComment->getId()}')"><i class='material-icons'>keyboard_arrow_up</i></div>
 	<div class="unfold" onclick="unfoldBranch('{$oComment->getId()}')"><i class='material-icons'>keyboard_arrow_down</i></div>
@@ -36,7 +36,7 @@
 	<ul class="comment-info">
 		<li class="comment-author"><a href="{$oUser->getUserWebPath()}" target="_blank">{$oUser->getLogin()}</a></li>
 
-        {if $oUser->getRank()}<li class="author-rank">{$oUser->getRank()}</li>{/if}
+        {if $oUser->getRank()}<li class="author-rank">{$oComment->getUserRank()}</li>{/if}
 
 	</ul>
 

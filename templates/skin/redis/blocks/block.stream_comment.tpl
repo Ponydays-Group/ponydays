@@ -5,7 +5,7 @@
 		{assign var="oBlog" value=$oTopic->getBlog()}
 
 		<li class="js-title-comment">
-			<a href="{$oUser->getUserWebPath()}"><img src="{$oUser->getProfileAvatarPath(48)}" alt="avatar" class="avatar" /></a>
+			<a href="{$oUser->getUserWebPath()}"><img src="{$oComment->getUserAvatar()}" height="48" width="48" alt="avatar" class="avatar" /></a>
 
 			<a href="{if $oConfig->GetValue('module.comment.nested_per_page')}{router page='comments'}{else}{$oTopic->getUrl()}#comment{/if}{$oComment->getId()}">{$oTopic->getTitle()|escape:'html'}</a>
 			<a href="{$oBlog->getUrlFull()}">{$oBlog->getTitle()}</a>

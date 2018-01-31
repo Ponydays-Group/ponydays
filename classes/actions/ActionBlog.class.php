@@ -1228,6 +1228,9 @@ class ActionBlog extends Action
         $oCommentNew->setPid($sParentId);
         $oCommentNew->setTextHash(md5($sText));
         $oCommentNew->setPublish($oTopic->getPublish());
+        $oCommentNew->setUserRank($this->oUserCurrent->getRank());
+		$sFile = $this->Topic_UploadTopicImageUrl('http:'.$this->oUserCurrent->getProfileAvatarPath(64), $this->oUserCurrent);
+        $oCommentNew->setUserAvatar($sFile);
         /**
          * Добавляем коммент
          */

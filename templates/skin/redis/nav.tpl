@@ -26,6 +26,7 @@
                             href="{router page='feedbacks'}">{$aLang.feedbacks.header}</a></li>
                 <li {if $sMenuHeadItemSelect=='quotes'}class="active"{/if}><a
                             href="{router page='quotes'}">{$aLang.quotes_title}</a></li>
+                <li><a href="https://ponyfiction.org/" target="_blank">Бибилотека Ponyfiction</a></li>
                 
 
                 {hook run='main_menu_item'}

@@ -165,7 +165,9 @@
                             ]
                         },
                         "type": "#text",
-                        "allowscriptaccess": "#text",
+                        "allowscriptaccess": [
+                            "never"
+                        ],
                         "allowfullscreen": "#text",
                         "width": "#int",
                         "height": "#int",
@@ -241,7 +243,7 @@
                     "name", {
                         "allowScriptAccess": {
                             "value": [
-                                "sameDomain"
+                                "never"
                             ]
                         },
                         "movie": {

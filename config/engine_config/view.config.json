@@ -4,6 +4,7 @@
         "name": "Ponydays dev",
         "description": "Description your site",
         "keywords": "site, google, internet",
+        "referrer_policy": "same-origin",
         "tinymce": false,
         "noindex": false,
         "img_resize_width": 0,

@@ -39,6 +39,9 @@
             "blocks": {
                 "right": {
                     "blocks/block.ad.tpl": {
+                        "priority": 30
+                    },
+                    "blocks/block.discord.tpl": {
                         "priority": 40
                     },
                     "blocks/block.bquote.tpl": {
@@ -147,6 +150,9 @@
                         "priority": 50
                     },
                     "blocks/block.ad.tpl": {
+                        "priority": 30
+                    },
+                    "blocks/block.discord.tpl": {
                         "priority": 40
                     },
                     "blocks/block.bquote.tpl": {

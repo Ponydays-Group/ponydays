@@ -97,6 +97,13 @@
                             "image-center",
                             "gray",
                             "image-center gray"
+                        ],
+                        "referrerpolicy": [
+                            "no-referrer",
+                            "no-referrer-when-downgrade",
+                            "origin",
+                            "origin-when-cross-origin",
+                            "unsafe-url"
                         ]
                     }
                 ],
@@ -123,6 +130,13 @@
                         "name": "#text",
                         "target": [
                             "_blank"
+                        ],
+                        "referrerpolicy": [
+                            "no-referrer",
+                            "no-referrer-when-downgrade",
+                            "origin",
+                            "origin-when-cross-origin",
+                            "unsafe-url"
                         ]
                     }
                 ],
@@ -200,7 +214,14 @@
                                 "soundcloud.com",
                                 "discordapp.com"
                             ]
-                        }
+                        },
+                        "referrerpolicy": [
+                            "no-referrer",
+                            "no-referrer-when-downgrade",
+                            "origin",
+                            "origin-when-cross-origin",
+                            "unsafe-url"
+                        ]
                     }
                 ],
                 [

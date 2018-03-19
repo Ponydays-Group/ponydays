@@ -22,6 +22,7 @@
     <meta name="description" content="{$sHtmlDescription}">
     <meta name="keywords" content="{$sHtmlKeywords}">
     <meta name="referrer" content="{cfg name="view.referrer_policy"}">
+    <meta name="robots" content="{cfg name="view.robots_policy"}">
 
     <link href="{cfg name='path.static.skin'}/images/favicon.ico?v1" rel="shortcut icon"/>
     <link rel="search" type="application/opensearchdescription+xml" href="{router page='search'}opensearch/"

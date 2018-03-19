@@ -5,6 +5,7 @@
         "description": "Description your site",
         "keywords": "site, google, internet",
         "referrer_policy": "same-origin",
+        "robots_policy": "noarchive",
         "tinymce": false,
         "noindex": false,
         "img_resize_width": 0,

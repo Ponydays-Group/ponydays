@@ -172,6 +172,11 @@ class ActionAdmin extends Action {
                 "type" => "string",
                 "description" => "Имя отправителя в почтовике",
             ],
+            "sep5" => ["type"=>"separator", "description"=>"Комментарии"],
+            "module.comment.bad" => [
+                "type" => "int",
+                "description" => "Порог скрытия комментария",
+            ],
         ];
 	    $this->Viewer_Assign("aConfig", $params);
     }

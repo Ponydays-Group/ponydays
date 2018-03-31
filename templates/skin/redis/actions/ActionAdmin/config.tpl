@@ -13,6 +13,11 @@
             <label for="{$sParamName}">{$aParam['description']}</label>
             <input type="text" name="{$sParamName}" id="{$sParamName}" value="{$val}" />
         </div>
+    {elseif $aParam['type']=="int"}
+        <div class="config-param" data-name="{$sParamName}" data-val="{$val}">
+            <label for="{$sParamName}">{$aParam['description']}</label>
+            <input type="number" name="{$sParamName}" id="{$sParamName}" value="{$val}" />
+        </div>
     {elseif $aParam['type']=="list"}
         <div class="config-param" data-separator=", " data-name="{$sParamName}" data-val="{implode(", ",$val)}">
             <label for="{$sParamName}">{$aParam['description']}</label>

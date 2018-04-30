@@ -73,7 +73,7 @@
 
             <ul class="nav navbar-nav navbar-right" id="navbar-right-small">
                 <li class="with_dropd">
-                    <a href="{if $oUserCurrent}{$oUserCurrent->getUserWebPath()}{/if}"
+                    <a {if $oUserCurrent}href="{$oUserCurrent->getUserWebPath()}"{/if}
                        class="user-wrapper">{if $oUserCurrent}{/if}
                         <span class="avatar-wrapper"><img
                                     src="{if $oUserCurrent}{$oUserCurrent->getProfileAvatarPath(48)}{else}https://chenhan1218.github.io/img/profile.png{/if}"

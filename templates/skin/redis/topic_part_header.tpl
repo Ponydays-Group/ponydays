@@ -25,6 +25,7 @@
                 </span>
             </div>
         </div>
+	{if $oUserCurrent and (($oUserCurrent->isGlobalModerator() and $oTopic->getBlog()->getType() == "open") or $oUserCurrent->getId()==$oTopic->getUserId() or $oUserCurrent->isAdministrator() or $oBlog->getUserIsAdministrator() or $oBlog->getUserIsModerator() or $oBlog->getOwnerId()==$oUserCurrent->getId())}
         <div class="topic-more">
             <i class="material-icons">more_vert</i>
             <div class="topic-dropdown">
@@ -53,4 +54,5 @@
                 {/if}
             </div>
         </div>
+	{/if}
     </header>

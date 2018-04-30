@@ -736,7 +736,7 @@ export function initShortcuts() {
             e.preventDefault();
         }.bind(this))
         oFormText.on("keydown", null, i, function (e) {
-        	if (i=="ctrl+end" || i=="ctrl+home")
+        	if (i=="ctrl+end" || i=="ctrl+home" || i=="w" || i=="s")
         		return
             shortcuts[i].apply(this);
             e.preventDefault();

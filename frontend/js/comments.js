@@ -703,8 +703,10 @@ export function initShortcuts() {
     }
 
     let shortcuts = {
-        "enter": goToNextComment,
+	"ctrl+space": goToNextComment,
+        "s": goToNextComment,
         "ctrl+shift+space": goToPrevComment,
+	"w": goToPrevComment,
         "ctrl+up": goToPrevCommentS,
         "ctrl+down": goToNextCommentS,
         "ctrl+end": goToLastComment,

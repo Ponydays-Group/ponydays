@@ -195,6 +195,7 @@
                     "iframe", {
                         "width": "#int",
                         "height": "#int",
+                        "allowfullscreen": "#text",
                         "src": {
                             "#domain": [
                                 "music.yandex.ru",

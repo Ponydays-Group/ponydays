@@ -155,6 +155,14 @@ class ModuleTalk_EntityTalk extends Entity {
 	public function getTalkUsers() {
 		return $this->_getDataOne('talk_users');
 	}
+	/**
+	 * Возвращает флаг удаления разговора
+	 *
+	 * @return bool|null
+	 */
+	public function getDeleted() {
+		return $this->_getDataOne('talk_deleted');
+	}
 
 
 	/**
@@ -277,6 +285,14 @@ class ModuleTalk_EntityTalk extends Entity {
 	 */
 	public function setTalkUsers($data) {
 		$this->_aData['talk_users']=$data;
+	}
+	/**
+	 * Устанавливает флаг удаления разговора
+	 *
+	 * @param bool|null $data
+	 */
+	public function setDeleted($data) {
+		$this->_aData['talk_deleted']=$data;
 	}
 }
 ?>

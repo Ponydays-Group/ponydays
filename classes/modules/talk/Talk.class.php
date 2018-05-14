@@ -803,9 +803,10 @@ class ModuleTalk extends Module {
 	 * @param int $iTalkId	ID разговора
 	 */
 	public function RemoveTalk($iTalkId) {
-		$oTalk = $this->Talk_GetTalkById($iTalkId);
-		$oTalk->setDeleted(true);
-		$this->oMapper->UpdateTalk($oTalk);
+		if($oTalk = $this->Talk_GetTalkById($iTalkId)) {
+			$oTalk->setDeleted(true);
+			$this->oMapper->UpdateTalk($oTalk);
+		}
 	}
 }
 ?>

@@ -254,13 +254,17 @@ class ModuleFavourite_MapperFavourite extends Mapper {
 			$sWhere.=" AND t.topic_deleted = 0";
 		}
 		if ($sTargetType == 'comment') {
-
+			$sFrom.=",".Config::Get('db.table.comment')." AS c ";
+			$sWhere.=" AND f.target_id = c.comment_id";
+			$sWhere.=" AND c.comment_delete = 0";
 		}
 		if ($sTargetType == 'talk') {
-
+			$sFrom.=",".Config::Get('db.table.talk')." AS t ";
+			$sWhere.=" AND f.target_id = t.talk_id";
+			$sWhere.=" AND t.talk_deleted = 0";
 		}
 		$sql = "SELECT 		
-					count(target_id) as count									
+					count(f.target_id) as count									
 				FROM 
 					".$sFrom."								
 				WHERE

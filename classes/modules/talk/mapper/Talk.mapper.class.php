@@ -94,6 +94,8 @@ class ModuleTalk_MapperTalk extends Mapper {
 					".Config::Get('db.table.talk')." as t 
 				WHERE 
 					t.talk_id IN(?a) 									
+				AND
+					t.talk_deleted = 0
 				ORDER BY FIELD(t.talk_id,?a) ";
 		$aTalks=array();
 		if ($aRows=$this->oDb->select($sql,$aArrayId,$aArrayId)) {
@@ -149,7 +151,9 @@ class ModuleTalk_MapperTalk extends Mapper {
 				WHERE 
 					t.talk_id = ?d 					
 					AND
-					t.user_id=u.user_id					
+					t.user_id=u.user_id		
+					AND
+					t.talk_deleted = 0			
 					";
 
 		if ($aRow=$this->oDb->selectRow($sql,$sId)) {
@@ -313,6 +317,8 @@ class ModuleTalk_MapperTalk extends Mapper {
 					tu.talk_id=t.talk_id
 					AND
 					tu.talk_user_active = ?d	
+					AND
+					t.talk_deleted = 0
 				ORDER BY t.talk_date_last desc, t.talk_date desc
 				LIMIT ?d, ?d	
 					";
@@ -421,6 +427,7 @@ class ModuleTalk_MapperTalk extends Mapper {
 					tu.talk_id=t.talk_id
 					AND tu.talk_user_active = ?d
 					AND u.user_id=t.user_id
+					AND t.talk_deleted = 0
 					{ AND tu.user_id = ?d }
 					{ AND tu.talk_id IN (?a) }
 					{ AND ( tu.comment_count_new > ?d OR tu.date_last IS NULL ) }

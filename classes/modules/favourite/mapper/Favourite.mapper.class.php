@@ -294,6 +294,8 @@ class ModuleFavourite_MapperFavourite extends Mapper {
 					t.blog_id = b.blog_id
 				AND 
 					b.blog_type IN ('open', 'personal')	
+				AND
+					b.blog_deleted = 0
             ORDER BY target_id DESC	
             LIMIT ?d, ?d ";
 
@@ -336,6 +338,8 @@ class ModuleFavourite_MapperFavourite extends Mapper {
 						t.blog_id = b.blog_id
 					AND 
 						b.blog_type IN ('open', 'personal')		
+					AND
+						b.blog_deleted = 0
 					;";
 		return ( $aRow=$this->oDb->selectRow($sql,$sUserId) )
 			? $aRow['count']
@@ -370,6 +374,8 @@ class ModuleFavourite_MapperFavourite extends Mapper {
 					t.blog_id = b.blog_id
 				AND 
 					b.blog_type IN ('open', 'personal')	
+				AND
+					b.blog_deleted = 0
             ORDER BY target_id DESC	
             LIMIT ?d, ?d ";
 
@@ -408,7 +414,9 @@ class ModuleFavourite_MapperFavourite extends Mapper {
 					AND 
 						t.blog_id = b.blog_id
 					AND 
-						b.blog_type IN ('open', 'personal')		
+						b.blog_type IN ('open', 'personal')	
+					AND
+						b.blog_deleted = 0	
 					;";
 		return ( $aRow=$this->oDb->selectRow($sql,$sUserId) )
 			? $aRow['count']

@@ -104,7 +104,9 @@ class ModuleBlog_MapperBlog extends Mapper {
 				FROM 
 					".Config::Get('db.table.blog')."
 				WHERE 
-					blog_id IN(?a) 		
+					blog_id IN(?a)
+					AND
+					blog_deleted = 0
 				ORDER BY 						
 					{ FIELD(blog_id,?a) } ";
 		if ($sOrder!='') $sql.=$sOrder;
@@ -199,11 +201,14 @@ class ModuleBlog_MapperBlog extends Mapper {
         } else {
             $sWhere.=" AND bu.user_role>".ModuleBlog::BLOG_USER_ROLE_GUEST;
         }
+		$sWhere.=" AND b.blog_deleted = 0";
+		$sWhere.=" AND bu.blog_id = b.blog_id";
 
         $sql = "SELECT
 					bu.*				
 				FROM 
-					".Config::Get('db.table.blog_user')." as bu
+					".Config::Get('db.table.blog_user')." as bu,
+					".Config::Get('db.table.blog')." as b	
 				WHERE 
 					".$sWhere." ";
 
@@ -242,11 +247,14 @@ class ModuleBlog_MapperBlog extends Mapper {
         } else {
             $sWhere.=" AND bu.user_role>".ModuleBlog::BLOG_USER_ROLE_GUEST;
         }
+		$sWhere.=" AND b.blog_deleted = 0";
+		$sWhere.=" AND bu.blog_id = b.blog_id";
 
         $sql = "SELECT
 					bu.*				
 				FROM 
-					".Config::Get('db.table.blog_user')." as bu
+					".Config::Get('db.table.blog_user')." as bu,
+					".Config::Get('db.table.blog')." as b	
 				WHERE 
 					".$sWhere." ";
 
@@ -280,11 +288,16 @@ class ModuleBlog_MapperBlog extends Mapper {
 		$sql = "SELECT 
 					bu.*				
 				FROM 
-					".Config::Get('db.table.blog_user')." as bu
+					".Config::Get('db.table.blog_user')." as bu,
+					".Config::Get('db.table.blog')." as b	
 				WHERE 
-					bu.blog_id IN(?a) 					
+					bu.blog_id IN(?a) 
 					AND
-					bu.user_id = ?d ";
+					bu.blog_id = b.blog_id
+					AND 
+					b.blog_deleted = 0
+					AND
+					bu.user_id = ?d";
 		$aBlogUsers=array();
 		if ($aRows=$this->oDb->select($sql,$aArrayId,$sUserId)) {
 			foreach ($aRows as $aUser) {
@@ -313,7 +326,7 @@ class ModuleBlog_MapperBlog extends Mapper {
 	 * @return ModuleBlog_EntityBlog|null
 	 */
 	public function GetBlogByTitle($sTitle) {
-		$sql = "SELECT blog_id FROM ".Config::Get('db.table.blog')." WHERE blog_title = ? ";
+		$sql = "SELECT blog_id FROM ".Config::Get('db.table.blog')." WHERE blog_title = ? AND blog_deleted = 0";
 		if ($aRow=$this->oDb->selectRow($sql,$sTitle)) {
 			return $aRow['blog_id'];
 		}
@@ -331,7 +344,9 @@ class ModuleBlog_MapperBlog extends Mapper {
 			FROM 
 				".Config::Get('db.table.blog')." as b
 			WHERE 
-				b.blog_url = ? 		
+				b.blog_url = ?
+			AND 
+			  	b.blog_deleted = 0
 				";
 		if ($aRow=$this->oDb->selectRow($sql,$sUrl)) {
 			return $aRow['blog_id'];
@@ -350,7 +365,8 @@ class ModuleBlog_MapperBlog extends Mapper {
 			FROM 
 				".Config::Get('db.table.blog')." as b				
 			WHERE 
-				b.user_owner_id = ? 
+				b.user_owner_id = ?
+				AND b.blog_deleted = 0
 				";
 		$aBlogs=array();
 		if ($aRows=$this->oDb->select($sql,$sUserId)) {
@@ -370,7 +386,7 @@ class ModuleBlog_MapperBlog extends Mapper {
 			b.blog_id			 
 			FROM 
 				".Config::Get('db.table.blog')." as b				
-				";
+			WHERE b.blog_deleted = 0";
 		$aBlogs=array();
 		if ($aRows=$this->oDb->select($sql)) {
 			foreach ($aRows as $aBlog) {
@@ -391,7 +407,8 @@ class ModuleBlog_MapperBlog extends Mapper {
 		$sql = "SELECT 
 					b.blog_id													
 				FROM 
-					".Config::Get('db.table.blog')." as b 									 
+					".Config::Get('db.table.blog')." as b
+				WHERE b.blog_deleted = 0
 				ORDER by b.blog_rating desc
 				LIMIT ?d, ?d 	";
 		$aReturn=array();
@@ -419,6 +436,8 @@ class ModuleBlog_MapperBlog extends Mapper {
 					bu.user_id = ?d
 					AND
 					bu.blog_id = b.blog_id
+					AND 
+					b.blog_deleted = 0
 				ORDER by b.blog_rating desc
 				LIMIT 0, ?d 
 				;	
@@ -445,6 +464,8 @@ class ModuleBlog_MapperBlog extends Mapper {
 					".Config::Get('db.table.blog')." as b	
 				WHERE 						
 					b.user_owner_id = ?d
+					AND 
+					blog_deleted = 0
 				ORDER by b.blog_rating desc
 				LIMIT 0, ?d 
 			;";
@@ -465,6 +486,7 @@ class ModuleBlog_MapperBlog extends Mapper {
 		$sql = "SELECT b.blog_id										
 				FROM ".Config::Get('db.table.blog')." as b					
 				WHERE b.blog_type='close'
+				AND blog_deleted = 0
 			;";
 		$aReturn=array();
 		if ($aRows=$this->oDb->select($sql)) {
@@ -484,6 +506,7 @@ class ModuleBlog_MapperBlog extends Mapper {
                 $sql = "SELECT b.blog_id
                                 FROM ".Config::Get('db.table.blog')." as b
                                 WHERE b.blog_type='invite'
+                                AND blog_deleted = 0
                         ;";
                 $aReturn=array();
                 if ($aRows=$this->oDb->select($sql)) {
@@ -595,6 +618,7 @@ class ModuleBlog_MapperBlog extends Mapper {
 					{ AND blog_type not IN (?a) }
 					{ AND blog_url = ? }
 					{ AND blog_title LIKE ? }
+					AND blog_deleted = 0
 				ORDER by {$sOrder}
 				LIMIT ?d, ?d ;
 					";

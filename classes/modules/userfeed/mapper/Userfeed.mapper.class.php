@@ -95,6 +95,8 @@ class ModuleUserfeed_MapperUserfeed extends Mapper {
                                                                 ".Config::Get('db.table.blog')." as b
                                                         WHERE
                                                                 t.topic_publish = 1
+																AND
+																b.blog_deleted = 0
                                                                 AND t.blog_id=b.blog_id
                                                                 { AND t.topic_id < ?d }
 

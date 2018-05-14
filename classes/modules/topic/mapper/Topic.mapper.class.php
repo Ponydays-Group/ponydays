@@ -221,7 +221,9 @@ class ModuleTopic_MapperTopic extends Mapper {
 						1=1					
 						".$sWhere."
 						AND
-						t.blog_id=b.blog_id										
+						t.blog_id=b.blog_id	
+						AND
+						b.blog_deleted = 0									
 					ORDER BY ".
 			implode(', ', $aFilter['order'])
 			."
@@ -249,9 +251,9 @@ class ModuleTopic_MapperTopic extends Mapper {
 					".Config::Get('db.table.blog')." as b
 				WHERE 
 					1=1
-					
-					".$sWhere."								
-					
+					".$sWhere."
+					AND
+					b.blog_deleted = 0
 					AND
 					t.blog_id=b.blog_id;";
 		if ($aRow=$this->oDb->selectRow($sql)) {
@@ -283,6 +285,8 @@ class ModuleTopic_MapperTopic extends Mapper {
 					WHERE 
 						1=1					
 						".$sWhere."
+						AND
+						b.blog_deleted = 0
 						AND
 						t.blog_id=b.blog_id										
 					ORDER by ".implode(', ', $aFilter['order'])." ";
@@ -425,6 +429,8 @@ class ModuleTopic_MapperTopic extends Mapper {
 				{ AND tt.user_id = ?d }
 				AND
 				tt.blog_id = b.blog_id
+				AND
+				b.blog_deleted = 0
 				AND
 				b.blog_type <> 'close'
 			GROUP BY 

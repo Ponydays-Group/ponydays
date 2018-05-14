@@ -442,6 +442,14 @@ class ModuleTopic_EntityTopic extends Entity {
 		}
 		return $this->Subscribe_GetSubscribeByTargetAndMail('topic_new_comment',$this->getId(),$oUserCurrent->getMail());
 	}
+	/**
+	 * Возвращает флаг удаления топика
+	 *
+	 * @return bool|null
+	 */
+	public function getDeleted() {
+		return $this->_getDataOne('topic_deleted');
+	}
 
 	/***************************************************************************************************************************************************
 	 * методы расширения типов топика
@@ -990,6 +998,14 @@ class ModuleTopic_EntityTopic extends Entity {
 	 */
 	public function setCountFavourite($data) {
 		$this->_aData['topic_count_favourite']=$data;
+	}
+	/**
+	 * Устанавливает флаг удаления топика
+	 *
+	 * @param bool|null $data
+	 */
+	public function setDeleted($data) {
+		$this->_aData['topic_deleted']=$data;
 	}
 	
 	public function isControlLocked() {

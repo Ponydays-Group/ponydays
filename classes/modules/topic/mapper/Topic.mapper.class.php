@@ -158,6 +158,8 @@ class ModuleTopic_MapperTopic extends Mapper {
 				topic_text_hash =? 						
 				AND
 				user_id = ?d
+				AND
+				topic_deleted = 0
 			LIMIT 0,1
 				";
 		if ($aRow=$this->oDb->selectRow($sql,$sHash,$sUserId)) {
@@ -183,7 +185,9 @@ class ModuleTopic_MapperTopic extends Mapper {
 					".Config::Get('db.table.topic')." as t	
 					JOIN  ".Config::Get('db.table.topic_content')." AS tc ON t.topic_id=tc.topic_id				
 				WHERE 
-					t.topic_id IN(?a) 									
+					t.topic_id IN(?a)
+				AND
+					t.topic_deleted = 0
 				ORDER BY FIELD(t.topic_id,?a) ";
 		$aTopics=array();
 		if ($aRows=$this->oDb->select($sql,$aArrayId,$aArrayId)) {
@@ -221,7 +225,11 @@ class ModuleTopic_MapperTopic extends Mapper {
 						1=1					
 						".$sWhere."
 						AND
-						t.blog_id=b.blog_id										
+						t.blog_id=b.blog_id	
+						AND
+						b.blog_deleted = 0	
+						AND
+						t.topic_deleted = 0									
 					ORDER BY ".
 			implode(', ', $aFilter['order'])
 			."
@@ -249,9 +257,11 @@ class ModuleTopic_MapperTopic extends Mapper {
 					".Config::Get('db.table.blog')." as b
 				WHERE 
 					1=1
-					
-					".$sWhere."								
-					
+					".$sWhere."
+					AND
+					b.blog_deleted = 0
+					AND
+					t.topic_deleted = 0
 					AND
 					t.blog_id=b.blog_id;";
 		if ($aRow=$this->oDb->selectRow($sql)) {
@@ -283,6 +293,10 @@ class ModuleTopic_MapperTopic extends Mapper {
 					WHERE 
 						1=1					
 						".$sWhere."
+						AND
+						b.blog_deleted = 0
+						AND
+						t.topic_deleted = 0
 						AND
 						t.blog_id=b.blog_id										
 					ORDER by ".implode(', ', $aFilter['order'])." ";
@@ -349,6 +363,8 @@ class ModuleTopic_MapperTopic extends Mapper {
 						t.topic_date_add >= ?
 						AND
 						t.topic_rating >= 0
+						AND
+						t.topic_deleted = 0
 						{ AND t.blog_id NOT IN(?a) } 																	
 					ORDER by t.topic_rating desc, t.topic_id desc
 					LIMIT 0, ?d ";
@@ -426,6 +442,8 @@ class ModuleTopic_MapperTopic extends Mapper {
 				AND
 				tt.blog_id = b.blog_id
 				AND
+				b.blog_deleted = 0
+				AND
 				b.blog_type <> 'close'
 			GROUP BY 
 				tt.topic_tag_text
@@ -492,11 +510,12 @@ class ModuleTopic_MapperTopic extends Mapper {
 				topic_count_favourite= ?d,
 				topic_cut_text = ? ,
 				topic_forbid_comment = ? ,
-				topic_text_hash = ? 
+				topic_text_hash = ?,
+				topic_deleted = ?
 			WHERE
 				topic_id = ?d
 		";
-		if ($this->oDb->query($sql,$oTopic->getBlogId(),$oTopic->getTitle(),$oTopic->getTags(),$oTopic->getDateAdd(),$oTopic->getDateEdit(),$oTopic->getUserIp(),$oTopic->getPublish(),$oTopic->getPublishDraft(),$oTopic->getPublishIndex(),$oTopic->getRating(),$oTopic->getCountVote(),$oTopic->getCountVoteUp(),$oTopic->getCountVoteDown(),$oTopic->getCountVoteAbstain(),$oTopic->getCountRead(),$oTopic->getCountComment(),$oTopic->getCountFavourite(),$oTopic->getCutText(),$oTopic->getForbidComment(),$oTopic->getTextHash(),$oTopic->getId())) {
+		if ($this->oDb->query($sql,$oTopic->getBlogId(),$oTopic->getTitle(),$oTopic->getTags(),$oTopic->getDateAdd(),$oTopic->getDateEdit(),$oTopic->getUserIp(),$oTopic->getPublish(),$oTopic->getPublishDraft(),$oTopic->getPublishIndex(),$oTopic->getRating(),$oTopic->getCountVote(),$oTopic->getCountVoteUp(),$oTopic->getCountVoteDown(),$oTopic->getCountVoteAbstain(),$oTopic->getCountRead(),$oTopic->getCountComment(),$oTopic->getCountFavourite(),$oTopic->getCutText(),$oTopic->getForbidComment(),$oTopic->getTextHash(),$oTopic->getDeleted(),$oTopic->getId())) {
 			$this->UpdateTopicContent($oTopic);
 			return true;
 		}
@@ -769,6 +788,8 @@ class ModuleTopic_MapperTopic extends Mapper {
 				blog_id= ?d
 			WHERE
 				topic_id IN(?a)
+			AND
+				topic_deleted = 0
 		";
 		if ($this->oDb->query($sql,$sBlogId,$aTopics)) {
 			return true;
@@ -788,6 +809,8 @@ class ModuleTopic_MapperTopic extends Mapper {
 				blog_id= ?d
 			WHERE
 				blog_id = ?d
+			AND
+				topic_deleted = 0
 		";
 		if ($this->oDb->query($sql,$sBlogIdNew,$sBlogId)) {
 			return true;

@@ -198,6 +198,14 @@ class ModuleBlog_EntityBlog extends Entity {
 		return $this->_getDataOne('user_is_moderator');
 	}
 	/**
+	 * Возвращает флаг удаления блога
+	 *
+	 * @return bool|null
+	 */
+	public function getDeleted() {
+		return $this->_getDataOne('blog_deleted');
+	}
+	/**
 	 * Возвращает полный URL блога
 	 *
 	 * @return string
@@ -357,6 +365,14 @@ class ModuleBlog_EntityBlog extends Entity {
 	 */
 	public function setVote($data) {
 		$this->_aData['vote']=$data;
+	}
+	/**
+	 * Устанавливает флаг удаления блога
+	 *
+	 * @param bool|null $data
+	 */
+	public function setDeleted($data) {
+		$this->_aData['blog_deleted']=$data;
 	}
 }
 ?>

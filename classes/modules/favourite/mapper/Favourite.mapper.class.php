@@ -241,17 +241,34 @@ class ModuleFavourite_MapperFavourite extends Mapper {
 	 * @return array
 	 */
 	public function GetCountFavouritesByUserId($sUserId,$sTargetType,$aExcludeTarget) {
+		$sFrom = Config::Get('db.table.favourite')." AS f ";
+		$sWhere = "	f.user_id = ?
+					AND
+						f.target_publish = 1
+					AND
+						f.target_type = ?
+					{ AND f.target_id NOT IN (?a) }";
+		if ($sTargetType == 'topic') {
+			$sFrom.=",".Config::Get('db.table.topic')." AS t ";
+			$sWhere.=" AND f.target_id = t.topic_id";
+			$sWhere.=" AND t.topic_deleted = 0";
+		}
+		if ($sTargetType == 'comment') {
+			$sFrom.=",".Config::Get('db.table.comment')." AS c ";
+			$sWhere.=" AND f.target_id = c.comment_id";
+			$sWhere.=" AND c.comment_delete = 0";
+		}
+		if ($sTargetType == 'talk') {
+			$sFrom.=",".Config::Get('db.table.talk')." AS t ";
+			$sWhere.=" AND f.target_id = t.talk_id";
+			$sWhere.=" AND t.talk_deleted = 0";
+		}
 		$sql = "SELECT 		
-					count(target_id) as count									
+					count(f.target_id) as count									
 				FROM 
-					".Config::Get('db.table.favourite')."								
-				WHERE 
-						user_id = ?
-					AND
-						target_publish = 1
-					AND
-						target_type = ?
-					{ AND target_id NOT IN (?a) }		
+					".$sFrom."								
+				WHERE
+					".$sWhere."		
 					;";
 		return ( $aRow=$this->oDb->selectRow(
 			$sql,$sUserId,
@@ -294,6 +311,10 @@ class ModuleFavourite_MapperFavourite extends Mapper {
 					t.blog_id = b.blog_id
 				AND 
 					b.blog_type IN ('open', 'personal')	
+				AND
+					b.blog_deleted = 0
+				AND
+					t.topic_deleted = 0
             ORDER BY target_id DESC	
             LIMIT ?d, ?d ";
 
@@ -336,6 +357,10 @@ class ModuleFavourite_MapperFavourite extends Mapper {
 						t.blog_id = b.blog_id
 					AND 
 						b.blog_type IN ('open', 'personal')		
+					AND
+						b.blog_deleted = 0
+					AND
+						t.topic_deleted = 0
 					;";
 		return ( $aRow=$this->oDb->selectRow($sql,$sUserId) )
 			? $aRow['count']
@@ -370,6 +395,10 @@ class ModuleFavourite_MapperFavourite extends Mapper {
 					t.blog_id = b.blog_id
 				AND 
 					b.blog_type IN ('open', 'personal')	
+				AND
+					b.blog_deleted = 0	
+				AND
+					t.topic_deleted = 0
             ORDER BY target_id DESC	
             LIMIT ?d, ?d ";
 
@@ -408,7 +437,11 @@ class ModuleFavourite_MapperFavourite extends Mapper {
 					AND 
 						t.blog_id = b.blog_id
 					AND 
-						b.blog_type IN ('open', 'personal')		
+						b.blog_type IN ('open', 'personal')	
+					AND
+						b.blog_deleted = 0	
+					AND
+						t.topic_deleted = 0
 					;";
 		return ( $aRow=$this->oDb->selectRow($sql,$sUserId) )
 			? $aRow['count']

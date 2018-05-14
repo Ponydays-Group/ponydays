@@ -434,15 +434,15 @@ class ModuleACL extends Module {
 			return self::CAN_DELETE_BLOG_WITH_TOPICS;
 		}
 		/**
-		 * Разрешаем удалять администраторам блога и автору, но только пустой
+		 * Разрешаем удалять администраторам блога и автору
 		 */
 		if($oBlog->getOwnerId()==$oUser->getId()) {
-			return self::CAN_DELETE_BLOG_EMPTY_ONLY;
+			return self::CAN_DELETE_BLOG_WITH_TOPICS;
 		}
 
 		$oBlogUser=$this->Blog_GetBlogUserByBlogIdAndUserId($oBlog->getId(),$oUser->getId());
 		if($oBlogUser and $oBlogUser->getIsAdministrator()) {
-			return self::CAN_DELETE_BLOG_EMPTY_ONLY;
+			return self::CAN_DELETE_BLOG_WITH_TOPICS;
 		}
 		return false;
 	}

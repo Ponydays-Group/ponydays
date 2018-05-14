@@ -131,7 +131,7 @@ class ActionBlog extends Action
 
         $this->AddEvent('add', 'EventAddBlog');
         $this->AddEvent('edit', 'EventEditBlog');
-        $this->AddEvent('delete', 'EventDeleteBlog');
+        $this->AddEvent('delete', 'EventRemoveBlog');
         $this->AddEventPreg('/^admin$/i', '/^\d+$/i', '/^(page([1-9]\d{0,5}))?$/i', 'EventAdminBlog');
         $this->AddEvent('invite', 'EventInviteBlog');
 
@@ -1873,6 +1873,54 @@ class ActionBlog extends Action
          */
         $this->Hook_Run('blog_delete_before', array('sBlogId' => $sBlogId));
         if ($this->Blog_DeleteBlog($sBlogId)) {
+            $this->Hook_Run('blog_delete_after', array('sBlogId' => $sBlogId));
+            $this->Message_AddNoticeSingle($this->Lang_Get('blog_admin_delete_success'), $this->Lang_Get('attention'), true);
+            Router::Location(Router::GetPath('blogs'));
+        } else {
+            Router::Location($oBlog->getUrlFull());
+        }
+    }
+
+    /**
+     * Удаление блога в корзину
+     *
+     */
+    protected function EventRemoveBlog()
+    {
+        $this->Security_ValidateSendForm();
+        /**
+         * Проверяем передан ли в УРЛе номер блога
+         */
+        $sBlogId = $this->GetParam(0);
+        if (!$oBlog = $this->Blog_GetBlogById($sBlogId)) {
+            return parent::EventNotFound();
+        }
+        /**
+         * Проверям авторизован ли пользователь
+         */
+        if (!$this->User_IsAuthorization()) {
+            $this->Message_AddErrorSingle($this->Lang_Get('not_access'), $this->Lang_Get('error'));
+            return Router::Action('error');
+        }
+        /**
+         * проверяем есть ли право на удаление топика
+         */
+        if (!$bAccess = $this->ACL_IsAllowDeleteBlog($oBlog, $this->oUserCurrent)) {
+            return parent::EventNotFound();
+        }
+        switch ($bAccess) {
+            case ModuleACL::CAN_DELETE_BLOG_EMPTY_ONLY :
+			case ModuleACL::CAN_DELETE_BLOG_WITH_TOPICS :
+                break;
+            default:
+                return parent::EventNotFound();
+        }
+        /**
+         * Удаляяем блог и перенаправляем пользователя к списку блогов
+         */
+        $this->Hook_Run('blog_delete_before', array('sBlogId' => $sBlogId));
+		$oBlog->setDeleted(true);
+		if ($this->Blog_UpdateBlog($oBlog)) {
             $this->Hook_Run('blog_delete_after', array('sBlogId' => $sBlogId));
             $this->Message_AddNoticeSingle($this->Lang_Get('blog_admin_delete_success'), $this->Lang_Get('attention'), true);
             Router::Location(Router::GetPath('blogs'));

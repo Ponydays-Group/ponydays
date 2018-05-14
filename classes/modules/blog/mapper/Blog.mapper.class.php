@@ -65,11 +65,12 @@ class ModuleBlog_MapperBlog extends Mapper {
 				blog_count_topic= ?d,
 				blog_limit_rating_topic= ?f ,
 				blog_url= ?,
-				blog_avatar= ?
+				blog_avatar= ?,
+				blog_deleted= ?
 			WHERE
 				blog_id = ?d
 		";
-		if ($this->oDb->query($sql,$oBlog->getTitle(),$oBlog->getDescription(),$oBlog->getType(),$oBlog->getDateEdit(),$oBlog->getRating(),$oBlog->getCountVote(),$oBlog->getCountUser(),$oBlog->getCountTopic(),$oBlog->getLimitRatingTopic(),$oBlog->getUrl(),$oBlog->getAvatar(),$oBlog->getId())) {
+		if ($this->oDb->query($sql,$oBlog->getTitle(),$oBlog->getDescription(),$oBlog->getType(),$oBlog->getDateEdit(),$oBlog->getRating(),$oBlog->getCountVote(),$oBlog->getCountUser(),$oBlog->getCountTopic(),$oBlog->getLimitRatingTopic(),$oBlog->getUrl(),$oBlog->getAvatar(),$oBlog->getDeleted(),$oBlog->getId())) {
 			return true;
 		}
 		return false;

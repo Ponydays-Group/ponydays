@@ -70,11 +70,12 @@ class ModuleTalk_MapperTalk extends Mapper {
 				talk_date_last = ? ,
 				talk_user_id_last = ? ,
 				talk_comment_id_last = ? ,
-				talk_count_comment = ?
+				talk_count_comment = ?,
+				talk_deleted= ?
 			WHERE 
 				talk_id = ?d
 		";
-		return $this->oDb->query($sql,$oTalk->getDateLast(),$oTalk->getUserIdLast(),$oTalk->getCommentIdLast(),$oTalk->getCountComment(),$oTalk->getId());
+		return $this->oDb->query($sql,$oTalk->getDateLast(),$oTalk->getUserIdLast(),$oTalk->getCommentIdLast(),$oTalk->getCountComment(),$oTalk->getDeleted(),$oTalk->getId());
 	}
 	/**
 	 * Получить список разговоров по списку айдишников

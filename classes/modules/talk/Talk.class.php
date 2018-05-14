@@ -469,7 +469,7 @@ class ModuleTalk extends Module {
 		foreach ($aTalkId as $sTalkId) {
 			$sTalkId=(string)$sTalkId;
 			if (!count($this->GetUsersTalk($sTalkId, array(self::TALK_USER_ACTIVE)))) {
-				$this->DeleteTalk($sTalkId);
+				$this->RemoveTalk($sTalkId);
 			}
 		}
 		return $ret;
@@ -796,6 +796,16 @@ class ModuleTalk extends Module {
 		 * При удалении комментариев они удаляются из избранного,прямого эфира и голоса за них
 		 */
 		$this->Comment_DeleteCommentByTargetId($iTalkId,'talk');
+	}
+	/**
+	 * Удаление письма в корзину
+	 *
+	 * @param int $iTalkId	ID разговора
+	 */
+	public function RemoveTalk($iTalkId) {
+		$oTalk = $this->Talk_GetTalkById($iTalkId);
+		$oTalk->setDeleted(true);
+		$this->oMapper->UpdateTalk($oTalk);
 	}
 }
 ?>

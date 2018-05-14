@@ -77,7 +77,7 @@ class ActionTopic extends Action {
 		$this->AddEventPreg('/^published$/i','/^(page([1-9]\d{0,5}))?$/i','EventShowTopics');
 		$this->AddEventPreg('/^saved$/i','/^(page([1-9]\d{0,5}))?$/i','EventShowTopics');
 		$this->AddEvent('edit','EventEdit');
-		$this->AddEvent('delete','EventDelete');
+		$this->AddEvent('delete','EventRemove');
 	}
 
 
@@ -173,6 +173,41 @@ class ActionTopic extends Action {
 		 */
 		$this->Hook_Run('topic_delete_before', array('oTopic'=>$oTopic));
 		$this->Topic_DeleteTopic($oTopic);
+		$this->Hook_Run('topic_delete_after', array('oTopic'=>$oTopic));
+		/**
+		 * Перенаправляем на страницу со списком топиков из блога этого топика
+		 */
+		Router::Location($oTopic->getBlog()->getUrlFull());
+	}
+	/**
+	 * Удаление топика в корзину
+	 *
+	 */
+	protected function EventRemove() {
+
+		$this->Security_ValidateSendForm();
+		/**
+		 * Получаем номер топика из УРЛ и проверяем существует ли он
+		 */
+		$sTopicId=$this->GetParam(0);
+		if (!($oTopic=$this->Topic_GetTopicById($sTopicId))) {
+			return parent::EventNotFound();
+		}
+		/**
+		 * проверяем есть ли право на удаление топика
+		 */
+		if (!$this->ACL_IsAllowDeleteTopic($oTopic,$this->oUserCurrent)) {
+			return parent::EventNotFound();
+		}
+		/**
+		 * Удаляем топик
+		 */
+		$this->Hook_Run('topic_delete_before', array('oTopic'=>$oTopic));
+		$oTopic->setDeleted(true);
+		if ($this->Topic_UpdateTopic($oTopic)){
+		} else{
+			return parent::EventNotFound();
+		}
 		$this->Hook_Run('topic_delete_after', array('oTopic'=>$oTopic));
 		/**
 		 * Перенаправляем на страницу со списком топиков из блога этого топика

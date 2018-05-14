@@ -565,6 +565,8 @@ class ModuleBlog_MapperBlog extends Mapper {
                         t.blog_id = b.blog_id
                     AND
                         t.topic_publish = 1
+                    AND
+                    	t.topic_deleted = 0
                 )
                 WHERE 1=1
                 	{ and b.blog_id = ?d }

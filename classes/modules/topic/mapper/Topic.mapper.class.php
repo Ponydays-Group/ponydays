@@ -158,6 +158,8 @@ class ModuleTopic_MapperTopic extends Mapper {
 				topic_text_hash =? 						
 				AND
 				user_id = ?d
+				AND
+				topic_deleted = 0
 			LIMIT 0,1
 				";
 		if ($aRow=$this->oDb->selectRow($sql,$sHash,$sUserId)) {
@@ -183,7 +185,9 @@ class ModuleTopic_MapperTopic extends Mapper {
 					".Config::Get('db.table.topic')." as t	
 					JOIN  ".Config::Get('db.table.topic_content')." AS tc ON t.topic_id=tc.topic_id				
 				WHERE 
-					t.topic_id IN(?a) 									
+					t.topic_id IN(?a)
+				AND
+					t.topic_deleted = 0
 				ORDER BY FIELD(t.topic_id,?a) ";
 		$aTopics=array();
 		if ($aRows=$this->oDb->select($sql,$aArrayId,$aArrayId)) {
@@ -223,7 +227,9 @@ class ModuleTopic_MapperTopic extends Mapper {
 						AND
 						t.blog_id=b.blog_id	
 						AND
-						b.blog_deleted = 0									
+						b.blog_deleted = 0	
+						AND
+						t.topic_deleted = 0									
 					ORDER BY ".
 			implode(', ', $aFilter['order'])
 			."
@@ -254,6 +260,8 @@ class ModuleTopic_MapperTopic extends Mapper {
 					".$sWhere."
 					AND
 					b.blog_deleted = 0
+					AND
+					t.topic_deleted = 0
 					AND
 					t.blog_id=b.blog_id;";
 		if ($aRow=$this->oDb->selectRow($sql)) {
@@ -287,6 +295,8 @@ class ModuleTopic_MapperTopic extends Mapper {
 						".$sWhere."
 						AND
 						b.blog_deleted = 0
+						AND
+						t.topic_deleted = 0
 						AND
 						t.blog_id=b.blog_id										
 					ORDER by ".implode(', ', $aFilter['order'])." ";
@@ -353,6 +363,8 @@ class ModuleTopic_MapperTopic extends Mapper {
 						t.topic_date_add >= ?
 						AND
 						t.topic_rating >= 0
+						AND
+						t.topic_deleted = 0
 						{ AND t.blog_id NOT IN(?a) } 																	
 					ORDER by t.topic_rating desc, t.topic_id desc
 					LIMIT 0, ?d ";
@@ -776,6 +788,8 @@ class ModuleTopic_MapperTopic extends Mapper {
 				blog_id= ?d
 			WHERE
 				topic_id IN(?a)
+			AND
+				topic_deleted = 0
 		";
 		if ($this->oDb->query($sql,$sBlogId,$aTopics)) {
 			return true;
@@ -795,6 +809,8 @@ class ModuleTopic_MapperTopic extends Mapper {
 				blog_id= ?d
 			WHERE
 				blog_id = ?d
+			AND
+				topic_deleted = 0
 		";
 		if ($this->oDb->query($sql,$sBlogIdNew,$sBlogId)) {
 			return true;

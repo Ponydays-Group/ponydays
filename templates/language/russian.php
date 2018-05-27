@@ -115,6 +115,7 @@ return array(
 	 */
 	'blog_edit' => 'Редактировать',
 	'blog_delete' => 'Удалить',
+	'blog_deleted' => 'Корзина',
 	'blog_create' => 'Создание нового блога',
 	'blog_create_acl' => 'Вы еще не достаточно окрепли, чтобы создавать свой блог',
 	'blog_create_title' => 'Название блога',
@@ -170,6 +171,7 @@ return array(
 	'blog_admin_delete_move' => 'Переместить топики в блог',
 	'blog_delete_clear' => 'Удалить топики',
 	'blog_admin_delete_success' => 'Блог успешно удален',
+	'blog_admin_restore_success' => 'Блог успешно восстановлен',
 	'blog_admin_delete_not_empty' => 'Вы не можете удалить блок с записями. Предварительно удалите из блога все записи.',
 	'blog_admin_delete_move_error' => 'Не удалось переместить топики из удаляемого блога',
 	'blog_admin_delete_move_personal' => 'Нельзя перемещать топики в персональный блог',
@@ -275,6 +277,7 @@ return array(
 	'topic_edit' => 'Редактировать',
 	'topic_preview' => 'Предпросмотр',
 	'topic_delete' => 'Удалить',
+	'topic_restore' => 'Восстановить',
 	'topic_delete_confirm' => 'Вы действительно хотите удалить топик?',
 	/**
 	 * Топик-ссылка

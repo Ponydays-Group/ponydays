@@ -186,6 +186,110 @@ class ModuleTopic extends Module {
 		return $aTopics;
 	}
 	/**
+	 * Получает дополнительные данные(объекты) для удаленных топиков по их ID
+	 *
+	 * @param array $aTopicId	Список ID топиков
+	 * @param array|null $aAllowData Список типов дополнительных данных, которые нужно подключать к топикам
+	 * @return array
+	 */
+	public function GetDeletedTopicsAdditionalData($aTopicId,$aAllowData=null) {
+		if (is_null($aAllowData)) {
+			$aAllowData=array('user'=>array(),'blog'=>array('owner'=>array(),'relation_user'),'vote','favourite','comment_new');
+		}
+		func_array_simpleflip($aAllowData);
+		if (!is_array($aTopicId)) {
+			$aTopicId=array($aTopicId);
+		}
+		/**
+		 * Получаем "голые" топики
+		 */
+		$aTopics=$this->GetDeletedTopicsByArrayId($aTopicId);
+		/**
+		 * Формируем ID дополнительных данных, которые нужно получить
+		 */
+		$aUserId=array();
+		$aBlogId=array();
+		$aTopicIdQuestion=array();
+		$aPhotoMainId=array();
+		foreach ($aTopics as $oTopic) {
+			if (isset($aAllowData['user'])) {
+				$aUserId[]=$oTopic->getUserId();
+			}
+			if (isset($aAllowData['blog'])) {
+				$aBlogId[]=$oTopic->getBlogId();
+			}
+			if ($oTopic->getType()=='question')	{
+				$aTopicIdQuestion[]=$oTopic->getId();
+			}
+			if ($oTopic->getType()=='photoset' and $oTopic->getPhotosetMainPhotoId())	{
+				$aPhotoMainId[]=$oTopic->getPhotosetMainPhotoId();
+			}
+		}
+		/**
+		 * Получаем дополнительные данные
+		 */
+		$aTopicsVote=array();
+		$aFavouriteTopics=array();
+		$aTopicsQuestionVote=array();
+		$aTopicsRead=array();
+		$aUsers=isset($aAllowData['user']) && is_array($aAllowData['user']) ? $this->User_GetUsersAdditionalData($aUserId,$aAllowData['user']) : $this->User_GetUsersAdditionalData($aUserId);
+		$aBlogs=isset($aAllowData['blog']) && is_array($aAllowData['blog']) ? $this->Blog_GetBlogsAdditionalData($aBlogId,$aAllowData['blog']) : $this->Blog_GetBlogsAdditionalData($aBlogId);
+		if (isset($aAllowData['vote']) and $this->oUserCurrent) {
+			$aTopicsVote=$this->Vote_GetVoteByArray($aTopicId,'topic',$this->oUserCurrent->getId());
+			$aTopicsQuestionVote=$this->GetTopicsQuestionVoteByArray($aTopicIdQuestion,$this->oUserCurrent->getId());
+		}
+		if (isset($aAllowData['favourite']) and $this->oUserCurrent) {
+			$aFavouriteTopics=$this->GetFavouriteTopicsByArray($aTopicId,$this->oUserCurrent->getId());
+		}
+		if (isset($aAllowData['comment_new']) and $this->oUserCurrent) {
+			$aTopicsRead=$this->GetTopicsReadByArray($aTopicId,$this->oUserCurrent->getId());
+		}
+		$aPhotosetMainPhotos=$this->GetTopicPhotosByArrayId($aPhotoMainId);
+		/**
+		 * Добавляем данные к результату - списку топиков
+		 */
+		foreach ($aTopics as $oTopic) {
+			if (isset($aUsers[$oTopic->getUserId()])) {
+				$oTopic->setUser($aUsers[$oTopic->getUserId()]);
+			} else {
+				$oTopic->setUser(null); // или $oTopic->setUser(new ModuleUser_EntityUser());
+			}
+			if (isset($aBlogs[$oTopic->getBlogId()])) {
+				$oTopic->setBlog($aBlogs[$oTopic->getBlogId()]);
+			} else {
+				$oTopic->setBlog(null); // или $oTopic->setBlog(new ModuleBlog_EntityBlog());
+			}
+			if (isset($aTopicsVote[$oTopic->getId()])) {
+				$oTopic->setVote($aTopicsVote[$oTopic->getId()]);
+			} else {
+				$oTopic->setVote(null);
+			}
+			if (isset($aFavouriteTopics[$oTopic->getId()])) {
+				$oTopic->setFavourite($aFavouriteTopics[$oTopic->getId()]);
+			} else {
+				$oTopic->setFavourite(null);
+			}
+			if (isset($aTopicsQuestionVote[$oTopic->getId()])) {
+				$oTopic->setUserQuestionIsVote(true);
+			} else {
+				$oTopic->setUserQuestionIsVote(false);
+			}
+			if (isset($aTopicsRead[$oTopic->getId()]))	{
+				$oTopic->setCountCommentNew($oTopic->getCountComment()-$aTopicsRead[$oTopic->getId()]->getCommentCountLast());
+				$oTopic->setDateRead($aTopicsRead[$oTopic->getId()]->getDateRead());
+			} else {
+				$oTopic->setCountCommentNew(0);
+				$oTopic->setDateRead(date("Y-m-d H:i:s"));
+			}
+			if (isset($aPhotosetMainPhotos[$oTopic->getPhotosetMainPhotoId()])) {
+				$oTopic->setPhotosetMainPhoto($aPhotosetMainPhotos[$oTopic->getPhotosetMainPhotoId()]);
+			} else {
+				$oTopic->setPhotosetMainPhoto(null);
+			}
+		}
+		return $aTopics;
+	}
+	/**
 	 * Добавляет топик
 	 *
 	 * @param ModuleTopic_EntityTopic $oTopic	Объект топика
@@ -323,6 +427,9 @@ class ModuleTopic extends Module {
 		 * Получаем топик ДО изменения
 		 */
 		$oTopicOld=$this->GetTopicById($oTopic->getId());
+		if ($oTopicOld == null) {
+			$oTopicOld=$this->GetDeletedTopicById($oTopic->getId());
+		}
 		$oTopic->setDateEdit(date("Y-m-d H:i:s"));
 		if ($this->oMapperTopic->UpdateTopic($oTopic)) {
 			/**
@@ -395,6 +502,22 @@ class ModuleTopic extends Module {
 		return null;
 	}
 	/**
+	 * Получить удаленный топик по айдишнику
+	 *
+	 * @param int $sId	ID топика
+	 * @return ModuleTopic_EntityTopic|null
+	 */
+	public function GetDeletedTopicById($sId) {
+		if (!is_numeric($sId)) {
+			return null;
+		}
+		$aTopics=$this->GetDeletedTopicsAdditionalData($sId);
+		if (isset($aTopics[$sId])) {
+			return $aTopics[$sId];
+		}
+		return null;
+	}
+	/**
 	 * Получить список топиков по списку айдишников
 	 *
 	 * @param array $aTopicId	Список ID топиков
@@ -439,6 +562,51 @@ class ModuleTopic extends Module {
 		$aTopicIdNeedQuery=array_diff($aTopicIdNeedQuery,$aTopicIdNotNeedQuery);
 		$aTopicIdNeedStore=$aTopicIdNeedQuery;
 		if ($data = $this->oMapperTopic->GetTopicsByArrayId($aTopicIdNeedQuery)) {
+			foreach ($data as $oTopic) {
+				/**
+				 * Добавляем к результату и сохраняем в кеш
+				 */
+				$aTopics[$oTopic->getId()]=$oTopic;
+				$this->Cache_Set($oTopic, "topic_{$oTopic->getId()}", array(), 60*60*24*4);
+				$aTopicIdNeedStore=array_diff($aTopicIdNeedStore,array($oTopic->getId()));
+			}
+		}
+		/**
+		 * Сохраняем в кеш запросы не вернувшие результата
+		 */
+		foreach ($aTopicIdNeedStore as $sId) {
+			$this->Cache_Set(null, "topic_{$sId}", array(), 60*60*24*4);
+		}
+		/**
+		 * Сортируем результат согласно входящему массиву
+		 */
+		$aTopics=func_array_sort_by_keys($aTopics,$aTopicId);
+		return $aTopics;
+	}
+	/**
+	 * Получить список топиков по списку айдишников
+	 *
+	 * @param array $aTopicId	Список ID топиков
+	 * @return array
+	 */
+	public function GetDeletedTopicsByArrayId($aTopicId) {
+		if (!$aTopicId) {
+			return array();
+		}
+		if (!is_array($aTopicId)) {
+			$aTopicId=array($aTopicId);
+		}
+		$aTopicId=array_unique($aTopicId);
+		$aTopics=array();
+		$aTopicIdNotNeedQuery=array();
+		/**
+		 * Смотрим каких топиков не было в кеше и делаем запрос в БД
+		 */
+		$aTopicIdNeedQuery=array_diff($aTopicId,array_keys($aTopics));
+		$aTopicIdNeedQuery=array_diff($aTopicIdNeedQuery,$aTopicIdNotNeedQuery);
+		$aTopicIdNeedStore=$aTopicIdNeedQuery;
+
+		if ($data = $this->oMapperTopic->GetDeletedTopicsByArrayId($aTopicIdNeedQuery)) {
 			foreach ($data as $oTopic) {
 				/**
 				 * Добавляем к результату и сохраняем в кеш
@@ -540,6 +708,29 @@ class ModuleTopic extends Module {
 			$this->Cache_Set($data, "topic_filter_{$s}_{$iPage}_{$iPerPage}", array('topic_update','topic_new'), 60*60*24*3);
 		}
 		$data['collection']=$this->GetTopicsAdditionalData($data['collection'],$aAllowData);
+		return $data;
+	}
+	/**
+	 * Список удаленных топиков по фильтру
+	 *
+	 * @param  array $aFilter	Фильтр
+	 * @param  int   $iPage	Номер страницы
+	 * @param  int   $iPerPage	Количество элементов на страницу
+	 * @param  array|null   $aAllowData	Список типов данных для подгрузки в топики
+	 * @return array('collection'=>array,'count'=>int)
+	 */
+	public function GetDeletedTopicsByFilter($aFilter,$iPage=1,$iPerPage=10,$aAllowData=null) {
+		if (!is_numeric($iPage) or $iPage<=0) {
+			$iPage=1;
+		}
+		$aFilter = $this->_getModifiedFilter($aFilter);
+		$s=serialize($aFilter);
+		$data = array(
+			'collection'=>$this->oMapperTopic->GetDeletedTopics($aFilter,$iCount,$iPage,$iPerPage),
+			'count'=>$iCount
+		);
+		$this->Cache_Set($data, "topic_filter_{$s}_{$iPage}_{$iPerPage}", array('topic_update','topic_new'), 60*60*24*3);
+		$data['collection']=$this->GetDeletedTopicsAdditionalData($data['collection'],$aAllowData);
 		return $data;
 	}
 	/**
@@ -969,6 +1160,40 @@ class ModuleTopic extends Module {
 		}
 		return $this->GetTopicsByFilter($aFilter,$iPage,$iPerPage);
 	}
+
+	/**
+	 * Список удаленных топиков из коллективных блогов
+	 *
+	 * @param int $iPage	Номер страницы
+	 * @param int $iPerPage	Количество элементов на страницу
+	 * @param string $sShowType	Тип выборки топиков
+	 * @param string $sPeriod	Период в виде секунд или конкретной даты
+	 * @return array
+	 */
+	public function GetDeletedTopicsCollective($iPage,$iPerPage,$sShowType='good',$sPeriod=null) {
+		if (is_numeric($sPeriod)) {
+			// количество последних секунд
+			$sPeriod=date("Y-m-d H:00:00",time()-$sPeriod);
+		}
+		$aFilter=array(
+			'blog_type' => array(
+				'open',
+			),
+			'topic_publish' => 1,
+		);
+		if ($sPeriod) {
+			$aFilter['topic_date_more'] = $sPeriod;
+		}
+		/**
+		 * Если пользователь авторизирован, то добавляем в выдачу
+		 * закрытые блоги в которых он состоит
+		 */
+		if($this->oUserCurrent) {
+			$aOpenBlogs = $this->Blog_GetAccessibleBlogsByUser($this->oUserCurrent);
+			if(count($aOpenBlogs)) $aFilter['blog_type']['close'] = $aOpenBlogs;
+		}
+		return $this->GetDeletedTopicsByFilter($aFilter,$iPage,$iPerPage);
+	}
 	/**
 	 * Получает число новых топиков в коллективных блогах
 	 *
@@ -1068,6 +1293,30 @@ class ModuleTopic extends Module {
 				break;
 		}
 		return $this->GetTopicsByFilter($aFilter,$iPage,$iPerPage);
+	}
+	/**
+	 * Список удаленных топиков из блога
+	 *
+	 * @param ModuleBlog_EntityBlog $oBlog	Объект блога
+	 * @param int $iPage	Номер страницы
+	 * @param int $iPerPage	Количество элементов на страницу
+	 * @param string $sShowType	Тип выборки топиков
+	 * @param string $sPeriod	Период в виде секунд или конкретной даты
+	 * @return array
+	 */
+	public function GetDeletedTopicsByBlog($oBlog,$iPage,$iPerPage,$sShowType='good',$sPeriod=null) {
+		if (is_numeric($sPeriod)) {
+			// количество последних секунд
+			$sPeriod=date("Y-m-d H:00:00",time()-$sPeriod);
+		}
+		$aFilter=array(
+			'topic_publish' => 1,
+			'blog_id' => $oBlog->getId(),
+		);
+		if ($sPeriod) {
+			$aFilter['topic_date_more'] = $sPeriod;
+		}
+		return $this->GetDeletedTopicsByFilter($aFilter,$iPage,$iPerPage);
 	}
 
 	/**

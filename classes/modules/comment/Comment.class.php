@@ -277,12 +277,8 @@ class ModuleComment extends Module {
 			? $this->Blog_GetInaccessibleBlogsByUser($this->oUserCurrent)
 			: $this->Blog_GetInaccessibleBlogsByUser();
 
-		$s=serialize($aCloseBlogs);
-
-		if (false === ($data = $this->Cache_Get("comment_online_{$sTargetType}_{$s}_{$iLimit}"))) {
-			$data = $this->oMapper->GetCommentsOnline($sTargetType,$aCloseBlogs,$iLimit);
-			$this->Cache_Set($data, "comment_online_{$sTargetType}_{$s}_{$iLimit}", array("comment_online_update_{$sTargetType}"), 60*60*24*1);
-		}
+		$data = $this->oMapper->GetCommentsOnline($sTargetType,$aCloseBlogs,$iLimit);
+		$this->Logger_Debug($data);
 		$data=$this->GetCommentsAdditionalData($data);
 		return $data;
 	}

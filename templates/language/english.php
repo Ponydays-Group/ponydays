@@ -113,6 +113,7 @@ return array(
 	 */
 	'blog_edit' => 'Edit',
 	'blog_delete' => 'Delete',
+	'blog_deleted' => 'Trash',
 	'blog_create' => 'Create new blog',
 	'blog_create_acl' => "You don't have enough power to create a blog",
 	'blog_create_title' => "Blog's title",
@@ -163,6 +164,7 @@ return array(
 	'blog_admin_delete_move' => 'Move topics to the blog',
 	'blog_delete_clear' => 'Delete topics',
 	'blog_admin_delete_success' => 'Blog deleted successfully',
+	'blog_admin_restore_success' => 'Blog restored successfully',
 	'blog_admin_delete_not_empty' => "You can't delete blog containing records. Please delete all records first.",
 	'blog_admin_delete_move_error' => 'Unable to move topics from the blog which is being deleted',
 	'blog_admin_delete_move_personal' => "Can't move topics to personal blog",
@@ -268,6 +270,7 @@ return array(
 	'topic_edit' => 'Edit',
 	'topic_preview' => 'Preview',
 	'topic_delete' => 'Delete',
+	'topic_restore' => 'Restore',
 	'topic_delete_confirm' => 'Do you really want to delete this topic?',
 	/**
 	 * Link-topic

@@ -198,6 +198,36 @@ class ModuleTopic_MapperTopic extends Mapper {
 		return $aTopics;
 	}
 	/**
+	 * Получить список удаленных топиков по списку айдишников
+	 *
+	 * @param array $aArrayId	Список ID топиков
+	 * @return array
+	 */
+	public function GetDeletedTopicsByArrayId($aArrayId) {
+		if (!is_array($aArrayId) or count($aArrayId)==0) {
+			return array();
+		}
+
+		$sql = "SELECT 
+					t.*,
+					tc.*							 
+				FROM 
+					".Config::Get('db.table.topic')." as t	
+					JOIN  ".Config::Get('db.table.topic_content')." AS tc ON t.topic_id=tc.topic_id				
+				WHERE 
+					t.topic_id IN(?a)
+				AND
+					t.topic_deleted = 1
+				ORDER BY FIELD(t.topic_id,?a) ";
+		$aTopics=array();
+		if ($aRows=$this->oDb->select($sql,$aArrayId,$aArrayId)) {
+			foreach ($aRows as $aTopic) {
+				$aTopics[]=Engine::GetEntity('Topic',$aTopic);
+			}
+		}
+		return $aTopics;
+	}
+	/**
 	 * Список топиков по фильтру
 	 *
 	 * @param  array $aFilter	Фильтр
@@ -230,6 +260,51 @@ class ModuleTopic_MapperTopic extends Mapper {
 						b.blog_deleted = 0	
 						AND
 						t.topic_deleted = 0									
+					ORDER BY ".
+			implode(', ', $aFilter['order'])
+			."
+					LIMIT ?d, ?d";
+		$aTopics=array();
+		if ($aRows=$this->oDb->selectPage($iCount,$sql,($iCurrPage-1)*$iPerPage, $iPerPage)) {
+			foreach ($aRows as $aTopic) {
+				$aTopics[]=$aTopic['topic_id'];
+			}
+		}
+		return $aTopics;
+	}
+	/**
+	 * Список удаленных топиков по фильтру
+	 *
+	 * @param  array $aFilter	Фильтр
+	 * @param  int   $iCount	Возвращает общее число элементов
+	 * @param  int   $iCurrPage	Номер страницы
+	 * @param  int   $iPerPage	Количество элементов на страницу
+	 * @return array
+	 */
+	public function GetDeletedTopics($aFilter,&$iCount,$iCurrPage,$iPerPage) {
+		$sWhere=$this->buildFilter($aFilter);
+
+		if(!isset($aFilter['order'])) {
+			$aFilter['order'] = 't.topic_date_add desc';
+		}
+		if (!is_array($aFilter['order'])) {
+			$aFilter['order'] = array($aFilter['order']);
+		}
+
+		$sql = "SELECT 
+						t.topic_id							
+					FROM 
+						".Config::Get('db.table.topic')." as t,	
+						".Config::Get('db.table.blog')." as b			
+					WHERE 
+						1=1					
+						".$sWhere."
+						AND
+						t.blog_id=b.blog_id	
+						AND
+						b.blog_deleted = 0	
+						AND
+						t.topic_deleted = 1									
 					ORDER BY ".
 			implode(', ', $aFilter['order'])
 			."
@@ -515,7 +590,7 @@ class ModuleTopic_MapperTopic extends Mapper {
 			WHERE
 				topic_id = ?d
 		";
-		if ($this->oDb->query($sql,$oTopic->getBlogId(),$oTopic->getTitle(),$oTopic->getTags(),$oTopic->getDateAdd(),$oTopic->getDateEdit(),$oTopic->getUserIp(),$oTopic->getPublish(),$oTopic->getPublishDraft(),$oTopic->getPublishIndex(),$oTopic->getRating(),$oTopic->getCountVote(),$oTopic->getCountVoteUp(),$oTopic->getCountVoteDown(),$oTopic->getCountVoteAbstain(),$oTopic->getCountRead(),$oTopic->getCountComment(),$oTopic->getCountFavourite(),$oTopic->getCutText(),$oTopic->getForbidComment(),$oTopic->getTextHash(),$oTopic->getDeleted(),$oTopic->getId())) {
+		if ($this->oDb->query($sql,$oTopic->getBlogId(),$oTopic->getTitle(),$oTopic->getTags(),$oTopic->getDateAdd(),$oTopic->getDateEdit(),$oTopic->getUserIp(),$oTopic->getPublish(),$oTopic->getPublishDraft(),$oTopic->getPublishIndex(),$oTopic->getRating(),$oTopic->getCountVote(),$oTopic->getCountVoteUp(),$oTopic->getCountVoteDown(),$oTopic->getCountVoteAbstain(),$oTopic->getCountRead(),$oTopic->getCountComment(),$oTopic->getCountFavourite(),$oTopic->getCutText(),$oTopic->getForbidComment(),$oTopic->getTextHash(),$oTopic->getDeleted() ? 1 : 0,$oTopic->getId())) {
 			$this->UpdateTopicContent($oTopic);
 			return true;
 		}

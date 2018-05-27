@@ -69,6 +69,7 @@
 					<a href="{router page='blog'}delete/{$oBlog->getId()}/?security_ls_key={$LIVESTREET_SECURITY_KEY}" title="{$aLang.blog_delete}" onclick="return confirm('{$aLang.blog_admin_delete_confirm}');" >{$aLang.blog_delete}</a>
                 {/if}
 				</li>
+				<li><a href="{router page='blog'}{$oBlog->getUrl()}/deleted/" title="{$aLang.blog_deleted}" class="delete">{$aLang.blog_deleted}</a></li>
             {/if}
 		</ul>
 	</header>

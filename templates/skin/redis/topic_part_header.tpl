@@ -35,10 +35,17 @@
                     </a>
                 {/if}
                 {if $oUserCurrent and (($oUserCurrent->isGlobalModerator() and $oTopic->getBlog()->getType() == "open") or $oUserCurrent->isAdministrator() or $oBlog->getUserIsAdministrator() or $oBlog->getUserIsModerator() or ($oTopic->getUserId() === $oUserCurrent->getId() and !$oTopic->isControlLocked()) or $oBlog->getOwnerId()==$oUserCurrent->getId())}
-                    <a href="{router page='topic'}delete/{$oTopic->getId()}/?security_ls_key={$LIVESTREET_SECURITY_KEY}"
-                       title="{$aLang.topic_delete}">
-                        <i class="material-icons">delete</i> Удалить
-                    </a>
+                   {if $oTopic->getDeleted()}
+                       <a href="{router page='topic'}restore/{$oTopic->getId()}/?security_ls_key={$LIVESTREET_SECURITY_KEY}"
+                          title="{$aLang.topic_restore}">
+                           <i class="material-icons">delete</i> Восстановить
+                       </a>
+                   {else}
+                       <a href="{router page='topic'}delete/{$oTopic->getId()}/?security_ls_key={$LIVESTREET_SECURITY_KEY}"
+                          title="{$aLang.topic_delete}">
+                           <i class="material-icons">delete</i> Удалить
+                       </a>
+                   {/if}
                 {/if}
                 {if $bAllowLockControl}
                     <a href="#">

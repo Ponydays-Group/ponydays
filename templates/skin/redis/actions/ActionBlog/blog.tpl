@@ -19,18 +19,6 @@
 
 
 		<form action="{router page='blog'}delete/{$oBlog->getId()}/" method="POST" class="modal-content">
-			<p><label for="topic_move_to">{$aLang.blog_admin_delete_move}:</label>
-				<select name="topic_move_to" id="topic_move_to" class="input-width-full">
-					<option value="-1">{$aLang.blog_delete_clear}</option>
-                    {if $aBlogs}
-						<optgroup label="{$aLang.blogs}">
-                            {foreach from=$aBlogs item=oBlogDelete}
-								<option value="{$oBlogDelete->getId()}">{$oBlogDelete->getTitle()|escape:'html'}</option>
-                            {/foreach}
-						</optgroup>
-                    {/if}
-				</select></p>
-
 			<input type="hidden" value="{$LIVESTREET_SECURITY_KEY}" name="security_ls_key" />
 			<button type="submit" class="button button-primary">{$aLang.blog_delete}</button>
 		</form>
@@ -39,7 +27,7 @@
 
 
 
-<div class="blog">
+<div class="blog {if $bInTrash}trash{/if}">
 	<header class="blog-header">
 		<div id="vote_area_blog_{$oBlog->getId()}" class="vote {if $oBlog->getRating() > 0}vote-count-positive{elseif $oBlog->getRating() < 0}vote-count-negative{/if} {if $oVote} voted {if $oVote->getDirection()>0}voted-up{elseif $oVote->getDirection()<0}voted-down{/if}{/if}">
 			<div class="vote-label">Рейтинг</div>
@@ -52,7 +40,7 @@
 		<img src="{$oBlog->getAvatarPath(48)}" alt="avatar" class="avatar" />
 
 
-		<h2>{if $oBlog->getType()=='close'}<i title="{$aLang.blog_closed}" class="icon icon-lock"></i> {/if}{$oBlog->getTitle()|escape:'html'}</h2>
+		<h2>{if $oBlog->getType()=='close'}<i title="{$aLang.blog_closed}" class="icon icon-lock"></i> {/if}{if $bInTrash}[ КОРЗИНА ] {/if}{$oBlog->getTitle()|escape:'html'}</h2>
 
 
 		<ul class="actions">

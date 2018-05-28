@@ -86,6 +86,8 @@ return array(
 	'blog_leave' => 'покинуть блог',
 	'blog_leave_ok' => 'Вы покинули блог',
 	'blog_join_leave' => 'Вступить/Покинуть',
+	'blog_restoration' => 'Восстановление',
+	'blog_restore' => 'Восстановить',
 	/**
 	 * Меню блогов
 	 */
@@ -930,6 +932,7 @@ return array(
 	'stream_list_event_add_friend_female' => 'добавила в друзья пользователя',
 
 	'stream_menu' => 'Активность',
+	'deleted_menu' => 'Корзина',
 	'stream_menu_all' => 'Вся',
 	'stream_menu_user' => 'Я слежу',
 	'stream_settings_note_filter' => 'Выберите действия которые будут отслеживаться',

@@ -2,9 +2,9 @@
 	{foreach from=$aComments item=oComment name="cmt"}
 		{assign var="oUser" value=$oComment->getUser()}
 		{assign var="oTopic" value=$oComment->getTarget()}
-		{*{if $oTopic != null}*}
+		{if $oTopic != null}
 			{assign var="oBlog" value=$oTopic->getBlog()}
-			{*{if $oBlog != null}*}
+			{if $oBlog != null}
 
 				<li class="js-title-comment">
 					<a href="{$oUser->getUserWebPath()}"><img src="{$oComment->getUserAvatar()}" height="48" width="48" alt="avatar" class="avatar" /></a>
@@ -17,8 +17,8 @@
 						{$oTopic->getCountComment()} {if $oTopic->getCountCommentNew()}<span>(+{$oTopic->getCountCommentNew()})</span>{/if} {$oTopic->getCountComment()|declension:$aLang.comment_declension:'russian'}
 					</p>
 				</li>
-			{*{/if}*}
-		{*{/if}*}
+			{/if}
+		{/if}
 	{/foreach}
 </ul>
 

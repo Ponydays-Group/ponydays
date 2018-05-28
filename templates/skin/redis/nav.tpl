@@ -14,14 +14,15 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <ul class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="nav navbar-nav">
-
                 <li {if $sMenuHeadItemSelect=='blog'}class="active"{/if}><a href="/">{$aLang.topic_title}</a></li>
                 <li {if $sMenuHeadItemSelect=='blogs'}class="active"{/if}><a
                             href="{router page='blogs'}">{$aLang.blogs}</a></li>
+                <li {if $sMenuHeadItemSelect=='deleted'}class="active"{/if}><a
+                            href="{router page='deleted'}">{$aLang.deleted_menu}</a></li>
                 <li {if $sMenuHeadItemSelect=='people'}class="active"{/if}><a
                             href="{router page='people'}">{$aLang.people}</a></li>
-                <li {if $sMenuHeadItemSelect=='stream'}class="active"{/if}><a
-                            href="{router page='stream'}">{$aLang.stream_menu}</a></li>
+                {*<li {if $sMenuHeadItemSelect=='stream'}class="active"{/if}><a*}
+                            {*href="{router page='stream'}">{$aLang.stream_menu}</a></li>*}
                 <li {if $sMenuHeadItemSelect=='feedbacks'}class="active"{/if}><a
                             href="{router page='feedbacks'}">{$aLang.feedbacks.header}</a></li>
                 <li {if $sMenuHeadItemSelect=='quotes'}class="active"{/if}><a

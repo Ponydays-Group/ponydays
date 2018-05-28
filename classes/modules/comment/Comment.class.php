@@ -278,7 +278,6 @@ class ModuleComment extends Module {
 			: $this->Blog_GetInaccessibleBlogsByUser();
 
 		$data = $this->oMapper->GetCommentsOnline($sTargetType,$aCloseBlogs,$iLimit);
-		$this->Logger_Debug($data);
 		$data=$this->GetCommentsAdditionalData($data);
 		return $data;
 	}
@@ -1045,3 +1044,4 @@ class ModuleComment extends Module {
 	}
 }
 ?>
+

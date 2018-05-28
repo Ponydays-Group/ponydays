@@ -181,7 +181,7 @@ class ModuleComment_MapperComment extends Mapper {
 	public function GetCommentsOnline($sTargetType,$aExcludeTargets,$iLimit) {
 		if ($sTargetType == 'topic') {
 			$sql = "SELECT 					
-					co.comment_id	
+					c.comment_id	
 				FROM 
 					" . Config::Get('db.table.comment_online') . " as co, 
 					" . Config::Get('db.table.comment') . " as c, 
@@ -190,7 +190,7 @@ class ModuleComment_MapperComment extends Mapper {
 				WHERE 												
 					co.target_type = ?
 					AND
-					co.comment_online_id = c.comment_id
+					co.comment_id = c.comment_id
 					AND
 					c.target_id = t.topic_id
 					AND
@@ -201,8 +201,8 @@ class ModuleComment_MapperComment extends Mapper {
 					t.topic_deleted = 0
 					AND
 					b.blog_deleted = 0
-				{ AND target_parent_id NOT IN(?a) }
-				ORDER by comment_online_id desc limit 0, ?d ; ";
+				{ AND co.target_parent_id NOT IN(?a) }
+				ORDER by co.comment_online_id desc limit 0, ?d ; ";
 		} else {
 			$sql = "SELECT 					
 					comment_id	
@@ -213,20 +213,19 @@ class ModuleComment_MapperComment extends Mapper {
 				{ AND target_parent_id NOT IN(?a) }
 				ORDER by comment_online_id desc limit 0, ?d ; ";
 		}
-		return $sql;
 
-//		$aComments=array();
-//		if ($aRows=$this->oDb->select(
-//			$sql,$sTargetType,
-//			(count($aExcludeTargets)?$aExcludeTargets:DBSIMPLE_SKIP),
-//			$iLimit
-//		)
-//		) {
-//			foreach ($aRows as $aRow) {
-//				$aComments[]=$aRow['comment_id'];
-//			}
-//		}
-//		return $aComments;
+		$aComments=array();
+		if ($aRows=$this->oDb->select(
+			$sql,$sTargetType,
+			(count($aExcludeTargets)?$aExcludeTargets:DBSIMPLE_SKIP),
+			$iLimit
+		)
+		) {
+			foreach ($aRows as $aRow) {
+				$aComments[]=$aRow['comment_id'];
+			}
+		}
+		return $aComments;
 	}
 	/**
 	 * Получить комменты по владельцу

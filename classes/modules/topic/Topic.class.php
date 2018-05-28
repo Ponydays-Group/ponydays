@@ -1139,7 +1139,7 @@ class ModuleTopic extends Module {
 				$aFilter['topic_new']=date("Y-m-d H:00:00",time()-Config::Get('module.topic.new_time'));
 				break;
 			case 'newall':
-				// нет доп фильтра
+				// нет доп филGetDeletedTopicsCollectiveьтра
 				break;
 			case 'discussed':
 				$aFilter['order']=array('t.topic_count_comment desc','t.topic_id desc');

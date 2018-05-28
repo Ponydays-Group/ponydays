@@ -84,6 +84,8 @@ return array(
 	'blog_leave' => 'Unjoin this blog',
 	'blog_leave_ok' => "You're unjoined this blog",
 	'blog_join_leave' => 'Join/Unjoin',
+	'blog_restoration' => 'Restoration',
+	'blog_restore' => 'Restore',
 	/**
 	 * Blog menu
 	 */
@@ -922,6 +924,7 @@ return array(
 	'stream_list_event_add_friend_female' => 'add to friends',
 
 	'stream_menu' => 'Stream',
+	'deleted_menu' => 'Trash',
 	'stream_menu_all' => 'All',
 	'stream_menu_user' => 'I watch',
 	'stream_settings_note_filter' => 'Select the actions that will be tracked',

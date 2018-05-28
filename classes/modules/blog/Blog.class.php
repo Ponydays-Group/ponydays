@@ -249,6 +249,22 @@ class ModuleBlog extends Module {
 		return null;
 	}
 	/**
+	 * Получить блог по айдишнику(номеру)
+	 *
+	 * @param int $sBlogId	ID блога
+	 * @return ModuleBlog_EntityBlog|null
+	 */
+	public function GetDeletedBlogById($sBlogId) {
+		if (!is_numeric($sBlogId)) {
+			return null;
+		}
+		$aBlogs=$this->GetBlogsAdditionalData($sBlogId);
+		if (isset($aBlogs[$sBlogId])) {
+			return $aBlogs[$sBlogId];
+		}
+		return null;
+	}
+	/**
 	 * Получить блог по УРЛу
 	 *
 	 * @param string $sBlogUrl	URL блога

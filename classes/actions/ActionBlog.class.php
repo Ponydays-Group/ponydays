@@ -128,8 +128,6 @@ class ActionBlog extends Action
         $this->AddEventPreg('/^newall$/i', '/^(page([1-9]\d{0,5}))?$/i', array('EventTopics', 'topics'));
         $this->AddEventPreg('/^discussed$/i', '/^(page([1-9]\d{0,5}))?$/i', array('EventTopics', 'topics'));
         $this->AddEventPreg('/^top$/i', '/^(page([1-9]\d{0,5}))?$/i', array('EventTopics', 'topics'));
-		$this->AddEvent('deleted', array('EventDeletedTopics', 'topics'));
-        $this->AddEventPreg('/^deleted$/i', '/^(page([1-9]\d{0,5}))?$/i', array('EventDeletedTopics', 'topics'));
 
         $this->AddEvent('add', 'EventAddBlog');
         $this->AddEvent('edit', 'EventEditBlog');
@@ -718,57 +716,6 @@ class ActionBlog extends Action
     }
 
     /**
-     * Показ всех удаленных топиков
-     *
-     */
-    protected function EventDeletedTopics()
-    {
-		$sPeriod = 'all';
-		$sShowType = 'deleted';
-        /**
-         * Меню
-         */
-        $this->sMenuSubItemSelect =  $sShowType;
-        /**
-         * Передан ли номер страницы
-         */
-        $iPage = $this->GetParamEventMatch(0, 2) ? $this->GetParamEventMatch(0, 2) : 1;
-        if ($iPage == 1 and !getRequest('period')) {
-            $this->Viewer_SetHtmlCanonical(Router::GetPath('blog') . $sShowType . '/');
-        }
-        /**
-         * Получаем список топиков
-         */
-        $aResult = $this->Topic_GetDeletedTopicsCollective($iPage, Config::Get('module.topic.per_page'), $sShowType, $sPeriod == 'all' ? null : $sPeriod * 60 * 60 * 24);
-        $aTopics = $aResult['collection'];
-        /**
-         * Вызов хуков
-         */
-        $this->Hook_Run('topics_list_show', array('aTopics' => $aTopics));
-        /**
-         * Формируем постраничность
-         */
-        $aPaging = $this->Viewer_MakePaging($aResult['count'], $iPage, Config::Get('module.topic.per_page'), Config::Get('pagination.pages.count'), Router::GetPath('blog') . $sShowType, in_array($sShowType, array('discussed', 'top')) ? array('period' => $sPeriod) : array());
-        /**
-         * Вызов хуков
-         */
-        $this->Hook_Run('blog_show', array('sShowType' => $sShowType));
-        /**
-         * Загружаем переменные в шаблон
-         */
-        $this->Viewer_Assign('aTopics', $aTopics);
-        $this->Viewer_Assign('aPaging', $aPaging);
-        if (in_array($sShowType, array('discussed', 'top'))) {
-            $this->Viewer_Assign('sPeriodSelectCurrent', $sPeriod);
-            $this->Viewer_Assign('sPeriodSelectRoot', Router::GetPath('blog') . $sShowType . '/');
-        }
-        /**
-         * Устанавливаем шаблон вывода
-         */
-        $this->SetTemplateAction('index');
-    }
-
-    /**
      * Показ топика
      *
      */
@@ -1253,6 +1200,7 @@ class ActionBlog extends Action
         $this->Viewer_Assign('iCountBlogAdministrators', $aBlogAdministratorsResult['count'] + 1);
         $this->Viewer_Assign('oBlog', $oBlog);
         $this->Viewer_Assign('bCloseBlog', $bCloseBlog);
+		$this->Viewer_Assign('bInTrash', true);
         /**
          * Устанавливаем title страницы
          */
@@ -2060,6 +2008,7 @@ class ActionBlog extends Action
          * Проверяем передан ли в УРЛе номер блога
          */
         $sBlogId = $this->GetParam(0);
+		$this->Logger_Debug($sBlogId);
         if (!$oBlog = $this->Blog_GetBlogById($sBlogId)) {
             return parent::EventNotFound();
         }
@@ -2100,7 +2049,7 @@ class ActionBlog extends Action
     }
 
     /**
-     * Восстановление блога из корзину
+     * Восстановление блога из корзины
      *
      */
     protected function EventRestoreBlog()
@@ -2111,41 +2060,43 @@ class ActionBlog extends Action
          */
         $sBlogId = $this->GetParam(0);
         if (!$oBlog = $this->Blog_GetBlogById($sBlogId)) {
-            return parent::EventNotFound();
+			$this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+            return;
         }
         /**
          * Проверям авторизован ли пользователь
          */
         if (!$this->User_IsAuthorization()) {
             $this->Message_AddErrorSingle($this->Lang_Get('not_access'), $this->Lang_Get('error'));
-            return Router::Action('error');
+            return;
         }
         /**
          * проверяем есть ли право на удаление топика
          */
         if (!$bAccess = $this->ACL_IsAllowDeleteBlog($oBlog, $this->oUserCurrent)) {
-            return parent::EventNotFound();
+			$this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+            return;
         }
         switch ($bAccess) {
             case ModuleACL::CAN_DELETE_BLOG_EMPTY_ONLY :
 			case ModuleACL::CAN_DELETE_BLOG_WITH_TOPICS :
                 break;
             default:
-                return parent::EventNotFound();
+				$this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+                return;
         }
         /**
-         * Восстанавливаем блог и перенаправляем пользователя к списку блогов
+         * Восстанавливаем блог
          */
-        $this->Hook_Run('blog_delete_before', array('sBlogId' => $sBlogId));
 		$oBlog->setDeleted(false);
 		if ($this->Blog_UpdateBlog($oBlog)) {
-            $this->Message_AddNoticeSingle($this->Lang_Get('blog_admin_restore_success'), $this->Lang_Get('attention'), true);
 			$sLogText = $this->oUserCurrent->getLogin()." восстановил блог ".$oBlog->getId();
 			$this->Logger_Notice($sLogText);
-            Router::Location(Router::GetPath('blogs'));
+			$this->Message_AddNoticeSingle($this->Lang_Get('blog_admin_restore_success'), $this->Lang_Get('attention'), true);
+			$this->Viewer_AssignAjax('bState', false);
         } else {
-            Router::Location($oBlog->getUrlFull());
-        }
+			$this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+		}
     }
 
     /**

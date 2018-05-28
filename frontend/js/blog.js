@@ -49,9 +49,8 @@ export function restoreBlog(obj, idBlog){
             Msg.notice(null, result.sMsg);
         } else {
             obj = $(obj);
-            Msg.notice(null, result.sMsg);
-            obj.remove();
         }
+        location.reload();
     });
 }
 

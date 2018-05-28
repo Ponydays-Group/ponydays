@@ -94,9 +94,6 @@ class ActionDeleted extends Action
          * Достаём текущего пользователя
          */
         $this->oUserCurrent = $this->User_GetUserCurrent();
-        /**
-         * Подсчитываем новые топики
-         */
     }
 
     /**

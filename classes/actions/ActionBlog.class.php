@@ -2054,6 +2054,7 @@ class ActionBlog extends Action
      */
     protected function EventRestoreBlog()
     {
+		$this->Viewer_SetResponseAjax('json');
         $this->Security_ValidateSendForm();
         /**
          * Проверяем передан ли в УРЛе номер блога
@@ -2061,21 +2062,21 @@ class ActionBlog extends Action
         $sBlogId = $this->GetParam(0);
         if (!$oBlog = $this->Blog_GetBlogById($sBlogId)) {
 			$this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
-            return;
+			$this->Viewer_AssignAjax('bState', true);
         }
         /**
          * Проверям авторизован ли пользователь
          */
         if (!$this->User_IsAuthorization()) {
             $this->Message_AddErrorSingle($this->Lang_Get('not_access'), $this->Lang_Get('error'));
-            return;
+			$this->Viewer_AssignAjax('bState', true);
         }
         /**
          * проверяем есть ли право на удаление топика
          */
         if (!$bAccess = $this->ACL_IsAllowDeleteBlog($oBlog, $this->oUserCurrent)) {
 			$this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
-            return;
+			$this->Viewer_AssignAjax('bState', true);
         }
         switch ($bAccess) {
             case ModuleACL::CAN_DELETE_BLOG_EMPTY_ONLY :
@@ -2083,7 +2084,7 @@ class ActionBlog extends Action
                 break;
             default:
 				$this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
-                return;
+				$this->Viewer_AssignAjax('bState', true);
         }
         /**
          * Восстанавливаем блог
@@ -2095,7 +2096,8 @@ class ActionBlog extends Action
 			$this->Message_AddNoticeSingle($this->Lang_Get('blog_admin_restore_success'), $this->Lang_Get('attention'), true);
 			$this->Viewer_AssignAjax('bState', false);
         } else {
-			$this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+			$this->Message_AddErrorSingle($this->Lang_Get('system_error') , $this->Lang_Get('error'));
+			return;
 		}
     }
 

@@ -102,8 +102,8 @@ class ActionDeleted extends Action
      */
     protected function RegisterEvent()
     {
-		$this->AddEvent('topics', array('EventDeletedTopics', 'topics'));
-		$this->AddEvent('blogs', array('EventDeletedBlogs', 'blogs'));
+		$this->AddEventPreg('/^topics$/i', '/^(page([1-9]\d{0,5}))?$/i', array('EventDeletedTopics', 'topics'));
+		$this->AddEventPreg('/^blogs$/i', '/^(page([1-9]\d{0,5}))?$/i', array('EventDeletedBlogs', 'blogs'));
 
     }
 

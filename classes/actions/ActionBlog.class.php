@@ -2008,7 +2008,6 @@ class ActionBlog extends Action
          * Проверяем передан ли в УРЛе номер блога
          */
         $sBlogId = $this->GetParam(0);
-		$this->Logger_Debug($sBlogId);
         if (!$oBlog = $this->Blog_GetBlogById($sBlogId)) {
             return parent::EventNotFound();
         }

@@ -3,7 +3,10 @@
 -------------------------------------------- */
 
 .blog { background: $first; margin-bottom: 10px; border-radius: 20px; border: $second-border; overflow: hidden; box-shadow: $first-shadow}
-
+.blog.trash {
+    border-left: $blog-trash-border;
+    border-right: $blog-trash-border;
+}
 /* Header */
 .blog .blog-header 			{ position: relative; padding: 15px 130px 15px 78px; border-bottom: 1px solid $main-accent-second; }
 .blog .blog-header h2 		{ font-size: 20px; font-weight: bold; line-height: 1em; margin-top: 3px; margin-bottom: 7px; }

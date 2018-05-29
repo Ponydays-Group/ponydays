@@ -445,7 +445,7 @@ class ModuleTopic_EntityTopic extends Entity {
 	/**
 	 * Возвращает флаг удаления топика
 	 *
-	 * @return bool|null
+	 * @return bool|false
 	 */
 	public function getDeleted() {
 		return $this->_getDataOne('topic_deleted');

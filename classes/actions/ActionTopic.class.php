@@ -78,6 +78,7 @@ class ActionTopic extends Action {
 		$this->AddEventPreg('/^saved$/i','/^(page([1-9]\d{0,5}))?$/i','EventShowTopics');
 		$this->AddEvent('edit','EventEdit');
 		$this->AddEvent('delete','EventRemove');
+		$this->AddEvent('restore', 'EventRestore');
 	}
 
 
@@ -212,7 +213,44 @@ class ActionTopic extends Action {
 		/**
 		 * Перенаправляем на страницу со списком топиков из блога этого топика
 		 */
+		$sLogText = $this->oUserCurrent->getLogin()." удалил топик ".$oTopic->getId();
+		$this->Logger_Notice($sLogText);
 		Router::Location($oTopic->getBlog()->getUrlFull());
+	}
+	/**
+	 * Восстановление топика из корзины
+	 *
+	 */
+	protected function EventRestore() {
+
+		$this->Security_ValidateSendForm();
+		/**
+		 * Получаем номер топика из УРЛ и проверяем существует ли он
+		 */
+		$sTopicId=$this->GetParam(0);
+		if (!($oTopic=$this->Topic_GetDeletedTopicById($sTopicId))) {
+			return parent::EventNotFound();
+		}
+		/**
+		 * проверяем есть ли право на удаление топика
+		 */
+		if (!$this->ACL_IsAllowDeleteTopic($oTopic,$this->oUserCurrent)) {
+			return parent::EventNotFound();
+		}
+		/**
+		 * Восстанавливаем топик
+		 */
+		$oTopic->setDeleted(false);
+		if ($this->Topic_UpdateTopic($oTopic)){
+		} else{
+			return parent::EventNotFound();
+		}
+		/**
+		 * Перенаправляем на страницу со списком топиков из блога этого топика
+		 */
+		$sLogText = $this->oUserCurrent->getLogin()." восстановил топик ".$oTopic->getId();
+		$this->Logger_Notice($sLogText);
+		Router::Location($oTopic->getBlog()->getUrlFull().'deleted/');
 	}
 	/**
 	 * Добавление топика

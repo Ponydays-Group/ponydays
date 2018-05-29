@@ -70,7 +70,7 @@ class ModuleBlog_MapperBlog extends Mapper {
 			WHERE
 				blog_id = ?d
 		";
-		if ($this->oDb->query($sql,$oBlog->getTitle(),$oBlog->getDescription(),$oBlog->getType(),$oBlog->getDateEdit(),$oBlog->getRating(),$oBlog->getCountVote(),$oBlog->getCountUser(),$oBlog->getCountTopic(),$oBlog->getLimitRatingTopic(),$oBlog->getUrl(),$oBlog->getAvatar(),$oBlog->getDeleted(),$oBlog->getId())) {
+		if ($this->oDb->query($sql,$oBlog->getTitle(),$oBlog->getDescription(),$oBlog->getType(),$oBlog->getDateEdit(),$oBlog->getRating(),$oBlog->getCountVote(),$oBlog->getCountUser(),$oBlog->getCountTopic(),$oBlog->getLimitRatingTopic(),$oBlog->getUrl(),$oBlog->getAvatar(),$oBlog->getDeleted() ? 1 : 0,$oBlog->getId())) {
 			return true;
 		}
 		return false;
@@ -105,8 +105,6 @@ class ModuleBlog_MapperBlog extends Mapper {
 					".Config::Get('db.table.blog')."
 				WHERE 
 					blog_id IN(?a)
-					AND
-					blog_deleted = 0
 				ORDER BY 						
 					{ FIELD(blog_id,?a) } ";
 		if ($sOrder!='') $sql.=$sOrder;
@@ -294,8 +292,6 @@ class ModuleBlog_MapperBlog extends Mapper {
 					bu.blog_id IN(?a) 
 					AND
 					bu.blog_id = b.blog_id
-					AND 
-					b.blog_deleted = 0
 					AND
 					bu.user_id = ?d";
 		$aBlogUsers=array();
@@ -579,11 +575,11 @@ class ModuleBlog_MapperBlog extends Mapper {
 	/**
 	 * Получает список блогов по фильтру
 	 *
-	 * @param array $aFilter	Фильтр выборки
-	 * @param array $aOrder		Сортировка
-	 * @param int $iCount		Возвращает общее количество элментов
-	 * @param int $iCurrPage	Номер текущей страницы
-	 * @param int $iPerPage		Количество элементов на одну страницу
+	 * @param array $aFilter		Фильтр выборки
+	 * @param array $aOrder			Сортировка
+	 * @param int $iCount			Возвращает общее количество элментов
+	 * @param int $iCurrPage		Номер текущей страницы
+	 * @param int|0 $bIsDeleted	Удаленные или активные
 	 * @return array
 	 */
 	public function GetBlogsByFilter($aFilter,$aOrder,&$iCount,$iCurrPage,$iPerPage) {
@@ -620,7 +616,7 @@ class ModuleBlog_MapperBlog extends Mapper {
 					{ AND blog_type not IN (?a) }
 					{ AND blog_url = ? }
 					{ AND blog_title LIKE ? }
-					AND blog_deleted = 0
+					{ AND blog_deleted = ? }
 				ORDER by {$sOrder}
 				LIMIT ?d, ?d ;
 					";
@@ -632,6 +628,7 @@ class ModuleBlog_MapperBlog extends Mapper {
 										  (isset($aFilter['exclude_type']) and count($aFilter['exclude_type']) ) ? $aFilter['exclude_type'] : DBSIMPLE_SKIP,
 										  isset($aFilter['url']) ? $aFilter['url'] : DBSIMPLE_SKIP,
 										  isset($aFilter['title']) ? $aFilter['title'] : DBSIMPLE_SKIP,
+										  isset($aFilter['deleted']) ? $aFilter['deleted'] : 0,
 										  ($iCurrPage-1)*$iPerPage, $iPerPage
 		)) {
 			foreach ($aRows as $aRow) {

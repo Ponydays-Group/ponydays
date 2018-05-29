@@ -37,6 +37,22 @@ export function toggleJoin(obj, idBlog) {
     });
 }
 
+/**
+ * Восстановить блог
+ */
+export function restoreBlog(obj, idBlog){
+    let url = aRouter['blog']+'restore/' + idBlog;
+    let params = {idBlog: idBlog};
+
+    Ajax.ajax(url,params,function(result) {
+        if (result.bStateError) {
+            Msg.notice(null, result.sMsg);
+        } else {
+            obj = $(obj);
+        }
+        location.reload();
+    });
+}
 
 /**
  * Отправляет приглашение вступить в блог

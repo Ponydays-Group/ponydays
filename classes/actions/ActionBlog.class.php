@@ -83,7 +83,7 @@ class ActionBlog extends Action
      *
      * @var array
      */
-    protected $aBadBlogUrl = array('new', 'good', 'bad', 'discussed', 'top', 'edit', 'add', 'admin', 'delete', 'invite', 'ajaxaddcomment', 'ajaxaddbloginvite', 'ajaxresponsecomment', 'ajaxrebloginvite', 'ajaxbloginfo', 'ajaxblogjoin');
+    protected $aBadBlogUrl = array('new', 'good', 'bad', 'discussed', 'top', 'edit', 'add', 'deleted', 'admin', 'delete', 'restore', 'invite', 'ajaxaddcomment', 'ajaxaddbloginvite', 'ajaxresponsecomment', 'ajaxrebloginvite', 'ajaxbloginfo', 'ajaxblogjoin');
 
     /**
      * Инизиализация экшена
@@ -132,6 +132,7 @@ class ActionBlog extends Action
         $this->AddEvent('add', 'EventAddBlog');
         $this->AddEvent('edit', 'EventEditBlog');
         $this->AddEvent('delete', 'EventRemoveBlog');
+        $this->AddEvent('restore', 'EventRestoreBlog');
         $this->AddEventPreg('/^admin$/i', '/^\d+$/i', '/^(page([1-9]\d{0,5}))?$/i', 'EventAdminBlog');
         $this->AddEvent('invite', 'EventInviteBlog');
 
@@ -154,6 +155,7 @@ class ActionBlog extends Action
         $this->AddEventPreg('/^[\w\-\_]+$/i', '/^newall$/i', '/^(page([1-9]\d{0,5}))?$/i', array('EventShowBlog', 'blog'));
         $this->AddEventPreg('/^[\w\-\_]+$/i', '/^discussed$/i', '/^(page([1-9]\d{0,5}))?$/i', array('EventShowBlog', 'blog'));
         $this->AddEventPreg('/^[\w\-\_]+$/i', '/^top$/i', '/^(page([1-9]\d{0,5}))?$/i', array('EventShowBlog', 'blog'));
+        $this->AddEventPreg('/^[\w\-\_]+$/i', '/^deleted$/i', '/^(page([1-9]\d{0,5}))?$/i', array('EventShowDeletedBlog', 'blog'));
 
         $this->AddEventPreg('/^[\w\-\_]+$/i', '/^users$/i', '/^(page([1-9]\d{0,5}))?$/i', 'EventShowUsers');
     }
@@ -1097,6 +1099,120 @@ class ActionBlog extends Action
     }
 
     /**
+     * Вывод удаленных топиков из определенного блога
+     *
+     */
+    protected function EventShowDeletedBlog()
+    {
+        $sBlogUrl = $this->sCurrentEvent;
+        $sShowType = 'deleted';
+        $sPeriod = 'all';
+
+        /**
+         * Проверяем есть ли блог с таким УРЛ
+         */
+        if (!($oBlog = $this->Blog_GetBlogByUrl($sBlogUrl))) {
+            return parent::EventNotFound();
+        }
+        /**
+         * Определяем права на отображение закрытого блога
+         */
+
+        if (!$bAccess = $this->ACL_IsAllowDeleteBlog($oBlog, $this->oUserCurrent)) {
+            $bCloseBlog = true;
+        } else {
+            $bCloseBlog = false;
+        }
+        $this->Viewer_Assign('iCountBlogTopics', $oBlog->getCountTopic());
+        /**
+         * Меню
+         */
+        $this->sMenuSubItemSelect = $sShowType == 'newall' ? 'new' : $sShowType;
+        $this->sMenuSubBlogUrl = $oBlog->getUrlFull();
+        /**
+         * Передан ли номер страницы
+         */
+        $iPage = $this->GetParamEventMatch(($sShowType == 'good') ? 0 : 1, 2) ? $this->GetParamEventMatch(($sShowType == 'good') ? 0 : 1, 2) : 1;
+        if ($iPage == 1 and !getRequest('period') and in_array($sShowType, array('discussed', 'top'))) {
+            $this->Viewer_SetHtmlCanonical($oBlog->getUrlFull() . $sShowType . '/');
+        }
+
+        if (!$bCloseBlog) {
+            /**
+             * Получаем список топиков
+             */
+            $aResult = $this->Topic_GetDeletedTopicsByBlog($oBlog, $iPage, Config::Get('module.topic.per_page'), $sShowType, $sPeriod == 'all' ? null : $sPeriod * 60 * 60 * 24);
+
+            $aTopics = $aResult['collection'];
+            /**
+             * Формируем постраничность
+             */
+            $aPaging = ($sShowType == 'good')
+                ? $this->Viewer_MakePaging($aResult['count'], $iPage, Config::Get('module.topic.per_page'), Config::Get('pagination.pages.count'), rtrim($oBlog->getUrlFull(), '/'))
+                : $this->Viewer_MakePaging($aResult['count'], $iPage, Config::Get('module.topic.per_page'), Config::Get('pagination.pages.count'), $oBlog->getUrlFull() . $sShowType, array('period' => $sPeriod));
+            /**
+             * Получаем число новых топиков в текущем блоге
+             */
+            $this->iCountTopicsBlogNew = $this->Topic_GetCountTopicsByBlogNew($oBlog);
+
+            $this->Viewer_Assign('aPaging', $aPaging);
+            $this->Viewer_Assign('aTopics', $aTopics);
+            if (in_array($sShowType, array('discussed', 'top'))) {
+                $this->Viewer_Assign('sPeriodSelectCurrent', $sPeriod);
+                $this->Viewer_Assign('sPeriodSelectRoot', $oBlog->getUrlFull() . $sShowType . '/');
+            }
+        }
+        /**
+         * Выставляем SEO данные
+         */
+        $sTextSeo = strip_tags($oBlog->getDescription());
+        $this->Viewer_SetHtmlDescription(func_text_words($sTextSeo, Config::Get('seo.description_words_count')));
+        /**
+         * Получаем список юзеров блога
+         */
+        $aBlogUsersResult = $this->Blog_GetBlogUsersByBlogId($oBlog->getId(), ModuleBlog::BLOG_USER_ROLE_USER, 1, 25);
+        $aBlogUsers = $aBlogUsersResult['collection'];
+        $aBlogModeratorsResult = $this->Blog_GetBlogUsersByBlogId($oBlog->getId(), ModuleBlog::BLOG_USER_ROLE_MODERATOR);
+        $aBlogModerators = $aBlogModeratorsResult['collection'];
+        $aBlogAdministratorsResult = $this->Blog_GetBlogUsersByBlogId($oBlog->getId(), ModuleBlog::BLOG_USER_ROLE_ADMINISTRATOR);
+        $aBlogAdministrators = $aBlogAdministratorsResult['collection'];
+        /**
+         * Для админов проекта получаем список блогов и передаем их во вьювер
+         */
+        if ($this->oUserCurrent and $this->oUserCurrent->isAdministrator()) {
+            $aBlogs = $this->Blog_GetBlogs();
+            unset($aBlogs[$oBlog->getId()]);
+
+            $this->Viewer_Assign('aBlogs', $aBlogs);
+        }
+        /**
+         * Вызов хуков
+         */
+        $this->Hook_Run('blog_collective_show', array('oBlog' => $oBlog, 'sShowType' => $sShowType));
+        /**
+         * Загружаем переменные в шаблон
+         */
+        $this->Viewer_Assign('aBlogUsers', $aBlogUsers);
+        $this->Viewer_Assign('aBlogModerators', $aBlogModerators);
+        $this->Viewer_Assign('aBlogAdministrators', $aBlogAdministrators);
+        $this->Viewer_Assign('iCountBlogUsers', $aBlogUsersResult['count']);
+        $this->Viewer_Assign('iCountBlogModerators', $aBlogModeratorsResult['count']);
+        $this->Viewer_Assign('iCountBlogAdministrators', $aBlogAdministratorsResult['count'] + 1);
+        $this->Viewer_Assign('oBlog', $oBlog);
+        $this->Viewer_Assign('bCloseBlog', $bCloseBlog);
+		$this->Viewer_Assign('bInTrash', true);
+        /**
+         * Устанавливаем title страницы
+         */
+        $this->Viewer_AddHtmlTitle($oBlog->getTitle());
+        $this->Viewer_SetHtmlRssAlternate(Router::GetPath('rss') . 'blog/' . $oBlog->getUrl() . '/', $oBlog->getTitle());
+        /**
+         * Устанавливаем шаблон вывода
+         */
+        $this->SetTemplateAction('blog');
+    }
+
+    /**
      * Обработка добавление комментария к топику через ajax
      *
      */
@@ -1892,6 +2008,7 @@ class ActionBlog extends Action
          * Проверяем передан ли в УРЛе номер блога
          */
         $sBlogId = $this->GetParam(0);
+		$this->Logger_Debug($sBlogId);
         if (!$oBlog = $this->Blog_GetBlogById($sBlogId)) {
             return parent::EventNotFound();
         }
@@ -1923,10 +2040,65 @@ class ActionBlog extends Action
 		if ($this->Blog_UpdateBlog($oBlog)) {
             $this->Hook_Run('blog_delete_after', array('sBlogId' => $sBlogId));
             $this->Message_AddNoticeSingle($this->Lang_Get('blog_admin_delete_success'), $this->Lang_Get('attention'), true);
+			$sLogText = $this->oUserCurrent->getLogin()." удалил блог ".$oBlog->getId();
+			$this->Logger_Notice($sLogText);
             Router::Location(Router::GetPath('blogs'));
         } else {
             Router::Location($oBlog->getUrlFull());
         }
+    }
+
+    /**
+     * Восстановление блога из корзины
+     *
+     */
+    protected function EventRestoreBlog()
+    {
+		$this->Viewer_SetResponseAjax('json');
+        $this->Security_ValidateSendForm();
+        /**
+         * Проверяем передан ли в УРЛе номер блога
+         */
+        $sBlogId = $this->GetParam(0);
+        if (!$oBlog = $this->Blog_GetBlogById($sBlogId)) {
+			$this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+			$this->Viewer_AssignAjax('bState', true);
+        }
+        /**
+         * Проверям авторизован ли пользователь
+         */
+        if (!$this->User_IsAuthorization()) {
+            $this->Message_AddErrorSingle($this->Lang_Get('not_access'), $this->Lang_Get('error'));
+			$this->Viewer_AssignAjax('bState', true);
+        }
+        /**
+         * проверяем есть ли право на удаление топика
+         */
+        if (!$bAccess = $this->ACL_IsAllowDeleteBlog($oBlog, $this->oUserCurrent)) {
+			$this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+			$this->Viewer_AssignAjax('bState', true);
+        }
+        switch ($bAccess) {
+            case ModuleACL::CAN_DELETE_BLOG_EMPTY_ONLY :
+			case ModuleACL::CAN_DELETE_BLOG_WITH_TOPICS :
+                break;
+            default:
+				$this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+				$this->Viewer_AssignAjax('bState', true);
+        }
+        /**
+         * Восстанавливаем блог
+         */
+		$oBlog->setDeleted(false);
+		if ($this->Blog_UpdateBlog($oBlog)) {
+			$sLogText = $this->oUserCurrent->getLogin()." восстановил блог ".$oBlog->getId();
+			$this->Logger_Notice($sLogText);
+			$this->Message_AddNoticeSingle($this->Lang_Get('blog_admin_restore_success'), $this->Lang_Get('attention'), true);
+			$this->Viewer_AssignAjax('bState', false);
+        } else {
+			$this->Message_AddErrorSingle($this->Lang_Get('system_error') , $this->Lang_Get('error'));
+			return;
+		}
     }
 
     /**

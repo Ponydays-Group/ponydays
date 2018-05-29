@@ -10,6 +10,7 @@
             "profile": "ActionProfile",
             "my": "ActionMy",
             "blog": "ActionBlog",
+            "deleted": "ActionDeleted",
             "personal_blog": "ActionPersonalBlog",
             "index": "ActionIndex",
             "topic": "ActionTopic",

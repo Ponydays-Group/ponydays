@@ -198,6 +198,22 @@
                 }
             },
             "clear": false
+        },
+        "deleted": {
+            "action": [
+                "deleted"
+            ],
+            "blocks": {
+                "right": {
+                    "stream": {
+                        "priority": 100
+                    },
+                    "tags": {
+                        "priority": 50
+                    }
+                }
+            },
+            "clear": false
         }
     },
     "pagination": {

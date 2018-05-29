@@ -466,20 +466,30 @@ class ModuleComment_MapperComment extends Mapper {
 	 */
 	public function GetCommentsByUserId($sId,$sTargetType,&$iCount,$iCurrPage,$iPerPage,$aExcludeTarget=array(),$aExcludeParentTarget=array()) {
 		$sql = "SELECT 
-					comment_id 					
+					c.comment_id 					
 				FROM 
-					".Config::Get('db.table.comment')." 
+					".Config::Get('db.table.comment')." as c,
+					" . Config::Get('db.table.blog') . " as b,
+					" . Config::Get('db.table.topic') . " as t 
 				WHERE 
-					user_id = ?d 
+					c.user_id = ?d 
 					AND
-					target_type= ? 
+					c.target_type= ? 
 					AND
-					comment_delete = 0
+					c.comment_publish = 1
 					AND
-					comment_publish = 1 
-					{ AND target_id NOT IN (?a) }					
-					{ AND target_parent_id NOT IN (?a) }					
-				ORDER by comment_id desc
+					c.target_id = t.topic_id
+					AND
+					t.blog_id = b.blog_id
+					AND
+					c.comment_delete = 0
+					AND
+					t.topic_deleted = 0
+					AND
+					b.blog_deleted = 0
+					{ AND c.target_id NOT IN (?a) }					
+					{ AND c.target_parent_id NOT IN (?a) }					
+				ORDER by c.comment_id desc
 				LIMIT ?d, ?d ";
 		$aComments=array();
 		if ($aRows=$this->oDb->selectPage(

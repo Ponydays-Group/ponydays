@@ -87,6 +87,8 @@ class ActionTalk extends Action
         $this->AddEvent('ajaxaddtoblacklist', 'AjaxAddToBlacklist');
         $this->AddEvent('ajaxdeletefromblacklist', 'AjaxDeleteFromBlacklist');
         $this->AddEvent('ajaxdeletetalkuser', 'AjaxDeleteTalkUser');
+        $this->AddEvent('ajaxinvitetalkuserback', 'AjaxInviteTalkUserBack');
+        $this->AddEvent('ajaxacceptinvitetalkuserback', 'AjaxAcceptInviteTalkUserBack');
         $this->AddEvent('ajaxaddtalkuser', 'AjaxAddTalkUser');
         $this->AddEvent('ajaxnewmessages', 'AjaxNewMessages');
         $this->AddEvent('ajaxmarkasread', 'EventMarkAsRead');
@@ -1093,6 +1095,204 @@ class ActionTalk extends Action
     }
 
     /**
+     * Приглашение участника разговора обратно (ajax)
+     *
+     */
+    public function AjaxInviteTalkUserBack()
+    {
+        /**
+         * Устанавливаем формат Ajax ответа
+         */
+        $this->Viewer_SetResponseAjax('json');
+        $idTarget = getRequestStr('idTarget', null, 'post');
+        $idTalk = getRequestStr('idTalk', null, 'post');
+        /**
+         * Если пользователь не авторизирован, возвращаем ошибку
+         */
+        if (!$this->User_IsAuthorization()) {
+            $this->Message_AddErrorSingle(
+                $this->Lang_Get('need_authorization'),
+                $this->Lang_Get('error')
+            );
+            return;
+        }
+        /**
+         * Если приглашаемый участник не существует в базе данных, возвращаем ошибку
+         */
+        if (!$oUserTarget = $this->User_GetUserById($idTarget)) {
+            $this->Message_AddErrorSingle(
+                $this->Lang_Get('user_not_found_by_id', array('id' => htmlspecialchars($idTarget))),
+                $this->Lang_Get('error')
+            );
+            return;
+        }
+        /**
+         * Если разговор не найден, или пользователь не является его автором (либо админом), возвращаем ошибку
+         */
+        if ((!$oTalk = $this->Talk_GetTalkById($idTalk))
+            || (($oTalk->getUserId() != $this->oUserCurrent->getId()) && !$this->oUserCurrent->isAdministrator())) {
+            $this->Message_AddErrorSingle(
+                $this->Lang_Get('talk_not_found'),
+                $this->Lang_Get('error')
+            );
+            return;
+        }
+        /**
+         * Получаем список всех участников разговора
+         */
+        $aTalkUsers = $oTalk->getTalkUsers();
+        /**
+         * Если пользователь не удален возвращаем ошибку
+         */
+        if ($aTalkUsers[$idTarget]->getUserActive() == ModuleTalk::TALK_USER_INVITED_BACK) {
+            $this->Message_AddErrorSingle(
+                $this->Lang_Get(
+                    'talk_speaker_user_already_invited',
+                    array('login' => $oUserTarget->getLogin())
+                ),
+                $this->Lang_Get('error')
+            );
+            return;
+        }
+        /**
+         * Если пользователь не удален возвращаем ошибку
+         */
+        if (!($aTalkUsers[$idTarget]->getUserActive() == ModuleTalk::TALK_USER_DELETE_BY_SELF
+        || $aTalkUsers[$idTarget]->getUserActive() == ModuleTalk::TALK_USER_DELETE_BY_AUTHOR)) {
+            $this->Message_AddErrorSingle(
+                $this->Lang_Get(
+                    'talk_speaker_user_not_found',
+                    array('login' => $oUserTarget->getLogin())
+                ),
+                $this->Lang_Get('error')
+            );
+            return;
+        }
+        /**
+         * Приглашаем пользователя в разговора,  если приглашение прошло неудачно - возвращаем системную ошибку
+         */
+        if (!$this->Talk_DeleteTalkUserByArray($idTalk, $idTarget, ModuleTalk::TALK_USER_INVITED_BACK)) {
+            $this->Message_AddErrorSingle(
+                $this->Lang_Get('system_error'),
+                $this->Lang_Get('error')
+            );
+            return;
+        }
+        $this->Message_AddNoticeSingle(
+            $this->Lang_Get(
+                'talk_speaker_invited_ok',
+                array('login' => $oUserTarget->getLogin())
+            ),
+            $this->Lang_Get('attention')
+        );
+        $this->Talk_SendTalk("Приглашение вернуться в переписку " . $oTalk->getTitle(),
+            "<div id=\"accept_invite_talk_back\"><a href=\"#\" idTalk=\"" . $idTalk . "\" id=\"speaker_accept_restore_item_" . $idTarget .
+            "\" class=\"delete\">Вернуться в переписку</a></div>", $this->oUserCurrent->getId(), $idTarget);
+    }
+
+    /**
+     * Приглашение участника разговора обратно (ajax)
+     *
+     */
+    public function AjaxAcceptInviteTalkUserBack()
+    {
+        /**
+         * Устанавливаем формат Ajax ответа
+         */
+        $this->Viewer_SetResponseAjax('json');
+        $idTarget = getRequestStr('idTarget', null, 'post');
+        $idTalk = getRequestStr('idTalk', null, 'post');
+        /**
+         * Если пользователь не авторизирован, возвращаем ошибку
+         */
+        if (!$this->User_IsAuthorization()) {
+            $this->Message_AddErrorSingle(
+                $this->Lang_Get('need_authorization'),
+                $this->Lang_Get('error')
+            );
+            return;
+        }
+        /**
+         * Если приглашенный участник не существует в базе данных, возвращаем ошибку
+         */
+        if (!$oUserTarget = $this->User_GetUserById($idTarget)) {
+            $this->Message_AddErrorSingle(
+                $this->Lang_Get('user_not_found_by_id', array('id' => htmlspecialchars($idTarget))),
+                $this->Lang_Get('error')
+            );
+            return;
+        }
+		/**
+		 * Если юзер принимает не свое приглашение, возвращаем ошибку
+		 */
+        if ($this->oUserCurrent->getId() != $idTarget){
+			$this->Message_AddErrorSingle(
+				$this->Lang_Get('system_error'),
+				$this->Lang_Get('error')
+			);
+            return;
+        }
+        /**
+         * Если разговор не найден возвращаем ошибку
+         */
+        if ((!$oTalk = $this->Talk_GetTalkById($idTalk))) {
+            $this->Message_AddErrorSingle(
+                $this->Lang_Get('talk_not_found'),
+                $this->Lang_Get('error')
+            );
+            return;
+        }
+        /**
+         * Получаем список всех участников разговора
+         */
+        $aTalkUsers = $oTalk->getTalkUsers();
+        /**
+         * Если пользователь участник, возвращаем ошибку
+         */
+        if ($aTalkUsers[$idTarget]->getUserActive() == ModuleTalk::TALK_USER_ACTIVE) {
+            $this->Message_AddErrorSingle(
+                $this->Lang_Get(
+                    'talk_speaker_user_already_exist',
+                    array('login' => $oUserTarget->getLogin())
+                ),
+                $this->Lang_Get('error')
+            );
+            return;
+        }
+        /**
+         * Если пользователь не приглашен, возвращаем ошибку
+         */
+        if ($aTalkUsers[$idTarget]->getUserActive() != ModuleTalk::TALK_USER_INVITED_BACK) {
+            $this->Message_AddErrorSingle(
+                $this->Lang_Get(
+                    'talk_speaker_user_not_found',
+                    array('login' => $oUserTarget->getLogin())
+                ),
+                $this->Lang_Get('error')
+            );
+            return;
+        }
+        /**
+         * Активируем пользователя в разговора,  если активация прошла неудачно - возвращаем системную ошибку
+         */
+        if (!$this->Talk_DeleteTalkUserByArray($idTalk, $idTarget, ModuleTalk::TALK_USER_ACTIVE)) {
+            $this->Message_AddErrorSingle(
+                $this->Lang_Get('system_error'),
+                $this->Lang_Get('error')
+            );
+            return;
+        }
+        $this->Message_AddNoticeSingle(
+            $this->Lang_Get(
+                'talk_speaker_add_ok',
+                array('login' => $oUserTarget->getLogin())
+            ),
+            $this->Lang_Get('attention')
+        );
+        return;
+    }
+
+    /**
      * Добавление нового участника разговора (ajax)
      *
      */
@@ -1336,6 +1536,7 @@ class ActionTalk extends Action
          * Передаем во вьевер константы состояний участников разговора
          */
         $this->Viewer_Assign('TALK_USER_ACTIVE', ModuleTalk::TALK_USER_ACTIVE);
+        $this->Viewer_Assign('TALK_USER_INVITED_BACK', ModuleTalk::TALK_USER_INVITED_BACK);
         $this->Viewer_Assign('TALK_USER_DELETE_BY_SELF', ModuleTalk::TALK_USER_DELETE_BY_SELF);
         $this->Viewer_Assign('TALK_USER_DELETE_BY_AUTHOR', ModuleTalk::TALK_USER_DELETE_BY_AUTHOR);
     }

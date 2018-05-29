@@ -22,6 +22,7 @@
 			<i class="material-icons">more_vert</i>
 			<div class="topic-dropdown">
 				<a href="{router page='talk'}delete/{$oTalk->getId()}/?security_ls_key={$LIVESTREET_SECURITY_KEY}" onclick="return confirm('{$aLang.talk_inbox_delete_confirm}');" class="delete"><i class="material-icons">delete</i> Удалить</a>
+				<a href="#" class="link-dotted" onclick="jQuery('#talk_recipients').toggle(); return false;">{$aLang.talk_speaker_edit}</a>
 			</div>
 		</div>
 	</header>

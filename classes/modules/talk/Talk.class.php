@@ -32,6 +32,10 @@ class ModuleTalk extends Module {
 	 */
 	const TALK_USER_DELETE_BY_SELF = 2;
 	/**
+	 * Пользователь приглашен в разговор обратно
+	 */
+	const TALK_USER_INVITED_BACK = 3;
+	/**
 	 * Пользователя удалил из разговора автор письма
 	 */
 	const TALK_USER_DELETE_BY_AUTHOR = 4;

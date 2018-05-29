@@ -14,13 +14,19 @@
 					{foreach from=$oTalk->getTalkUsers() item=oTalkUser name=users}
 						{if $oTalkUser->getUserId()!=$oUserCurrent->getId()}
 							{assign var="oUser" value=$oTalkUser->getUser()}
-
-							{if $oTalkUser->getUserActive()!=$TALK_USER_DELETE_BY_AUTHOR}
+							{*{if $oTalkUser->getUserActive()!=$TALK_USER_DELETE_BY_AUTHOR}*}
 								<li id="speaker_item_{$oTalkUser->getUserId()}_area">
 									<a class="user {if $oTalkUser->getUserActive()!=$TALK_USER_ACTIVE}inactive{/if}" href="{$oUser->getUserWebPath()}">{$oUser->getLogin()}</a>
 									{if $oTalkUser->getUserActive()==$TALK_USER_ACTIVE}- <a href="#" id="speaker_item_{$oTalkUser->getUserId()}" class="delete">{$aLang.blog_delete}</a>{/if}
+									{if $oTalkUser->getUserActive()!=$TALK_USER_ACTIVE}- <a href="#" id="speaker_restore_item_{$oTalkUser->getUserId()}" class="delete">
+										{if $oTalkUser->getUserActive()==$TALK_USER_INVITED_BACK}
+											{$aLang.talk_invited}
+										{else}
+											{$aLang.blog_restore}
+										{/if}
+										</a>{/if}
 								</li>
-							{/if}
+							{*{/if}*}
 						{/if}
 					{/foreach}
 				</ul>

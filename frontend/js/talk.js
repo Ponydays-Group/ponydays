@@ -57,20 +57,80 @@ export function addToTalk(idTalk) {
 };
 
 /**
- * Удаляет пользователя из переписки
+ * Удаляет или приглашает обратно пользователя из переписки
  */
 export function removeFromTalk(link, idTalk) {
     link = $(link);
+    if (link.attr('id').includes('restore')) {
 
-    $('#' + link.attr('id') + '_area').fadeOut(500, function () {
-        $(this).remove();
-    });
-    var idTarget = link.attr('id').replace('speaker_item_', '');
+        /**
+         * Приглашает пользователя обратно в переписку
+         */
 
-    var url = aRouter['talk'] + 'ajaxdeletetalkuser/';
+        var idTarget = link.attr('id').replace('speaker_restore_item_', '');
+
+        var url = aRouter['talk'] + 'ajaxinvitetalkuserback/';
+        var params = {idTarget: idTarget, idTalk: idTalk};
+
+        $('#speaker_item_' + idTarget + '_area > #speaker_restore_item_' + idTarget).html('Приглашен');
+        $('#speaker_item_' + idTarget + '_area > .user').addClass('inactive');
+
+        Ajax.ajax(url, params, function (result) {
+            if (!result) {
+                Msg.error('Error', 'Please try again later');
+                link.parent('li').show();
+            }
+            if (result.bStateError) {
+                Msg.error(null, result.sMsg);
+                link.parent('li').show();
+            } else {
+                Msg.notice(null, result.sMsg);
+            }
+        });
+    } else {
+        /**
+         * Удаляет пользователя из переписки
+         */
+        var idTarget = link.attr('id').replace('speaker_item_', '');
+
+        var url = aRouter['talk'] + 'ajaxdeletetalkuser/';
+        var params = {idTarget: idTarget, idTalk: idTalk};
+
+        $('#speaker_item_' + idTarget + '_area > #speaker_item_' + idTarget).attr("id","speaker_restore_item_" + idTarget).html('Восстановить');
+        $('#speaker_item_' + idTarget + '_area > .user').addClass('inactive');
+
+        Emitter.emit('removeFromTalkBefore');
+        Ajax.ajax(url, params, function (result) {
+            if (!result) {
+                Msg.error('Error', 'Please try again later');
+                link.parent('li').show();
+            }
+            if (result.bStateError) {
+                Msg.error(null, result.sMsg);
+                link.parent('li').show();
+            } else {
+                Msg.notice(null, result.sMsg);
+            }
+            Emitter.emit('ls_talk_remove_from_talk_after', [idTalk, idTarget], link);
+        });
+    }
+
+    return false;
+};
+
+/**
+ * Принимает приглашение обратно в переписку
+ */
+export function acceptInviteBackToTalk(link) {
+    link = $(link);
+
+    var idTalk = link.attr('idTalk');
+
+    var idTarget = link.attr('id').replace('speaker_accept_restore_item_', '');
+
+    var url = aRouter['talk'] + 'ajaxacceptinvitetalkuserback/';
     var params = {idTarget: idTarget, idTalk: idTalk};
 
-    Emitter.emit('removeFromTalkBefore');
     Ajax.ajax(url, params, function (result) {
         if (!result) {
             Msg.error('Error', 'Please try again later');
@@ -79,8 +139,9 @@ export function removeFromTalk(link, idTalk) {
         if (result.bStateError) {
             Msg.error(null, result.sMsg);
             link.parent('li').show();
+        } else {
+            Msg.notice(null, result.sMsg);
         }
-        Emitter.emit('ls_talk_remove_from_talk_after', [idTalk, idTarget], link);
     });
 
     return false;

@@ -376,6 +376,12 @@ export default function init() {
             return false;
         });
 
+        // Принимаем приглашение в переписку переписки
+        $("#accept_invite_talk_back").delegate("a.delete", "click", function () {
+            Talk.acceptInviteBackToTalk(this);
+            return false;
+        });
+
 
         // Help-tags link
         $('.js-tags-help-link').click(function () {

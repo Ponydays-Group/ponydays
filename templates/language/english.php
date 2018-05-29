@@ -852,13 +852,16 @@ return array(
 	'talk_speaker_title' => 'Message members',
 	'talk_speaker_edit' => 'Edit members',
 	'talk_speaker_add_label' => 'Add member',
+	'talk_speaker_invited_ok' => 'Member <b>%%login%%</b> invited successfully',
 	'talk_speaker_delete_ok' => 'Member <b>%%login%%</b> deleted successfully',
 	'talk_speaker_user_not_found' => 'User <b>%%login%%</b> is not a member of this message',
 	'talk_speaker_user_already_exist' => ' <b>%%login%%</b> is a member of this message already',
+	'talk_speaker_user_already_invited' => ' <b>%%login%%</b> is invited already',
 	'talk_speaker_add_ok' => 'User <b>%%login%%</b> added successfully',
 	'talk_speaker_delete_by_self' => 'Member <b>%%login%%</b> deleted this message',
 	'talk_speaker_add_self' => 'You can\'t add yourself as a member',
 	'talk_not_found' => 'Message not found',
+	'talk_invited' => 'Invited',
 	/**
 	 * Userfeed
 	 */

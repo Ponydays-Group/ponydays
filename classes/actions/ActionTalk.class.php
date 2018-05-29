@@ -464,6 +464,7 @@ class ActionTalk extends Action
         $oTalkUser->setDateLast(date("Y-m-d H:i:s"));
         $oTalkUser->setCommentIdLast($iMaxIdComment);
         $oTalkUser->setCommentCountNew(0);
+	$this->Talk_UpdateTalkUser($oTalkUser);
 
         $this->Viewer_AddHtmlTitle($oTalk->getTitle());
         $this->Viewer_Assign('oTalk', $oTalk);

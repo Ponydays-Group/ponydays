@@ -11,7 +11,7 @@
 
 
 {if $oUserCurrent and $oUserCurrent->isAdministrator()}
-	<div id="blog_delete_form" class="modal">
+	<div id="blog_delete_form" class="modal modal-blog-delete">
 		<header class="modal-header">
 			<h3>{$aLang.blog_admin_delete_title}</h3>
 			<a href="#" class="close jqmClose"></a>

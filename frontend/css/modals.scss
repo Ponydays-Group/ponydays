@@ -6,8 +6,8 @@
     display: none;
     position: fixed;
     top: 25%;
-    left: 25%;
-    width: 50%;
+    left: 50%;
+    width: 100%;
     margin-left: -150px;
     color: $text-color;
     background-color: $first;
@@ -173,6 +173,11 @@
 /* Upload Image */
 
 .modal-image-upload {
+    max-width: 500px;
+    margin-left: -250px;
+}
+
+.modal-blog-delete {
     max-width: 500px;
     margin-left: -250px;
 }

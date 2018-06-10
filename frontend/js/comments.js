@@ -494,7 +494,7 @@ export function goToNextComment() {
 	if ($("#next_new").hasClass("disabled"))
 		return false
 	Emitter.emit("go-to-next-comment")
-	let id = $('.comment-new')[0].dataset.id
+	let id = $('.comment-new:visible')[0].dataset.id
 	scrollToComment(id)
 }
 

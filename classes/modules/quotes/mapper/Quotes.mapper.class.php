@@ -157,7 +157,7 @@ class ModuleQuotes_MapperQuotes extends Mapper {
             return $aRows[0];
         }
 
-        return "";
+        return array();
     }
 
 	/**

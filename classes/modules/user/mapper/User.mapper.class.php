@@ -1525,8 +1525,10 @@ class ModuleUser_MapperUser extends Mapper
                 WHERE 
                     adminset_id = 68
                 ";
-
-        return $this->oDb->query($sql)[0]['adminset_val'];;
+        if ($aResult = $this->oDb->query($sql) && count($aResult)) {
+            return $aResult[0]['adminset_val'];
+        }
+        return false;
     }
 }
 

@@ -212,6 +212,16 @@ export function getMarkitupComment() {
             },
             {separator: '---------------'},
             {
+                name: "Dice",
+                className: 'fa dice_icon',
+                replaceWith: function(m) {
+                    let i = prompt("Сколько раз бросить дайс");
+                    let d = prompt("Количество граней дайса");
+                    if(i&&d) return '['+i+'d'+d+']';
+                }
+            },
+            {separator: '---------------'},
+            {
                 name: Lang.get('panel_clear_tags'), className: 'fa fa-times', replaceWith: function (markitup) {
                 return markitup.selection.replace(/<(.*?)>/g, "")
             }

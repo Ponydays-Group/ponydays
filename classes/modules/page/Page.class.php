@@ -92,7 +92,7 @@ class ModulePage extends Module {
 	public function GetPages($aFilter=array()) {
 		$aPages=array();
 		$aPagesRow=$this->oMapper->GetPages($aFilter);
-		if (count($aPagesRow)) {
+		if ($aPagesRow && count($aPagesRow)) {
 			$aPages=$this->BuildPagesRecursive($aPagesRow);
 		}
 		return $aPages;

@@ -587,3 +587,19 @@ button#comment-button-history {
     align-items: center;
     margin-bottom: 10px;
 }
+
+.dice_result {
+    color: green;
+}
+
+.dice_icon {
+    background: url(/dice.svg);
+    @if $text-color == white {
+        background: url(/dice_white.svg);
+    }
+    width: 12px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 12px !important;
+    margin-top: 2px;
+}

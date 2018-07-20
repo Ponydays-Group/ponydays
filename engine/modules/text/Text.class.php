@@ -289,6 +289,19 @@ class ModuleText extends Module {
             $oTarget = $this->Talk_GetTalkById($oComment->getTargetId());
 		}
 
+		$sText = preg_replace_callback('/\[(\d*)d(\d*)\]/',
+            function ($matches) {
+                $i = (int)$matches[1];
+                $d = (int)$matches[2];
+                $r = "<span class='dice_result'>[ ";
+                for ($y = 0 ; $y < $i; $y++) {
+                    $r = $r . rand(1,$d) . ", ";
+                }
+                $r = substr($r,0,-2);
+                $r = $r . " ]</span>";
+                return $r;
+            }, $sText);
+
         $sText = str_replace('href="'.$oTarget->getUrl(),"href=\"", $sText);
         $sText = str_replace("href='".$oTarget->getUrl(),"href='", $sText);
 

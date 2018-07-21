@@ -280,7 +280,25 @@ class ModuleText extends Module {
         return $sText;
 	}
 
-	public function CommentParser($oComment, $bMark = false) {
+	public function Mark($sText) {
+        $sText = preg_replace_callback('/\*\*(.*[\s\S]*)\*\*/',
+            function ($matches) {
+                return "<b>" . $matches[1] . "</b>";
+            }, $sText);
+
+        $sText = preg_replace_callback('/\*(.*[\s\S]*)\*/',
+            function ($matches) {
+                return "<em>" . $matches[1] . "</em>";
+            }, $sText);
+
+        $sText = preg_replace_callback('/\~\~(.*[\s\S]*)\~\~/',
+            function ($matches) {
+                return "<s>" . $matches[1] . "</s>";
+            }, $sText);
+        return $sText;
+	}
+
+	public function CommentParser($oComment, $bMark = false, $bDice = false) {
 		$sText = $oComment->getText();
 
         if ($oComment->getTargetType()=="topic") {
@@ -289,39 +307,23 @@ class ModuleText extends Module {
             $oTarget = $this->Talk_GetTalkById($oComment->getTargetId());
 		}
 
-		$sText = preg_replace_callback('/\[(\d*)d(\d*)\]/',
-            function ($matches) {
-                $i = (int)$matches[1];
-                $d = (int)$matches[2];
-                $r = "<span class='dice_result'>".$matches[0].": ";
-                for ($y = 0 ; $y < $i; $y++) {
-                    $r = $r . rand(1,$d) . ", ";
-                }
-                $r = substr($r,0,-2);
-                $r = $r . "</span>";
-                return $r;
-            }, $sText);
+		if ($bDice) {
+            $sText = preg_replace_callback('/\[(\d*)d(\d*)\]/',
+                function ($matches) {
+                    $i = (int)$matches[1];
+                    $d = (int)$matches[2];
+                    $r = "<span class='dice_result'>" . $matches[0] . ": ";
+                    for ($y = 0; $y < $i; $y++) {
+                        $r = $r . rand(1, $d) . ", ";
+                    }
+                    $r = substr($r, 0, -2);
+                    $r = $r . "</span>";
+                    return $r;
+                }, $sText);
+        }
 
         if ($bMark) {
-            $sText = preg_replace_callback('/\*\*(.*[\s\S]*)\*\*/',
-                function ($matches) {
-                    return "<b>" . $matches[1] . "</b>";
-                }, $sText);
-
-            $sText = preg_replace_callback('/\*(.*[\s\S]*)\*/',
-                function ($matches) {
-                    return "<em>" . $matches[1] . "</em>";
-                }, $sText);
-
-            $sText = preg_replace_callback('/\~\~(.*[\s\S]*)\~\~/',
-                function ($matches) {
-                    return "<s>" . $matches[1] . "</s>";
-                }, $sText);
-
-            $sText = preg_replace_callback('/\~\~(.*[\s\S]*)\~\~/',
-                function ($matches) {
-                    return "<s>" . $matches[1] . "</s>";
-                }, $sText);
+            $sText = $this->Mark($sText);
         }
 
         $sText = str_replace('href="'.$oTarget->getUrl(),"href=\"", $sText);

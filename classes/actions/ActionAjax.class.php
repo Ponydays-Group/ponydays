@@ -1900,6 +1900,8 @@ class ActionAjax extends Action
         }
         
         $sText=$this->Text_Parser(getRequest('comment_text'));
+        if (getRequestStr('form_comment_mark')=="on")
+            $sText = $this->Text_Mark($sText);
         
         if (mb_strlen($sText, 'utf-8') > Config::Get('module.comment.max_length'))
         {
@@ -1908,11 +1910,9 @@ class ActionAjax extends Action
         }
         
         $sDE=date("Y-m-d H:i:s");
-        
-        $oOldData=$this->Editcomment_GetLastEditData($oComment->getId());
 
         $bEdited = false;
-        if ($oOldData && $oOldData->getCommentTextSource() == getRequest('comment_text'))
+        if ($oComment->getText() == $sText)
         {
             $this->Message_AddNoticeSingle($this->Lang_Get('editcomment.notice_nothing_changed'));
 			$bEdited = false;
@@ -1932,7 +1932,8 @@ class ActionAjax extends Action
                 $oComment->setText($sText . $oViewerLocal->Fetch('inject_comment_edited.tpl'));
             else
                 $oComment->setText($sText);
-            $oComment->setTextHash(md5($sText));
+            $oComment->setText($this->Text_CommentParser($oComment,getRequestStr('form_comment_mark')=="on",true));
+            $oComment->setTextHash(md5($oComment->getText()));
             
             if ($this->Comment_UpdateComment($oComment))
             {

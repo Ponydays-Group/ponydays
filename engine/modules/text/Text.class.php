@@ -293,7 +293,7 @@ class ModuleText extends Module {
             function ($matches) {
                 $i = (int)$matches[1];
                 $d = (int)$matches[2];
-                $r = "<span class='dice_result'>[ ";
+                $r = "<span class='dice_result'>".$matches[0].": [";
                 for ($y = 0 ; $y < $i; $y++) {
                     $r = $r . rand(1,$d) . ", ";
                 }

@@ -293,12 +293,12 @@ class ModuleText extends Module {
             function ($matches) {
                 $i = (int)$matches[1];
                 $d = (int)$matches[2];
-                $r = "<span class='dice_result'>".$matches[0].": [";
+                $r = "<span class='dice_result'>".$matches[0].": ";
                 for ($y = 0 ; $y < $i; $y++) {
                     $r = $r . rand(1,$d) . ", ";
                 }
                 $r = substr($r,0,-2);
-                $r = $r . " ]</span>";
+                $r = $r . "</span>";
                 return $r;
             }, $sText);
 

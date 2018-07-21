@@ -603,3 +603,33 @@ button#comment-button-history {
     height: 12px !important;
     margin-top: 2px;
 }
+
+.markItUpFooter {
+    display: none;
+}
+
+div#form_comment_mark_wrapper label::before {
+    /* background: red; */
+    width: 14px;
+    height: 14px;
+}
+
+div#form_comment_mark_wrapper label {
+    font-size: 12px;
+    line-height: 14px;
+    min-height: 14px;
+    padding-left: 24px;
+}
+
+div#form_comment_mark_wrapper {
+    padding: 5px;
+    //background: #272727;
+    background: $second;
+    margin-bottom: 10px;
+    border: $second-border;
+    @if $text-color == white {
+        background: #272727;
+        border: 1px solid #171616;
+    }
+    border-top: 0px;
+}

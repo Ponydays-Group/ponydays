@@ -468,15 +468,16 @@ class ModuleComment extends Module {
 	/**
 	 * Добавляет коммент
 	 *
-	 * @param  ModuleComment_EntityComment $oComment	Объект комментария
+     * @param  ModuleComment_EntityComment $oComment	Объект комментария
+	 * @param  bool $bMark    Использовать ли mark
 	 * @return bool|ModuleComment_EntityComment
 	 */
-	public function AddComment(ModuleComment_EntityComment $oComment) {
+	public function AddComment(ModuleComment_EntityComment $oComment, $bMark= alse) {
 		if (Config::Get('module.comment.use_nested')) {
 			$sId=$this->oMapper->AddCommentTree($oComment);
 			$this->Cache_Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG,array("comment_update"));
 		} else {
-            $oComment->setText($this->Text_CommentParser($oComment));
+            $oComment->setText($this->Text_CommentParser($oComment, $bMark));
 			$sId=$this->oMapper->AddComment($oComment);
 		}
 		if ($sId) {

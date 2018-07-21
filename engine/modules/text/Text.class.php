@@ -280,7 +280,7 @@ class ModuleText extends Module {
         return $sText;
 	}
 
-	public function CommentParser($oComment) {
+	public function CommentParser($oComment, $bMark = false) {
 		$sText = $oComment->getText();
 
         if ($oComment->getTargetType()=="topic") {
@@ -301,6 +301,28 @@ class ModuleText extends Module {
                 $r = $r . "</span>";
                 return $r;
             }, $sText);
+
+        if ($bMark) {
+            $sText = preg_replace_callback('/\*\*(.*[\s\S]*)\*\*/',
+                function ($matches) {
+                    return "<b>" . $matches[1] . "</b>";
+                }, $sText);
+
+            $sText = preg_replace_callback('/\*(.*[\s\S]*)\*/',
+                function ($matches) {
+                    return "<em>" . $matches[1] . "</em>";
+                }, $sText);
+
+            $sText = preg_replace_callback('/\~\~(.*[\s\S]*)\~\~/',
+                function ($matches) {
+                    return "<s>" . $matches[1] . "</s>";
+                }, $sText);
+
+            $sText = preg_replace_callback('/\~\~(.*[\s\S]*)\~\~/',
+                function ($matches) {
+                    return "<s>" . $matches[1] . "</s>";
+                }, $sText);
+        }
 
         $sText = str_replace('href="'.$oTarget->getUrl(),"href=\"", $sText);
         $sText = str_replace("href='".$oTarget->getUrl(),"href='", $sText);

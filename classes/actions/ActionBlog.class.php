@@ -1283,6 +1283,9 @@ class ActionBlog extends Action
         /**
          * Проверяем текст комментария
          */
+//        echo getRequestStr('comment_text');
+        $bMark = getRequestStr('form_comment_mark')=="on";
+
         $sText = $this->Text_Parser(getRequestStr('comment_text'));
         if (!func_check($sText, 'text', 2, Config::Get('module.comment.max_length'))) {
             $this->Message_AddErrorSingle($this->Lang_Get('topic_comment_add_text_error'), $this->Lang_Get('error'));
@@ -1352,7 +1355,7 @@ class ActionBlog extends Action
          */
 
         $this->Hook_Run('comment_add_before', array('oCommentNew' => $oCommentNew, 'oCommentParent' => $oCommentParent, 'oTopic' => $oTopic));
-        if ($this->Comment_AddComment($oCommentNew)) {
+        if ($this->Comment_AddComment($oCommentNew, $bMark)) {
             $curl_data = array(
                 "senderId" => $this->oUserCurrent->getUserId(),
                 "senderLogin" => $this->oUserCurrent->getLogin(),

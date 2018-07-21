@@ -135,6 +135,7 @@ export function add(formObj, targetId, targetType) {
 	}
 
 	formObj = $("#" + formObj)
+	console.log(formObj)
 
 	$("#form_comment_text").addClass(options.classes.form_loader).attr("readonly", true)
 	$("#comment-button-submit").attr("disabled", "disabled")
@@ -837,6 +838,10 @@ export function init() {
 	if (typeof(options.wysiwyg) !== "number") {
 		options.wysiwyg = Boolean(BLOG_USE_TINYMCE && tinyMCE)
 	}
+
+    $("#form_comment_mark").on("change", (e)=>localStorage.setItem('comment_use_mark',e.target.checked))
+    $("#form_comment_mark")[0].checked = JSON.parse(localStorage.getItem('comment_use_mark'))
+
 	Emitter.emit('ls_comments_init_after',[],this)
 }
 

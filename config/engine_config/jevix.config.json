@@ -79,6 +79,13 @@
                     }
                 ],
                 [
+                    "code", {
+                    "class": [
+                        "inline"
+                    ]
+                }
+                ],
+                [
                     "img", {
                         "0": "src",
                         "alt": "#text",

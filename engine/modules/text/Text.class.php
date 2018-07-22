@@ -295,6 +295,14 @@ class ModuleText extends Module {
             function ($matches) {
                 return "<s>" . $matches[1] . "</s>";
             }, $sText);
+        $sText = preg_replace_callback('/\`\`\`(.*[\s\S]*)\`\`\`/',
+            function ($matches) {
+                return "<pre>" . $matches[1] . "</pre>";
+            }, $sText);
+        $sText = preg_replace_callback('/\`(.*[\s\S]*)\`/',
+            function ($matches) {
+                return "<code class='inline'>" . $matches[1] . "</code>";
+            }, $sText);
 
         return $sText;
 	}

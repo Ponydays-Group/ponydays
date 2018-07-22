@@ -295,6 +295,7 @@ class ModuleText extends Module {
             function ($matches) {
                 return "<s>" . $matches[1] . "</s>";
             }, $sText);
+
         return $sText;
 	}
 

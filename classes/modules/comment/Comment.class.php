@@ -472,7 +472,7 @@ class ModuleComment extends Module {
 	 * @param  bool $bMark    Использовать ли mark
 	 * @return bool|ModuleComment_EntityComment
 	 */
-	public function AddComment(ModuleComment_EntityComment $oComment, $bMark= alse) {
+	public function AddComment(ModuleComment_EntityComment $oComment, $bMark= false) {
 		if (Config::Get('module.comment.use_nested')) {
 			$sId=$this->oMapper->AddCommentTree($oComment);
 			$this->Cache_Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG,array("comment_update"));

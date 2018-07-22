@@ -300,37 +300,37 @@ class ModuleText extends Module {
                 return $this->Escape($matches[1]);
             }, $sText);
 
-        $sText = preg_replace_callback('/\`\`\`(.*[\s\S]*)\`\`\`/',
+        $sText = preg_replace_callback('/\`\`\`([.\s\S]*?)\`\`\`/',
             function ($matches) {
                 return "<pre>" . $this->Escape($matches[1]) . "</pre>";
             }, $sText);
 
-        $sText = preg_replace_callback('/\`(.*[\s\S]*)\`/',
+        $sText = preg_replace_callback('/\`([.\s\S]*?)\`/',
             function ($matches) {
                 return "<code class='inline'>" . $this->Escape($matches[1]) . "</code>";
             }, $sText);
 
-        $sText = preg_replace_callback('/\[\[(.*[\s\S]*)\]\]/',
+        $sText = preg_replace_callback('/\[\[([.\s\S]*?)\]\]/',
             function ($matches) {
                 return "<span class=\"spoiler-gray\">" . $matches[1] . "</span>";
             }, $sText);
 
-        $sText = preg_replace_callback('/\(([.\s\S]*)\)\[([.\s\S]*)\]/',
+        $sText = preg_replace_callback('/\(([.\s\S]*?)\)\[([.\s\S]*?)\]/',
             function ($matches) {
                 return "<a target='_blank' href='".$matches[1]."'>" . $matches[2] . "</a>";
             }, $sText);
 
-        $sText = preg_replace_callback('/\*\*(.*[\s\S]*)\*\*/',
+        $sText = preg_replace_callback('/\*\*([.\s\S]*?)\*\*/',
             function ($matches) {
                 return "<b>" . $matches[1] . "</b>";
             }, $sText);
 
-        $sText = preg_replace_callback('/\*(.*[\s\S]*)\*/',
+        $sText = preg_replace_callback('/\*([.\s\S]*?)\*/',
             function ($matches) {
                 return "<em>" . $matches[1] . "</em>";
             }, $sText);
 
-        $sText = preg_replace_callback('/\~\~(.*[\s\S]*)\~\~/',
+        $sText = preg_replace_callback('/\~\~([.\s\S]*?)\~\~/',
             function ($matches) {
                 return "<s>" . $matches[1] . "</s>";
             }, $sText);

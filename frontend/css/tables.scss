@@ -73,6 +73,7 @@
     background: $first;
     border: $second-border;
     margin-bottom: 15px;
+    box-shadow: $first-shadow;
 }
 
 .table-hover > tbody > tr:hover {
@@ -97,5 +98,4 @@
     max-width: 100%;
     overflow-x: scroll;
     width: 100%;
-    box-shadow: $first-shadow;
 }

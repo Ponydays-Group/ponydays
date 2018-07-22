@@ -170,7 +170,7 @@
     color: #607D8A;
 }
 
-.spoiler-gray:hover {
+.spoiler-gray:hover, .spoiler-gray.visible {
     background: none;
 }
 

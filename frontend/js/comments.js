@@ -671,11 +671,20 @@ export function initShortcuts() {
         let despoiled = current.hasClass("comment-despoiled")
         current.find(".spoiler-body").each(function (k, v) {
             if (v.style.display !== "block") {
-                if (!despoiled) window.openSpoiler(v)
+                if (!despoiled) {
+                	window.openSpoiler(v)
+                }
             } else {
-                if (despoiled) window.closeSpoiler(v)
+                if (despoiled) {
+                    window.closeSpoiler(v)
+                }
             }
         })
+        if (despoiled) {
+            $('.comment-current .spoiler-gray').removeClass("visible")
+        } else {
+            $('.comment-current .spoiler-gray').addClass("visible")
+		}
         current.toggleClass("comment-despoiled")
     }.bind(this)
 

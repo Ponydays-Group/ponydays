@@ -289,7 +289,8 @@ class ModuleText extends Module {
         "~" => "&#126;",
         "`" => "&#96;",
 		"<" => "&#60;",
-		">" => "&#62;"
+		">" => "&#62;",
+		" " => "&nbsp;"
     ];
 
 	public function Escape($sText) {

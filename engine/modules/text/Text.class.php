@@ -280,7 +280,41 @@ class ModuleText extends Module {
         return $sText;
 	}
 
+	public $aRepl = [
+        "*" => "&#42;",
+        "(" => "&#40;",
+        ")" => "&#41;",
+        "[" => "&#91;",
+        "]" => "&#93;",
+        "~" => "&#126;",
+        "`" => "&#96;"
+    ];
+
+	public function Escape($sText) {
+		return str_replace(array_keys($this->aRepl), array_values($this->aRepl), $sText);
+	}
+
 	public function Mark($sText) {
+        $sText = preg_replace_callback('/[\\\](.)/',
+            function ($matches) {
+                return $this->Escape($matches[1]);
+            }, $sText);
+
+        $sText = preg_replace_callback('/\`\`\`(.*[\s\S]*)\`\`\`/',
+            function ($matches) {
+                return "<pre>" . $this->Escape($matches[1]) . "</pre>";
+            }, $sText);
+
+        $sText = preg_replace_callback('/\`(.*[\s\S]*)\`/',
+            function ($matches) {
+                return "<code class='inline'>" . $this->Escape($matches[1]) . "</code>";
+            }, $sText);
+
+        $sText = preg_replace_callback('/\[\[(.*[\s\S]*)\]\]/',
+            function ($matches) {
+                return "<span class=\"spoiler-gray\">" . $matches[1] . "</span>";
+            }, $sText);
+
         $sText = preg_replace_callback('/\(([.\s\S]*)\)\[([.\s\S]*)\]/',
             function ($matches) {
                 return "<a target='_blank' href='".$matches[1]."'>" . $matches[2] . "</a>";
@@ -299,14 +333,6 @@ class ModuleText extends Module {
         $sText = preg_replace_callback('/\~\~(.*[\s\S]*)\~\~/',
             function ($matches) {
                 return "<s>" . $matches[1] . "</s>";
-            }, $sText);
-        $sText = preg_replace_callback('/\`\`\`(.*[\s\S]*)\`\`\`/',
-            function ($matches) {
-                return "<pre>" . $matches[1] . "</pre>";
-            }, $sText);
-        $sText = preg_replace_callback('/\`(.*[\s\S]*)\`/',
-            function ($matches) {
-                return "<code class='inline'>" . $matches[1] . "</code>";
             }, $sText);
 
         return $sText;

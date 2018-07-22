@@ -477,7 +477,7 @@ class ModuleComment extends Module {
 			$sId=$this->oMapper->AddCommentTree($oComment);
 			$this->Cache_Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG,array("comment_update"));
 		} else {
-            $oComment->setText($this->Text_CommentParser($oComment, $bMark));
+            $oComment->setText($this->Text_CommentParser($oComment, true));
 			$sId=$this->oMapper->AddComment($oComment);
 		}
 		if ($sId) {

@@ -287,7 +287,9 @@ class ModuleText extends Module {
         "[" => "&#91;",
         "]" => "&#93;",
         "~" => "&#126;",
-        "`" => "&#96;"
+        "`" => "&#96;",
+		"<" => "&#60;",
+		">" => "&#62;"
     ];
 
 	public function Escape($sText) {
@@ -338,7 +340,7 @@ class ModuleText extends Module {
         return $sText;
 	}
 
-	public function CommentParser($oComment, $bMark = false, $bDice = true) {
+	public function CommentParser($oComment, $bDice = true) {
 		$sText = $oComment->getText();
 
         if ($oComment->getTargetType()=="topic") {
@@ -360,10 +362,6 @@ class ModuleText extends Module {
                     $r = $r . "</span>";
                     return $r;
                 }, $sText);
-        }
-
-        if ($bMark) {
-            $sText = $this->Mark($sText);
         }
 
         $sText = str_replace('href="'.$oTarget->getUrl(),"href=\"", $sText);

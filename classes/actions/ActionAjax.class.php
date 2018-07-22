@@ -1898,10 +1898,12 @@ class ActionAjax extends Action
             $this->Message_AddErrorSingle($sCheckResult);
             return;
         }
-        
-        $sText=$this->Text_Parser(getRequest('comment_text'));
-        if (getRequestStr('form_comment_mark')=="on")
-            $sText = $this->Text_Mark($sText);
+
+        $bMark = getRequestStr('form_comment_mark')=="on";
+        if ($bMark)
+            $sText = $this->Text_Parser($this->Text_Mark(getRequestStr('comment_text')));
+        else
+            $sText = $this->Text_Parser(getRequestStr('comment_text'));
         
         if (mb_strlen($sText, 'utf-8') > Config::Get('module.comment.max_length'))
         {

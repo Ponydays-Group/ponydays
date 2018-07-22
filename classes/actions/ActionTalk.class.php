@@ -751,7 +751,10 @@ class ActionTalk extends Action
          * Проверяем текст комментария
          */
         $bMark = getRequestStr('form_comment_mark')=="on";
-        $sText = $this->Text_Parser(getRequestStr('comment_text'));
+        if ($bMark)
+            $sText = $this->Text_Parser($this->Text_Mark(getRequestStr('comment_text')));
+        else
+            $sText = $this->Text_Parser(getRequestStr('comment_text'));
         if (!func_check($sText, 'text', 2, Config::Get('module.comment.max_length'))) {
             $this->Message_AddErrorSingle($this->Lang_Get('talk_comment_add_text_error'), $this->Lang_Get('error'));
             return;
@@ -813,7 +816,7 @@ class ActionTalk extends Action
          * Добавляем коммент
          */
         $this->Hook_Run('talk_comment_add_before', array('oCommentNew' => $oCommentNew, 'oCommentParent' => $oCommentParent, 'oTalk' => $oTalk));
-        if ($this->Comment_AddComment($oCommentNew, $bMark)) {
+        if ($this->Comment_AddComment($oCommentNew)) {
             $this->Hook_Run('talk_comment_add_after', array('oCommentNew' => $oCommentNew, 'oCommentParent' => $oCommentParent, 'oTalk' => $oTalk));
 
             $this->Viewer_AssignAjax('sCommentId', $oCommentNew->getId());

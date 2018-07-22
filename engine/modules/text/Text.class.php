@@ -283,9 +283,9 @@ class ModuleText extends Module {
 	public function Mark($sText) {
         $sText = preg_replace_callback('/\(([.\s\S]*)\)\[([.\s\S]*)\]/',
             function ($matches) {
-                return "<a href='".$matches[1]."'>" . $matches[2] . "</a>";
+                return "<a target='_blank' href='".$matches[1]."'>" . $matches[2] . "</a>";
             }, $sText);
-        
+
         $sText = preg_replace_callback('/\*\*(.*[\s\S]*)\*\*/',
             function ($matches) {
                 return "<b>" . $matches[1] . "</b>";

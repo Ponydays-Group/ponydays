@@ -299,7 +299,7 @@ class ModuleText extends Module {
         return $sText;
 	}
 
-	public function CommentParser($oComment, $bMark = false, $bDice = false) {
+	public function CommentParser($oComment, $bMark = false, $bDice = true) {
 		$sText = $oComment->getText();
 
         if ($oComment->getTargetType()=="topic") {

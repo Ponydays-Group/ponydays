@@ -290,7 +290,8 @@ class ModuleText extends Module {
         "`" => "&#96;",
 		"<" => "&#60;",
 		">" => "&#62;",
-		" " => "&nbsp;"
+		" " => "&nbsp;",
+		"_" => "&#95;"
     ];
 
 	public function Escape($sText) {
@@ -312,7 +313,7 @@ class ModuleText extends Module {
             function ($matches) {
                 return $this->Escape($matches[1]);
             }, $sText);
-        
+
         $sText = preg_replace_callback('/\[\[([.\s\S]*?)\]\]/',
             function ($matches) {
                 return "<span class=\"spoiler-gray\">" . $matches[1] . "</span>";
@@ -337,6 +338,12 @@ class ModuleText extends Module {
             function ($matches) {
                 return "<s>" . $matches[1] . "</s>";
             }, $sText);
+
+        $sText = preg_replace_callback('/\_\_([.\s\S]*?)\_\_/',
+            function ($matches) {
+                return "<u>" . $matches[1] . "</u>";
+            }, $sText);
+
 
         return $sText;
 	}

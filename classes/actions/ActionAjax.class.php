@@ -1290,7 +1290,7 @@ class ActionAjax extends Action
             $sTextResult = htmlspecialchars($sText);
         }
         else {
-            $sTextResult = $this->Text_Parser($sText);
+            $sTextResult = $this->Text_Parser($this->Text_Mark($sText));
         }
 
         /**

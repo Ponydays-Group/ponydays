@@ -298,11 +298,6 @@ class ModuleText extends Module {
 	}
 
 	public function Mark($sText) {
-        $sText = preg_replace_callback('/[\\\](.)/',
-            function ($matches) {
-                return $this->Escape($matches[1]);
-            }, $sText);
-
         $sText = preg_replace_callback('/\`\`\`([.\s\S]*?)\`\`\`/',
             function ($matches) {
                 return "<pre>" . $this->Escape($matches[1]) . "</pre>";
@@ -313,6 +308,11 @@ class ModuleText extends Module {
                 return "<code class='inline'>" . $this->Escape($matches[1]) . "</code>";
             }, $sText);
 
+        $sText = preg_replace_callback('/[\\\](.)/',
+            function ($matches) {
+                return $this->Escape($matches[1]);
+            }, $sText);
+        
         $sText = preg_replace_callback('/\[\[([.\s\S]*?)\]\]/',
             function ($matches) {
                 return "<span class=\"spoiler-gray\">" . $matches[1] . "</span>";

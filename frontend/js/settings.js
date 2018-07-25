@@ -216,7 +216,11 @@ export function getMarkitupComment() {
                 className: 'fa dice_icon',
                 replaceWith: function(m) {
                     let i = prompt("Сколько раз бросить дайс");
+                    if (!i)
+                        return
                     let d = prompt("Количество граней дайса");
+                    if (!d)
+                        return
                     if(i&&d) return '['+i+'d'+d+']';
                 }
             },

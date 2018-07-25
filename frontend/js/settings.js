@@ -221,7 +221,7 @@ export function getMarkitupComment() {
                     let d = prompt("Количество граней дайса");
                     if (!d)
                         return
-                    if(i&&d) return '['+i+'d'+d+']';
+                    return '['+i+'d'+d+']';
                 }
             },
             {separator: '---------------'},

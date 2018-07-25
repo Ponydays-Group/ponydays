@@ -1290,7 +1290,10 @@ class ActionAjax extends Action
             $sTextResult = htmlspecialchars($sText);
         }
         else {
-            $sTextResult = $this->Text_Parser($this->Text_Mark($sText));
+            if (getRequestStr('form_comment_mark')=="on")
+                $sTextResult = $this->Text_Parser($this->Text_Mark($sText));
+            else
+                $sTextResult = $this->Text_Parser($sText);
         }
 
         /**

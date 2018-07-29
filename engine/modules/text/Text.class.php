@@ -304,6 +304,11 @@ class ModuleText extends Module {
                 return "<pre>" . $this->Escape($matches[1]) . "</pre>";
             }, $sText);
 
+		$sText = preg_replace_callback('/\`\`([.\s\S]*?)\`\`/',
+			function ($matches) {
+				return "<blockquote>" . $matches[1] . "</blockquote>";
+			}, $sText);
+
         $sText = preg_replace_callback('/\`([.\s\S]*?)\`/',
             function ($matches) {
                 return "<code class='inline'>" . $this->Escape($matches[1]) . "</code>";

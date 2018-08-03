@@ -495,7 +495,8 @@ class ModuleComment extends Module {
                     $sNick = $matches[2];
                     $r = "<a href=\"/profile/" . $sLogin . "/\" class=\"ls-user\">&#64;" . $sNick . "</a>";
                     if ($oTargetUser = $this->User_getUserByLogin($sLogin)) {
-                        $this->Cast_sendCastNotifyToUser("comment", $oComment, $this->Topic_GetTopicById($oComment->getTargetId()), $oTargetUser);
+                        if ($oComment->getTargetType()=="topic")
+                        	$this->Cast_sendCastNotifyToUser("comment", $oComment, $this->Topic_GetTopicById($oComment->getTargetId()), $oTargetUser);
                         return $r;
                     }
                     return $matches[0];
@@ -505,7 +506,8 @@ class ModuleComment extends Module {
                     $sLogin = $matches[1];
                     $r = "<a href=\"/profile/" . $sLogin . "/\" class=\"ls-user\">&#64;" . $sLogin . "</a>";
                     if ($oTargetUser = $this->User_getUserByLogin($sLogin)) {
-                        $this->Cast_sendCastNotifyToUser("comment", $oComment, $this->Topic_GetTopicById($oComment->getTargetId()), $oTargetUser);
+                    	if ($oComment->getTargetType()=="topic")
+                        	$this->Cast_sendCastNotifyToUser("comment", $oComment, $this->Topic_GetTopicById($oComment->getTargetId()), $oTargetUser);
                         return $r;
                     }
                     return $matches[0];

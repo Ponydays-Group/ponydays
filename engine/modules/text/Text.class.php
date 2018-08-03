@@ -374,6 +374,16 @@ class ModuleText extends Module {
                     }
                     return $matches[0];
                 }, $sText);
+            $sText = preg_replace_callback('/@([\S]+)/',
+                function ($matches) use ($oComment) {
+                    $sLogin = $matches[1];
+                    $r = "<a href=\"/profile/" . $sLogin . "/\" class=\"ls-user\">@" . $sLogin . "</a>";
+                    if ($oTargetUser = $this->User_getUserByLogin($sLogin)) {
+                        $this->Cast_sendCastNotifyToUser("comment", $oComment, $this->Topic_GetTopicById($oComment->getTargetId()), $oTargetUser);
+                        return $r;
+                    }
+                    return $matches[0];
+                }, $sText);
         }
 
 		if ($bDice) {

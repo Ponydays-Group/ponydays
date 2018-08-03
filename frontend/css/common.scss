@@ -641,9 +641,8 @@
 // .loader { background: $main-color url(images/loader.gif) 50% 50% no-repeat; }
 
 .user, .ls-user {
-  font-weight: bold;
   display: inline-block;
-  //color: $text-color;
+  text-decoration: none !important;
 }
 
 .user.inactive {

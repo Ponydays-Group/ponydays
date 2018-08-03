@@ -19,7 +19,7 @@ if (isset($_SERVER["HTTP_CF_CONNECTING_IP"])) {
 }
 setlocale(LC_ALL, "ru_RU.UTF-8");
 date_default_timezone_set('Europe/Moscow'); // See http://php.net/manual/en/timezones.php
-error_reporting(E_ALL);
+error_reporting(E_ALL & ~E_NOTICE & ~E_STRICT & ~E_DEPRECATED);
 ini_set('display_errors', 1);
 
 header('Content-Type: text/html; charset=utf-8');
@@ -30,6 +30,7 @@ chdir(dirname(__FILE__));
 // Получаем объект конфигурации
 require_once("./config/loader.php");
 require_once(Config::Get('path.root.engine')."/classes/Engine.class.php");
+require_once("engine/lib/external/simple_html_dom.php");
 
 $oProfiler=ProfilerSimple::getInstance(Config::Get('path.root.server').'/logs/'.Config::Get('sys.logs.profiler_file'),Config::Get('sys.logs.profiler'));
 $iTimeId=$oProfiler->Start('full_time');

@@ -643,6 +643,8 @@
 .user, .ls-user {
   display: inline-block;
   text-decoration: none !important;
+  background: rgba($link-color, .16);
+  padding: 0 3px;
 }
 
 .user.inactive {

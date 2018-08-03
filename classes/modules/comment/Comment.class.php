@@ -513,6 +513,7 @@ class ModuleComment extends Module {
             if ($sTextOld != $sText) {
                 $oComment->setText($sText);
                 $oComment->setCountVote(0);
+                $oComment->setCountFavourite(0);
                 $this->Comment_UpdateComment($oComment);
             }
 

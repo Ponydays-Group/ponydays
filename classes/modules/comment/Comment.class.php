@@ -514,6 +514,7 @@ class ModuleComment extends Module {
                 $oComment->setText($sText);
                 $oComment->setCountVote(0);
                 $oComment->setCountFavourite(0);
+		$oComment->setDelete(false);
                 $this->Comment_UpdateComment($oComment);
             }
 

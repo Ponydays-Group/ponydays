@@ -488,7 +488,7 @@ class ModuleComment extends Module {
             $this->Cache_Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG,array("comment_new_{$oComment->getTargetType()}","comment_new_user_{$oComment->getUserId()}_{$oComment->getTargetType()}","comment_new_{$oComment->getTargetType()}_{$oComment->getTargetId()}"));
             $oComment->setId($sId);
             $oTarget = $this->Topic_GetTopicById($oComment->getTargetId());
-            $sText = $oComment->getText();
+            $sTextOld = $oComment->getText();
             $sText = preg_replace_callback('/@(.*?)\((.*?)\)/',
                 function ($matches) use ($oComment) {
                     $sLogin = $matches[1];
@@ -499,7 +499,7 @@ class ModuleComment extends Module {
                         return $r;
                     }
                     return $matches[0];
-                }, $sText);
+                }, $sTextOld);
             $sText = preg_replace_callback('/@([a-zA-Zа-яА-Я0-9-_]+)/',
                 function ($matches) use ($oComment) {
                     $sLogin = $matches[1];
@@ -510,8 +510,11 @@ class ModuleComment extends Module {
                     }
                     return $matches[0];
                 }, $sText);
-            $oComment->setText($sText);
-            $this->Comment_UpdateComment($oComment);
+            if ($sTextOld != $sText) {
+                $oComment->setText($sText);
+                $oComment->setCountVote(0);
+                $this->Comment_UpdateComment($oComment);
+            }
 
 			if (strstr($oComment->getText(), "@moderator")) {
 				if ($oTarget->getBlog()->getType() == "open") {

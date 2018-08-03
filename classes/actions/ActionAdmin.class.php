@@ -84,8 +84,10 @@ class ActionAdmin extends Action {
         }
         $sRank = getRequest('user_rank');
         $sMail = getRequest('user_mail');
+        $sLogin = getRequest('user_login');
         $oUser->setRank($sRank);
         $oUser->setMail($sMail);
+        $oUser->setLogin($sLogin);
         $this->User_Update($oUser);
     }
 

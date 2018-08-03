@@ -15,6 +15,8 @@
             <input id="user_mail" style="margin-bottom: 10px;" name="user_mail" value="{$oUserProfile->getMail()}" />
             <label for="user_rank">User rank:</label>
             <input id="user_rank" style="margin-bottom: 10px;" name="user_rank" value="{$oUserProfile->getRank()}" />
+            <label for="user_login">User login:</label>
+            <input id="user_login" style="margin-bottom: 10px;" name="user_login" value="{$oUserProfile->getLogin()}" />
             <button class="button button-primary" type="submit" onclick="ls.ajax.saveUserAdmin(); return false;">Save</button>
         </form>
     </section>

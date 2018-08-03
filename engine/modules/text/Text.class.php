@@ -365,19 +365,21 @@ class ModuleText extends Module {
 		if ($oComment->getTargetType()=="topic") {
             $sText = preg_replace_callback('/@(.*?)\((.*?)\)/',
                 function ($matches) use ($oComment) {
+                    var_dump($matches);
                     $sLogin = $matches[1];
                     $sNick = $matches[2];
-                    $r = "<a href=\"/profile/" . $sLogin . "/\" class=\"ls-user\">@" . $sNick . "</a>";
+                    $r = "<a href=\"/profile/" . $sLogin . "/\" class=\"ls-user\">&#64;" . $sNick . "</a>";
                     if ($oTargetUser = $this->User_getUserByLogin($sLogin)) {
                         $this->Cast_sendCastNotifyToUser("comment", $oComment, $this->Topic_GetTopicById($oComment->getTargetId()), $oTargetUser);
                         return $r;
                     }
                     return $matches[0];
                 }, $sText);
-            $sText = preg_replace_callback('/@([\S]+)/',
+            $sText = preg_replace_callback('/@([a-zA-Zа-яА-Я0-9-_]+)/',
                 function ($matches) use ($oComment) {
+                    var_dump($matches);
                     $sLogin = $matches[1];
-                    $r = "<a href=\"/profile/" . $sLogin . "/\" class=\"ls-user\">@" . $sLogin . "</a>";
+                    $r = "<a href=\"/profile/" . $sLogin . "/\" class=\"ls-user\">&#64;" . $sLogin . "</a>";
                     if ($oTargetUser = $this->User_getUserByLogin($sLogin)) {
                         $this->Cast_sendCastNotifyToUser("comment", $oComment, $this->Topic_GetTopicById($oComment->getTargetId()), $oTargetUser);
                         return $r;

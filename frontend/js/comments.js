@@ -171,7 +171,14 @@ export function add(formObj, targetId, targetType) {
 
 			Emitter.emit("ls_comments_add_after", [formObj, targetId, targetType, result])
 		}
-	}.bind(this))
+	}.bind(this), {
+		error: function() {
+			console.log("ERROR")
+            $("#comment-button-submit").removeAttr("disabled")
+            enableFormComment()
+            Msg.error("Ошибка", "Возможно поможет перезагрузка страницы.")
+		}
+	})
 }
 
 // Активирует форму

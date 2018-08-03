@@ -485,9 +485,34 @@ class ModuleComment extends Module {
 				$this->Topic_increaseTopicCountComment($oComment->getTargetId());
 			}
 			//чистим зависимые кеши
-			$this->Cache_Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG,array("comment_new_{$oComment->getTargetType()}","comment_new_user_{$oComment->getUserId()}_{$oComment->getTargetType()}","comment_new_{$oComment->getTargetType()}_{$oComment->getTargetId()}"));
-			$oComment->setId($sId);
-			$oTarget = $this->Topic_GetTopicById($oComment->getTargetId());
+            $this->Cache_Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG,array("comment_new_{$oComment->getTargetType()}","comment_new_user_{$oComment->getUserId()}_{$oComment->getTargetType()}","comment_new_{$oComment->getTargetType()}_{$oComment->getTargetId()}"));
+            $oComment->setId($sId);
+            $oTarget = $this->Topic_GetTopicById($oComment->getTargetId());
+            $sText = $oComment->getText();
+            $sText = preg_replace_callback('/@(.*?)\((.*?)\)/',
+                function ($matches) use ($oComment) {
+                    $sLogin = $matches[1];
+                    $sNick = $matches[2];
+                    $r = "<a href=\"/profile/" . $sLogin . "/\" class=\"ls-user\">&#64;" . $sNick . "</a>";
+                    if ($oTargetUser = $this->User_getUserByLogin($sLogin)) {
+                        $this->Cast_sendCastNotifyToUser("comment", $oComment, $this->Topic_GetTopicById($oComment->getTargetId()), $oTargetUser);
+                        return $r;
+                    }
+                    return $matches[0];
+                }, $sText);
+            $sText = preg_replace_callback('/@([a-zA-Zа-яА-Я0-9-_]+)/',
+                function ($matches) use ($oComment) {
+                    $sLogin = $matches[1];
+                    $r = "<a href=\"/profile/" . $sLogin . "/\" class=\"ls-user\">&#64;" . $sLogin . "</a>";
+                    if ($oTargetUser = $this->User_getUserByLogin($sLogin)) {
+                        $this->Cast_sendCastNotifyToUser("comment", $oComment, $this->Topic_GetTopicById($oComment->getTargetId()), $oTargetUser);
+                        return $r;
+                    }
+                    return $matches[0];
+                }, $sText);
+            $oComment->setText($sText);
+            $this->Comment_UpdateComment($oComment);
+
 			if (strstr($oComment->getText(), "@moderator")) {
 				if ($oTarget->getBlog()->getType() == "open") {
 					$this->Talk_SendTalk("Вызов модератора в пост " . $oTarget->getTitle(), "Я <a target='_blank' href='".$oTarget->getUrl()."#comment".$sId."'>прошу</a> модераторов посмотреть пост <a href='" . $oTarget->getUrl() . "'>" . $oTarget->getTitle() . "</a> и комментарии к нему на соответствие правилам.", $oComment->getUserId(), Config::Get("moderator"));

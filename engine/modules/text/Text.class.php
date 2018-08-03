@@ -362,30 +362,6 @@ class ModuleText extends Module {
             $oTarget = $this->Talk_GetTalkById($oComment->getTargetId());
 		}
 
-		if ($oComment->getTargetType()=="topic") {
-            $sText = preg_replace_callback('/@(.*?)\((.*?)\)/',
-                function ($matches) use ($oComment) {
-                    $sLogin = $matches[1];
-                    $sNick = $matches[2];
-                    $r = "<a href=\"/profile/" . $sLogin . "/\" class=\"ls-user\">&#64;" . $sNick . "</a>";
-                    if ($oTargetUser = $this->User_getUserByLogin($sLogin)) {
-                        $this->Cast_sendCastNotifyToUser("comment", $oComment, $this->Topic_GetTopicById($oComment->getTargetId()), $oTargetUser);
-                        return $r;
-                    }
-                    return $matches[0];
-                }, $sText);
-            $sText = preg_replace_callback('/@([a-zA-Zа-яА-Я0-9-_]+)/',
-                function ($matches) use ($oComment) {
-                    $sLogin = $matches[1];
-                    $r = "<a href=\"/profile/" . $sLogin . "/\" class=\"ls-user\">&#64;" . $sLogin . "</a>";
-                    if ($oTargetUser = $this->User_getUserByLogin($sLogin)) {
-                        $this->Cast_sendCastNotifyToUser("comment", $oComment, $this->Topic_GetTopicById($oComment->getTargetId()), $oTargetUser);
-                        return $r;
-                    }
-                    return $matches[0];
-                }, $sText);
-        }
-
 		if ($bDice) {
             $sText = preg_replace_callback('/\[(\d*)d(\d*)\]/',
                 function ($matches) {

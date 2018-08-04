@@ -493,7 +493,7 @@ class ModuleComment extends Module {
                 function ($matches) use ($oComment) {
                     $sLogin = $matches[1];
                     $sNick = $matches[2];
-                    $r = "<a href=\"/profile/" . $sLogin . "/\" class=\"ls-user\">&#64;" . $sNick . "</a>";
+                    $r = "<a href=\"/profile/" . $sLogin . "/\" class=\"summon-user\">&#64;" . $sNick . "</a>";
                     if ($oTargetUser = $this->User_getUserByLogin($sLogin)) {
                         if ($oComment->getTargetType()=="topic")
                         	$this->Cast_sendCastNotifyToUser("comment", $oComment, $this->Topic_GetTopicById($oComment->getTargetId()), $oTargetUser);
@@ -504,7 +504,7 @@ class ModuleComment extends Module {
             $sText = preg_replace_callback('/@([a-zA-Zа-яА-Я0-9-_]+)/',
                 function ($matches) use ($oComment) {
                     $sLogin = $matches[1];
-                    $r = "<a href=\"/profile/" . $sLogin . "/\" class=\"ls-user\">&#64;" . $sLogin . "</a>";
+                    $r = "<a href=\"/profile/" . $sLogin . "/\" class=\"summon-user\">&#64;" . $sLogin . "</a>";
                     if ($oTargetUser = $this->User_getUserByLogin($sLogin)) {
                     	if ($oComment->getTargetType()=="topic")
                         	$this->Cast_sendCastNotifyToUser("comment", $oComment, $this->Topic_GetTopicById($oComment->getTargetId()), $oTargetUser);

@@ -640,9 +640,12 @@
 
 // .loader { background: $main-color url(images/loader.gif) 50% 50% no-repeat; }
 
-.user, .ls-user {
+.user, .ls-user, .summon-user {
   display: inline-block;
   text-decoration: none !important;
+}
+
+.summon-user {
   background: rgba($link-color, .16);
   padding: 0 3px;
 }

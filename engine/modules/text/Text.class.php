@@ -360,7 +360,7 @@ class ModuleText extends Module {
             $oTarget = $this->Talk_GetTalkById($oComment->getTargetId());
 		}
 
-        $html = str_get_html($oComment->getText());
+        $html = str_get_html($oComment->getText(), true, true, 'UTF-8', false);
         foreach($html->find('.spoiler-body img') as $element) {
             $element->attr['data-src'] = $element->src;
             $element->src = "#";
@@ -370,7 +370,7 @@ class ModuleText extends Module {
             $element->src = "";
         }
 
-        $sText = $html;
+        $sText = $html->save();
 
 		if ($bDice) {
             $sText = preg_replace_callback('/\[(\d*)d(\d*)\]/',

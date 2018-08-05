@@ -645,6 +645,10 @@
   text-decoration: none !important;
 }
 
+.user, .ls-user {
+  font-weight: bold;
+}
+
 .summon-user {
   background: rgba($link-color, .16);
   padding: 0 3px;

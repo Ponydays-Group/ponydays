@@ -742,7 +742,7 @@ class ActionBlog extends Action
         /**
          * Проверяем права на просмотр топика
          */
-        if (!$oTopic->getPublish() and (!$this->oUserCurrent or ($this->oUserCurrent->getId() != $oTopic->getUserId() and !$this->oUserCurrent->isAdministrator()))) {
+        if (!$oTopic->getPublish() and (!$this->oUserCurrent or ($this->oUserCurrent->getId() != $oTopic->getUserId() and !$this->oUserCurrent->isAdministrator() and !$this->ACL_IsAllowEditTopic($oTopic,$this->oUserCurrent)))) {
             return parent::EventNotFound();
         }
 

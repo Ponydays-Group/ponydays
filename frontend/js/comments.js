@@ -329,6 +329,10 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
 					let next = null
 					console.warn(parent.next('.comment'))
 					window.pel = parent
+					if (parent.hasClass("comment-folding-start")) {
+						$(cmt.html).appendTo(`#folded_branch_${parent.data("id")} .folding-comments`).css("margin-left", level * 20 + "px").attr("data-level", level)
+						continue
+					}
                     parent.nextAll('.comment').each(function(k,v){
 						v=$(v)
 						console.warn(v.data("level"))

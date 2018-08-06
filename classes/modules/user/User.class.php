@@ -580,6 +580,7 @@ class ModuleUser extends Module
             setcookie('key', $sKey, time() + Config::Get('sys.cookie.time'), Config::Get('sys.cookie.path'), Config::Get('sys.cookie.host'), false, false);
             setcookie('wskey', $sKey, time() + Config::Get('sys.cookie.time'), Config::Get('sys.cookie.path'), Config::Get('sys.cookie.host'), false, false);
         }
+        setcookie('wskey', $sKey, 0, Config::Get('sys.cookie.path'), Config::Get('sys.cookie.host'), false, false);
         return true;
     }
 

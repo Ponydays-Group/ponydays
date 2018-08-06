@@ -24,8 +24,8 @@ export function initSelect() {
 };
 
 export function loadRegions($country) {
-    $region = $country.parents('.js-geo-select').find('.js-geo-region');
-    $city = $country.parents('.js-geo-select').find('.js-geo-city');
+    let $region = $country.parents('.js-geo-select').find('.js-geo-region');
+    let $city = $country.parents('.js-geo-select').find('.js-geo-city');
     $region.empty();
     $region.append('<option value="">' + Lang.get('geo_select_region') + '</option>');
     $city.empty();
@@ -53,7 +53,7 @@ export function loadRegions($country) {
 };
 
 export function loadCities($region) {
-    $city = $region.parents('.js-geo-select').find('.js-geo-city');
+    let $city = $region.parents('.js-geo-select').find('.js-geo-city');
     $city.empty();
     $city.append('<option value="">' + Lang.get('geo_select_city') + '</option>');
 

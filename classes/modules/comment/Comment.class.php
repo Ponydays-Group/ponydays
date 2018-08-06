@@ -489,7 +489,7 @@ class ModuleComment extends Module {
             $oComment->setId($sId);
             $oTarget = $this->Topic_GetTopicById($oComment->getTargetId());
             $sTextOld = $oComment->getText();
-            $sText = preg_replace_callback('/@(.*?)\((.*?)\)/',
+            $sText = preg_replace_callback('/@(.+?)\((.+?)\)/',
                 function ($matches) use ($oComment) {
                     $sLogin = $matches[1];
                     $sNick = $matches[2];
@@ -501,7 +501,7 @@ class ModuleComment extends Module {
                     }
                     return $matches[0];
                 }, $sTextOld);
-            $sText = preg_replace_callback('/@([a-zA-Zа-яА-Я0-9-_]+)/',
+            $sText = preg_replace_callback('/@(.[^\s\<\>,?!]+)/',
                 function ($matches) use ($oComment) {
                     $sLogin = $matches[1];
                     $r = "<a href=\"/profile/" . $sLogin . "/\" class=\"summon-user\">&#64;" . $sLogin . "</a>";

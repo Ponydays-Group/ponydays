@@ -343,14 +343,15 @@ export default function init() {
 
         // Добавляем или удаляем друга из списка получателей
         $('#friends input:checkbox').change(function () {
-            Talk.toggleRecipient($('#' + $(this).attr('id') + '_label').text(), $(this).attr('checked'));
+            console.log($(this).attr('id'), $(this).attr('checked'), this)
+            Talk.toggleRecipient($('#' + $(this).attr('id') + '_label').text(), this.checked);
         });
 
         // Добавляем всех друзей в список получателей
         $('#friend_check_all').click(function () {
             $('#friends input:checkbox').each(function (index, item) {
                 Talk.toggleRecipient($('#' + $(item).attr('id') + '_label').text(), true);
-                $(item).attr('checked', true);
+                item.checked = true;
             });
             return false;
         });
@@ -359,7 +360,7 @@ export default function init() {
         $('#friend_uncheck_all').click(function () {
             $('#friends input:checkbox').each(function (index, item) {
                 Talk.toggleRecipient($('#' + $(item).attr('id') + '_label').text(), false);
-                $(item).attr('checked', false);
+                item.checked = false;
             });
             return false;
         });

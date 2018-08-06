@@ -196,36 +196,38 @@ function changeRTCstatus(status) {
 }
 
 
+async function startRTC() {
+    let canVideo = false
+    let canAudio = false
+
+    try {
+        let stream = await navigator.mediaDevices.getUserMedia({video: true})
+        canVideo = {width: 1280, height: 720}//true;
+        stream.stop()
+    } catch(e) {
+        console.info("No video")
+    }
+    try {
+        let stream = await navigator.mediaDevices.getUserMedia({audio: true})
+        canAudio = true;
+        stream.stop()
+    } catch(e) {
+        console.info("No audio")
+    }
+
+    initWRTC({audio: canAudio, video: canVideo})
+}
+
+function updateRTCusers(users) {
+    rtcUsers = users
+    $("#voice-users").html(Object.values(rtcUsers).map((data) => `<span class="user" id="voice-user-${data.id}"><img src="${data.avatar}" class="avatar" width=40 height=40 />${data.login} <i ${data.audio? 'style="display: none"':""} class="material-icons">mic_off</i>${data.id!=USER_ID?`<input type="range" id="voice_${data.id}" min="0" value="1" max="1" step="0.05"></span>`:""}`))
+    Object.values(rtcUsers).map((data) => {if(data.id!=USER_ID){$("#voice_"+data.id).on('change', (e)=>$("video[data-userid='"+data.id+"']").each((k,v)=>v.volume=e.target.value))}})
+
+}
 
 if (LOGGED_IN && location.pathname.match(/\/voice\/voice/)) {
-    function updateRTCusers(users) {
-        rtcUsers = users
-        $("#voice-users").html(Object.values(rtcUsers).map((data) => `<span class="user" id="voice-user-${data.id}"><img src="${data.avatar}" class="avatar" width=40 height=40 />${data.login} <i ${data.audio? 'style="display: none"':""} class="material-icons">mic_off</i>${data.id!=USER_ID?`<input type="range" id="voice_${data.id}" min="0" value="1" max="1" step="0.05"></span>`:""}`))
-        Object.values(rtcUsers).map((data) => {if(data.id!=USER_ID){$("#voice_"+data.id).on('change', (e)=>$("video[data-userid='"+data.id+"']").each((k,v)=>v.volume=e.target.value))}})
-
-    }
     window.rtcUsers = []
-    async function startRTC() {
-        let canVideo = false
-        let canAudio = false
 
-        try {
-            let stream = await navigator.mediaDevices.getUserMedia({video: true})
-            canVideo = {width: 1280, height: 720}//true;
-            stream.stop()
-        } catch(e) {
-            console.info("No video")
-        }
-        try {
-            let stream = await navigator.mediaDevices.getUserMedia({audio: true})
-            canAudio = true;
-            stream.stop()
-        } catch(e) {
-            console.info("No audio")
-        }
-
-        initWRTC({audio: canAudio, video: canVideo})
-    }
     startRTC()
 
     sock.on('user joined', updateRTCusers)

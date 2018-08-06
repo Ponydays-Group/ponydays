@@ -62,8 +62,8 @@ input[type="file"] {
 	justify-content: center;
 	align-items: center;
 	display: flex;
-	background: #303030;
-	border-color: #111;
+	background: $first;
+	border-color: $second-border;
 }
 
 input[type="text"], textarea, select, .input-text, .input-width-300 {

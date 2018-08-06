@@ -42,7 +42,7 @@
 }
 
 #notifier .n-box h3 { color: $text-color; font-size: 14px; font-weight: 400; margin-bottom: 3px; }
-#notifier .n-box p { margin: 0; font-weight: 300;}
+#notifier .n-box p { margin: 0; font-weight: 300; overflow: hidden; text-overflow: ellipsis;}
 
 #notifier .n-box.n-notice { background: white; color: $text-notice-color; }
 #notifier .n-box.n-notice h3 { color: $text-notice-color; }

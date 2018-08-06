@@ -23,7 +23,6 @@ export function showEditForm(id) {
 }
 
 export function quotesPreview() {
-	// let data = $('#quotes_form_data').val();
 	ls.tools.textPreview("quotes_form_data", false, "quotes_preview")
 	$('#quotes_preview').show();
 }
@@ -51,21 +50,30 @@ export function addQuotes() {
 		if (!data.bStateError) {
 			window.location.href = aRouter['quotes'] + "#field_" + data.id;
 
-			let trElement = $(
-				'<tr id="field_' + data.id + '" class="quote_element">\n' +
-				'    <td class="quotes_data" id="quote_' + data.id + '"></td>\n' +
-				'    <td>\n' +
-				'        <div class="quotes-actions">\n' +
-				'           <a href="#" onclick="prompt("' + Lang.get('quotes_link') + '", ' + DIR_WEB_ROOT + '/quotes/' + data.id + '); return false;" title="' + Lang.get('quotes_link') + '"><i class="fa fa-hashtag" aria-hidden="true"></i></a>&nbsp;&nbsp;\n' +
-				'			<a href="#" onclick="ls.quotes.showEditForm(' + data.id + '); return false;" title="' + Lang.get('quotes_update') + '"><i class="fa fa-pencil" style="float: left;" aria-hidden="true"></i></a>\n' +
-				'           <a href="#" onclick="ls.quotes.deleteQuotes(' + data.id + '); return false;" title="' + Lang.get('quotes_delete') + '"><i class="fa fa-trash" style="float: right;" aria-hidden="true"></i></a>\n' +
-				'        </div>\n' +
-				'    </td>\n' +
-				'</tr>'
+			const trElement = $(
+				'<tr id="field_' + data.id + '" class="quote_element">' +
+                '    <td class="quotes_data" id="quote_' + data.id + '"></td>' +
+                '        <td>' +
+                '            <div class="quotes-actions">' +
+                '                <span style="float: left">' +
+                '                    <a href="#" onclick="ls.quotes.showEditForm(' + data.id + '); return false;"' +
+                '                          title="' + Lang.get('quotes_update') + '"><i class="fa fa-pencil" style="float:left;"' +
+                '                          aria-hidden="true"></i></a>' +
+                '                    &nbsp;' +
+                '                    <a href="/quotes/' + data.id + '"' +
+                '                          onclick="prompt(\'' + Lang.get('quotes_link') + '\', \'' + DIR_WEB_ROOT + '/quotes/' + data.id + '\'); return false;"' +
+                '                          title="' + Lang.get('quotes_link') + '"><i class="fa fa-hashtag" aria-hidden="true"></i></a>' +
+                '                </span>' +
+                '                <a href="#" onclick="ls.quotes.deleteQuotes(' + data.id + '); return false;"' +
+                '                      title="' + Lang.get('quotes_delete') + '"><i class="fa fa-trash" style="float:right;"' +
+                '                                                                       aria-hidden="true"></i></a>' +
+                '            </div>' +
+                '        </td>' +
+                '    </tr>'
 			);
 			$('#quotes_list').append(trElement);
 
-			ls.tools.textPreview("quotes_form_data", false, "quote_" + data.id)
+            ls.tools.textPreview("quotes_form_data", false, "quote_" + data.id)
 
 			scrollToQuote(data.id);
 

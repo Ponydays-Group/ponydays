@@ -1808,35 +1808,57 @@ class ActionAjax extends Action
             return;
         }
 
-		if ($oComment->getTargetType()!='topic' or !($oTopic=$oComment->getTarget())) {
-			$this->Message_AddErrorSingle($this->Lang_Get('system_error') , $this->Lang_Get('error'));
-			return;
-		}
-		if (!$oTopic->getPublish() and (!$this->oUserCurrent or ($this->oUserCurrent->getId()!=$oTopic->getUserId() and !$this->oUserCurrent->isAdministrator()))) {
-			$this->Message_AddErrorSingle($this->Lang_Get('system_error') , $this->Lang_Get('error'));
-			return;
-		}
-		/**
-		 * Проверяет коммент на удаленность и отдает его только автору, и тем, у кого есть права на удаление.
-		 */
-		if ((!$this->oUserCurrent || ($oComment->getDelete() && !($this->ACL_UserCanDeleteComment($this->oUserCurrent, $oComment,1) || $this->oUserCurrent->getId()==$oComment->getUserId())))) {
-			$this->Message_AddErrorSingle($this->Lang_Get('not_access'),$this->Lang_Get('not_access'));
-			return Router::Action('error');
-		}
-		/**
-		 * Проверяет коммент на доступность из закрытых блогов.
-		 */
-		if(in_array($oTopic->getBlog()->getType(), array('close', 'invite'))
-			and (!$this->oUserCurrent
-				|| !in_array(
-					$oTopic->getBlog()->getId(),
-					$this->Blog_GetAccessibleBlogsByUser($this->oUserCurrent)
-				)
-			)
-		) {
-			$this->Message_AddErrorSingle($this->Lang_Get('blog_close_show'),$this->Lang_Get('not_access'));
-			return Router::Action('error');
-		}
+        if ($oComment->getTargetType() =='talk') {
+            if (!($oTalk = $this->Talk_GetTalkById($oComment->getTargetId()))) {
+                echo "NO TARGET";
+                $this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+                return;
+            }
+            /**
+             * Пользователь есть в переписке?
+             */
+            if (!($oTalkUser = $this->Talk_GetTalkUser($oTalk->getId(), $this->oUserCurrent->getId()))) {
+                $this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+                return;
+            }
+            /**
+             * Пользователь активен в переписке?
+             */
+            if ($oTalkUser->getUserActive() != ModuleTalk::TALK_USER_ACTIVE) {
+                $this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+                return;
+            }
+        } else {
+            if ($oComment->getTargetType() != 'topic' or !($oTopic = $oComment->getTarget())) {
+                $this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+                return;
+            }
+            if (!$oTopic->getPublish() and (!$this->oUserCurrent or ($this->oUserCurrent->getId() != $oTopic->getUserId() and !$this->oUserCurrent->isAdministrator()))) {
+                $this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+                return;
+            }
+            /**
+             * Проверяет коммент на удаленность и отдает его только автору, и тем, у кого есть права на удаление.
+             */
+            if ((!$this->oUserCurrent || ($oComment->getDelete() && !($this->ACL_UserCanDeleteComment($this->oUserCurrent, $oComment, 1) || $this->oUserCurrent->getId() == $oComment->getUserId())))) {
+                $this->Message_AddErrorSingle($this->Lang_Get('not_access'), $this->Lang_Get('not_access'));
+                return Router::Action('error');
+            }
+            /**
+             * Проверяет коммент на доступность из закрытых блогов.
+             */
+            if (in_array($oTopic->getBlog()->getType(), array('close', 'invite'))
+                and (!$this->oUserCurrent
+                    || !in_array(
+                        $oTopic->getBlog()->getId(),
+                        $this->Blog_GetAccessibleBlogsByUser($this->oUserCurrent)
+                    )
+                )
+            ) {
+                $this->Message_AddErrorSingle($this->Lang_Get('blog_close_show'), $this->Lang_Get('not_access'));
+                return Router::Action('error');
+            }
+        }
         
         $aData=$this->Editcomment_GetDataItemsByCommentId($oComment->getId(), array('#order'=>array('date_add'=>'desc')));
 

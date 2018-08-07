@@ -2,6 +2,7 @@ import * as Msg from './msg'
 import Emitter from './emitter'
 import $ from 'jquery'
 import * as Ajax from './ajax'
+import hljs from "highlightjs"
 
 /**
  * Вспомогательные функции
@@ -56,6 +57,7 @@ export function textPreview(textId, save, divPreview)
             Emitter.emit('textPreviewDisplayBefore');
             if (elementPreview.length) {
                 elementPreview.html(result.sText);
+                elementPreview.find(`pre code`).each((k,el)=>hljs.highlightBlock(el))
                 Emitter.emit('textPreviewDisplayAfter');
             }
         }

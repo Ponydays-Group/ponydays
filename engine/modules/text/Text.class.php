@@ -301,7 +301,7 @@ class ModuleText extends Module {
 	public function Mark($sText) {
         $sText = preg_replace_callback('/\`\`\`([.\s\S]*?)\`\`\`/',
             function ($matches) {
-                return "<pre>" . $this->Escape($matches[1]) . "</pre>";
+                return "<code>" . $this->Escape($matches[1]) . "</code>";
             }, $sText);
 
 		$sText = preg_replace_callback('/\`\`([.\s\S]*?)\`\`/',

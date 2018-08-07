@@ -5,6 +5,7 @@ import * as Blocks from "./blocks"
 import Emitter from "./emitter"
 import * as Msg from "./msg"
 import * as Ajax from "./ajax"
+var hljs = require('highlightjs')
 
 import Tree from "./Tree"
 import * as Vote from "./vote";
@@ -352,6 +353,7 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
                 } else {
                     $(cmt.html).appendTo("#comments-tree").attr("data-level", 0)
 				}
+                $(`.comment[data-id=${cmt.id}] pre code`).each((k,el)=>hljs.highlightBlock(el))
 			}
 
             if (selfIdComment && $("#comment_id_" + selfIdComment).length) {

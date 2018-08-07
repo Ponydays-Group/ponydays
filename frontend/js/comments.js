@@ -895,6 +895,7 @@ export function updateCommentEdited(id, sText) {
     }
     cmt.find(".comment-edited").css("display", "inline-block")
     cmt.find('.comment-content').html(sText)
+    cmt.find(`pre code`).each((k,el)=>hljs.highlightBlock(el))
 }
 
 export function initEvent() {
@@ -1089,6 +1090,7 @@ export function edit(formObject, targetId, targetType) {
 			// Load new comments
 			if (result.bEdited) {
 				$("#comment_content_id_" + idComment).html(result.sCommentText)
+                $(`.comment[data-id=${idComment}] pre code`).each((k,el)=>hljs.highlightBlock(el))
 			}
 			if (!result.bCanEditMore)
 				$("#comment_id_" + idComment).find(".editcomment_editlink").remove()

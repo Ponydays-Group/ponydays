@@ -79,9 +79,9 @@
 }
 
 .text pre {
-		color: $text-color;
+    color: $text-color;
     margin: 0;
-    padding: 10px 15px;
+    padding: 0;
     border: none;
     background: $pre-background;
     font-size: 12px;

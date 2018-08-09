@@ -5,6 +5,7 @@ import * as Blocks from "./blocks"
 import Emitter from "./emitter"
 import * as Msg from "./msg"
 import * as Ajax from "./ajax"
+var hljs = require('highlightjs')
 
 import Tree from "./Tree"
 import * as Vote from "./vote";
@@ -352,6 +353,7 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
                 } else {
                     $(cmt.html).appendTo("#comments-tree").attr("data-level", 0)
 				}
+                $(`.comment[data-id=${cmt.id}] pre code`).each((k,el)=>hljs.highlightBlock(el))
 			}
 
             if (selfIdComment && $("#comment_id_" + selfIdComment).length) {
@@ -893,6 +895,7 @@ export function updateCommentEdited(id, sText) {
     }
     cmt.find(".comment-edited").css("display", "inline-block")
     cmt.find('.comment-content').html(sText)
+    cmt.find(`pre code`).each((k,el)=>hljs.highlightBlock(el))
 }
 
 export function initEvent() {
@@ -1087,6 +1090,7 @@ export function edit(formObject, targetId, targetType) {
 			// Load new comments
 			if (result.bEdited) {
 				$("#comment_content_id_" + idComment).html(result.sCommentText)
+                $(`.comment[data-id=${idComment}] pre code`).each((k,el)=>hljs.highlightBlock(el))
 			}
 			if (!result.bCanEditMore)
 				$("#comment_id_" + idComment).find(".editcomment_editlink").remove()

@@ -7,6 +7,7 @@ import * as Autocomplete from './autocomplete'
 import * as Blocks from './blocks'
 import * as Hook from './hook'
 import Emitter from './emitter'
+import hljs from 'highlightjs'
 
 function showFloatBlock($) {
 

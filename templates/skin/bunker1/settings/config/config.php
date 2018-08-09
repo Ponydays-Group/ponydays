@@ -47,7 +47,7 @@ $config['head']['default']['css'] = array(
 	"___path.static.skin___/css/profile.css",
 	"___path.static.skin___/css/wall.css",
 	"___path.static.skin___/css/infobox.css",
-	"___path.static.skin___/css/jquery.notifier.css",
+	"___path.static.skin___/css/jquery.notifier.scss",
 	"___path.static.skin___/css/smoothness/jquery-ui.css",
 	"___path.static.skin___/themes/___view.theme___/style.css",
 	"___path.static.skin___/css/print.css",

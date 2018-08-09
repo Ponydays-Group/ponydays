@@ -110,7 +110,7 @@ $block-content-color: #c3c3c3;
 @import "./grid";
 @import "./icons";
 @import "./infobox";
-@import "./jquery.notifier";
+@import "jquery.notifier";
 @import "./menu";
 @import "./modals";
 @import "./navs";
@@ -134,3 +134,5 @@ $block-content-color: #c3c3c3;
 }
 
 @import "./adaptive";
+
+@import "../node_modules/highlightjs/styles/atom-one-dark.css";

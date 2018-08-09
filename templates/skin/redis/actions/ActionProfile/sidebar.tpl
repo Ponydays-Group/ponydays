@@ -12,11 +12,11 @@
             <label for="admin_id">User is admin: {if $oUserProfile->isAdministrator()}<span style="color: #4CAF50;">true</span>{else}<span style="color: #F44336;">false</span>{/if}</label>
             <label for="admin_id">User is moder: {if $oUserProfile->isGlobalModerator()}<span style="color: #4CAF50;">true</span>{else}<span style="color: #F44336;">false</span>{/if}</label>
             <label for="admin_mail">User email:</label>
-            <input id="user_mail" style="margin-bottom: 10px;" name="user_mail" value="{$oUserProfile->getMail()}" />
+            <input id="user_mail" class="input-width-300" style="margin-bottom: 10px;" name="user_mail" value="{$oUserProfile->getMail()}" />
             <label for="user_rank">User rank:</label>
-            <input id="user_rank" style="margin-bottom: 10px;" name="user_rank" value="{$oUserProfile->getRank()}" />
+            <input id="user_rank" class="input-width-300" style="margin-bottom: 10px;" name="user_rank" value="{$oUserProfile->getRank()}" />
             <label for="user_login">User login:</label>
-            <input id="user_login" style="margin-bottom: 10px;" name="user_login" value="{$oUserProfile->getLogin()}" />
+            <input id="user_login" class="input-width-300" style="margin-bottom: 10px;" name="user_login" value="{$oUserProfile->getLogin()}" />
             <button class="button button-primary" type="submit" onclick="ls.ajax.saveUserAdmin(); return false;">Save</button>
         </form>
     </section>

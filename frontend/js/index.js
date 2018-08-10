@@ -232,6 +232,7 @@ async function handler(e) {
             })
         }
         el.animate({opacity: 1}, 300)
+        el.find(`pre code`).each((k,el)=>hljs.highlightBlock(el))
 
         setTimeout(cb.bind({}, e.target, el, info.currentWindow), 1000)
 

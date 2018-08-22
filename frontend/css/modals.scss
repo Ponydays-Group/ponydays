@@ -7,7 +7,8 @@
     position: fixed;
     top: 25%;
     left: 50%;
-    width: 400px;
+    width: 100%;
+    max-width: 400px;
     margin-left: -150px;
     color: $text-color;
     background-color: $first;
@@ -62,7 +63,7 @@
 /* ����� ����� */
 
 .modal.modal-login {
-    width: 450px;
+    max-width: 450px;
     margin-left: -225px;
     top: 50px;
 }
@@ -72,7 +73,7 @@
 }
 
 .modal.modal-description {
-    width: 650px;
+    max-width: 650px;
     margin-left: -325px;
     top: 130px;
     max-height: 90%;
@@ -85,7 +86,7 @@
 }
 
 .modal.modal-description .modal-content img {
-    width: 100%;
+    max-width: 100%;
 }
 
 
@@ -98,7 +99,7 @@
 /* ���������� ������ */
 
 .modal.modal-write {
-    width: 620px;
+    max-width: 620px;
     margin-left: -300px;
     top: 50px;
 }
@@ -116,7 +117,7 @@
 }
 
 .modal.modal-write .write-list li {
-    width: 100px;
+    max-width: 100px;
     margin: 0 10px 20px;
     text-align: center;
     overflow: hidden;
@@ -139,6 +140,10 @@
     border-radius: 3px;
     text-align: center;
     margin-bottom: 10px;
+}
+
+#add_friend_form, #avatar-resize {
+    max-width: 400px;
 }
 
 .modal.modal-write .write-list li.write-item-type-topic .write-item-image {
@@ -169,12 +174,12 @@
 /* Upload Image */
 
 .modal-image-upload {
-    width: 500px;
+    max-width: 500px;
     margin-left: -250px;
 }
 
 .modal-blog-delete {
-    width: 500px;
+    max-width: 500px;
     margin-left: -250px;
 }
 

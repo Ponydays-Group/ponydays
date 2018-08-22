@@ -218,6 +218,10 @@
         &.topic-info-favourite {
             margin-left: 10px;
 
+            &.active {
+                border-color: #5d67bb;
+            }
+
             .favourite {
                 opacity: 1 !important;
                 color: #E91E63;

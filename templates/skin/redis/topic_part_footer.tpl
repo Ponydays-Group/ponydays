@@ -67,8 +67,8 @@
 					</div>
 				{/if}
 
-			<a href="#" class="topic-info-favourite">
-				<i onclick="return ls.favourite.toggle({$oTopic->getId()},this,'topic');" class="fa fa-heart-o favourite {if $oUserCurrent && $oTopic->getIsFavourite()}active{/if}"></i>
+			<a href="#" class="topic-info-favourite {if $oUserCurrent && $oTopic->getIsFavourite()}active{/if}" onclick="return ls.favourite.toggle({$oTopic->getId()},this,'topic');">
+				<i class="fa fa-heart-o favourite"></i>
 				<span class="favourite-count" id="fav_count_topic_{$oTopic->getId()}"></span>
 			</a>
 			

@@ -193,6 +193,12 @@ img.gray:not(:hover) {
     color: inherit;
 }
 
+.spoiler-gray:not(:hover) code.inline {
+    color: inherit;
+    background-color: inherit;
+    padding-bottom: 1px;
+}
+
 .text .left {
     display: inline-block;
     width: 100%;

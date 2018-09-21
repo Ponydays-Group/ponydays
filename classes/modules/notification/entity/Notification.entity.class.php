@@ -86,6 +86,24 @@ class ModuleNotification_EntityNotification extends Entity {
 	}
 
 	/**
+	 * Возвращает тип таргета
+	 *
+	 * @return string|null
+	 */
+	public function getTargetType() {
+		return $this->_getDataOne('target_type');
+	}
+
+	/**
+	 * Возвращает id таргета
+	 *
+	 * @return int|null
+	 */
+	public function getTargetId() {
+		return $this->_getDataOne('target_id');
+	}
+
+	/**
 	 * Устанавливает ID уведомления
 	 *
 	 * @param int $data
@@ -155,6 +173,24 @@ class ModuleNotification_EntityNotification extends Entity {
 	 */
 	public function setType($data) {
 		$this->_aData['notification_type']=$data;
+	}
+
+	/**
+	 * Устанавливает тип таргета
+	 *
+	 * @param string $data
+	 */
+	public function setTargetType($data) {
+		$this->_aData['target_type']=$data;
+	}
+
+	/**
+	 * Устанавливает id таргета
+	 *
+	 * @param int $data
+	 */
+	public function setTargetId($data) {
+		$this->_aData['target_id']=$data;
 	}
 }
 ?>

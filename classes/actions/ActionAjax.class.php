@@ -1510,19 +1510,32 @@ class ActionAjax extends Action
 			$this->Logger_Notice($sLogText);
         }
 
-        $curl_data = array(
-            "senderId" => $this->oUserCurrent->getUserId(),
-            "senderLogin" => $this->oUserCurrent->getLogin(),
-            "userId" => $oComment->getUserId(),
-            "commentId" => $oComment->getId(),
-            "commentText" => $oComment->getText(),
-            "targetType" => $oComment->getTargetType(),
-            "targetId" => $oComment->getTargetId(),
-            "targetTitle" => $oComment->getTarget()->getTitle(),
-            "deleteReason" => $oComment->getDeleteReason(),
-            "delete" => (bool)$oComment->getDelete()
-        );
-        $this->Nower_Delete('/comment', $curl_data);
+		/**
+		 * Отправка уведомления пользователям
+		 */
+		if ((bool)$oComment->getDelete()) {
+			$notificationTitle = $this->oUserCurrent->getLogin()." удалил ваш комментарий\nПричина: ".$oComment->getDeleteReason();
+		} else {
+			$notificationTitle = $this->oUserCurrent->getLogin()." восстановил ваш комментарий";
+		}
+		$notificationText = $oComment->getText();
+		$notificationLink = "/blog/undefined/".$oComment->getTargetId()."#comment".$oComment->getId();
+		$notification = Engine::GetEntity(
+			'Notification',
+			array(
+				'user_id' => $oComment->getUserId(),
+				'text' => $notificationText,
+				'title' => $notificationTitle,
+				'link' => $notificationLink,
+				'rating' => 0,
+				'notification_type' => 7,
+				'target_type' => 'topic',
+				'target_id' => $oComment->getTargetId()
+			)
+		);
+		if($notificationId = $this->Notification_createNotification($notification)){
+			$this->Nower_PostNotification($this->Notification_getNotificationById($notificationId));
+		}
 
         /**
          * Обновление события в ленте активности
@@ -1985,34 +1998,66 @@ class ActionAjax extends Action
             else
                 $this->Message_AddErrorSingle($this->Lang_Get('error'));
         }
-        $curl_data = array(
-            "senderId" => $this->oUserCurrent->getUserId(),
-            "senderLogin" => $this->oUserCurrent->getLogin(),
-            "userId" => $oComment->getUserId(),
-            "commentData" => json_encode($this->Comment_ConvertCommentToArray($oComment)),
-            "targetType" => $oComment->getTargetType(),
-            "targetId" => $oComment->getTargetId(),
-        );
-        if($oComment->getTargetType() == 'topic') {
-            $curl_data['targetTitle'] = $oComment->getTarget()->getTitle();
-        } else if($oComment->getTargetType() == 'talk') {
-            if (!($oTalk = $this->Talk_GetTalkById($oComment->getTargetId()))) {
-                $this->Message_AddErrorSingle($this->Lang_Get('error'));
-                return;
-            }
-            $curl_data['targetTitle'] = $oTalk->getTitle();
-            $curl_data['userIds'] = array();
-            $aUsersTalk = $this->Talk_GetUsersTalk($oTalk->getId(), ModuleTalk::TALK_USER_ACTIVE);
-            foreach ($aUsersTalk as $oUserTalk) {
-                //if ($oUserTalk->getId() != $oComment->getUserId()) {
-                //    $this->Notify_SendTalkCommentNew($oUserTalk, $this->oUserCurrent, $oTalk, $oComment);
-                //    $curl_data['userIds'][] = $oUserTalk->getId();
-                //}
-                $curl_data['userIds'][] = $oUserTalk->getId();
-            }
-        }
-        if ($bEdited) {
-			$this->Nower_Patch('/comment', $curl_data);
+		if ($bEdited) {
+			if ($oComment->getTargetType() == 'topic') {
+
+				/**
+				 * Отправка уведомления пользователям
+				 */
+				$notificationTitle = $this->oUserCurrent->getLogin() . " отрежактировал комментарий в посте " . $oComment->getTarget()->getTitle();
+				$notificationText = $oComment->getText();
+				$notificationLink = "/blog/undefined/" . $oComment->getTargetId() . "#comment" . $oComment->getId();
+				$notification = Engine::GetEntity(
+					'Notification',
+					array(
+						'user_id' => $oComment->getUserId(),
+						'text' => $notificationText,
+						'title' => $notificationTitle,
+						'link' => $notificationLink,
+						'rating' => 0,
+						'notification_type' => 6,
+						'target_type' => 'topic',
+						'target_id' => $oComment->getTargetId()
+					)
+				);
+				if ($notificationId = $this->Notification_createNotification($notification)) {
+					$this->Nower_PostNotification($this->Notification_getNotificationById($notificationId));
+				}
+
+			} else if ($oComment->getTargetType() == 'talk') {
+				if (!($oTalk = $this->Talk_GetTalkById($oComment->getTargetId()))) {
+					$this->Message_AddErrorSingle($this->Lang_Get('error'));
+					return;
+				}
+				$aUsersTalk = $this->Talk_GetUsersTalk($oTalk->getId(), ModuleTalk::TALK_USER_ACTIVE);
+				foreach ($aUsersTalk as $oUserTalk) {
+
+					/**
+					 * Отправка уведомления пользователям
+					 */
+					$notificationTitle = $this->oUserCurrent->getLogin() . " отрежактировал комментарий в личке " . $oTalk->getTitle();
+					$notificationText = "";
+					$notificationLink = "/blog/undefined/" . $oComment->getTargetId() . "#comment" . $oComment->getId();
+					$notification = Engine::GetEntity(
+						'Notification',
+						array(
+							'user_id' => $oUserTalk->getId(),
+							'text' => $notificationText,
+							'title' => $notificationTitle,
+							'link' => $notificationLink,
+							'rating' => 0,
+							'notification_type' => 6,
+							'target_type' => 'talk',
+							'target_id' => $oComment->getTargetId()
+						)
+					);
+
+					if ($notificationId = $this->Notification_createNotification($notification)) {
+						$this->Nower_PostNotification($this->Notification_getNotificationById($notificationId));
+					}
+				}
+			}
+
 			$sLogText = $this->oUserCurrent->getLogin() . " редактировал коммент " . $oComment->getId() . " " . $ip;
 			$this->Logger_Notice($sLogText);
 		}

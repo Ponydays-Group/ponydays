@@ -43,6 +43,30 @@ class ModuleNotification_MapperNotification extends Mapper {
 	}
 
 	/**
+	 * Получение уведомления по id
+	 * @param $notificationId int ID уведомления
+	 * @return array уведомления
+	 * @throws Exception
+	 */
+
+	public function getNotificationById($notificationId){
+		$sql = "SELECT
+				*
+				FROM
+				".Config::Get('db.table.notification')."
+				WHERE
+				notification_id = ?
+		";
+		$aNotifications=array();
+		if ($aRows=$this->oDb->select($sql, $notificationId)) {
+			foreach ($aRows as $aRow) {
+				$aNotifications[]=Engine::GetEntity('Notification',$aRow);
+			}
+		}
+		return $aNotifications[0];
+	}
+
+	/**
 	 * Создание нового уведомления
 	 *
 	 * @param ModuleNotification_EntityNotification $eNotification
@@ -50,17 +74,20 @@ class ModuleNotification_MapperNotification extends Mapper {
 	 */
 	public function createNotification(ModuleNotification_EntityNotification $eNotification){
 		$sql = "INSERT INTO ".Config::Get('db.table.notification')."
-				(user_id          
-				date             
-				text             
-				title            
-				link             
-				rating           
-				notification_type)
-				VALUES (?, ?, ?, ?, ?, ?, ?)
+				(user_id,
+				date,
+				text,
+				title,
+				link,
+				rating,
+				notification_type,
+				target_type,
+				target_id)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
 		";
 		if ($iId=$this->oDb->query($sql,$eNotification->getUserId(), $eNotification->getDate(), $eNotification->getText(),
-			$eNotification->getTitle(), $eNotification->getLink(), $eNotification->getRating(), $eNotification->getType())) {
+			$eNotification->getTitle(), $eNotification->getLink(), $eNotification->getRating(), $eNotification->getType(),
+			$eNotification->getTargetType(), $eNotification->getTargetId())) {
         	return $iId;
 		}
 		return false;

@@ -830,24 +830,34 @@ class ActionTalk extends Action
              */
             $aUsersTalk = $this->Talk_GetUsersTalk($oTalk->getId(), ModuleTalk::TALK_USER_ACTIVE);
 
-            $curl_data = array(
-                "senderId" => $this->oUserCurrent->getUserId(),
-                "senderLogin" => $this->oUserCurrent->getLogin(),
-                "commentData" => json_encode($this->Comment_ConvertCommentToArray($oCommentNew)),
-                "targetType" => $oCommentNew->getTargetType(),
-                "targetId" => $oCommentNew->getTargetId(),
-                "targetTitle" => $oTalk->getTitle(),
-                "userIds" => array()
-            );
-
             foreach ($aUsersTalk as $oUserTalk) {
                 if ($oUserTalk->getId() != $oCommentNew->getUserId()) {
                     $this->Notify_SendTalkCommentNew($oUserTalk, $this->oUserCurrent, $oTalk, $oCommentNew);
-                    $curl_data["userIds"][] = $oUserTalk->getId();
+					/**
+					 * Отправка уведомления пользователям
+					 */
+					$notificationTitle = $this->oUserCurrent->getLogin()." ответил вам в личке ".$oTalk->getTitle();
+					$notificationText = "";
+					$notificationLink = "/talk/undefined/".$oCommentNew->getTargetId()."#comment".$oCommentNew->getId();
+					$notification = Engine::GetEntity(
+						'Notification',
+						array(
+							'user_id' => $oUserTalk->getId(),
+							'text' => $notificationText,
+							'title' => $notificationTitle,
+							'link' => $notificationLink,
+							'rating' => 0,
+							'notification_type' => 2,
+							'target_type' => 'talk',
+							'target_id' => $oCommentNew->getTargetId()
+						)
+					);
+					if($notificationId = $this->Notification_createNotification($notification)){
+						$this->Nower_PostNotification($this->Notification_getNotificationById($notificationId));
+					}
                 }
             }
 
-            $this->Nower_Post("/comment", $curl_data);
             /**
              * Увеличиваем число новых комментов
              */

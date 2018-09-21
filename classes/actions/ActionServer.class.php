@@ -49,6 +49,7 @@ class ActionServer extends Action
         $this->AddEvent('deploy', 'EventDeploy');
         $this->AddEvent('getuserbykey', 'EventGetUserByKey');
         $this->AddEvent('hastopicaccess', 'EventHasTopicAccess');
+        $this->AddEvent('hastalkaccess', 'EventHasTalkAccess');
     }
 
     /**********************************************************************************
@@ -88,8 +89,6 @@ class ActionServer extends Action
             $this->Viewer_AssignAjax("bAccess", false);
             return;
         }
-
-        $sUserId = getRequest("userId");
 
         $oUser = $this->User_GetUserById(getRequest("userId"));
         $oTopic = $this->Topic_GetTopicById(getRequest("topicId"));
@@ -138,4 +137,31 @@ class ActionServer extends Action
         $this->Viewer_AssignAjax("bAccess", true);
         return;
     }
+
+    function EventHasTalkAccess() {
+		$this->Viewer_SetResponseAjax('json', true, false);
+		if (getRequest('token')!=Config::Get('deploy_token')) {
+			$this->Viewer_AssignAjax("bAccess", false);
+			return;
+		}
+
+		$oUser = $this->User_GetUserById(getRequest("userId"));
+		$sTalkId = $this->Topic_GetTopicById(getRequest("talkId"));
+		/**
+		 * Пользователь есть в переписке?
+		 */
+		if (!($oTalkUser = $this->Talk_GetTalkUser($sTalkId, $oUser))) {
+			$this->Viewer_AssignAjax("bAccess", false);
+			return;
+		}
+		/**
+		 * Пользователь активен в переписке?
+		 */
+		if ($oTalkUser->getUserActive() != ModuleTalk::TALK_USER_ACTIVE) {
+			$this->Viewer_AssignAjax("bAccess", false);
+			return;
+		}
+		$this->Viewer_AssignAjax("bAccess", true);
+		return;
+	}
 }

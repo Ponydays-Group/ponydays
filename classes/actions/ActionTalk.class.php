@@ -852,8 +852,8 @@ class ActionTalk extends Action
 							'target_id' => $oCommentNew->getTargetId()
 						)
 					);
-					if($notificationId = $this->Notification_createNotification($notification)){
-						$this->Nower_PostNotification($this->Notification_getNotificationById($notificationId));
+					if($notificationCreated = $this->Notification_createNotification($notification)){
+						$this->Nower_PostNotification($notificationCreated);
 					}
                 }
             }

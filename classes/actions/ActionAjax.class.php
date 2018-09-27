@@ -1533,8 +1533,8 @@ class ActionAjax extends Action
 				'target_id' => $oComment->getTargetId()
 			)
 		);
-		if($notificationId = $this->Notification_createNotification($notification)){
-			$this->Nower_PostNotification($this->Notification_getNotificationById($notificationId));
+		if($notificationCreated = $this->Notification_createNotification($notification)){
+			$this->Nower_PostNotification($notificationCreated);
 		}
 
         /**
@@ -2020,8 +2020,8 @@ class ActionAjax extends Action
 						'target_id' => $oComment->getTargetId()
 					)
 				);
-				if ($notificationId = $this->Notification_createNotification($notification)) {
-					$this->Nower_PostNotification($this->Notification_getNotificationById($notificationId));
+				if($notificationCreated = $this->Notification_createNotification($notification)){
+					$this->Nower_PostNotification($notificationCreated);
 				}
 
 			} else if ($oComment->getTargetType() == 'talk') {
@@ -2051,9 +2051,8 @@ class ActionAjax extends Action
 							'target_id' => $oComment->getTargetId()
 						)
 					);
-
-					if ($notificationId = $this->Notification_createNotification($notification)) {
-						$this->Nower_PostNotification($this->Notification_getNotificationById($notificationId));
+					if($notificationCreated = $this->Notification_createNotification($notification)){
+						$this->Nower_PostNotification($notificationCreated);
 					}
 				}
 			}

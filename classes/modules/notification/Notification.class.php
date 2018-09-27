@@ -37,4 +37,8 @@ class ModuleNotification extends Module {
 		return false;
 	}
 
+	public function getNotificationById($notificationId){
+		return $this->oMapper->getNotificationById($notificationId);
+	}
+
 }

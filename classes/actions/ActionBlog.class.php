@@ -1350,8 +1350,8 @@ class ActionBlog extends Action
         $oCommentNew->setTextHash(md5($sText));
         $oCommentNew->setPublish($oTopic->getPublish());
         $oCommentNew->setUserRank($this->oUserCurrent->getRank());
-		$sFile = $this->Topic_UploadTopicImageUrl('http:'.$this->oUserCurrent->getProfileAvatarPath(64), $this->oUserCurrent);
-        $oCommentNew->setUserAvatar($sFile);
+//		$sFile = $this->Topic_UploadTopicImageUrl('http:'.$this->oUserCurrent->getProfileAvatarPath(64), $this->oUserCurrent);
+//        $oCommentNew->setUserAvatar($sFile);
         /**
          * Добавляем коммент
          */
@@ -1365,21 +1365,23 @@ class ActionBlog extends Action
 			$notificationTitle = $this->oUserCurrent->getLogin()." ответил вам в посте ".$oTopic->getTitle();
 			$notificationText = $oCommentNew->getText();
 			$notificationLink = "/blog/undefined/".$oCommentNew->getTargetId()."#comment".$oCommentNew->getId();
-			$notification = Engine::GetEntity(
-				'Notification',
-				array(
-					'user_id' => $oCommentNew->getUserId(),
-					'text' => $notificationText,
-					'title' => $notificationTitle,
-					'link' => $notificationLink,
-					'rating' => 0,
-					'notification_type' => 5,
-					'target_type' => 'topic',
-					'target_id' => $oCommentNew->getTargetId()
-				)
-			);
-			if($notificationId = $this->Notification_createNotification($notification)){
-				$this->Nower_PostNotification($this->Notification_getNotificationById($notificationId));
+			if ($oCommentParent) {
+				$notification = Engine::GetEntity(
+					'Notification',
+					array(
+						'user_id' => $oCommentParent->getUserId(),
+						'text' => $notificationText,
+						'title' => $notificationTitle,
+						'link' => $notificationLink,
+						'rating' => 0,
+						'notification_type' => 5,
+						'target_type' => 'topic',
+						'target_id' => $oCommentNew->getTargetId()
+					)
+				);
+				if ($notificationCreated = $this->Notification_createNotification($notification)) {
+					$this->Nower_PostNotification($notificationCreated);
+				}
 			}
 
             $this->Hook_Run('comment_add_after', array('oCommentNew' => $oCommentNew, 'oCommentParent' => $oCommentParent, 'oTopic' => $oTopic));

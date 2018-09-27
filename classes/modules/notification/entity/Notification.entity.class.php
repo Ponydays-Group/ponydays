@@ -13,6 +13,20 @@
  */
 class ModuleNotification_EntityNotification extends Entity {
 
+	public function getArrayData() {
+		return array(
+			'notification_id' => $this->getId(),
+			'user_id' => $this->getUserId(),
+			'date' => $this->getDate(),
+			'text' => $this->getText(),
+			'title' => $this->getTitle(),
+			'link' => $this->getLink(),
+			'rating' => $this->getRating(),
+			'notification_type' => $this->getType(),
+			'target_type' => $this->getTargetType(),
+			'target_id' => $this->getTargetId());
+	}
+
 	/**
 	 * Возвращает ID уведомления
 	 *

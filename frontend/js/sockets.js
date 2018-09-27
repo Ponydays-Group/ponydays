@@ -30,6 +30,52 @@ sock.on('reconnect_attempt', () => {
 window.nAudio = new Audio()
 nAudio.src = localStorage.getItem("notice_sound_url") || "http://freesound.org/data/previews/245/245645_1038806-lq.mp3"
 
+sock.on('notification', function (data) {
+    //TODO: handle notification
+    console.log("============= TEST NEW NOTIFICATIONS =============");
+    console.log("============= TEST NEW NOTIFICATIONS =============");
+    console.log("============= TEST NEW NOTIFICATIONS =============");
+    console.log("============= TEST NEW NOTIFICATIONS =============");
+    console.log("============= TEST NEW NOTIFICATIONS =============");
+    console.log("DATA:", data);
+
+    // switch(data.type){
+    //     case 1: //talk_new_topic
+    //         action ="talk_new_topic";
+    //     case 2: //talk_new_comment
+    //         action ="talk_new_comment";
+    //     case 3: //comment_response
+    //         action ="comment_response";
+    //     case 4: //comment_mention
+    //         action ="comment_mention";
+    //     case 5: //topic_new_comment
+    //         action ="topic_new_comment";
+    //     case 6: //comment_edit
+    //         action ="comment_edit";
+    //     case 7: //comment_delete
+    //         action ="comment_delete";
+    //     case 8: //comment_restore
+    //         action ="comment_restore";
+    //     case 9: //comment_restore_deleted_by_you
+    //         action ="comment_restore_deleted_by_you";
+    //     case 10: //comment_rank
+    //         action ="comment_rank";
+    //     case 11: //topic_rank
+    //         action ="topic_rank";
+    //     case 12: //topic_invite_ask
+    //         action ="topic_invite_ask";
+    //     case 13: //topic_invite_offer
+    //         action ="topic_invite_offer";
+    //     case 14: //talk_invite_offer
+    //         action ="talk_invite_offer";
+    //     case 15: //ban_in_blog
+    //         action ="ban_in_blog";
+    //     case 16: //ban_global
+    //         action ="ban_global";
+    //     default:
+    // }
+});
+
 sock.on("reply-info", function (data) {
     console.log("DATA:", data)
     if (checkPerm("notice_reply")) {

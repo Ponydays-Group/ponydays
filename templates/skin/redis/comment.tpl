@@ -132,10 +132,10 @@
 																			vote-count-zero
 																		{/if}
 
-																		{if $oVote}
+																		{if $oComment->getVote()}
 																			voted
 
-																			{if $oVote->getDirection() > 0}
+																			{if $oComment->getVote()->getDirection() > 0}
 																				voted-up
 																			{else}
 																				voted-down

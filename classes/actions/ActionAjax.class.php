@@ -287,7 +287,7 @@ class ActionAjax extends Action
         /**
          * Время голосования истекло?
          */
-        if (strtotime($oComment->getDate()) <= time() - Config::Get('acl.vote.comment.limit_time')) {
+        if (Config::Get('acl.vote.comment.limit_time') != 0 && strtotime($oComment->getDate()) <= time() - Config::Get('acl.vote.comment.limit_time')) {
             $this->Message_AddErrorSingle($this->Lang_Get('comment_vote_error_time'), $this->Lang_Get('attention'));
             return;
         }

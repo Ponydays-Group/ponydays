@@ -110,6 +110,24 @@ class ActionAjax extends Action
             $this->User_Unban($iUserId);
 			$sLogText = $this->oUserCurrent->getLogin()." разбанил пользователя ".$iUserId;
 			$this->Logger_Notice($sLogText);
+
+			$notificationTitle = "Пользователь ".$this->oUserCurrent->getLogin()." разбанил вас на сайте";
+			$notification = Engine::GetEntity(
+				'Notification',
+				array(
+					'user_id' => $iUserId,
+					'text' => "",
+					'title' => $notificationTitle,
+					'link' => "",
+					'rating' => 0,
+					'notification_type' => 16,
+					'target_type' => "global",
+					'target_id' => -1
+				)
+			);
+			if($notificationCreated = $this->Notification_createNotification($notification)){
+				$this->Nower_PostNotification($notificationCreated);
+			}
             return;
         }
 
@@ -125,6 +143,24 @@ class ActionAjax extends Action
 
         $sLogText = $this->oUserCurrent->getLogin()." забанил пользователя ".$iUserId;
         $this->Logger_Notice($sLogText);
+
+		$notificationTitle = "Пользователь ".$this->oUserCurrent->getLogin()." забанил вас на сайте";
+		$notification = Engine::GetEntity(
+			'Notification',
+			array(
+				'user_id' => $iUserId,
+				'text' => "",
+				'title' => $notificationTitle,
+				'link' => "",
+				'rating' => 0,
+				'notification_type' => 16,
+				'target_type' => "global",
+				'target_id' => -1
+			)
+		);
+		if($notificationCreated = $this->Notification_createNotification($notification)){
+			$this->Nower_PostNotification($notificationCreated);
+		}
     }
 
     /**
@@ -1477,6 +1513,7 @@ class ActionAjax extends Action
             return;
         }
 
+        $lastdeleteUser = $oComment->getDeleteUserId();
         /**
          * Устанавливаем пометку о том, что комментарий удален
          */
@@ -1515,8 +1552,10 @@ class ActionAjax extends Action
 		 */
 		if ((bool)$oComment->getDelete()) {
 			$notificationTitle = $this->oUserCurrent->getLogin()." удалил ваш комментарий\nПричина: ".$oComment->getDeleteReason();
+			$notificationType = 7;
 		} else {
 			$notificationTitle = $this->oUserCurrent->getLogin()." восстановил ваш комментарий";
+			$notificationType = 8;
 		}
 		$notificationText = $oComment->getText();
 		$notificationLink = "/blog/undefined/".$oComment->getTargetId()."#comment".$oComment->getId();
@@ -1528,13 +1567,35 @@ class ActionAjax extends Action
 				'title' => $notificationTitle,
 				'link' => $notificationLink,
 				'rating' => 0,
-				'notification_type' => 7,
+				'notification_type' => $notificationType,
 				'target_type' => 'topic',
 				'target_id' => $oComment->getTargetId()
 			)
 		);
 		if($notificationCreated = $this->Notification_createNotification($notification)){
 			$this->Nower_PostNotification($notificationCreated);
+		}
+
+		if ($this->oUserCurrent->getId() != $lastdeleteUser) {
+			$notificationTitle = $this->oUserCurrent->getLogin()." восстановил удаленный вами комментарий";
+			$notificationText = $oComment->getText();
+			$notificationLink = "/blog/undefined/".$oComment->getTargetId()."#comment".$oComment->getId();
+			$notification = Engine::GetEntity(
+				'Notification',
+				array(
+					'user_id' => $lastdeleteUser,
+					'text' => $notificationText,
+					'title' => $notificationTitle,
+					'link' => $notificationLink,
+					'rating' => 0,
+					'notification_type' => 9,
+					'target_type' => 'topic',
+					'target_id' => $oComment->getTargetId()
+				)
+			);
+			if($notificationCreated = $this->Notification_createNotification($notification)){
+				$this->Nower_PostNotification($notificationCreated);
+			}
 		}
 
         /**

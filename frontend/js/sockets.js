@@ -30,15 +30,24 @@ sock.on('reconnect_attempt', () => {
 window.nAudio = new Audio()
 nAudio.src = localStorage.getItem("notice_sound_url") || "http://freesound.org/data/previews/245/245645_1038806-lq.mp3"
 
+sock.on('notification_group', function (data) {
+    //TODO: handle group update
+    console.log("============= GROUP NEW NOTIFICATIONS =============");
+    console.log("DATA:", data);
+});
+
 sock.on('notification', function (data) {
-    //TODO: handle notification
-    console.log("============= TEST NEW NOTIFICATIONS =============");
-    console.log("============= TEST NEW NOTIFICATIONS =============");
-    console.log("============= TEST NEW NOTIFICATIONS =============");
-    console.log("============= TEST NEW NOTIFICATIONS =============");
+    //TODO: fix handle notification
     console.log("============= TEST NEW NOTIFICATIONS =============");
     console.log("DATA:", data);
 
+    let title = data.title;
+    if (data.rating * 1 > 0) {
+        title += "<span><span class=\""+ options.classes.vote + " " + options.classes.positive + "\"><span class=\"" + options.classes.vote_count +"\">+"+ data.rating +"</span></span></span>";
+    } else if (data.rating * 1 < 0) {
+        title += "<span><span class=\""+ options.classes.vote + " " + options.classes.negative + "\"><span class=\"" + options.classes.vote_count +"\">"+ data.rating +"</span></span></span>";
+    }
+    ls.msg.notice(title, data.text, data.link, false)
     // switch(data.type){
     //     case 1: //talk_new_topic
     //         action ="talk_new_topic";
@@ -72,6 +81,8 @@ sock.on('notification', function (data) {
     //         action ="ban_in_blog";
     //     case 16: //ban_global
     //         action ="ban_global";
+    //     case 17: //topic_mention
+    //         action ="topic_mention";
     //     default:
     // }
 });

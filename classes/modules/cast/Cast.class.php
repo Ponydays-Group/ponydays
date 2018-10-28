@@ -62,37 +62,78 @@ class ModuleCast extends Module
 			$oViewerLocal->Assign('oTarget', $oTarget);
 			$oViewerLocal->Assign('oParentTarget', $oParentTarget);
 			$oViewerLocal->Assign('oUserMarked', $oUser);
-		
-			$aAssigin = array(
-				'oUser' => $this->oUserCurrent,
-				'oTarget' => $oTarget,
-				'oParentTarget' => $oParentTarget,
-				'oUserMarked' => $oUser,		
-			);
-			
-			$sTemplateName = 'notify.'.$sTarget.'.tpl';
-			
-			$sLangDir = 'notify/' . $this->Lang_GetLang();
-			if (is_dir($sLangDir)) {
-				$sPath = $sLangDir.'/'.$sTemplateName;
+
+			if ($sTarget == "topic") {
+
+				$notificationTitle = $this->oUserCurrent->getLogin()." упомянул вас в посте ".$oTarget->getTitle();
+				$notificationText = $oTarget->getTitle();
+				$notificationLink = "/blog/undefined/".$oTarget->getId();
+				$notification = Engine::GetEntity(
+					'Notification',
+					array(
+						'user_id' => $oTarget->getUserId(),
+						'text' => $notificationText,
+						'title' => $notificationTitle,
+						'link' => $notificationLink,
+						'rating' => 0,
+						'notification_type' => 17,
+						'target_type' => 'topic',
+						'target_id' => $oTarget->getId()
+					)
+				);
 			} else {
-				$sPath = 'notify/' . $this->Lang_GetLangDefault() .'/'. $sTemplateName;
+				$notificationTitle = $this->oUserCurrent->getLogin()." упомянул вас в комментарии ".$oParentTarget->getTitle();
+				$notificationText = $oTarget->getText();
+				$notificationLink = "/blog/undefined/".$oTarget->getTargetId()."#comment".$oTarget->getId();
+				$notification = Engine::GetEntity(
+					'Notification',
+					array(
+						'user_id' => $oTarget->getUserId(),
+						'text' => $notificationText,
+						'title' => $notificationTitle,
+						'link' => $notificationLink,
+						'rating' => 0,
+						'notification_type' => 4,
+						'target_type' => 'topic',
+						'target_id' => $oParentTarget->getId()
+					)
+				);
+			}
+			if ($notificationCreated = $this->Notification_createNotification($notification)) {
+				$this->Nower_PostNotification($notificationCreated);
 			}
 
-			$sText = $oViewerLocal->Fetch($sPath);
-
-			$aTitles = $this->Lang_Get('notify_title');
-			$sTitle = $aTitles[$sTarget];
-			
-			$oTalk = $this->Talk_SendTalk($sTitle, $sText, $this->oUserCurrent, array($oUser), false, false);
-			
-			$this->Notify_Send(
-				$oUser, $sTemplateName , $sTitle, $aAssigin, 'castuser'
-			);
-						
-			$this->Talk_DeleteTalkUserByArray($oTalk->getId(), $this->oUserCurrent->getId());
-			
-			$this->oMapper->saveExist($sTarget,$oTarget->getId(),$oUser->getId());
+			//TODO: Use it optionally
+//			$aAssigin = array(
+//				'oUser' => $this->oUserCurrent,
+//				'oTarget' => $oTarget,
+//				'oParentTarget' => $oParentTarget,
+//				'oUserMarked' => $oUser,
+//			);
+//
+//			$sTemplateName = 'notify.'.$sTarget.'.tpl';
+//
+//			$sLangDir = 'notify/' . $this->Lang_GetLang();
+//			if (is_dir($sLangDir)) {
+//				$sPath = $sLangDir.'/'.$sTemplateName;
+//			} else {
+//				$sPath = 'notify/' . $this->Lang_GetLangDefault() .'/'. $sTemplateName;
+//			}
+//
+//			$sText = $oViewerLocal->Fetch($sPath);
+//
+//			$aTitles = $this->Lang_Get('notify_title');
+//			$sTitle = $aTitles[$sTarget];
+//
+//			$oTalk = $this->Talk_SendTalk($sTitle, $sText, $this->oUserCurrent, array($oUser), false, false);
+//
+//			$this->Notify_Send(
+//				$oUser, $sTemplateName , $sTitle, $aAssigin, 'castuser'
+//			);
+//
+//			$this->Talk_DeleteTalkUserByArray($oTalk->getId(), $this->oUserCurrent->getId());
+//
+//			$this->oMapper->saveExist($sTarget,$oTarget->getId(),$oUser->getId());
     	}
     }    
     

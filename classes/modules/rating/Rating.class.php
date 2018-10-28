@@ -61,21 +61,26 @@ class ModuleRating extends Module {
 		$iSkillNew=$oUserComment->getSkill()+$iValue/100;
 		$oUserComment->setSkill($iSkillNew);
 		$this->User_Update($oUserComment);
-        $curl_data = array(
-            "senderId" => $oUser->getId(),
-            "senderName" => $oUser->getLogin(),
-            "userId" => $oComment->getUserId(),
-            "targetId" => $oComment->getId(),
-            "targetType" => "comment",
-            "targetParentId" => $oComment->getTargetId(),
-            "targetParentType" => $oComment->getTargetType(),
-			"rating" => $oComment->getRating(),
-			"voteCount" => $oComment->getCountVote() + $iCountVote,
-            "voteType" => $iVoteType,
-            "voteValue" => $iValueOld,
-			"commentText" => $oComment->getText()
-        );
-        $this->Nower_Post('/vote', $curl_data);
+
+		$notificationTitle = "Пользователь ".$oUser->getLogin()." проголосовал за ваш комментарий";
+		$notificationText = $oComment->getText();
+		$notificationLink = "/blog/undefined/".$oComment->getTargetId()."#comment".$oComment->getId();
+		$notification = Engine::GetEntity(
+			'Notification',
+			array(
+				'user_id' => $oComment->getUserId(),
+				'text' => $notificationText,
+				'title' => $notificationTitle,
+				'link' => $notificationLink,
+				'rating' => $oComment->getRating(),
+				'notification_type' => 10,
+				'target_type' => $oComment->getTargetType(),
+				'target_id' => $oComment->getTargetId()
+			)
+		);
+		if($notificationCreated = $this->Notification_createNotification($notification)){
+			$this->Nower_PostNotification($notificationCreated);
+		}
 		return $iValue;
 	}
 	/**
@@ -100,21 +105,26 @@ class ModuleRating extends Module {
 		$iSkillNew=$oUserTopic->getSkill()+$iValue;
 		$oUserTopic->setSkill($iSkillNew);
 		$this->User_Update($oUserTopic);
-        $curl_data = array(
-            "senderId" => $oUser->getId(),
-            "senderName" => $oUser->getLogin(),
-            "userId" => $oTopic->getUserId(),
-            "targetId" => $oTopic->getId(),
-            "targetType" => "topic",
-            "targetParentId" => null,
-            "targetParentType" => null,
-            "rating" => $oTopic->getRating(),
-			"voteCount" => $oTopic->getCountVote() + $iCountVote,
-            "voteType" => $iVoteType,
-            "voteValue" => $iValueOld,
-			"topicTitle" => $oTopic->getTitle()
-        );
-        $this->Nower_Post('/vote', $curl_data);
+
+		$notificationTitle = "Пользователь ".$oUser->getLogin()." проголосовал за ваш пост";
+		$notificationText = $oTopic->getTitle();
+		$notificationLink = "/blog/undefined/".$oTopic->getId();
+		$notification = Engine::GetEntity(
+			'Notification',
+			array(
+				'user_id' => $oUserTopic->getUserId(),
+				'text' => $notificationText,
+				'title' => $notificationTitle,
+				'link' => $notificationLink,
+				'rating' => $oTopic->getRating(),
+				'notification_type' => 11,
+				'target_type' => "topic",
+				'target_id' => $oTopic->getId()
+			)
+		);
+		if($notificationCreated = $this->Notification_createNotification($notification)){
+			$this->Nower_PostNotification($notificationCreated);
+		}
 		return $iValue;
 	}
 	/**

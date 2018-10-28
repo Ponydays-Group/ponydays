@@ -38,6 +38,7 @@ INSERT INTO prefix_notification_type (name) VALUES ('talk_new_topic'),(
                                                     'topic_invite_offer'),(
                                                     'talk_invite_offer'),(
                                                     'ban_in_blog'),(
-                                                    'ban_global');
+                                                    'ban_global'),(
+                                                    'topic_mention');
 ALTER TABLE prefix_notification_type CONVERT TO CHARACTER SET utf8;
 ALTER TABLE prefix_notification CONVERT TO CHARACTER SET utf8;

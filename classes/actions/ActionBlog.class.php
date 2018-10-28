@@ -1374,7 +1374,7 @@ class ActionBlog extends Action
 						'title' => $notificationTitle,
 						'link' => $notificationLink,
 						'rating' => 0,
-						'notification_type' => 5,
+						'notification_type' => 3,
 						'target_type' => 'topic',
 						'target_id' => $oCommentNew->getTargetId()
 					)
@@ -1383,6 +1383,26 @@ class ActionBlog extends Action
 					$this->Nower_PostNotification($notificationCreated);
 				}
 			}
+
+			$notificationTitle = $this->oUserCurrent->getLogin()." оставил комментарий в вашем посте ".$oTopic->getTitle();
+			$notificationText = $oCommentNew->getText();
+			$notificationLink = "/blog/undefined/".$oCommentNew->getTargetId()."#comment".$oCommentNew->getId();
+            $notification = Engine::GetEntity(
+                'Notification',
+                array(
+                    'user_id' => $oTopic->getUserId(),
+                    'text' => $notificationText,
+                    'title' => $notificationTitle,
+                    'link' => $notificationLink,
+                    'rating' => 0,
+                    'notification_type' => 5,
+                    'target_type' => 'topic',
+                    'target_id' => $oTopic->getId()
+                )
+            );
+            if ($notificationCreated = $this->Notification_createNotification($notification)) {
+                $this->Nower_PostNotification($notificationCreated);
+            }
 
             $this->Hook_Run('comment_add_after', array('oCommentNew' => $oCommentNew, 'oCommentParent' => $oCommentParent, 'oTopic' => $oTopic));
             $this->Cast_sendCastNotify('comment', $oCommentNew, $oTopic, $oCommentNew->getText());
@@ -1842,18 +1862,38 @@ class ActionBlog extends Action
                 'blog_title' => $oBlog->getTitle()
             )
         );
-        $oTalk = $this->Talk_SendTalk($sTitle, $sText, $this->oUserCurrent, array($oUser), false, false);
-        /**
-         * Отправляем пользователю заявку
-         */
-        $this->Notify_SendBlogUserInvite(
-            $oUser, $this->oUserCurrent, $oBlog,
-            Router::GetPath('talk') . 'read/' . $oTalk->getId() . '/'
-        );
-        /**
-         * Удаляем отправляющего юзера из переписки
-         */
-        $this->Talk_DeleteTalkUserByArray($oTalk->getId(), $this->oUserCurrent->getId());
+
+		$notification = Engine::GetEntity(
+			'Notification',
+			array(
+				'user_id' => $oUser->getUserId(),
+				'text' => $sText,
+				'title' => $sTitle,
+				'link' => "",
+				'rating' => 0,
+				'notification_type' => 13,
+				'target_type' => 'talk',
+				'target_id' => $oBlog->getId()
+			)
+		);
+		if ($notificationCreated = $this->Notification_createNotification($notification)) {
+			$this->Nower_PostNotification($notificationCreated);
+		}
+
+		//TODO: Use it optionally
+
+//        $oTalk = $this->Talk_SendTalk($sTitle, $sText, $this->oUserCurrent, array($oUser), false, false);
+//        /**
+//         * Отправляем пользователю заявку
+//         */
+//        $this->Notify_SendBlogUserInvite(
+//            $oUser, $this->oUserCurrent, $oBlog,
+//            Router::GetPath('talk') . 'read/' . $oTalk->getId() . '/'
+//        );
+//        /**
+//         * Удаляем отправляющего юзера из переписки
+//         */
+//        $this->Talk_DeleteTalkUserByArray($oTalk->getId(), $this->oUserCurrent->getId());
     }
 
     /**

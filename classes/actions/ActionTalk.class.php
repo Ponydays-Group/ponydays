@@ -416,7 +416,34 @@ class ActionTalk extends Action
          * Отправляем письмо
          */
         if ($oTalk = $this->Talk_SendTalk($this->Text_Parser(strip_tags(getRequestStr('talk_title'))), $this->Text_Parser(getRequestStr('talk_text')), $this->oUserCurrent, $this->aUsersId)) {
-            Router::Location(Router::GetPath('talk') . 'read/' . $oTalk->getId() . '/');
+
+			/**
+			 * Отправка уведомления пользователям
+			 */
+            $aUsersTalk = $this->Talk_GetUsersTalk($oTalk->getId(), ModuleTalk::TALK_USER_ACTIVE);
+            foreach ($aUsersTalk as $oUserTalk) {
+				$notificationTitle = "Пользователь ".$this->oUserCurrent->getLogin()." отправил вам личное письмо";
+				$notificationText = $oTalk->getTitle();
+				$notificationLink = "/talk/read/".$oTalk->getId();
+				$notification = Engine::GetEntity(
+					'Notification',
+					array(
+						'user_id' => $oUserTalk->getUserId(),
+						'text' => $notificationText,
+						'title' => $notificationTitle,
+						'link' => $notificationLink,
+						'rating' => 0,
+						'notification_type' => 1,
+						'target_type' => 'talk',
+						'target_id' => $oTalk->getId()
+					)
+				);
+				if ($notificationCreated = $this->Notification_createNotification($notification)) {
+					$this->Nower_PostNotification($notificationCreated);
+				}
+			}
+
+			Router::Location(Router::GetPath('talk') . 'read/' . $oTalk->getId() . '/');
         } else {
             $this->Message_AddErrorSingle($this->Lang_Get('system_error'));
             return Router::Action('error');
@@ -838,7 +865,7 @@ class ActionTalk extends Action
 					 */
 					$notificationTitle = $this->oUserCurrent->getLogin()." ответил вам в личке ".$oTalk->getTitle();
 					$notificationText = "";
-					$notificationLink = "/talk/undefined/".$oCommentNew->getTargetId()."#comment".$oCommentNew->getId();
+					$notificationLink = "/talk/read/".$oCommentNew->getTargetId()."#comment".$oCommentNew->getId();
 					$notification = Engine::GetEntity(
 						'Notification',
 						array(
@@ -1200,9 +1227,33 @@ class ActionTalk extends Action
             ),
             $this->Lang_Get('attention')
         );
-        $this->Talk_SendTalk("Приглашение вернуться в переписку " . $oTalk->getTitle(),
-            "<div id=\"accept_invite_talk_back\"><a href=\"#\" idTalk=\"" . $idTalk . "\" id=\"speaker_accept_restore_item_" . $idTarget .
-            "\" class=\"delete\">Вернуться в переписку</a></div>", $this->oUserCurrent->getId(), $idTarget);
+
+
+		$notificationTitle = $this->oUserCurrent->getLogin()." приглашает вас вернуться в переписку " . $oTalk->getTitle();
+		$notificationText = "<div id=\"accept_invite_talk_back\"><a href=\"#\" idTalk=\"" . $idTalk . "\" id=\"speaker_accept_restore_item_" . $idTarget .
+			"\" class=\"delete\" onclick=\"ls.talk.acceptInviteBackToTalk(this)\">Вернуться в переписку</a></div>";
+		$notification = Engine::GetEntity(
+			'Notification',
+			array(
+				'user_id' => $oUserTarget->getUserId(),
+				'text' => $notificationText,
+				'title' => $notificationTitle,
+				'link' => "",
+				'rating' => 0,
+				'notification_type' => 14,
+				'target_type' => "talk",
+				'target_id' => -1
+			)
+		);
+		if ($notificationCreated = $this->Notification_createNotification($notification)) {
+			$this->Nower_PostNotification($notificationCreated);
+		}
+
+		//TODO: Use it optionally
+
+//        $this->Talk_SendTalk("Приглашение вернуться в переписку " . $oTalk->getTitle(),
+//            "<div id=\"accept_invite_talk_back\"><a href=\"#\" idTalk=\"" . $idTalk . "\" id=\"speaker_accept_restore_item_" . $idTarget .
+//            "\" class=\"delete\">Вернуться в переписку</a></div>", $this->oUserCurrent->getId(), $idTarget);
     }
 
     /**

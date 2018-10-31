@@ -422,24 +422,26 @@ class ActionTalk extends Action
 			 */
             $aUsersTalk = $this->Talk_GetUsersTalk($oTalk->getId(), ModuleTalk::TALK_USER_ACTIVE);
             foreach ($aUsersTalk as $oUserTalk) {
-				$notificationTitle = "Пользователь ".$this->oUserCurrent->getLogin()." отправил вам личное письмо";
-				$notificationText = $oTalk->getTitle();
-				$notificationLink = "/talk/read/".$oTalk->getId();
-				$notification = Engine::GetEntity(
-					'Notification',
-					array(
-						'user_id' => $oUserTalk->getUserId(),
-						'text' => $notificationText,
-						'title' => $notificationTitle,
-						'link' => $notificationLink,
-						'rating' => 0,
-						'notification_type' => 1,
-						'target_type' => 'talk',
-						'target_id' => $oTalk->getId()
-					)
-				);
-				if ($notificationCreated = $this->Notification_createNotification($notification)) {
-					$this->Nower_PostNotification($notificationCreated);
+				if ($oUserTalk->getId() != $this->oUserCurrent->getId()) {
+					$notificationTitle = "Пользователь " . $this->oUserCurrent->getLogin() . " отправил вам личное письмо";
+					$notificationText = $oTalk->getTitle();
+					$notificationLink = "/talk/read/" . $oTalk->getId();
+					$notification = Engine::GetEntity(
+						'Notification',
+						array(
+							'user_id' => $oUserTalk->getUserId(),
+							'text' => $notificationText,
+							'title' => $notificationTitle,
+							'link' => $notificationLink,
+							'rating' => 0,
+							'notification_type' => 1,
+							'target_type' => 'talk',
+							'target_id' => $oTalk->getId()
+						)
+					);
+					if ($notificationCreated = $this->Notification_createNotification($notification)) {
+						$this->Nower_PostNotification($notificationCreated);
+					}
 				}
 			}
 
@@ -1248,12 +1250,6 @@ class ActionTalk extends Action
 		if ($notificationCreated = $this->Notification_createNotification($notification)) {
 			$this->Nower_PostNotification($notificationCreated);
 		}
-
-		//TODO: Use it optionally
-
-//        $this->Talk_SendTalk("Приглашение вернуться в переписку " . $oTalk->getTitle(),
-//            "<div id=\"accept_invite_talk_back\"><a href=\"#\" idTalk=\"" . $idTalk . "\" id=\"speaker_accept_restore_item_" . $idTarget .
-//            "\" class=\"delete\">Вернуться в переписку</a></div>", $this->oUserCurrent->getId(), $idTarget);
     }
 
     /**

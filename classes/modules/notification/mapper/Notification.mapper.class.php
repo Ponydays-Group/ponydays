@@ -23,18 +23,50 @@ class ModuleNotification_MapperNotification extends Mapper {
 	 * @throws Exception
 	 */
 
-	public function getNotification($userId, $page, $count){
+	public function getNotifications($userId, $page, $count){
 		$sql = "SELECT
 				*
 				FROM
 				".Config::Get('db.table.notification')."
 				WHERE
-				user_id = ?
-				LIMIT ? 
-				OFFSET ?
+				user_id = ?d
+				ORDER BY notification_id DESC
+				LIMIT ?d 
+				OFFSET ?d
 		";
 		$aNotifications=array();
 		if ($aRows=$this->oDb->select($sql,$userId, $count, (($page-1)*$count))) {
+			foreach ($aRows as $aRow) {
+				$aNotifications[]=Engine::GetEntity('Notification',$aRow);
+			}
+		}
+		return $aNotifications;
+	}
+
+	/**
+	 * Получение всех уведомлений пользователя с пагинацией
+	 * @param $userId int ID пользователя
+	 * @param $page int номер страницы
+	 * @param $count int количество на странице
+	 * @param $types array список требуемых типов уведомлений
+	 * @return array уведомления
+	 * @throws Exception
+	 */
+
+	public function getNotificationsFiltered($userId, $page, $count, $types){
+		$sql = "SELECT
+				*
+				FROM
+				".Config::Get('db.table.notification')."
+				WHERE
+				user_id = ?d,
+				notification_type in ?d
+				ORDER BY notification_id DESC
+				LIMIT ?d 
+				OFFSET ?d
+		";
+		$aNotifications=array();
+		if ($aRows=$this->oDb->select($sql,$userId, $types, $count, (($page-1)*$count))) {
 			foreach ($aRows as $aRow) {
 				$aNotifications[]=Engine::GetEntity('Notification',$aRow);
 			}

@@ -174,6 +174,28 @@ export function LoadMoreActions(LastActionId){
 
 };
 
+export function LoadMoreNotifications(Page){
+
+	var params = {};
+	params['Page'] 	= Page;
+
+	$("#LoadMoreButton").toggleClass('loading');
+
+	return this.ajax(aRouter['notifications']+'LoadMoreActions', params, function(data){
+		if (data.aResult.Errors.length > 0){
+			var $aErrors = data.aResult.Errors;
+			for(var i=0; i < $aErrors.length; i++){
+				var $sError	= $aErrors[i];
+				ls.msg.error('',$sError);
+			}
+		} else {
+			$("#stream-list").append(data.aResult.Text);
+			$("#LoadMoreButton").remove();
+		}
+	});
+
+};
+
 export function saveConfig(){
     let changed={};
     $('.config-param').each(

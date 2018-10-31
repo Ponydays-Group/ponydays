@@ -41,4 +41,12 @@ class ModuleNotification extends Module {
 		return $this->oMapper->getNotificationById($notificationId);
 	}
 
+	public function getNotification($userId, $page, $count, $types) {
+		if ($types) {
+			return $this->oMapper->getNotificationsFiltered($userId, $page, $count, $types);
+		} else {
+			return $this->oMapper->getNotifications($userId, $page, $count);
+		}
+	}
+
 }

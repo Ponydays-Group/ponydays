@@ -1879,21 +1879,6 @@ class ActionBlog extends Action
 		if ($notificationCreated = $this->Notification_createNotification($notification)) {
 			$this->Nower_PostNotification($notificationCreated);
 		}
-
-		//TODO: Use it optionally
-
-//        $oTalk = $this->Talk_SendTalk($sTitle, $sText, $this->oUserCurrent, array($oUser), false, false);
-//        /**
-//         * Отправляем пользователю заявку
-//         */
-//        $this->Notify_SendBlogUserInvite(
-//            $oUser, $this->oUserCurrent, $oBlog,
-//            Router::GetPath('talk') . 'read/' . $oTalk->getId() . '/'
-//        );
-//        /**
-//         * Удаляем отправляющего юзера из переписки
-//         */
-//        $this->Talk_DeleteTalkUserByArray($oTalk->getId(), $this->oUserCurrent->getId());
     }
 
     /**

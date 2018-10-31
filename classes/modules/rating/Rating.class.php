@@ -62,7 +62,14 @@ class ModuleRating extends Module {
 		$oUserComment->setSkill($iSkillNew);
 		$this->User_Update($oUserComment);
 
-		$notificationTitle = "Пользователь ".$oUser->getLogin()." проголосовал за ваш комментарий";
+		$notificationTitle = "Пользователь ".$oUser->getLogin();
+		if ($iVoteType == 0) {
+			$notificationTitle = $notificationTitle." проголосовал за ваш комментарий";
+		} elseif ($iVoteType == 1) {
+			$notificationTitle = $notificationTitle."  изменил голос за ваш комментарий";
+		} else {
+			$notificationTitle = $notificationTitle." отменил голос за ваш комментарий";
+		}
 		$notificationText = $oComment->getText();
 		$notificationLink = "/blog/undefined/".$oComment->getTargetId()."#comment".$oComment->getId();
 		$notification = Engine::GetEntity(

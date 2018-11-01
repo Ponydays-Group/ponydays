@@ -78,7 +78,10 @@ class ModuleCast extends Module
 						'rating' => 0,
 						'notification_type' => 17,
 						'target_type' => 'topic',
-						'target_id' => $oTarget->getId()
+						'target_id' => $oTarget->getId(),
+						'sender_user_id' => $this->oUserCurrent->getId(),
+						'group_target_type' => 'topic',
+						'group_target_id' => -1
 					)
 				);
 			} else {
@@ -94,8 +97,11 @@ class ModuleCast extends Module
 						'link' => $notificationLink,
 						'rating' => 0,
 						'notification_type' => 4,
-						'target_type' => 'topic',
-						'target_id' => $oParentTarget->getId()
+						'target_type' => 'comment',
+						'target_id' => $oTarget->getId(),
+						'sender_user_id' => $this->oUserCurrent->getId(),
+						'group_target_type' => 'topic',
+						'group_target_id' => -1
 					)
 				);
 			}

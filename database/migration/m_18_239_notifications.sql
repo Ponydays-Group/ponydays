@@ -6,22 +6,26 @@ CREATE TABLE prefix_notification_type
 );
 CREATE UNIQUE INDEX prefix_notification_type_notification_type_id_uindex ON prefix_notification_type (notification_type_id);
 
-CREATE TABLE prefix_notification
+create table prefix_notification
 (
-    notification_id int PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    user_id int(11) NOT NULL,
-    date timestamp DEFAULT current_timestamp,
-    text text,
-    title text,
-    link text,
-    rating int,
-    notification_type int(11) NOT NULL,
-    CONSTRAINT prefix_notification_prefix_notification_type_id_fk FOREIGN KEY (notification_type) REFERENCES prefix_notification_type (notification_type_id)
+  notification_id   int auto_increment,
+  user_id           int                                 not null,
+  sender_user_id    int                                 not null,
+  date              timestamp default CURRENT_TIMESTAMP not null,
+  text              mediumtext                          null,
+  title             mediumtext                          null,
+  link              mediumtext                          null,
+  rating            int                                 null,
+  notification_type int                                 not null,
+  target_type       varchar(256)                        null,
+  target_id         int                                 null,
+  group_target_type varchar(256)                        null,
+  group_target_id   int                                 null,
+  constraint prefix_notification_notification_id_uindex
+  unique (notification_id),
+  constraint prefix_notification_prefix_notification_type_id_fk
+  foreign key (notification_type) references prefix_notification_type (notification_type_id)
 );
-CREATE UNIQUE INDEX prefix_notification_notification_id_uindex ON prefix_notification (notification_id);
-
-ALTER TABLE prefix_notification ADD target_type varchar(256) NULL;
-ALTER TABLE prefix_notification ADD target_id int NULL;
 
 INSERT INTO prefix_notification_type (name) VALUES ('talk_new_topic'),(
                                                     'talk_new_comment'),(

@@ -1375,8 +1375,11 @@ class ActionBlog extends Action
 						'link' => $notificationLink,
 						'rating' => 0,
 						'notification_type' => 3,
-						'target_type' => 'topic',
-						'target_id' => $oCommentNew->getTargetId()
+						'target_type' => 'comment',
+						'target_id' => $oCommentNew->getId(),
+						'sender_user_id' => $this->oUserCurrent->getId(),
+						'group_target_type' => 'topic',
+						'group_target_id' => $oCommentNew->getTargetId()
 					)
 				);
 				if ($notificationCreated = $this->Notification_createNotification($notification)) {
@@ -1396,8 +1399,11 @@ class ActionBlog extends Action
                     'link' => $notificationLink,
                     'rating' => 0,
                     'notification_type' => 5,
-                    'target_type' => 'topic',
-                    'target_id' => $oTopic->getId()
+					'target_type' => 'comment',
+					'target_id' => $oCommentNew->getId(),
+					'sender_user_id' => $this->oUserCurrent->getId(),
+					'group_target_type' => 'topic',
+					'group_target_id' => $oCommentNew->getTargetId()
                 )
             );
             if ($notificationCreated = $this->Notification_createNotification($notification)) {
@@ -1872,8 +1878,11 @@ class ActionBlog extends Action
 				'link' => "",
 				'rating' => 0,
 				'notification_type' => 13,
-				'target_type' => 'talk',
-				'target_id' => $oBlog->getId()
+				'target_type' => 'blog',
+				'target_id' => $oBlog->getId(),
+                'sender_user_id' => $this->oUserCurrent->getId(),
+                'group_target_type' => 'nothing',
+                'group_target_id' => -1
 			)
 		);
 		if ($notificationCreated = $this->Notification_createNotification($notification)) {

@@ -436,7 +436,10 @@ class ActionTalk extends Action
 							'rating' => 0,
 							'notification_type' => 1,
 							'target_type' => 'talk',
-							'target_id' => $oTalk->getId()
+							'target_id' => $oTalk->getId(),
+							'sender_user_id' => $this->oUserCurrent->getId(),
+							'group_target_type' => 'nothing',
+							'group_target_id' => -1
 						)
 					);
 					if ($notificationCreated = $this->Notification_createNotification($notification)) {
@@ -877,8 +880,11 @@ class ActionTalk extends Action
 							'link' => $notificationLink,
 							'rating' => 0,
 							'notification_type' => 2,
-							'target_type' => 'talk',
-							'target_id' => $oCommentNew->getTargetId()
+							'target_type' => 'comment',
+							'target_id' => $oCommentNew->getId(),
+							'sender_user_id' => $this->oUserCurrent->getId(),
+							'group_target_type' => 'talk',
+							'group_target_id' => $oCommentNew->getTargetId()
 						)
 					);
 					if($notificationCreated = $this->Notification_createNotification($notification)){
@@ -1244,7 +1250,10 @@ class ActionTalk extends Action
 				'rating' => 0,
 				'notification_type' => 14,
 				'target_type' => "talk",
-				'target_id' => -1
+				'target_id' => $idTalk,
+				'sender_user_id' => $this->oUserCurrent->getId(),
+				'group_target_type' => 'nothing',
+				'group_target_id' => -1
 			)
 		);
 		if ($notificationCreated = $this->Notification_createNotification($notification)) {

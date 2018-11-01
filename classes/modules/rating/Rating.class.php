@@ -82,7 +82,10 @@ class ModuleRating extends Module {
 				'rating' => $oComment->getRating(),
 				'notification_type' => 10,
 				'target_type' => $oComment->getTargetType(),
-				'target_id' => $oComment->getTargetId()
+				'target_id' => $oComment->getTargetId(),
+				'sender_user_id' => $oUser->getId(),
+				'group_target_type' => 'topic',
+				'group_target_id' => $oComment->getTargetId()
 			)
 		);
 		if($notificationCreated = $this->Notification_createNotification($notification)){
@@ -126,7 +129,10 @@ class ModuleRating extends Module {
 				'rating' => $oTopic->getRating(),
 				'notification_type' => 11,
 				'target_type' => "topic",
-				'target_id' => $oTopic->getId()
+				'target_id' => $oTopic->getId(),
+				'sender_user_id' => $oUser->getId(),
+				'group_target_type' => 'topic',
+				'group_target_id' => $oTopic->getId()
 			)
 		);
 		if($notificationCreated = $this->Notification_createNotification($notification)){

@@ -122,7 +122,10 @@ class ActionAjax extends Action
 					'rating' => 0,
 					'notification_type' => 16,
 					'target_type' => "global",
-					'target_id' => -1
+					'target_id' => -1,
+					'sender_user_id' => $this->oUserCurrent->getId(),
+					'group_target_type' => 'global',
+					'group_target_id' => -1
 				)
 			);
 			if($notificationCreated = $this->Notification_createNotification($notification)){
@@ -155,7 +158,10 @@ class ActionAjax extends Action
 				'rating' => 0,
 				'notification_type' => 16,
 				'target_type' => "global",
-				'target_id' => -1
+				'target_id' => -1,
+				'sender_user_id' => $this->oUserCurrent->getId(),
+				'group_target_type' => 'global',
+				'group_target_id' => -1
 			)
 		);
 		if($notificationCreated = $this->Notification_createNotification($notification)){
@@ -1568,8 +1574,11 @@ class ActionAjax extends Action
 				'link' => $notificationLink,
 				'rating' => 0,
 				'notification_type' => $notificationType,
-				'target_type' => 'topic',
-				'target_id' => $oComment->getTargetId()
+				'target_type' => 'comment',
+				'target_id' => $oComment->getId(),
+				'sender_user_id' => $this->oUserCurrent->getId(),
+				'group_target_type' => 'topic',
+				'group_target_id' => $oComment->getTargetId()
 			)
 		);
 		if($notificationCreated = $this->Notification_createNotification($notification)){
@@ -1589,8 +1598,11 @@ class ActionAjax extends Action
 					'link' => $notificationLink,
 					'rating' => 0,
 					'notification_type' => 9,
-					'target_type' => 'topic',
-					'target_id' => $oComment->getTargetId()
+					'target_type' => 'comment',
+					'target_id' => $oComment->getId(),
+					'sender_user_id' => $this->oUserCurrent->getId(),
+					'group_target_type' => 'topic',
+					'group_target_id' => $oComment->getTargetId()
 				)
 			);
 			if($notificationCreated = $this->Notification_createNotification($notification)){
@@ -2077,8 +2089,11 @@ class ActionAjax extends Action
 						'link' => $notificationLink,
 						'rating' => 0,
 						'notification_type' => 6,
-						'target_type' => 'topic',
-						'target_id' => $oComment->getTargetId()
+						'target_type' => 'comment',
+						'target_id' => $oComment->getId(),
+						'sender_user_id' => $this->oUserCurrent->getId(),
+						'group_target_type' => 'topic',
+						'group_target_id' => $oComment->getTargetId()
 					)
 				);
 				if($notificationCreated = $this->Notification_createNotification($notification)){
@@ -2108,8 +2123,11 @@ class ActionAjax extends Action
 							'link' => $notificationLink,
 							'rating' => 0,
 							'notification_type' => 6,
-							'target_type' => 'talk',
-							'target_id' => $oComment->getTargetId()
+							'target_type' => 'comment',
+							'target_id' => $oComment->getId(),
+							'sender_user_id' => $this->oUserCurrent->getId(),
+							'group_target_type' => 'talk',
+							'group_target_id' => $oComment->getTargetId()
 						)
 					);
 					if($notificationCreated = $this->Notification_createNotification($notification)){

@@ -107,6 +107,7 @@ class ModuleNotification_MapperNotification extends Mapper {
 	public function createNotification(ModuleNotification_EntityNotification $eNotification){
 		$sql = "INSERT INTO ".Config::Get('db.table.notification')."
 				(user_id,
+				sender_user_id,
 				date,
 				text,
 				title,
@@ -114,12 +115,14 @@ class ModuleNotification_MapperNotification extends Mapper {
 				rating,
 				notification_type,
 				target_type,
-				target_id)
-				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+				target_id
+				group_target_type,
+				group_target_id)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 		";
-		if ($iId=$this->oDb->query($sql,$eNotification->getUserId(), $eNotification->getDate(), $eNotification->getText(),
+		if ($iId=$this->oDb->query($sql,$eNotification->getUserId(), $eNotification->getSenderUserId(), $eNotification->getDate(), $eNotification->getText(),
 			$eNotification->getTitle(), $eNotification->getLink(), $eNotification->getRating(), $eNotification->getType(),
-			$eNotification->getTargetType(), $eNotification->getTargetId())) {
+			$eNotification->getTargetType(), $eNotification->getTargetId(), $eNotification->getGroupTargetType(), $eNotification->getGroupTargetId())) {
         	return $iId;
 		}
 		return false;

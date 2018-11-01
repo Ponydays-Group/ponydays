@@ -34,57 +34,139 @@ sock.on('notification_group', function (data) {
     //TODO: handle group update
     console.log("============= GROUP NEW NOTIFICATIONS =============");
     console.log("DATA:", data);
+    switch(data.notification_type * 1){
+        case 1: //talk_new_topic
+            break;
+        case 2: //talk_new_comment
+            break;
+        case 3: //comment_response
+            break;
+        case 4: //comment_mention
+            break;
+        case 5: //topic_new_comment
+            ls.emitter.emit("socket-new-comment", data);
+            break;
+        case 6: //comment_edit
+            ls.emitter.emit("socket-edit-comment", data);
+            break;
+        case 7: //comment_delete
+            ls.emitter.emit("socket-delete-comment", data);
+            break;
+        case 8: //comment_restore
+            ls.emitter.emit("socket-delete-comment", data);
+            break;
+        case 9: //comment_restore_deleted_by_you
+            break;
+        case 10: //comment_rank
+            onVote(data);
+            break;
+        case 11: //topic_rank
+            onVote(data);
+            break;
+        case 12: //topic_invite_ask
+            break;
+        case 13: //topic_invite_offer
+            break;
+        case 14: //talk_invite_offer
+            break;
+        case 15: //ban_in_blog
+            break;
+        case 16: //ban_global
+            break;
+        case 17: //topic_mention
+            break;
+        default:
+    }
 });
 
-sock.on('notification', function (data) {
-    //TODO: fix handle notification
-    console.log("============= TEST NEW NOTIFICATIONS =============");
-    console.log("DATA:", data);
-
-    let title = data.title;
-    if (data.rating * 1 > 0) {
-        title += "<span><span class=\""+ options.classes.vote + " " + options.classes.positive + "\"><span class=\"" + options.classes.vote_count +"\">+"+ data.rating +"</span></span></span>";
-    } else if (data.rating * 1 < 0) {
-        title += "<span><span class=\""+ options.classes.vote + " " + options.classes.negative + "\"><span class=\"" + options.classes.vote_count +"\">"+ data.rating +"</span></span></span>";
+function onVote(data) {
+    let area = data.target_type == "comment" ? $("#vote_area_" + data.target_type + "_" + data.target_id) : $("#vote_total_" + data.target_type + "_" + data.target_id)
+    console.log(area);
+    /*if (data.rating == 0 && data.voteCount > 0) {
+        area.addClass("vote-count-mixed")
+        area.removeClass("vote-count-positive")
+        area.removeClass("vote-count-negative")
+        area.removeClass("action-hidden")
+        $("#vote_total_" + data.target_type + "_" + data.targetId).html(data.rating)
+    } else*/ if (data.rating * 1 == 0) {
+        area.addClass("action-hidden")
+        area.removeClass("vote-count-positive")
+        area.removeClass("vote-count-negative")
+        area.removeClass("vote-count-mixed")
+        $("#vote_total_" + data.target_type + "_" + data.targetId).html(data.rating)
+    } else if (data.rating > 0) {
+        area.addClass("vote-count-positive")
+        area.removeClass("vote-count-negative")
+        area.removeClass("vote-count-mixed")
+        area.removeClass("action-hidden")
+        $("#vote_total_" + data.target_type + "_" + data.targetId).html("+" + data.rating)
+    } else {
+        area.addClass("vote-count-negative")
+        area.removeClass("vote-count-positive")
+        area.removeClass("vote-count-mixed")
+        area.removeClass("action-hidden")
+        $("#vote_total_" + data.target_type + "_" + data.targetId).html(data.rating)
     }
-    ls.msg.notice(title, data.text, data.link, false)
-    // switch(data.type){
-    //     case 1: //talk_new_topic
-    //         action ="talk_new_topic";
-    //     case 2: //talk_new_comment
-    //         action ="talk_new_comment";
-    //     case 3: //comment_response
-    //         action ="comment_response";
-    //     case 4: //comment_mention
-    //         action ="comment_mention";
-    //     case 5: //topic_new_comment
-    //         action ="topic_new_comment";
-    //     case 6: //comment_edit
-    //         action ="comment_edit";
-    //     case 7: //comment_delete
-    //         action ="comment_delete";
-    //     case 8: //comment_restore
-    //         action ="comment_restore";
-    //     case 9: //comment_restore_deleted_by_you
-    //         action ="comment_restore_deleted_by_you";
-    //     case 10: //comment_rank
-    //         action ="comment_rank";
-    //     case 11: //topic_rank
-    //         action ="topic_rank";
-    //     case 12: //topic_invite_ask
-    //         action ="topic_invite_ask";
-    //     case 13: //topic_invite_offer
-    //         action ="topic_invite_offer";
-    //     case 14: //talk_invite_offer
-    //         action ="talk_invite_offer";
-    //     case 15: //ban_in_blog
-    //         action ="ban_in_blog";
-    //     case 16: //ban_global
-    //         action ="ban_global";
-    //     case 17: //topic_mention
-    //         action ="topic_mention";
-    //     default:
-    // }
+    if (isFinite(data.voteCount)) {
+        area.data("count", data.voteCount);
+    }
+}
+
+sock.on('notification', function (data) {
+    console.log("DATA:", data);
+    // let isEnabled = false;
+    let isEnabled = true;
+
+    switch(data.notification_type){
+        case 1: //talk_new_topic
+            break;
+        case 2: //talk_new_comment
+            break;
+        case 3: //comment_response
+            break;
+        case 4: //comment_mention
+            break;
+        case 5: //topic_new_comment
+            break;
+        case 6: //comment_edit
+            break;
+        case 7: //comment_delete
+            break;
+        case 8: //comment_restore
+            break;
+        case 9: //comment_restore_deleted_by_you
+            break;
+        case 10: //comment_rank
+            break;
+        case 11: //topic_rank
+            break;
+        case 12: //topic_invite_ask
+            break;
+        case 13: //topic_invite_offer
+            break;
+        case 14: //talk_invite_offer
+            break;
+        case 15: //ban_in_blog
+            break;
+        case 16: //ban_global
+            break;
+        case 17: //topic_mention
+            break;
+        default:
+    }
+    if (isEnabled) {
+        let title = data.title;
+        if (data.rating * 1 > 0) {
+            title += "<span><span class=\"" + options.classes.vote + " " + options.classes.positive + "\"><span class=\"" + options.classes.vote_count + "\">+" + data.rating + "</span></span></span>";
+        } else if (data.rating * 1 < 0) {
+            title += "<span><span class=\"" + options.classes.vote + " " + options.classes.negative + "\"><span class=\"" + options.classes.vote_count + "\">" + data.rating + "</span></span></span>";
+        }
+        ls.msg.notice(title, data.text, data.link, false);
+
+        if (checkPerm("sound_notice")) {
+            nAudio.play();
+        }
+    }
 });
 
 sock.on("reply-info", function (data) {

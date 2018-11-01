@@ -833,8 +833,9 @@ export function init() {
             sock.on("reconnect", () => sock.emit("listenTopic", {id: targetId}))
         }
 
-        Emitter.on('socket-edit-comment', (data) => updateCommentEdited(data.commentData.id, data.commentData.text))
-        Emitter.on('socket-delete-comment', (data) => updateCommentDeleted(data.commentId, parseInt(data.delete), data.deleteReason, data.senderLogin))
+        Emitter.on('socket-edit-comment', (data) => updateCommentEdited(data.target_id, data.text))
+        Emitter.on('socket-delete-comment', (data) => updateCommentDeleted(data.target_id, 1, data.deleteReason, data.senderLogin))
+        Emitter.on('socket-restore-comment', (data) => updateCommentDeleted(data.target_id, 0, data.deleteReason, data.senderLogin))
         Emitter.on('socket-new-comment', (data) => {
             if (!document.getElementById('autoload').checked)
                 return

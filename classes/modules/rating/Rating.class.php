@@ -30,16 +30,18 @@ class ModuleRating extends Module {
 	public function Init() {
 
 	}
+
 	/**
 	 * Расчет рейтинга при голосовании за комментарий
 	 *
-	 * @param ModuleUser_EntityUser $oUser	Объект пользователя, который голосует
-	 * @param ModuleComment_EntityComment $oComment	Объект комментария
+	 * @param ModuleUser_EntityUser $oUser Объект пользователя, который голосует
+	 * @param ModuleComment_EntityComment $oComment Объект комментария
 	 * @param int $iValue значение оценки
 	 * @param int $iValueOld
 	 * @param int $iCountVote 1 при добавлении оцеки, -1 при ее удалении, 0 при переголосовании
 	 * @param int $iVoteType 0 - при добавлении нового голоса, 1 - при его изменении, 2 - при отмене
 	 * @return int
+	 * @throws Exception
 	 */
 	public function VoteComment(ModuleUser_EntityUser $oUser, ModuleComment_EntityComment $oComment, $iValue, $iValueOld, $iCountVote, $iVoteType) {
 		/**
@@ -63,46 +65,53 @@ class ModuleRating extends Module {
 		$this->User_Update($oUserComment);
 
 		$notificationTitle = "Пользователь ".$oUser->getLogin();
+		$rating = $iValue;
 		if ($iVoteType == 0) {
 			$notificationTitle = $notificationTitle." проголосовал за ваш комментарий";
 		} elseif ($iVoteType == 1) {
 			$notificationTitle = $notificationTitle."  изменил голос за ваш комментарий";
+			$rating = $rating / 2;
 		} else {
 			$notificationTitle = $notificationTitle." отменил голос за ваш комментарий";
+			$rating = 0;
 		}
 		$notificationText = $oComment->getText();
 		$notificationLink = "/blog/undefined/".$oComment->getTargetId()."#comment".$oComment->getId();
 		$notification = Engine::GetEntity(
 			'Notification',
 			array(
-				'user_id' => $oComment->getUserId(),
+				'user_id' => $oUserComment->getId(),
 				'text' => $notificationText,
 				'title' => $notificationTitle,
 				'link' => $notificationLink,
-				'rating' => $oComment->getRating(),
+				'rating' => $rating,
+				'rating_result' => $oComment->getRating(),
 				'notification_type' => 10,
-				'target_type' => $oComment->getTargetType(),
-				'target_id' => $oComment->getTargetId(),
+				'target_type' => 'comment',
+				'target_id' => $oComment->getId(),
 				'sender_user_id' => $oUser->getId(),
-				'group_target_type' => 'topic',
+				'group_target_type' => $oComment->getTargetType(),
 				'group_target_id' => $oComment->getTargetId()
 			)
 		);
+		$this->Logger_Debug(json_encode($notification->getArrayData()));
 		if($notificationCreated = $this->Notification_createNotification($notification)){
 			$this->Nower_PostNotification($notificationCreated);
 		}
 		return $iValue;
 	}
+
 	/**
 	 * Расчет рейтинга и силы при гоосовании за топик
 	 *
-	 * @param ModuleUser_EntityUser $oUser	Объект пользователя, который голосует
-	 * @param ModuleTopic_EntityTopic $oTopic	Объект топика
+	 * @param ModuleUser_EntityUser $oUser Объект пользователя, который голосует
+	 * @param ModuleTopic_EntityTopic $oTopic Объект топика
 	 * @param int $iValue
 	 * @param int $iValueOld
 	 * @param int $iCountVote 1 при добавлении оцеки, -1 при ее удалении, 0 при переголосовании
-     * @param int $iVoteType 0 - при добавлении нового голоса, 1 - при его изменении, 2 - при отмене
+	 * @param int $iVoteType 0 - при добавлении нового голоса, 1 - при его изменении, 2 - при отмене
 	 * @return int
+	 * @throws Exception
 	 */
 	public function VoteTopic(ModuleUser_EntityUser $oUser, ModuleTopic_EntityTopic $oTopic, $iValue, $iValueOld, $iCountVote, $iVoteType) {
 		$oTopic->setRating($oTopic->getRating()+$iValue);
@@ -116,17 +125,25 @@ class ModuleRating extends Module {
 		$oUserTopic->setSkill($iSkillNew);
 		$this->User_Update($oUserTopic);
 
-		$notificationTitle = "Пользователь ".$oUser->getLogin()." проголосовал за ваш пост";
+		$notificationTitle = "Пользователь ".$oUser->getLogin();
+		if ($iVoteType == 0) {
+			$notificationTitle = $notificationTitle." проголосовал за ваш пост";
+		} elseif ($iVoteType == 1) {
+			$notificationTitle = $notificationTitle."  изменил голос за ваш пост";
+		} else {
+			$notificationTitle = $notificationTitle." отменил голос за ваш пост";
+		}
 		$notificationText = $oTopic->getTitle();
 		$notificationLink = "/blog/undefined/".$oTopic->getId();
 		$notification = Engine::GetEntity(
 			'Notification',
 			array(
-				'user_id' => $oUserTopic->getUserId(),
+				'user_id' => $oUserTopic->getId(),
 				'text' => $notificationText,
 				'title' => $notificationTitle,
 				'link' => $notificationLink,
-				'rating' => $oTopic->getRating(),
+				'rating' => $iValue,
+				'rating_result' => $oTopic->getRating(),
 				'notification_type' => 11,
 				'target_type' => "topic",
 				'target_id' => $oTopic->getId(),

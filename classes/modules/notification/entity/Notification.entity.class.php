@@ -23,6 +23,7 @@ class ModuleNotification_EntityNotification extends Entity {
 			'title' => $this->getTitle(),
 			'link' => $this->getLink(),
 			'rating' => $this->getRating(),
+			'rating_result' => $this->getRating(),
 			'notification_type' => $this->getType(),
 			'target_type' => $this->getTargetType(),
 			'target_id' => $this->getTargetId(),
@@ -100,6 +101,15 @@ class ModuleNotification_EntityNotification extends Entity {
 	 */
 	public function getRating() {
 		return $this->_getDataOne('rating');
+	}
+
+	/**
+	 * Возвращает результирующую оценку
+	 *
+	 * @return int|null
+	 */
+	public function getRatingResult() {
+		return $this->_getDataOne('rating_result');
 	}
 
 	/**
@@ -217,6 +227,15 @@ class ModuleNotification_EntityNotification extends Entity {
 	 */
 	public function setRating($data) {
 		$this->_aData['rating']=$data;
+	}
+
+	/**
+	 * Устанавливает результирующую оценку пользователя
+	 *
+	 * @param int $data
+	 */
+	public function setRatingResult($data) {
+		$this->_aData['rating_result']=$data;
 	}
 
 	/**

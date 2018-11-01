@@ -120,6 +120,7 @@ class ActionAjax extends Action
 					'title' => $notificationTitle,
 					'link' => "",
 					'rating' => 0,
+					'rating_result' => 0,
 					'notification_type' => 16,
 					'target_type' => "global",
 					'target_id' => -1,
@@ -156,6 +157,7 @@ class ActionAjax extends Action
 				'title' => $notificationTitle,
 				'link' => "",
 				'rating' => 0,
+				'rating_result' => 0,
 				'notification_type' => 16,
 				'target_type' => "global",
 				'target_id' => -1,
@@ -1573,6 +1575,7 @@ class ActionAjax extends Action
 				'title' => $notificationTitle,
 				'link' => $notificationLink,
 				'rating' => 0,
+				'rating_result' => 0,
 				'notification_type' => $notificationType,
 				'target_type' => 'comment',
 				'target_id' => $oComment->getId(),
@@ -1597,6 +1600,7 @@ class ActionAjax extends Action
 					'title' => $notificationTitle,
 					'link' => $notificationLink,
 					'rating' => 0,
+					'rating_result' => 0,
 					'notification_type' => 9,
 					'target_type' => 'comment',
 					'target_id' => $oComment->getId(),
@@ -2077,7 +2081,7 @@ class ActionAjax extends Action
 				/**
 				 * Отправка уведомления пользователям
 				 */
-				$notificationTitle = $this->oUserCurrent->getLogin() . " отрежактировал комментарий в посте " . $oComment->getTarget()->getTitle();
+				$notificationTitle = $this->oUserCurrent->getLogin() . " отредактировал комментарий в посте " . $oComment->getTarget()->getTitle();
 				$notificationText = $oComment->getText();
 				$notificationLink = "/blog/undefined/" . $oComment->getTargetId() . "#comment" . $oComment->getId();
 				$notification = Engine::GetEntity(
@@ -2088,6 +2092,7 @@ class ActionAjax extends Action
 						'title' => $notificationTitle,
 						'link' => $notificationLink,
 						'rating' => 0,
+						'rating_result' => 0,
 						'notification_type' => 6,
 						'target_type' => 'comment',
 						'target_id' => $oComment->getId(),
@@ -2111,7 +2116,7 @@ class ActionAjax extends Action
 					/**
 					 * Отправка уведомления пользователям
 					 */
-					$notificationTitle = $this->oUserCurrent->getLogin() . " отрежактировал комментарий в личке " . $oTalk->getTitle();
+					$notificationTitle = $this->oUserCurrent->getLogin() . " отредактировал комментарий в личке " . $oTalk->getTitle();
 					$notificationText = "";
 					$notificationLink = "/blog/undefined/" . $oComment->getTargetId() . "#comment" . $oComment->getId();
 					$notification = Engine::GetEntity(
@@ -2122,6 +2127,7 @@ class ActionAjax extends Action
 							'title' => $notificationTitle,
 							'link' => $notificationLink,
 							'rating' => 0,
+							'rating_result' => 0,
 							'notification_type' => 6,
 							'target_type' => 'comment',
 							'target_id' => $oComment->getId(),

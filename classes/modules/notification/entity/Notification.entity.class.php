@@ -23,7 +23,7 @@ class ModuleNotification_EntityNotification extends Entity {
 			'title' => $this->getTitle(),
 			'link' => $this->getLink(),
 			'rating' => $this->getRating(),
-			'rating_result' => $this->getRating(),
+			'rating_result' => $this->getRatingResult(),
 			'notification_type' => $this->getType(),
 			'target_type' => $this->getTargetType(),
 			'target_id' => $this->getTargetId(),

@@ -31,9 +31,7 @@ window.nAudio = new Audio();
 nAudio.src = localStorage.getItem("notice_sound_url") || "http://freesound.org/data/previews/245/245645_1038806-lq.mp3";
 
 sock.on('notification_group', function (data) {
-    //TODO: handle group update
-    console.log("============= GROUP NEW NOTIFICATIONS =============");
-    console.log("DATA:", data);
+    console.log("DATA_group:", data);
     switch(data.notification_type * 1){
         case 1: //talk_new_topic
             break;
@@ -113,61 +111,77 @@ function onVote(data) {
 }
 
 sock.on('notification', function (data) {
-    console.log("============= USER NEW NOTIFICATIONS =============");
-    console.log("DATA:", data);
-    // let isEnabled = false;
-    let isEnabled = true;
+    console.log("DATA_user:", data);
+    let isEnabled = false;
 
-    if (data.user_id != data.sender_user_id) {
-        switch (data.notification_type) {
-            case 1: //talk_new_topic
-                break;
-            case 2: //talk_new_comment
-                break;
-            case 3: //comment_response
-                break;
-            case 4: //comment_mention
-                break;
-            case 5: //topic_new_comment
-                break;
-            case 6: //comment_edit
-                break;
-            case 7: //comment_delete
-                break;
-            case 8: //comment_restore
-                break;
-            case 9: //comment_restore_deleted_by_you
-                break;
-            case 10: //comment_rank
-                break;
-            case 11: //topic_rank
-                break;
-            case 12: //topic_invite_ask
-                break;
-            case 13: //topic_invite_offer
-                break;
-            case 14: //talk_invite_offer
-                break;
-            case 15: //ban_in_blog
-                break;
-            case 16: //ban_global
-                break;
-            case 17: //topic_mention
-                break;
-            default:
+    if (data.user_id == data.sender_user_id) {
+        return;
+    }
+    switch (data.notification_type * 1) {
+        case 1: //talk_new_topic
+            isEnabled = checkPerm("talk_new_topic");
+            break;
+        case 2: //talk_new_comment
+            isEnabled = checkPerm("talk_new_comment");
+            break;
+        case 3: //comment_response
+            isEnabled = checkPerm("comment_response");
+            break;
+        case 4: //comment_mention
+            isEnabled = checkPerm("comment_mention");
+            break;
+        case 5: //topic_new_comment
+            isEnabled = checkPerm("topic_new_comment");
+            break;
+        case 6: //comment_edit
+            isEnabled = checkPerm("comment_edit");
+            break;
+        case 7: //comment_delete
+            isEnabled = checkPerm("comment_delete_restore");
+            break;
+        case 8: //comment_restore
+            isEnabled = checkPerm("comment_delete_restore");
+            break;
+        case 9: //comment_restore_deleted_by_you
+            isEnabled = true;
+            break;
+        case 10: //comment_rank
+            isEnabled = checkPerm("comment_rank");
+            break;
+        case 11: //topic_rank
+            isEnabled = checkPerm("topic_rank");
+            break;
+        case 12: //topic_invite_ask
+            isEnabled = checkPerm("topic_invite_ask");
+            break;
+        case 13: //topic_invite_offer
+            isEnabled = checkPerm("topic_invite_offer");
+            break;
+        case 14: //talk_invite_offer
+            isEnabled = checkPerm("talk_invite_offer");
+            break;
+        case 15: //ban_in_blog
+            isEnabled = true;
+            break;
+        case 16: //ban_global
+            isEnabled = true;
+            break;
+        case 17: //topic_mention
+            isEnabled = checkPerm("topic_mention");
+            break;
+        default:
+    }
+    if (isEnabled) {
+        let title = data.title;
+        if (data.rating * 1 > 0) {
+            title += "<span><span class=\"" + options.classes.vote + " " + options.classes.positive + "\"><span class=\"" + options.classes.vote_count + "\">+" + data.rating + "</span></span></span>";
+        } else if (data.rating * 1 < 0) {
+            title += "<span><span class=\"" + options.classes.vote + " " + options.classes.negative + "\"><span class=\"" + options.classes.vote_count + "\">" + data.rating + "</span></span></span>";
         }
-        if (isEnabled) {
-            let title = data.title;
-            if (data.rating * 1 > 0) {
-                title += "<span><span class=\"" + options.classes.vote + " " + options.classes.positive + "\"><span class=\"" + options.classes.vote_count + "\">+" + data.rating + "</span></span></span>";
-            } else if (data.rating * 1 < 0) {
-                title += "<span><span class=\"" + options.classes.vote + " " + options.classes.negative + "\"><span class=\"" + options.classes.vote_count + "\">" + data.rating + "</span></span></span>";
-            }
-            ls.msg.notice(title, data.text, data.link, false);
+        ls.msg.notice(title, data.text, data.link, false);
 
-            if (checkPerm("sound_notice")) {
-                nAudio.play();
-            }
+        if (checkPerm("sound_notice")) {
+            nAudio.play();
         }
     }
 });

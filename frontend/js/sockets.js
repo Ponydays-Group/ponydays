@@ -81,20 +81,19 @@ sock.on('notification_group', function (data) {
 
 function onVote(data) {
     let area = data.target_type == "comment" ? $("#vote_area_" + data.target_type + "_" + data.target_id) : $("#vote_total_" + data.target_type + "_" + data.target_id);
-    console.log(area);
-    let rating = data.rating_result * 1;
-    /*if (data.rating == 0 && data.voteCount > 0) {
+    let rating = data.comment_extra.rating * 1;
+    if (rating == 0 && data.comment_extra.countVote > 0) {
         area.addClass("vote-count-mixed");
         area.removeClass("vote-count-positive");
         area.removeClass("vote-count-negative");
         area.removeClass("action-hidden");
-        $("#vote_total_" + data.target_type + "_" + data.targetId).html(data.rating)
-    } else*/ if (rating == 0) {
+        $("#vote_total_" + data.target_type + "_" + data.target_id).html("0")
+    } else if (rating == 0) {
         area.addClass("action-hidden");
         area.removeClass("vote-count-positive");
         area.removeClass("vote-count-negative");
         area.removeClass("vote-count-mixed");
-        $("#vote_total_" + data.target_type + "_" + data.target_id).html(rating)
+        $("#vote_total_" + data.target_type + "_" + data.target_id).html("0")
     } else if (rating > 0) {
         area.addClass("vote-count-positive");
         area.removeClass("vote-count-negative");
@@ -108,8 +107,8 @@ function onVote(data) {
         area.removeClass("action-hidden");
         $("#vote_total_" + data.target_type + "_" + data.target_id).html(rating)
     }
-    if (isFinite(data.voteCount)) {
-        area.data("count", data.voteCount);
+    if (isFinite(data.comment_extra.voteCount)) {
+        area.data("count", data.comment_extra.voteCount);
     }
 }
 

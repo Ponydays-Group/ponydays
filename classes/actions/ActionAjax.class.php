@@ -120,7 +120,6 @@ class ActionAjax extends Action
 					'title' => $notificationTitle,
 					'link' => "",
 					'rating' => 0,
-					'rating_result' => 0,
 					'notification_type' => 16,
 					'target_type' => "global",
 					'target_id' => -1,
@@ -157,7 +156,6 @@ class ActionAjax extends Action
 				'title' => $notificationTitle,
 				'link' => "",
 				'rating' => 0,
-				'rating_result' => 0,
 				'notification_type' => 16,
 				'target_type' => "global",
 				'target_id' => -1,
@@ -1575,7 +1573,6 @@ class ActionAjax extends Action
 				'title' => $notificationTitle,
 				'link' => $notificationLink,
 				'rating' => 0,
-				'rating_result' => 0,
 				'notification_type' => $notificationType,
 				'target_type' => 'comment',
 				'target_id' => $oComment->getId(),
@@ -1585,7 +1582,7 @@ class ActionAjax extends Action
 			)
 		);
 		if($notificationCreated = $this->Notification_createNotification($notification)){
-			$this->Nower_PostNotification($notificationCreated);
+			$this->Nower_PostNotificationWithComment($notificationCreated, $oComment);
 		}
 
 		if ($this->oUserCurrent->getId() != $lastdeleteUser) {
@@ -1600,7 +1597,6 @@ class ActionAjax extends Action
 					'title' => $notificationTitle,
 					'link' => $notificationLink,
 					'rating' => 0,
-					'rating_result' => 0,
 					'notification_type' => 9,
 					'target_type' => 'comment',
 					'target_id' => $oComment->getId(),
@@ -1610,7 +1606,7 @@ class ActionAjax extends Action
 				)
 			);
 			if($notificationCreated = $this->Notification_createNotification($notification)){
-				$this->Nower_PostNotification($notificationCreated);
+				$this->Nower_PostNotificationWithComment($notificationCreated, $oComment);
 			}
 		}
 
@@ -2092,7 +2088,6 @@ class ActionAjax extends Action
 						'title' => $notificationTitle,
 						'link' => $notificationLink,
 						'rating' => 0,
-						'rating_result' => 0,
 						'notification_type' => 6,
 						'target_type' => 'comment',
 						'target_id' => $oComment->getId(),
@@ -2102,7 +2097,7 @@ class ActionAjax extends Action
 					)
 				);
 				if($notificationCreated = $this->Notification_createNotification($notification)){
-					$this->Nower_PostNotification($notificationCreated);
+					$this->Nower_PostNotificationWithComment($notificationCreated, $oComment);
 				}
 
 			} else if ($oComment->getTargetType() == 'talk') {
@@ -2127,7 +2122,6 @@ class ActionAjax extends Action
 							'title' => $notificationTitle,
 							'link' => $notificationLink,
 							'rating' => 0,
-							'rating_result' => 0,
 							'notification_type' => 6,
 							'target_type' => 'comment',
 							'target_id' => $oComment->getId(),
@@ -2137,7 +2131,7 @@ class ActionAjax extends Action
 						)
 					);
 					if($notificationCreated = $this->Notification_createNotification($notification)){
-						$this->Nower_PostNotification($notificationCreated);
+						$this->Nower_PostNotificationWithComment($notificationCreated, $oComment);
 					}
 				}
 			}

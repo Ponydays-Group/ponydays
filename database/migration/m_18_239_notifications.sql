@@ -16,7 +16,6 @@ create table prefix_notification
   title             mediumtext                          null,
   link              mediumtext                          null,
   rating            int default 0                       null,
-  rating_result     int default 0                       null,
   notification_type int                                 not null,
   target_type       varchar(256)                        null,
   target_id         int                                 null,

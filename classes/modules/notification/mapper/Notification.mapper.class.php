@@ -113,16 +113,15 @@ class ModuleNotification_MapperNotification extends Mapper {
 				title,
 				link,
 				rating,
-				rating_result,
 				notification_type,
 				target_type,
 				target_id,
 				group_target_type,
 				group_target_id)
-				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 		";
 		if ($iId=$this->oDb->query($sql,$eNotification->getUserId(), $eNotification->getSenderUserId(), $eNotification->getDate(), $eNotification->getText(),
-			$eNotification->getTitle(), $eNotification->getLink(), $eNotification->getRating(), $eNotification->getRatingResult(), $eNotification->getType(),
+			$eNotification->getTitle(), $eNotification->getLink(), $eNotification->getRating(), $eNotification->getType(),
 			$eNotification->getTargetType(), $eNotification->getTargetId(), $eNotification->getGroupTargetType(), $eNotification->getGroupTargetId())) {
         	return $iId;
 		}

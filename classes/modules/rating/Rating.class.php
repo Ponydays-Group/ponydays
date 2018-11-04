@@ -85,7 +85,6 @@ class ModuleRating extends Module {
 				'title' => $notificationTitle,
 				'link' => $notificationLink,
 				'rating' => $rating,
-				'rating_result' => $oComment->getRating(),
 				'notification_type' => 10,
 				'target_type' => 'comment',
 				'target_id' => $oComment->getId(),
@@ -96,7 +95,7 @@ class ModuleRating extends Module {
 		);
 		$this->Logger_Debug(json_encode($notification->getArrayData()));
 		if($notificationCreated = $this->Notification_createNotification($notification)){
-			$this->Nower_PostNotification($notificationCreated);
+			$this->Nower_PostNotificationWithComment($notificationCreated, $oComment);
 		}
 		return $iValue;
 	}
@@ -143,7 +142,6 @@ class ModuleRating extends Module {
 				'title' => $notificationTitle,
 				'link' => $notificationLink,
 				'rating' => $iValue,
-				'rating_result' => $oTopic->getRating(),
 				'notification_type' => 11,
 				'target_type' => "topic",
 				'target_id' => $oTopic->getId(),

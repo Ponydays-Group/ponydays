@@ -67,8 +67,13 @@
 			$this->CheckUserLogin();
 
 			$aNotifications = $this->Notification_getNotification($this->oUserCurrent->getId(), 1, 20, null);
+			$aUsers = array();
+			foreach ($aNotifications as $oNotification) {
+				array_push($aUsers, $this->User_GetUserById($oNotification->getSenderUserId()));
+			}
 
 			$this->Viewer_Assign('aNotifications', $aNotifications);
+			$this->Viewer_Assign('aUsers', $aUsers);
 			$this->Viewer_Assign('iPage', 2);
 
 		}
@@ -81,10 +86,15 @@
 
 			$iPage	= getRequest('Page');
 			$aNotifications = $this->Notification_getNotification($this->oUserCurrent->getId(), $iPage, 20, null);
+			$aUsers = array();
+			foreach ($aNotifications as $oNotification) {
+				array_push($aUsers, $this->User_GetUserById($oNotification->getSenderUserId()));
+			}
 
 			$oViewerLocal = $this->Viewer_GetLocalViewer();
 			$oViewerLocal->Assign('aNotifications', $aNotifications);
 			$oViewerLocal->Assign('iPage', $iPage + 1);
+			$oViewerLocal->Assign('aUsers', $aUsers);
 
 			$aResult['Text']	= $oViewerLocal->Fetch('notifications.tpl');
 

@@ -1,8 +1,11 @@
 {if $aNotifications}
 
-{foreach from=$aNotifications item="oNotification"}
-	
+{for $index = 0; $index < sizeof($aNotifications); $index++ }
+	{$oNotification = $aNotifications[$index]}
+	{$oUser = $aUsers[$index]}
+	{$oUser->getAvatar()}
 	<li class="stream-item">
+		<a href="{$oUser->getUserWebPath()}"><img src="{$oUser->getProfileAvatarPath(48)}" alt="avatar" class="avatar" /></a>
 		<h3>{$oNotification->getTitle()}<span>
 				{if $oNotification->getRating() > 0}
 					<span class="vote vote-count-positive">
@@ -23,7 +26,7 @@
 		{/if}
 	</li>
 
-{/foreach}
+{/for}
 
 {if $oNotification}
 	<div style="clear:both; height: 20px;"></div>

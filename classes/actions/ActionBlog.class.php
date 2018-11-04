@@ -1365,7 +1365,7 @@ class ActionBlog extends Action
 			$notificationTitle = $this->oUserCurrent->getLogin()." ответил вам в посте ".$oTopic->getTitle();
 			$notificationText = $oCommentNew->getText();
 			$notificationLink = "/blog/undefined/".$oCommentNew->getTargetId()."#comment".$oCommentNew->getId();
-			if ($oCommentParent) {
+			if ($oCommentParent && $this->oUserCurrent->getId() != $oCommentParent->getUserId()) {
 				$notification = Engine::GetEntity(
 					'Notification',
 					array(
@@ -1387,28 +1387,30 @@ class ActionBlog extends Action
 				}
 			}
 
-			$notificationTitle = $this->oUserCurrent->getLogin()." оставил комментарий в вашем посте ".$oTopic->getTitle();
-			$notificationText = $oCommentNew->getText();
-			$notificationLink = "/blog/undefined/".$oCommentNew->getTargetId()."#comment".$oCommentNew->getId();
-            $notification = Engine::GetEntity(
-                'Notification',
-                array(
-                    'user_id' => $oTopic->getUserId(),
-                    'text' => $notificationText,
-                    'title' => $notificationTitle,
-                    'link' => $notificationLink,
-                    'rating' => 0,
-                    'notification_type' => 5,
-					'target_type' => 'comment',
-					'target_id' => $oCommentNew->getId(),
-					'sender_user_id' => $this->oUserCurrent->getId(),
-					'group_target_type' => 'topic',
-					'group_target_id' => $oCommentNew->getTargetId()
-                )
-            );
-            if ($notificationCreated = $this->Notification_createNotification($notification)) {
-                $this->Nower_PostNotification($notificationCreated);
-            }
+			if ($this->oUserCurrent->getId() != $oTopic->getUserId()) {
+				$notificationTitle = $this->oUserCurrent->getLogin() . " оставил комментарий в вашем посте " . $oTopic->getTitle();
+				$notificationText = $oCommentNew->getText();
+				$notificationLink = "/blog/undefined/" . $oCommentNew->getTargetId() . "#comment" . $oCommentNew->getId();
+				$notification = Engine::GetEntity(
+					'Notification',
+					array(
+						'user_id' => $oTopic->getUserId(),
+						'text' => $notificationText,
+						'title' => $notificationTitle,
+						'link' => $notificationLink,
+						'rating' => 0,
+						'notification_type' => 5,
+						'target_type' => 'comment',
+						'target_id' => $oCommentNew->getId(),
+						'sender_user_id' => $this->oUserCurrent->getId(),
+						'group_target_type' => 'topic',
+						'group_target_id' => $oCommentNew->getTargetId()
+					)
+				);
+				if ($notificationCreated = $this->Notification_createNotification($notification)) {
+					$this->Nower_PostNotification($notificationCreated);
+				}
+			}
 
             $this->Hook_Run('comment_add_after', array('oCommentNew' => $oCommentNew, 'oCommentParent' => $oCommentParent, 'oTopic' => $oTopic));
             $this->Cast_sendCastNotify('comment', $oCommentNew, $oTopic, $oCommentNew->getText());

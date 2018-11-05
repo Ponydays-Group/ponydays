@@ -122,12 +122,12 @@ class ModuleText extends Module {
 		 */
 		$sText = preg_replace(
 		    '/<video>(?:http(?:s|):|)(?:\/\/|)(?:www\.|)youtu(?:\.|)be(?:-nocookie|)(?:\.com|)\/(?:e(?:mbed|)\/|v\/|watch\?(?:.+&|)v=|)([a-zA-Z0-9_\-]+?)(&.+)?<\/video>/Ui',
-    		'<iframe width="560" height="315" src="https://www.youtube.com/embed/$1" frameborder="0" allowfullscreen></iframe>',
+    		'<iframe width="560" height="315" src="https://www.youtube.com/embed/$1" frameborder="0" allowfullscreen="true"></iframe>',
 		    $sText
 		);	
 		$sText = preg_replace(
     		'/<video>(?:http(?:s|):|)(?:\/\/|)(?:www\.|)m\.youtu(?:\.|)be(?:-nocookie|)(?:\.com|)\/(?:e(?:mbed|)\/|v\/|watch\?(?:.+&|)v=|)([a-zA-Z0-9_\-]+?)(&.+)?<\/video>/Ui',
-		    '<iframe width="560" height="315" src="https://www.youtube.com/embed/$1" frameborder="0" allowfullscreen></iframe>',
+		    '<iframe width="560" height="315" src="https://www.youtube.com/embed/$1" frameborder="0" allowfullscreen="true"></iframe>',
     		$sText
 		);
 		$sText = preg_replace('/<video>(?:http(?:s|):|)\/\/coub\.com\/view\/(.*)<\/video>/Ui', '<iframe src="https://coub.com/embed/$1" allowfullscreen="true" frameborder="0" width="480" height="270"></iframe>', $sText);
@@ -301,8 +301,13 @@ class ModuleText extends Module {
 	public function Mark($sText) {
         $sText = preg_replace_callback('/\`\`\`([.\s\S]*?)\`\`\`/',
             function ($matches) {
-                return "<pre>" . $this->Escape($matches[1]) . "</pre>";
+                return "<code>" . $this->Escape($matches[1]) . "</code>";
             }, $sText);
+
+		$sText = preg_replace_callback('/\`\`([.\s\S]*?)\`\`/',
+			function ($matches) {
+				return "<blockquote>" . $matches[1] . "</blockquote>";
+			}, $sText);
 
         $sText = preg_replace_callback('/\`([.\s\S]*?)\`/',
             function ($matches) {
@@ -349,13 +354,23 @@ class ModuleText extends Module {
 	}
 
 	public function CommentParser($oComment, $bDice = true) {
-		$sText = $oComment->getText();
-
         if ($oComment->getTargetType()=="topic") {
         	$oTarget = $this->Topic_GetTopicById($oComment->getTargetId());
 		} else {
             $oTarget = $this->Talk_GetTalkById($oComment->getTargetId());
 		}
+
+        $html = str_get_html($oComment->getText(), true, true, 'UTF-8', false);
+        foreach($html->find('.spoiler-body img') as $element) {
+            $element->attr['data-src'] = $element->src;
+            $element->src = "#";
+        }
+        foreach($html->find('.spoiler-body iframe') as $element) {
+            $element->attr['data-src'] = $element->src;
+            $element->src = "";
+        }
+
+        $sText = $html->save();
 
 		if ($bDice) {
             $sText = preg_replace_callback('/\[(\d*)d(\d*)\]/',

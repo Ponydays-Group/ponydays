@@ -2,6 +2,7 @@ import * as Msg from './msg'
 import Emitter from './emitter'
 import $ from 'jquery'
 import * as Ajax from './ajax'
+import hljs from "highlightjs"
 
 /**
  * Вспомогательные функции
@@ -39,7 +40,8 @@ export function textPreview(textId, save, divPreview)
 {
     let text = (BLOG_USE_TINYMCE) ? tinyMCE.activeEditor.getContent() : $('#' + textId).val();
     let ajaxUrl = aRouter['ajax'] + 'preview/text/';
-    let ajaxOptions = {text: text, save: save, form_comment_mark: $("#form_comment_mark")[0].checked? "on" : "off"};
+    const form_comment_mark = $("#form_comment_mark")[0];
+    let ajaxOptions = {text: text, save: save, form_comment_mark: form_comment_mark ? (form_comment_mark.checked? 'on' : 'off') : 'off'};
     Emitter.emit('textPreviewAjaxBefore');
     Ajax.ajax(ajaxUrl, ajaxOptions, function (result) {
         if (!result) {
@@ -55,6 +57,7 @@ export function textPreview(textId, save, divPreview)
             Emitter.emit('textPreviewDisplayBefore');
             if (elementPreview.length) {
                 elementPreview.html(result.sText);
+                elementPreview.find(`pre code`).each((k,el)=>hljs.highlightBlock(el))
                 Emitter.emit('textPreviewDisplayAfter');
             }
         }

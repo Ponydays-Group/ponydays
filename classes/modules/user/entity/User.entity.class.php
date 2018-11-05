@@ -269,7 +269,7 @@ class ModuleUser_EntityUser extends Entity {
 	 * @return string|null
 	 */
 	public function getProfileAvatar() {
-		return $this->_getDataOne('user_profile_avatar');
+		return $this->_getDataOne('user_profile_avatar') ? $this->_getDataOne('user_profile_avatar') : "/templates/skin/".Config::Get('view.skin')."/images/avatar_male_100x100.png";
 	}
 	/**
 	 * Возвращает расширение автара
@@ -285,7 +285,7 @@ class ModuleUser_EntityUser extends Entity {
 	 * @return string|null
 	 */
 	public function getProfileFoto() {
-		return $this->_getDataOne('user_profile_foto');
+		return $this->_getDataOne('user_profile_foto') ? $this->_getDataOne('user_profile_foto') : "/templates/skin/".Config::Get('view.skin')."/images/profile_foto.png";
 	}
 	/**
 	 * Возвращает статус уведомления о новых топиках

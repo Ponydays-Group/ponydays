@@ -1,3 +1,5 @@
+import hljs from "highlightjs";
+
 window.getCookie = function (name) {
     var matches = document.cookie.match(new RegExp(
         "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
@@ -230,6 +232,7 @@ async function handler(e) {
             })
         }
         el.animate({opacity: 1}, 300)
+        el.find(`pre code`).each((k,el)=>hljs.highlightBlock(el))
 
         setTimeout(cb.bind({}, e.target, el, info.currentWindow), 1000)
 
@@ -242,3 +245,7 @@ async function handler(e) {
 
 if(!(/Mobi/i.test(navigator.userAgent) || /Android/i.test(navigator.userAgent)))
     $(document).ready(() => document.body.onmouseover = document.body.onmouseout = handler)
+
+$(document).ready(function() {
+    $(`pre code`).each((k,el)=>hljs.highlightBlock(el))
+})

@@ -5,6 +5,7 @@ import * as Blocks from "./blocks"
 import Emitter from "./emitter"
 import * as Msg from "./msg"
 import * as Ajax from "./ajax"
+var hljs = require('highlightjs')
 
 import Tree from "./Tree"
 import * as Vote from "./vote";
@@ -171,7 +172,14 @@ export function add(formObj, targetId, targetType) {
 
 			Emitter.emit("ls_comments_add_after", [formObj, targetId, targetType, result])
 		}
-	}.bind(this))
+	}.bind(this), {
+		error: function() {
+			console.log("ERROR")
+            $("#comment-button-submit").removeAttr("disabled")
+            enableFormComment()
+            Msg.error("Ошибка", "Возможно поможет перезагрузка страницы.")
+		}
+	})
 }
 
 // Активирует форму
@@ -322,6 +330,10 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
 					let next = null
 					console.warn(parent.next('.comment'))
 					window.pel = parent
+					if (parent.hasClass("comment-folding-start")) {
+						$(cmt.html).appendTo(`#folded_branch_${parent.data("id")} .folding-comments`).css("margin-left", level * 20 + "px").attr("data-level", level)
+						continue
+					}
                     parent.nextAll('.comment').each(function(k,v){
 						v=$(v)
 						console.warn(v.data("level"))
@@ -341,6 +353,7 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
                 } else {
                     $(cmt.html).appendTo("#comments-tree").attr("data-level", 0)
 				}
+                $(`.comment[data-id=${cmt.id}] pre code`).each((k,el)=>hljs.highlightBlock(el))
 			}
 
             if (selfIdComment && $("#comment_id_" + selfIdComment).length) {
@@ -883,6 +896,7 @@ export function updateCommentEdited(id, sText) {
     }
     cmt.find(".comment-edited").css("display", "inline-block")
     cmt.find('.comment-content').html(sText)
+    cmt.find(`pre code`).each((k,el)=>hljs.highlightBlock(el))
 }
 
 export function initEvent() {
@@ -1077,6 +1091,7 @@ export function edit(formObject, targetId, targetType) {
 			// Load new comments
 			if (result.bEdited) {
 				$("#comment_content_id_" + idComment).html(result.sCommentText)
+                $(`.comment[data-id=${idComment}] pre code`).each((k,el)=>hljs.highlightBlock(el))
 			}
 			if (!result.bCanEditMore)
 				$("#comment_id_" + idComment).find(".editcomment_editlink").remove()

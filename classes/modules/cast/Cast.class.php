@@ -30,28 +30,28 @@ class ModuleCast extends Module
     		}
 		}
 
-        if (preg_match_all("/class=\"ls-user\">([^<]*)<\/a>/",$sParsingText,$aMatch)) {        	
-			foreach($aMatch[0] as $sAdditionalString){
-				if (preg_match("/class=\"ls-user\">(.*)<\/a>/",$sAdditionalString,$aInnerMatch)){
-					foreach($aInnerMatch as$sUserLogin){
-						$oTargetUser = $this->User_getUserByLogin($sUserLogin);
-						if ($oTargetUser){
-							if (!isset($aSendUsers[$oTargetUser->getId()])){
-								$aSendUsers[$oTargetUser->getId()] = $oTargetUser;
-							}
-						}						
-					} 
-				}				
-			}
-		}		
-		
-		foreach ($aSendUsers as $oTargetUser){
+        if (preg_match_all("/class=\"ls-user\">([^<]*)<\/a>/",$sParsingText,$aMatch)) {
+            foreach($aMatch[0] as $sAdditionalString){
+                if (preg_match("/class=\"ls-user\">(.*)<\/a>/",$sAdditionalString,$aInnerMatch)){
+                    foreach($aInnerMatch as$sUserLogin){
+                        $oTargetUser = $this->User_getUserByLogin($sUserLogin);
+                        if ($oTargetUser){
+                            if (!isset($aSendUsers[$oTargetUser->getId()])){
+                                $aSendUsers[$oTargetUser->getId()] = $oTargetUser;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        foreach ($aSendUsers as $oTargetUser){
 			$this->sendCastNotifyToUser($sTarget,$oTarget,$oParentTarget,$oTargetUser);
 		}
     }
     
     
-    protected function sendCastNotifyToUser($sTarget,$oTarget,$oParentTarget,$oUser){
+    public function sendCastNotifyToUser($sTarget,$oTarget,$oParentTarget,$oUser){
     	    	
     	if (!$this->oMapper->castExist($sTarget,$oTarget->getId(),$oUser->getId())){
     		

@@ -323,7 +323,7 @@
 
 .comment .comment-actions .action-hidden {
     opacity: 0;
-    transition: opacity .2s;
+//     transition: opacity .2s;
 }
 
 .comment:hover .comment-actions .action-hidden {
@@ -379,11 +379,6 @@ button#comment-button-cancel {
 
 button#comment-button-history {
     margin-left: 5px;
-}
-
-.modal.editcomment-history {
-    width: 740px;
-    margin-left: -370px;
 }
 
 #editcomment-history-content {

@@ -8,6 +8,7 @@
     top: 25%;
     left: 50%;
     width: 100%;
+    max-width: 400px;
     margin-left: -150px;
     color: $text-color;
     background-color: $first;
@@ -93,6 +94,11 @@
     width: 460px;
     left: calc(50% - 230px);
     margin-left: 0px;
+}
+
+.modal.editcomment-history {
+    max-width: 740px;
+    margin-left: -370px;
 }
 
 /* ���������� ������ */

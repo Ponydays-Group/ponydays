@@ -329,7 +329,7 @@ class ActionAjax extends Action
         /**
          * Время голосования истекло?
          */
-        if (strtotime($oComment->getDate()) <= time() - Config::Get('acl.vote.comment.limit_time')) {
+        if (Config::Get('acl.vote.comment.limit_time') != 0 && strtotime($oComment->getDate()) <= time() - Config::Get('acl.vote.comment.limit_time')) {
             $this->Message_AddErrorSingle($this->Lang_Get('comment_vote_error_time'), $this->Lang_Get('attention'));
             return;
         }
@@ -1338,6 +1338,26 @@ class ActionAjax extends Action
                 $sTextResult = $this->Text_Parser($sText);
         }
 
+        $sTextResult = preg_replace_callback('/@(.*?)\((.*?)\)/',
+            function ($matches) {
+                $sLogin = $matches[1];
+                $sNick = $matches[2];
+                $r = "<a href=\"/profile/" . $sLogin . "/\" class=\"ls-user\">&#64;" . $sNick . "</a>";
+                if ($oTargetUser = $this->User_getUserByLogin($sLogin)) {
+                    return $r;
+                }
+                return $matches[0];
+            }, $sTextResult);
+        $sTextResult = preg_replace_callback('/@([a-zA-Zа-яА-Я0-9-_]+)/',
+            function ($matches) {
+                $sLogin = $matches[1];
+                $r = "<a href=\"/profile/" . $sLogin . "/\" class=\"ls-user\">&#64;" . $sLogin . "</a>";
+                if ($oTargetUser = $this->User_getUserByLogin($sLogin)) {
+                    return $r;
+                }
+                return $matches[0];
+            }, $sTextResult);
+
         /**
          * Передаем результат в ajax ответ
          */
@@ -1874,35 +1894,57 @@ class ActionAjax extends Action
             return;
         }
 
-		if ($oComment->getTargetType()!='topic' or !($oTopic=$oComment->getTarget())) {
-			$this->Message_AddErrorSingle($this->Lang_Get('system_error') , $this->Lang_Get('error'));
-			return;
-		}
-		if (!$oTopic->getPublish() and (!$this->oUserCurrent or ($this->oUserCurrent->getId()!=$oTopic->getUserId() and !$this->oUserCurrent->isAdministrator()))) {
-			$this->Message_AddErrorSingle($this->Lang_Get('system_error') , $this->Lang_Get('error'));
-			return;
-		}
-		/**
-		 * Проверяет коммент на удаленность и отдает его только автору, и тем, у кого есть права на удаление.
-		 */
-		if ((!$this->oUserCurrent || ($oComment->getDelete() && !($this->ACL_UserCanDeleteComment($this->oUserCurrent, $oComment,1) || $this->oUserCurrent->getId()==$oComment->getUserId())))) {
-			$this->Message_AddErrorSingle($this->Lang_Get('not_access'),$this->Lang_Get('not_access'));
-			return Router::Action('error');
-		}
-		/**
-		 * Проверяет коммент на доступность из закрытых блогов.
-		 */
-		if(in_array($oTopic->getBlog()->getType(), array('close', 'invite'))
-			and (!$this->oUserCurrent
-				|| !in_array(
-					$oTopic->getBlog()->getId(),
-					$this->Blog_GetAccessibleBlogsByUser($this->oUserCurrent)
-				)
-			)
-		) {
-			$this->Message_AddErrorSingle($this->Lang_Get('blog_close_show'),$this->Lang_Get('not_access'));
-			return Router::Action('error');
-		}
+        if ($oComment->getTargetType() =='talk') {
+            if (!($oTalk = $this->Talk_GetTalkById($oComment->getTargetId()))) {
+                echo "NO TARGET";
+                $this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+                return;
+            }
+            /**
+             * Пользователь есть в переписке?
+             */
+            if (!($oTalkUser = $this->Talk_GetTalkUser($oTalk->getId(), $this->oUserCurrent->getId()))) {
+                $this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+                return;
+            }
+            /**
+             * Пользователь активен в переписке?
+             */
+            if ($oTalkUser->getUserActive() != ModuleTalk::TALK_USER_ACTIVE) {
+                $this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+                return;
+            }
+        } else {
+            if ($oComment->getTargetType() != 'topic' or !($oTopic = $oComment->getTarget())) {
+                $this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+                return;
+            }
+            if (!$oTopic->getPublish() and (!$this->oUserCurrent or ($this->oUserCurrent->getId() != $oTopic->getUserId() and !$this->oUserCurrent->isAdministrator()))) {
+                $this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+                return;
+            }
+            /**
+             * Проверяет коммент на удаленность и отдает его только автору, и тем, у кого есть права на удаление.
+             */
+            if ((!$this->oUserCurrent || ($oComment->getDelete() && !($this->ACL_UserCanDeleteComment($this->oUserCurrent, $oComment, 1) || $this->oUserCurrent->getId() == $oComment->getUserId())))) {
+                $this->Message_AddErrorSingle($this->Lang_Get('not_access'), $this->Lang_Get('not_access'));
+                return Router::Action('error');
+            }
+            /**
+             * Проверяет коммент на доступность из закрытых блогов.
+             */
+            if (in_array($oTopic->getBlog()->getType(), array('close', 'invite'))
+                and (!$this->oUserCurrent
+                    || !in_array(
+                        $oTopic->getBlog()->getId(),
+                        $this->Blog_GetAccessibleBlogsByUser($this->oUserCurrent)
+                    )
+                )
+            ) {
+                $this->Message_AddErrorSingle($this->Lang_Get('blog_close_show'), $this->Lang_Get('not_access'));
+                return Router::Action('error');
+            }
+        }
         
         $aData=$this->Editcomment_GetDataItemsByCommentId($oComment->getId(), array('#order'=>array('date_add'=>'desc')));
 
@@ -1993,6 +2035,28 @@ class ActionAjax extends Action
             $sText = $this->Text_Parser($this->Text_Mark(getRequestStr('comment_text')));
         else
             $sText = $this->Text_Parser(getRequestStr('comment_text'));
+
+        $sText = preg_replace_callback('/@(.*?)\((.*?)\)/',
+            function ($matches) use ($oComment) {
+                $sLogin = $matches[1];
+                $sNick = $matches[2];
+                $r = "<a href=\"/profile/" . $sLogin . "/\" class=\"ls-user\">&#64;" . $sNick . "</a>";
+                if ($oTargetUser = $this->User_getUserByLogin($sLogin)) {
+                    $this->Cast_sendCastNotifyToUser("comment", $oComment, $this->Topic_GetTopicById($oComment->getTargetId()), $oTargetUser);
+                    return $r;
+                }
+                return $matches[0];
+            }, $sText);
+        $sText = preg_replace_callback('/@([a-zA-Zа-яА-Я0-9-_]+)/',
+            function ($matches) use ($oComment) {
+                $sLogin = $matches[1];
+                $r = "<a href=\"/profile/" . $sLogin . "/\" class=\"ls-user\">&#64;" . $sLogin . "</a>";
+                if ($oTargetUser = $this->User_getUserByLogin($sLogin)) {
+                    $this->Cast_sendCastNotifyToUser("comment", $oComment, $this->Topic_GetTopicById($oComment->getTargetId()), $oTargetUser);
+                    return $r;
+                }
+                return $matches[0];
+            }, $sText);
         
         if (mb_strlen($sText, 'utf-8') > Config::Get('module.comment.max_length'))
         {

@@ -79,9 +79,9 @@
 }
 
 .text pre {
-		color: $text-color;
+    color: $text-color;
     margin: 0;
-    padding: 10px 15px;
+    padding: 0;
     border: none;
     background: $pre-background;
     font-size: 12px;
@@ -191,6 +191,12 @@ img.gray:not(:hover) {
 
 .spoiler-gray:not(:hover) a {
     color: inherit;
+}
+
+.spoiler-gray:not(:hover) code.inline {
+    color: inherit;
+    background-color: inherit;
+    padding-bottom: 1px;
 }
 
 .text .left {

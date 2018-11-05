@@ -212,6 +212,16 @@ export function removeFromBlackList(link) {
     return false;
 };
 
+function removeA(arr) {
+    var what, a = arguments, L = a.length, ax;
+    while (L > 1 && arr.length) {
+        what = a[--L];
+        while ((ax= arr.indexOf(what)) !== -1) {
+            arr.splice(ax, 1);
+        }
+    }
+    return arr;
+}
 /**
  * Добавляет или удаляет друга из списка получателей
  */
@@ -220,11 +230,14 @@ export function toggleRecipient(login, add) {
         item = $.trim(item);
         return item != '' ? item : null;
     });
+    console.log(login,to)
     if (add) {
         to.push(login);
-        to = $.richArray.unique(to);
+        console.log(login,to)
+        to = $.uniqueSort(to);
     } else {
-        to = $.richArray.without(to, login);
+        console.log(login,to,"Remove")
+        to = removeA(to, login);
     }
     $('#talk_users').val(to.join(', '));
 };

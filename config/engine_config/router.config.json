@@ -32,6 +32,7 @@
             "photoset": "ActionPhotoset",
             "subscribe": "ActionSubscribe",
             "feedbacks": "ActionFeedbacks",
+            "notifications": "ActionNotifications",
             "page": "ActionPage",
             "quotes": "ActionQuotes",
             "server": "ActionServer",

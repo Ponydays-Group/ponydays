@@ -34,6 +34,11 @@
                     {if !$iUserCurrentCountTalkNew}style="display: none;"{/if}
                     title="{$aLang.comment_count_new}">{$iUserCurrentCountTalkNew}</span></a></a>
             </div>
+
+
+            <div class="rightbar-item">
+                <a href="{router page='notifications'}"  title="Уведомления"><i class="material-icons">notifications</i></a>
+            </div>
         {/if}
 
         <div class="rightbar-item">

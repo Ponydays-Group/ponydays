@@ -30,16 +30,18 @@ class ModuleRating extends Module {
 	public function Init() {
 
 	}
+
 	/**
 	 * Расчет рейтинга при голосовании за комментарий
 	 *
-	 * @param ModuleUser_EntityUser $oUser	Объект пользователя, который голосует
-	 * @param ModuleComment_EntityComment $oComment	Объект комментария
+	 * @param ModuleUser_EntityUser $oUser Объект пользователя, который голосует
+	 * @param ModuleComment_EntityComment $oComment Объект комментария
 	 * @param int $iValue значение оценки
 	 * @param int $iValueOld
 	 * @param int $iCountVote 1 при добавлении оцеки, -1 при ее удалении, 0 при переголосовании
 	 * @param int $iVoteType 0 - при добавлении нового голоса, 1 - при его изменении, 2 - при отмене
 	 * @return int
+	 * @throws Exception
 	 */
 	public function VoteComment(ModuleUser_EntityUser $oUser, ModuleComment_EntityComment $oComment, $iValue, $iValueOld, $iCountVote, $iVoteType) {
 		/**
@@ -61,33 +63,54 @@ class ModuleRating extends Module {
 		$iSkillNew=$oUserComment->getSkill()+$iValue/100;
 		$oUserComment->setSkill($iSkillNew);
 		$this->User_Update($oUserComment);
-        $curl_data = array(
-            "senderId" => $oUser->getId(),
-            "senderName" => $oUser->getLogin(),
-            "userId" => $oComment->getUserId(),
-            "targetId" => $oComment->getId(),
-            "targetType" => "comment",
-            "targetParentId" => $oComment->getTargetId(),
-            "targetParentType" => $oComment->getTargetType(),
-			"rating" => $oComment->getRating(),
-			"voteCount" => $oComment->getCountVote() + $iCountVote,
-            "voteType" => $iVoteType,
-            "voteValue" => $iValueOld,
-			"commentText" => $oComment->getText()
-        );
-        $this->Nower_Post('/vote', $curl_data);
+
+		$notificationTitle = "Пользователь <a href='".$oUser->getUserWebPath()."'>".$oUser->getLogin() . "</a>";
+		$rating = $iValue;
+		$notificationLink = "/blog/undefined/".$oComment->getTargetId()."#comment".$oComment->getId();
+		if ($iVoteType == 0) {
+			$notificationTitle = $notificationTitle." проголосовал за ваш <a href='".$notificationLink."'>комментарий</a>";
+		} elseif ($iVoteType == 1) {
+			$notificationTitle = $notificationTitle." изменил голос за ваш <a href='".$notificationLink."'>комментарий</a>";
+			$rating = $rating / 2;
+		} else {
+			$notificationTitle = $notificationTitle." отменил голос за ваш <a href='".$notificationLink."'>комментарий</a>";
+			$rating = 0;
+		}
+		$notificationText = $oComment->getText();
+		$notification = Engine::GetEntity(
+			'Notification',
+			array(
+				'user_id' => $oUserComment->getId(),
+				'text' => $notificationText,
+				'title' => $notificationTitle,
+				'link' => $notificationLink,
+				'rating' => $rating,
+				'notification_type' => 10,
+				'target_type' => 'comment',
+				'target_id' => $oComment->getId(),
+				'sender_user_id' => $oUser->getId(),
+				'group_target_type' => $oComment->getTargetType(),
+				'group_target_id' => $oComment->getTargetId()
+			)
+		);
+		$this->Logger_Debug(json_encode($notification->getArrayData()));
+		if($notificationCreated = $this->Notification_createNotification($notification)){
+			$this->Nower_PostNotificationWithComment($notificationCreated, $oComment);
+		}
 		return $iValue;
 	}
+
 	/**
 	 * Расчет рейтинга и силы при гоосовании за топик
 	 *
-	 * @param ModuleUser_EntityUser $oUser	Объект пользователя, который голосует
-	 * @param ModuleTopic_EntityTopic $oTopic	Объект топика
+	 * @param ModuleUser_EntityUser $oUser Объект пользователя, который голосует
+	 * @param ModuleTopic_EntityTopic $oTopic Объект топика
 	 * @param int $iValue
 	 * @param int $iValueOld
 	 * @param int $iCountVote 1 при добавлении оцеки, -1 при ее удалении, 0 при переголосовании
-     * @param int $iVoteType 0 - при добавлении нового голоса, 1 - при его изменении, 2 - при отмене
+	 * @param int $iVoteType 0 - при добавлении нового голоса, 1 - при его изменении, 2 - при отмене
 	 * @return int
+	 * @throws Exception
 	 */
 	public function VoteTopic(ModuleUser_EntityUser $oUser, ModuleTopic_EntityTopic $oTopic, $iValue, $iValueOld, $iCountVote, $iVoteType) {
 		$oTopic->setRating($oTopic->getRating()+$iValue);
@@ -100,21 +123,36 @@ class ModuleRating extends Module {
 		$iSkillNew=$oUserTopic->getSkill()+$iValue;
 		$oUserTopic->setSkill($iSkillNew);
 		$this->User_Update($oUserTopic);
-        $curl_data = array(
-            "senderId" => $oUser->getId(),
-            "senderName" => $oUser->getLogin(),
-            "userId" => $oTopic->getUserId(),
-            "targetId" => $oTopic->getId(),
-            "targetType" => "topic",
-            "targetParentId" => null,
-            "targetParentType" => null,
-            "rating" => $oTopic->getRating(),
-			"voteCount" => $oTopic->getCountVote() + $iCountVote,
-            "voteType" => $iVoteType,
-            "voteValue" => $iValueOld,
-			"topicTitle" => $oTopic->getTitle()
-        );
-        $this->Nower_Post('/vote', $curl_data);
+
+		$notificationTitle = "Пользователь <a href='".$oUser->getUserWebPath()."'>".$oUser->getLogin() . "</a>";
+		if ($iVoteType == 0) {
+			$notificationTitle = $notificationTitle." проголосовал за ваш пост";
+		} elseif ($iVoteType == 1) {
+			$notificationTitle = $notificationTitle." изменил голос за ваш пост";
+		} else {
+			$notificationTitle = $notificationTitle." отменил голос за ваш пост";
+		}
+		$notificationLink = "/blog/undefined/".$oTopic->getId();
+		$notificationText = "<a href='".$notificationLink."'>".$oTopic->getTitle()."</a>";
+		$notification = Engine::GetEntity(
+			'Notification',
+			array(
+				'user_id' => $oUserTopic->getId(),
+				'text' => $notificationText,
+				'title' => $notificationTitle,
+				'link' => $notificationLink,
+				'rating' => $iValue,
+				'notification_type' => 11,
+				'target_type' => "topic",
+				'target_id' => $oTopic->getId(),
+				'sender_user_id' => $oUser->getId(),
+				'group_target_type' => 'topic',
+				'group_target_id' => $oTopic->getId()
+			)
+		);
+		if($notificationCreated = $this->Notification_createNotification($notification)){
+			$this->Nower_PostNotification($notificationCreated);
+		}
 		return $iValue;
 	}
 	/**

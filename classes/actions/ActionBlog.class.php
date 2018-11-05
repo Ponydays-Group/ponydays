@@ -1350,27 +1350,69 @@ class ActionBlog extends Action
         $oCommentNew->setTextHash(md5($sText));
         $oCommentNew->setPublish($oTopic->getPublish());
         $oCommentNew->setUserRank($this->oUserCurrent->getRank());
-		$sFile = $this->Topic_UploadTopicImageUrl('http:'.$this->oUserCurrent->getProfileAvatarPath(64), $this->oUserCurrent);
-        $oCommentNew->setUserAvatar($sFile);
+//		$sFile = $this->Topic_UploadTopicImageUrl('http:'.$this->oUserCurrent->getProfileAvatarPath(64), $this->oUserCurrent);
+//        $oCommentNew->setUserAvatar($sFile);
         /**
          * Добавляем коммент
          */
 
         $this->Hook_Run('comment_add_before', array('oCommentNew' => $oCommentNew, 'oCommentParent' => $oCommentParent, 'oTopic' => $oTopic));
         if ($this->Comment_AddComment($oCommentNew)) {
-            $curl_data = array(
-                "senderId" => $this->oUserCurrent->getUserId(),
-                "senderLogin" => $this->oUserCurrent->getLogin(),
-                "commentData" => json_encode($this->Comment_ConvertCommentToArray($oCommentNew)),
-                "targetType" => $oCommentNew->getTargetType(),
-                "targetId" => $oCommentNew->getTargetId(),
-                "targetTitle" => $oTopic->getTitle(),
-                "targetParentType" => $oTopic->getBlog()->getType()
-            );
-            if ($oCommentParent) {
-                $curl_data["userId"] = $oCommentParent->getUserId();
-            }
-            $this->Nower_Post('/comment', $curl_data);
+
+			/**
+			 * Отправка уведомления пользователям
+			 */
+			$postLink = "/blog/undefined/".$oCommentNew->getTargetId();
+			$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> ответил вам в посте <a href='".$postLink."'>".$oTopic->getTitle()."</a>";
+			$notificationText = $oCommentNew->getText();
+			$notificationLink = $postLink."#comment".$oCommentNew->getId();
+			if ($oCommentParent && $this->oUserCurrent->getId() != $oCommentParent->getUserId()) {
+				$notification = Engine::GetEntity(
+					'Notification',
+					array(
+						'user_id' => $oCommentParent->getUserId(),
+						'text' => $notificationText,
+						'title' => $notificationTitle,
+						'link' => $notificationLink,
+						'rating' => 0,
+						'notification_type' => 3,
+						'target_type' => 'comment',
+						'target_id' => $oCommentNew->getId(),
+						'sender_user_id' => $this->oUserCurrent->getId(),
+						'group_target_type' => 'topic',
+						'group_target_id' => $oCommentNew->getTargetId()
+					)
+				);
+				if ($notificationCreated = $this->Notification_createNotification($notification)) {
+					$this->Nower_PostNotification($notificationCreated);
+				}
+			}
+
+			if ($this->oUserCurrent->getId() != $oTopic->getUserId()) {
+				$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> оставил комментарий в вашем посте <a href='".$postLink."'>".$oTopic->getTitle()."</a>";
+				$notificationText = $oCommentNew->getText();
+				$notificationLink = $postLink . "#comment" . $oCommentNew->getId();
+				$notification = Engine::GetEntity(
+					'Notification',
+					array(
+						'user_id' => $oTopic->getUserId(),
+						'text' => $notificationText,
+						'title' => $notificationTitle,
+						'link' => $notificationLink,
+						'rating' => 0,
+						'notification_type' => 5,
+						'target_type' => 'comment',
+						'target_id' => $oCommentNew->getId(),
+						'sender_user_id' => $this->oUserCurrent->getId(),
+						'group_target_type' => 'topic',
+						'group_target_id' => $oCommentNew->getTargetId()
+					)
+				);
+				if ($notificationCreated = $this->Notification_createNotification($notification)) {
+					$this->Nower_PostNotification($notificationCreated);
+				}
+			}
+
             $this->Hook_Run('comment_add_after', array('oCommentNew' => $oCommentNew, 'oCommentParent' => $oCommentParent, 'oTopic' => $oTopic));
             $this->Cast_sendCastNotify('comment', $oCommentNew, $oTopic, $oCommentNew->getText());
 
@@ -1829,18 +1871,26 @@ class ActionBlog extends Action
                 'blog_title' => $oBlog->getTitle()
             )
         );
-        $oTalk = $this->Talk_SendTalk($sTitle, $sText, $this->oUserCurrent, array($oUser), false, false);
-        /**
-         * Отправляем пользователю заявку
-         */
-        $this->Notify_SendBlogUserInvite(
-            $oUser, $this->oUserCurrent, $oBlog,
-            Router::GetPath('talk') . 'read/' . $oTalk->getId() . '/'
-        );
-        /**
-         * Удаляем отправляющего юзера из переписки
-         */
-        $this->Talk_DeleteTalkUserByArray($oTalk->getId(), $this->oUserCurrent->getId());
+
+		$notification = Engine::GetEntity(
+			'Notification',
+			array(
+				'user_id' => $oUser->getUserId(),
+				'text' => $sText,
+				'title' => $sTitle,
+				'link' => "",
+				'rating' => 0,
+				'notification_type' => 13,
+				'target_type' => 'blog',
+				'target_id' => $oBlog->getId(),
+                'sender_user_id' => $this->oUserCurrent->getId(),
+                'group_target_type' => 'nothing',
+                'group_target_id' => -1
+			)
+		);
+		if ($notificationCreated = $this->Notification_createNotification($notification)) {
+			$this->Nower_PostNotification($notificationCreated);
+		}
     }
 
     /**

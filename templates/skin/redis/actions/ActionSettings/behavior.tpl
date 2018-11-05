@@ -36,25 +36,70 @@
 
 	<fieldset>
 		<span class="checkbox"><span>
-			<input type="checkbox" id="notice_talk_reply" name="notice_talk_reply" data-default=1 data-save=1 class="input-checkbox" />
-			<label for="notice_talk_reply">Уведомления о новых комментариях в ЛС</label>
+			<input type="checkbox" id="talk_new_topic" name="talk_new_topic" data-default=1 data-save=1 class="input-checkbox" />
+			<label for="talk_new_topic">Уведомления о новых письмах в ЛС</label>
 		</span></span>
+
 		<span class="checkbox"><span>
-			<input type="checkbox" id="notice_reply" name="notice_reply" data-default=1 data-save=1 class="input-checkbox" />
-			<label for="notice_reply">Уведомления об ответах</label>
+			<input type="checkbox" id="talk_new_comment" name="talk_new_comment" data-default=1 data-save=1 class="input-checkbox" />
+			<label for="talk_new_comment">Уведомления о новых комментариях в ЛС</label>
 		</span></span>
+
 		<span class="checkbox"><span>
-			<input type="checkbox" id="notice_comment_edit" name="notice_comment_edit" data-default=1 data-save=1 class="input-checkbox" />
-			<label for="notice_comment_edit">Уведомления о редактировании ваших комментариев</label>
+			<input type="checkbox" id="comment_response" name="comment_response" data-default=1 data-save=1 class="input-checkbox" />
+			<label for="comment_response">Уведомления об ответах</label>
 		</span></span>
+
 		<span class="checkbox"><span>
-			<input type="checkbox" id="notice_comment_delete" name="notice_comment_delete" data-default=1 data-save=1 class="input-checkbox" />
-			<label for="notice_comment_delete">Уведомления об удалении/восстановлении ваших комментариев</label>
+			<input type="checkbox" id="comment_mention" name="comment_mention" data-default=1 data-save=1 class="input-checkbox" />
+			<label for="comment_mention">Уведомления об упоминании вас в комментарях</label>
 		</span></span>
+
+        <span class="checkbox"><span>
+			<input type="checkbox" id="topic_mention" name="topic_mention" data-default=1 data-save=1 class="input-checkbox" />
+			<label for="topic_mention">Уведомления об упоминании вас в постах</label>
+		</span></span>
+
 		<span class="checkbox"><span>
-			<input type="checkbox" id="notice_vote" name="notice_vote" data-default=1 data-save=1 class="input-checkbox" />
-			<label for="notice_vote">Уведомления о голосовании за ваши посты/комментарии</label>
+			<input type="checkbox" id="topic_new_comment" name="topic_new_comment" data-default=1 data-save=1 class="input-checkbox" />
+			<label for="topic_new_comment">Уведомления о новых комментариях в ваших постах</label>
 		</span></span>
+
+		<span class="checkbox"><span>
+			<input type="checkbox" id="comment_edit" name="comment_edit" data-default=1 data-save=1 class="input-checkbox" />
+			<label for="comment_edit">Уведомления о редактировании ваших комментариев</label>
+		</span></span>
+
+		<span class="checkbox"><span>
+			<input type="checkbox" id="comment_delete_restore" name="comment_delete_restore" data-default=1 data-save=1 class="input-checkbox" />
+			<label for="comment_delete_restore">Уведомления об удалении/восстановлении ваших комментариев</label>
+		</span></span>
+
+		<span class="checkbox"><span>
+			<input type="checkbox" id="comment_rank" name="comment_rank" data-default=1 data-save=1 class="input-checkbox" />
+			<label for="comment_rank">Уведомления о голосовании за ваши комментарии</label>
+		</span></span>
+
+		<span class="checkbox"><span>
+			<input type="checkbox" id="topic_rank" name="topic_rank" data-default=1 data-save=1 class="input-checkbox" />
+			<label for="topic_rank">Уведомления о голосовании за ваши посты</label>
+		</span></span>
+
+		<span class="checkbox"><span>
+			<input type="checkbox" id="topic_invite_ask" name="topic_invite_ask" data-default=1 data-save=1 class="input-checkbox" />
+			<label for="topic_invite_ask">Уведомления о просьбах инвайтов в ваш блог</label>
+		</span></span>
+
+		<span class="checkbox"><span>
+			<input type="checkbox" id="topic_invite_offer" name="topic_invite_offer" data-default=1 data-save=1 class="input-checkbox" />
+			<label for="topic_invite_offer">Уведомления о получении приглашений в блоги</label>
+		</span></span>
+
+		<span class="checkbox"><span>
+			<input type="checkbox" id="talk_invite_offer" name="talk_invite_offer" data-default=1 data-save=1 class="input-checkbox" />
+			<label for="talk_invite_offer">Уведомления о получении приглашений в ЛС</label>
+		</span></span>
+
 	</fieldset>
 	<fieldset>
 		<span class="checkbox"><span>

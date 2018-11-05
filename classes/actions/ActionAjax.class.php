@@ -110,6 +110,27 @@ class ActionAjax extends Action
             $this->User_Unban($iUserId);
 			$sLogText = $this->oUserCurrent->getLogin()." разбанил пользователя ".$iUserId;
 			$this->Logger_Notice($sLogText);
+
+			$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> разбанил вас на сайте";
+			$notification = Engine::GetEntity(
+				'Notification',
+				array(
+					'user_id' => $iUserId,
+					'text' => "",
+					'title' => $notificationTitle,
+					'link' => "",
+					'rating' => 0,
+					'notification_type' => 16,
+					'target_type' => "global",
+					'target_id' => -1,
+					'sender_user_id' => $this->oUserCurrent->getId(),
+					'group_target_type' => 'global',
+					'group_target_id' => -1
+				)
+			);
+			if($notificationCreated = $this->Notification_createNotification($notification)){
+				$this->Nower_PostNotification($notificationCreated);
+			}
             return;
         }
 
@@ -125,6 +146,27 @@ class ActionAjax extends Action
 
         $sLogText = $this->oUserCurrent->getLogin()." забанил пользователя ".$iUserId;
         $this->Logger_Notice($sLogText);
+
+		$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> забанил вас на сайте";
+		$notification = Engine::GetEntity(
+			'Notification',
+			array(
+				'user_id' => $iUserId,
+				'text' => "",
+				'title' => $notificationTitle,
+				'link' => "",
+				'rating' => 0,
+				'notification_type' => 16,
+				'target_type' => "global",
+				'target_id' => -1,
+				'sender_user_id' => $this->oUserCurrent->getId(),
+				'group_target_type' => 'global',
+				'group_target_id' => -1
+			)
+		);
+		if($notificationCreated = $this->Notification_createNotification($notification)){
+			$this->Nower_PostNotification($notificationCreated);
+		}
     }
 
     /**
@@ -1497,6 +1539,7 @@ class ActionAjax extends Action
             return;
         }
 
+        $lastdeleteUser = $oComment->getDeleteUserId();
         /**
          * Устанавливаем пометку о том, что комментарий удален
          */
@@ -1530,19 +1573,62 @@ class ActionAjax extends Action
 			$this->Logger_Notice($sLogText);
         }
 
-        $curl_data = array(
-            "senderId" => $this->oUserCurrent->getUserId(),
-            "senderLogin" => $this->oUserCurrent->getLogin(),
-            "userId" => $oComment->getUserId(),
-            "commentId" => $oComment->getId(),
-            "commentText" => $oComment->getText(),
-            "targetType" => $oComment->getTargetType(),
-            "targetId" => $oComment->getTargetId(),
-            "targetTitle" => $oComment->getTarget()->getTitle(),
-            "deleteReason" => $oComment->getDeleteReason(),
-            "delete" => (bool)$oComment->getDelete()
-        );
-        $this->Nower_Delete('/comment', $curl_data);
+		/**
+		 * Отправка уведомления пользователям
+		 */
+		$notificationLink = "/blog/undefined/".$oComment->getTargetId()."#comment".$oComment->getId();
+		if ((bool)$oComment->getDelete()) {
+			$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> удалил ваш <a href='".$notificationLink."'>комментарий</a>\nПричина: ".$oComment->getDeleteReason();
+			$notificationType = 7;
+		} else {
+			$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> восстановил ваш <a href='".$notificationLink."'>комментарий</a>";
+			$notificationType = 8;
+		}
+		$notificationText = $oComment->getText();
+		$notification = Engine::GetEntity(
+			'Notification',
+			array(
+				'user_id' => $oComment->getUserId(),
+				'text' => $notificationText,
+				'title' => $notificationTitle,
+				'link' => $notificationLink,
+				'rating' => 0,
+				'notification_type' => $notificationType,
+				'target_type' => 'comment',
+				'target_id' => $oComment->getId(),
+				'sender_user_id' => $this->oUserCurrent->getId(),
+				'group_target_type' => 'topic',
+				'group_target_id' => $oComment->getTargetId()
+			)
+		);
+		if($notificationCreated = $this->Notification_createNotification($notification)){
+			$this->Nower_PostNotificationWithComment($notificationCreated, $oComment);
+		}
+
+		if ($this->oUserCurrent->getId() != $lastdeleteUser) {
+			$notificationLink = "/blog/undefined/".$oComment->getTargetId()."#comment".$oComment->getId();
+			$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> восстановил удаленный вами <a href='".$notificationLink."'>комментарий</a>";
+			$notificationText = $oComment->getText();
+			$notification = Engine::GetEntity(
+				'Notification',
+				array(
+					'user_id' => $lastdeleteUser,
+					'text' => $notificationText,
+					'title' => $notificationTitle,
+					'link' => $notificationLink,
+					'rating' => 0,
+					'notification_type' => 9,
+					'target_type' => 'comment',
+					'target_id' => $oComment->getId(),
+					'sender_user_id' => $this->oUserCurrent->getId(),
+					'group_target_type' => 'topic',
+					'group_target_id' => $oComment->getTargetId()
+				)
+			);
+			if($notificationCreated = $this->Notification_createNotification($notification)){
+				$this->Nower_PostNotificationWithComment($notificationCreated, $oComment);
+			}
+		}
 
         /**
          * Обновление события в ленте активности
@@ -2049,34 +2135,71 @@ class ActionAjax extends Action
             else
                 $this->Message_AddErrorSingle($this->Lang_Get('error'));
         }
-        $curl_data = array(
-            "senderId" => $this->oUserCurrent->getUserId(),
-            "senderLogin" => $this->oUserCurrent->getLogin(),
-            "userId" => $oComment->getUserId(),
-            "commentData" => json_encode($this->Comment_ConvertCommentToArray($oComment)),
-            "targetType" => $oComment->getTargetType(),
-            "targetId" => $oComment->getTargetId(),
-        );
-        if($oComment->getTargetType() == 'topic') {
-            $curl_data['targetTitle'] = $oComment->getTarget()->getTitle();
-        } else if($oComment->getTargetType() == 'talk') {
-            if (!($oTalk = $this->Talk_GetTalkById($oComment->getTargetId()))) {
-                $this->Message_AddErrorSingle($this->Lang_Get('error'));
-                return;
-            }
-            $curl_data['targetTitle'] = $oTalk->getTitle();
-            $curl_data['userIds'] = array();
-            $aUsersTalk = $this->Talk_GetUsersTalk($oTalk->getId(), ModuleTalk::TALK_USER_ACTIVE);
-            foreach ($aUsersTalk as $oUserTalk) {
-                //if ($oUserTalk->getId() != $oComment->getUserId()) {
-                //    $this->Notify_SendTalkCommentNew($oUserTalk, $this->oUserCurrent, $oTalk, $oComment);
-                //    $curl_data['userIds'][] = $oUserTalk->getId();
-                //}
-                $curl_data['userIds'][] = $oUserTalk->getId();
-            }
-        }
-        if ($bEdited) {
-			$this->Nower_Patch('/comment', $curl_data);
+		if ($bEdited) {
+			if ($oComment->getTargetType() == 'topic') {
+
+				/**
+				 * Отправка уведомления пользователям
+				 */
+				$notificationLink = "/blog/undefined/" . $oComment->getTargetId() . "#comment" . $oComment->getId();
+				$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a>" . " отредактировал <a href='".$notificationLink."'>комментарий</a> в посте <a href='/blog/undefined/" . $oComment->getTargetId()."'>".$oComment->getTarget()->getTitle()."</a>";
+				$notificationText = $oComment->getText();
+				$notification = Engine::GetEntity(
+					'Notification',
+					array(
+						'user_id' => $oComment->getUserId(),
+						'text' => $notificationText,
+						'title' => $notificationTitle,
+						'link' => $notificationLink,
+						'rating' => 0,
+						'notification_type' => 6,
+						'target_type' => 'comment',
+						'target_id' => $oComment->getId(),
+						'sender_user_id' => $this->oUserCurrent->getId(),
+						'group_target_type' => 'topic',
+						'group_target_id' => $oComment->getTargetId()
+					)
+				);
+				if($notificationCreated = $this->Notification_createNotification($notification)){
+					$this->Nower_PostNotificationWithComment($notificationCreated, $oComment);
+				}
+
+			} else if ($oComment->getTargetType() == 'talk') {
+				if (!($oTalk = $this->Talk_GetTalkById($oComment->getTargetId()))) {
+					$this->Message_AddErrorSingle($this->Lang_Get('error'));
+					return;
+				}
+				$aUsersTalk = $this->Talk_GetUsersTalk($oTalk->getId(), ModuleTalk::TALK_USER_ACTIVE);
+				foreach ($aUsersTalk as $oUserTalk) {
+
+					/**
+					 * Отправка уведомления пользователям
+					 */
+					$notificationLink = "/blog/undefined/" . $oComment->getTargetId() . "#comment" . $oComment->getId();
+					$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a>" . " отредактировал <a href='".$notificationLink."'>комментарий</a> в личке " . $oTalk->getTitle();
+					$notificationText = "";
+					$notification = Engine::GetEntity(
+						'Notification',
+						array(
+							'user_id' => $oUserTalk->getId(),
+							'text' => $notificationText,
+							'title' => $notificationTitle,
+							'link' => $notificationLink,
+							'rating' => 0,
+							'notification_type' => 6,
+							'target_type' => 'comment',
+							'target_id' => $oComment->getId(),
+							'sender_user_id' => $this->oUserCurrent->getId(),
+							'group_target_type' => 'talk',
+							'group_target_id' => $oComment->getTargetId()
+						)
+					);
+					if($notificationCreated = $this->Notification_createNotification($notification)){
+						$this->Nower_PostNotificationWithComment($notificationCreated, $oComment);
+					}
+				}
+			}
+
 			$sLogText = $this->oUserCurrent->getLogin() . " редактировал коммент " . $oComment->getId() . " " . $ip;
 			$this->Logger_Notice($sLogText);
 		}

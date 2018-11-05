@@ -1297,6 +1297,9 @@ return array(
 		'giveanswer' => 'Ответить в топике',
 		'seeanswer' => 'Смотреть ответ'
 	),
+    'notifications' => array(
+		'header' => 'Уведомления'
+	),
 	'editcomment' => array(
 		'edit_command_title'=>'Редактировать',
 

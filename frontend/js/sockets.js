@@ -11,15 +11,15 @@ if (!(getCookie("key")||getCookie("wskey"))&&LOGGED_IN) {
     ls.msg.error("Необходимо войти в аккаунт еще раз.", "Были внесены изменения в механизм входа")
 }
 
-const SimpleWebRTC = require("simplewebrtc")
-const hark = require("hark")
-const io = require("socket.io-client")
+const SimpleWebRTC = require("simplewebrtc");
+const hark = require("hark");
+const io = require("socket.io-client");
 
 window.sock = io(SOCKET_URL, {
     query: {
         token: getCookie("key")
     }
-})
+});
 
 sock.on('reconnect_attempt', () => {
     sock.io.opts.query = {
@@ -27,47 +27,203 @@ sock.on('reconnect_attempt', () => {
     }
 });
 
-window.nAudio = new Audio()
-nAudio.src = localStorage.getItem("notice_sound_url") || "http://freesound.org/data/previews/245/245645_1038806-lq.mp3"
+window.nAudio = new Audio();
+nAudio.src = localStorage.getItem("notice_sound_url") || "http://freesound.org/data/previews/245/245645_1038806-lq.mp3";
+
+sock.on('notification_group', function (data) {
+    console.log("DATA_group:", data);
+    switch(data.notification_type * 1){
+        case 1: //talk_new_topic
+            break;
+        case 2: //talk_new_comment
+            break;
+        case 3: //comment_response
+            break;
+        case 4: //comment_mention
+            break;
+        case 5: //topic_new_comment
+            ls.emitter.emit("socket-new-comment", data);
+            break;
+        case 6: //comment_edit
+            ls.emitter.emit("socket-edit-comment", data);
+            break;
+        case 7: //comment_delete
+            ls.emitter.emit("socket-delete-comment", data);
+            break;
+        case 8: //comment_restore
+            ls.emitter.emit("socket-restore-comment", data);
+            break;
+        case 9: //comment_restore_deleted_by_you
+            break;
+        case 10: //comment_rank
+            onVote(data);
+            break;
+        case 11: //topic_rank
+            onVote(data);
+            break;
+        case 12: //topic_invite_ask
+            break;
+        case 13: //topic_invite_offer
+            break;
+        case 14: //talk_invite_offer
+            break;
+        case 15: //ban_in_blog
+            break;
+        case 16: //ban_global
+            break;
+        case 17: //topic_mention
+            break;
+        default:
+    }
+});
+
+function onVote(data) {
+    let area = data.target_type == "comment" ? $("#vote_area_" + data.target_type + "_" + data.target_id) : $("#vote_total_" + data.target_type + "_" + data.target_id);
+    let rating = data.comment_extra.rating * 1;
+    if (rating == 0 && data.comment_extra.countVote > 0) {
+        area.addClass("vote-count-mixed");
+        area.removeClass("vote-count-positive");
+        area.removeClass("vote-count-negative");
+        area.removeClass("action-hidden");
+        $("#vote_total_" + data.target_type + "_" + data.target_id).html("0")
+    } else if (rating == 0) {
+        area.addClass("action-hidden");
+        area.removeClass("vote-count-positive");
+        area.removeClass("vote-count-negative");
+        area.removeClass("vote-count-mixed");
+        $("#vote_total_" + data.target_type + "_" + data.target_id).html("0")
+    } else if (rating > 0) {
+        area.addClass("vote-count-positive");
+        area.removeClass("vote-count-negative");
+        area.removeClass("vote-count-mixed");
+        area.removeClass("action-hidden");
+        $("#vote_total_" + data.target_type + "_" + data.target_id).html("+" + rating)
+    } else {
+        area.addClass("vote-count-negative");
+        area.removeClass("vote-count-positive");
+        area.removeClass("vote-count-mixed");
+        area.removeClass("action-hidden");
+        $("#vote_total_" + data.target_type + "_" + data.target_id).html(rating)
+    }
+    if (isFinite(data.comment_extra.voteCount)) {
+        area.data("count", data.comment_extra.voteCount);
+    }
+}
+
+sock.on('notification', function (data) {
+    console.log("DATA_user:", data);
+    let isEnabled = false;
+
+    if (data.user_id == data.sender_user_id) {
+        return;
+    }
+    switch (data.notification_type * 1) {
+        case 1: //talk_new_topic
+            isEnabled = checkPerm("talk_new_topic");
+            break;
+        case 2: //talk_new_comment
+            isEnabled = checkPerm("talk_new_comment");
+            break;
+        case 3: //comment_response
+            isEnabled = checkPerm("comment_response");
+            break;
+        case 4: //comment_mention
+            isEnabled = checkPerm("comment_mention");
+            break;
+        case 5: //topic_new_comment
+            isEnabled = checkPerm("topic_new_comment");
+            break;
+        case 6: //comment_edit
+            isEnabled = checkPerm("comment_edit");
+            break;
+        case 7: //comment_delete
+            isEnabled = checkPerm("comment_delete_restore");
+            break;
+        case 8: //comment_restore
+            isEnabled = checkPerm("comment_delete_restore");
+            break;
+        case 9: //comment_restore_deleted_by_you
+            isEnabled = true;
+            break;
+        case 10: //comment_rank
+            isEnabled = checkPerm("comment_rank");
+            break;
+        case 11: //topic_rank
+            isEnabled = checkPerm("topic_rank");
+            break;
+        case 12: //topic_invite_ask
+            isEnabled = checkPerm("topic_invite_ask");
+            break;
+        case 13: //topic_invite_offer
+            isEnabled = checkPerm("topic_invite_offer");
+            break;
+        case 14: //talk_invite_offer
+            isEnabled = checkPerm("talk_invite_offer");
+            break;
+        case 15: //ban_in_blog
+            isEnabled = true;
+            break;
+        case 16: //ban_global
+            isEnabled = true;
+            break;
+        case 17: //topic_mention
+            isEnabled = checkPerm("topic_mention");
+            break;
+        default:
+    }
+    if (isEnabled) {
+        let title = data.title;
+        if (data.rating * 1 > 0) {
+            title += "<span><span class=\"" + options.classes.vote + " " + options.classes.positive + "\"><span class=\"" + options.classes.vote_count + "\">+" + data.rating + "</span></span></span>";
+        } else if (data.rating * 1 < 0) {
+            title += "<span><span class=\"" + options.classes.vote + " " + options.classes.negative + "\"><span class=\"" + options.classes.vote_count + "\">" + data.rating + "</span></span></span>";
+        }
+        ls.msg.notice(title, data.text, data.link, false);
+
+        if (checkPerm("sound_notice")) {
+            nAudio.play();
+        }
+    }
+});
 
 sock.on("reply-info", function (data) {
-    console.log("DATA:", data)
+    console.log("DATA:", data);
     if (checkPerm("notice_reply")) {
-        let url = "/blog/undefined/" + data.targetId + "#comment" + data.commentData.id
-        let blank = true
+        let url = "/blog/undefined/" + data.targetId + "#comment" + data.commentData.id;
+        let blank = true;
         if (location.pathname.startsWith("/blog/") && location.pathname.endsWith(data.targetId)) {
-            url = "#comment" + data.commentData.id
+            url = "#comment" + data.commentData.id;
             blank = false
         }
-        ls.msg.notice(data.senderLogin + " ответил вам в посте " + data.targetTitle, data.commentData.text, url, blank)
+        ls.msg.notice(data.senderLogin + " ответил вам в посте " + data.targetTitle, data.commentData.text, url, blank);
         if (checkPerm("sound_notice"))
             nAudio.play()
     }
-})
+});
 
 sock.on("edit-comment-info", function (data) {
-    console.log("DATA:", data)
+    console.log("DATA:", data);
     if (checkPerm("notice_comment_delete")) {
-        let url = "/blog/undefined/" + data.targetId + "#comment" + data.commentData.id
-        let blank = true
+        let url = "/blog/undefined/" + data.targetId + "#comment" + data.commentData.id;
+        let blank = true;
         if (location.pathname.startsWith("/blog/") && location.pathname.endsWith(data.targetId)) {
-            url = "#comment" + data.commentData.id
+            url = "#comment" + data.commentData.id;
             blank = false
         }
-        ls.msg.notice(data.senderLogin + " отредактировал ваш комментарий", data.commentData.text, url, blank)
+        ls.msg.notice(data.senderLogin + " отредактировал ваш комментарий", data.commentData.text, url, blank);
         if (checkPerm("sound_notice"))
             nAudio.play()
     }
-})
+});
 
 sock.on("delete-comment-info", function (data) {
-    console.log("DATA:", data)
-    data.delete = parseInt(data.delete)
+    console.log("DATA:", data);
+    data.delete = parseInt(data.delete);
     if (checkPerm("notice_comment_delete")) {
-        let url = "/blog/undefined/" + data.targetId + "#comment" + data.commentId
-        let blank = true
+        let url = "/blog/undefined/" + data.targetId + "#comment" + data.commentId;
+        let blank = true;
         if (location.pathname.startsWith("/blog/") && location.pathname.endsWith(data.targetId)) {
-            url = "#comment" + data.commentId
+            url = "#comment" + data.commentId;
             blank = false
         }
         if (data.delete) {
@@ -78,37 +234,37 @@ sock.on("delete-comment-info", function (data) {
         if (checkPerm("sound_notice"))
             nAudio.play()
     }
-})
+});
 
 sock.on("talk-answer", function (data) {
-    console.log("DATA:", data)
+    console.log("DATA:", data);
     if (checkPerm("notice_talk_reply")) {
-        let url = "/talk/read/" + data.targetId + "#comment" + data.commentData.id
-        let blank = true
+        let url = "/talk/read/" + data.targetId + "#comment" + data.commentData.id;
+        let blank = true;
         if (location.pathname.startsWith("/talk/") && (location.pathname.endsWith(data.targetId) || location.pathname.endsWith(data.targetId + "/"))) {
-            url = "#comment" + data.commentData.id
+            url = "#comment" + data.commentData.id;
             blank = false
         }
-        ls.msg.notice("Новый комментарий в " + data.targetTitle + ", от " + data.senderLogin, data.commentText, url, blank)
+        ls.msg.notice("Новый комментарий в " + data.targetTitle + ", от " + data.senderLogin, data.commentText, url, blank);
         if (checkPerm("sound_notice"))
             nAudio.play()
     }
-})
+});
 
 sock.on("vote-info", function (data) {
-    console.log("DATA:", data)
+    console.log("DATA:", data);
     if (checkPerm("notice_vote")) {
-        let url = "/blog/undefined/" + data.targetId
-        let blank = true
+        let url = "/blog/undefined/" + data.targetId;
+        let blank = true;
         if (data.targetParentId) {
             url = "/blog/undefined/" + data.targetParentId + "#comment" + data.targetId
         }
         if (location.pathname.startsWith("/blog/") && (location.pathname.endsWith(data.targetParentId) || location.pathname.endsWith(data.targetParentId + "/"))) {
-            url = "#comment" + data.targetId
+            url = "#comment" + data.targetId;
             blank = false
         }
         if (location.pathname.startsWith("/blog/") && (location.pathname.endsWith(data.targetId) || location.pathname.endsWith(data.targetId + "/")) && data.targetType == "topic") {
-            url = "#"
+            url = "#";
             blank = false
         }
         switch (data.voteType*1) {
@@ -120,7 +276,7 @@ sock.on("vote-info", function (data) {
                         "<span><span class=\""+ options.classes.vote + " " + options.classes.negative + "\"><span class=\"" + options.classes.vote_count +"\">"+ data.voteValue +"</span></span></span>"),
                     data.commentText || data.topicTitle,
                     url,
-                    blank)
+                    blank);
                 break;
             case 1:
                 ls.msg.notice("Пользователь " + data.senderName + " изменил голос за ваш " +
@@ -130,66 +286,66 @@ sock.on("vote-info", function (data) {
                         "<span><span class=\""+ options.classes.vote + " " + options.classes.negative + "\"><span class=\"" + options.classes.vote_count +"\">"+ data.voteValue +"</span></span></span>"),
                     data.commentText || data.topicTitle,
                     url,
-                    blank)
+                    blank);
                 break;
             case 2:
                 ls.msg.notice("Пользователь " + data.senderName + " отменил свой голос за ваш " +
                     (data.targetType == "comment" ? "комментарий" : "пост"),
                     data.commentText || data.topicTitle,
                     url,
-                    blank)
+                    blank);
                 break;
         }
         if (checkPerm("sound_notice"))
             nAudio.play()
     }
-})
+});
 
-sock.on('edit-comment', (data) => ls.emitter.emit("socket-edit-comment", data))
-sock.on('delete-comment', (data) => ls.emitter.emit("socket-delete-comment", data))
+sock.on('edit-comment', (data) => ls.emitter.emit("socket-edit-comment", data));
+sock.on('delete-comment', (data) => ls.emitter.emit("socket-delete-comment", data));
 sock.on('new-comment', (data) => {
     console.log("DATA:", data.commentData);
     ls.emitter.emit("socket-new-comment", data);
-})
+});
 
 sock.on('new-vote', function (data) {
-    console.log("VOTE!", data)
-    let area = data.targetType == "comment" ? $("#vote_area_" + data.targetType + "_" + data.targetId) : $("#vote_total_" + data.targetType + "_" + data.targetId)
+    console.log("VOTE!", data);
+    let area = data.targetType == "comment" ? $("#vote_area_" + data.targetType + "_" + data.targetId) : $("#vote_total_" + data.targetType + "_" + data.targetId);
     if (data.rating == 0 && data.voteCount > 0) {
-        area.addClass("vote-count-mixed")
-        area.removeClass("vote-count-positive")
-        area.removeClass("vote-count-negative")
-        area.removeClass("action-hidden")
+        area.addClass("vote-count-mixed");
+        area.removeClass("vote-count-positive");
+        area.removeClass("vote-count-negative");
+        area.removeClass("action-hidden");
         $("#vote_total_" + data.targetType + "_" + data.targetId).html(data.rating)
     } else if (data.rating == 0) {
-        area.addClass("action-hidden")
-        area.removeClass("vote-count-positive")
-        area.removeClass("vote-count-negative")
-        area.removeClass("vote-count-mixed")
+        area.addClass("action-hidden");
+        area.removeClass("vote-count-positive");
+        area.removeClass("vote-count-negative");
+        area.removeClass("vote-count-mixed");
         $("#vote_total_" + data.targetType + "_" + data.targetId).html(data.rating)
     } else if (data.rating > 0) {
-        area.addClass("vote-count-positive")
-        area.removeClass("vote-count-negative")
-        area.removeClass("vote-count-mixed")
-        area.removeClass("action-hidden")
+        area.addClass("vote-count-positive");
+        area.removeClass("vote-count-negative");
+        area.removeClass("vote-count-mixed");
+        area.removeClass("action-hidden");
         $("#vote_total_" + data.targetType + "_" + data.targetId).html("+" + data.rating)
     } else {
-        area.addClass("vote-count-negative")
-        area.removeClass("vote-count-positive")
-        area.removeClass("vote-count-mixed")
-        area.removeClass("action-hidden")
+        area.addClass("vote-count-negative");
+        area.removeClass("vote-count-positive");
+        area.removeClass("vote-count-mixed");
+        area.removeClass("action-hidden");
         $("#vote_total_" + data.targetType + "_" + data.targetId).html(data.rating)
     }
     if (isFinite(data.voteCount)) {
         area.data("count", data.voteCount);
     }
-})
+});
 
 sock.on('site-update', function () {
-    ls.msg.notice('Сайт был обновлен', 'Рекомендуется перезагрузить страницу')
+    ls.msg.notice('Сайт был обновлен', 'Рекомендуется перезагрузить страницу');
     if (checkPerm("sound_notice"))
         nAudio.play()
-})
+});
 
 function changeRTCstatus(status) {
     $("#webrtc-status")[0].className = status
@@ -214,7 +370,6 @@ async function startRTC() {
     } catch(e) {
         console.info("No audio")
     }
-
     initWRTC({audio: canAudio, video: canVideo})
 }
 
@@ -230,81 +385,81 @@ if (LOGGED_IN && location.pathname.match(/\/voice\/voice/)) {
 
     startRTC()
 
-    sock.on('user joined', updateRTCusers)
-    sock.on('user leaved', updateRTCusers)
-    sock.on('rtc users', updateRTCusers)
+    sock.on('user joined', updateRTCusers);
+    sock.on('user leaved', updateRTCusers);
+    sock.on('rtc users', updateRTCusers);
 
-    sock.on('speaking', (id)=>$("#voice-user-"+id).addClass("speaking"))
-    sock.on('stopped speaking', (id)=>$("#voice-user-"+id).removeClass("speaking"))
+    sock.on('speaking', (id)=>$("#voice-user-"+id).addClass("speaking"));
+    sock.on('stopped speaking', (id)=>$("#voice-user-"+id).removeClass("speaking"));
 
     sock.on('mute', function(id){
-        rtcUsers[id].audio =false
+        rtcUsers[id].audio =false;
         $("#voice-user-"+id+" i").css("display", "inline-flex")
-    })
+    });
     sock.on('unmute', function(id){
-        rtcUsers[id].audio =true
+        rtcUsers[id].audio =true;
         $("#voice-user-"+id+" i").css("display", "none")
-    })
+    });
 
-    sock.emit('getRTC')
+    sock.emit('getRTC');
 
     sock.on('reconnect', function(){
-        sock.emit("joinRTC")
+        sock.emit("joinRTC");
         sock.emit('getRTC')
-    })
+    });
     sock.on('connect', function(){
-        sock.emit("joinRTC")
+        sock.emit("joinRTC");
         sock.emit('getRTC')
-    })
+    });
     sock.on('connection', function(){
-        sock.emit("joinRTC")
+        sock.emit("joinRTC");
         sock.emit('getRTC')
     })
 }
 
 function initWRTC(media, join) {
     function toggleMic() {
-        let mic_disable = $("#webrtc-disable-micro")
+        let mic_disable = $("#webrtc-disable-micro");
         if (mic_disable.css("display")=="none") {
-            mic_disable.css("display", "inline-flex")
-            $("#webrtc-enable-micro").css("display", "none")
-            wrtc.unmute()
+            mic_disable.css("display", "inline-flex");
+            $("#webrtc-enable-micro").css("display", "none");
+            wrtc.unmute();
             sock.emit('unmute')
         } else {
-            mic_disable.css("display", "none")
-            $("#webrtc-enable-micro").css("display", "inline-flex")
-            wrtc.mute()
+            mic_disable.css("display", "none");
+            $("#webrtc-enable-micro").css("display", "inline-flex");
+            wrtc.mute();
             sock.emit('mute')
         }
     }
     function toggleVideo() {
-        let video_disable = $("#webrtc-disable-video")
+        let video_disable = $("#webrtc-disable-video");
         if (video_disable.css("display")=="none") {
-            video_disable.css("display", "inline-flex")
-            $("#webrtc-enable-video").css("display", "none")
-            $("#localVideo").css("display", "block")
-            wrtc.resumeVideo()
+            video_disable.css("display", "inline-flex");
+            $("#webrtc-enable-video").css("display", "none");
+            $("#localVideo").css("display", "block");
+            wrtc.resumeVideo();
             sock.emit('resume video')
         } else {
-            video_disable.css("display", "none")
-            $("#webrtc-enable-video").css("display", "inline-flex")
-            $("#localVideo").css("display", "none")
-            wrtc.pauseVideo()
+            video_disable.css("display", "none");
+            $("#webrtc-enable-video").css("display", "inline-flex");
+            $("#localVideo").css("display", "none");
+            wrtc.pauseVideo();
             sock.emit('pause video')
         }
     }
-    $("#webrtc-disable-micro, #webrtc-enable-micro").click(toggleMic)
-    $("#webrtc-disable-video, #webrtc-enable-video").click(toggleVideo)
+    $("#webrtc-disable-micro, #webrtc-enable-micro").click(toggleMic);
+    $("#webrtc-disable-video, #webrtc-enable-video").click(toggleVideo);
     function cb() {
-        wrtc.joinRoom('your awesome room name')
-        sock.emit("joinRTC")
+        wrtc.joinRoom('your awesome room name');
+        sock.emit("joinRTC");
 
-        wrtc.mute()
+        wrtc.mute();
         wrtc.pauseVideo();
-        $("#localVideo").css("display", "none")
+        $("#localVideo").css("display", "none");
 
-        $("#webrtc-join").css("display", "none")
-        $("#webrtc-leave").css("display", "inline-flex")
+        $("#webrtc-join").css("display", "none");
+        $("#webrtc-leave").css("display", "inline-flex");
         changeRTCstatus("active")
     }
 
@@ -320,27 +475,27 @@ function initWRTC(media, join) {
         nick: USER_ID
     });
 
-    wrtc.on('readyToCall', cb)
+    wrtc.on('readyToCall', cb);
 
-    wrtc.on('*', console.log)
+    wrtc.on('*', console.log);
     wrtc.on("localStream", function(stream){
-        var speechEvents = hark(stream,{})
+        var speechEvents = hark(stream,{});
         speechEvents.on('speaking', function() {
-            console.error("speaking")
+            console.error("speaking");
             sock.emit("speaking")
         });
 
         speechEvents.on('stopped_speaking', function() {
-            console.error("stopped speaking")
+            console.error("stopped speaking");
             sock.emit("stopped speaking")
         })
-    })
+    });
 
     wrtc.on('speaking', ()=>console.error("Started speaking"));
     wrtc.on('stoppedSpeaking', ()=>console.error("Stopped speaking"));
 
     wrtc.on('mute', function (data) {
-        console.error(data.id)
+        console.error(data.id);
         wrtc.getPeers(data.id).forEach(function (peer) {
             if (data.name == 'video') {
                 $('video#' + wrtc.getDomId(peer) + '').hide();
@@ -348,7 +503,7 @@ function initWRTC(media, join) {
         });
     });
     wrtc.on('unmute', function (data) {
-        console.error(data.id)
+        console.error(data.id);
         wrtc.getPeers(data.id).forEach(function (peer) {
             if (data.name == 'video') {
                 $('video#' + wrtc.getDomId(peer) + '').show();
@@ -357,8 +512,8 @@ function initWRTC(media, join) {
     });
 
     wrtc.on('videoAdded', function (video, peer) {
-        console.error("ADD VIDEO", video, peer)
-        var remotes = $("#remotesMain video:visible").length<2?$("#remotesMain")[0]:$("#remotesSecondary")[0]
+        console.error("ADD VIDEO", video, peer);
+        var remotes = $("#remotesMain video:visible").length<2?$("#remotesMain")[0]:$("#remotesSecondary")[0];
 
         if (remotes) {
             // var container = document.createElement('div');
@@ -372,17 +527,17 @@ function initWRTC(media, join) {
 
             // suppress contextmenu
             video.oncontextmenu = function () { return false; };
-            video.setAttribute('data-userid', peer.nick)
+            video.setAttribute('data-userid', peer.nick);
 
             remotes.appendChild(video);
         }
     });
     wrtc.on('videoRemoved', function (video, peer) {
         console.error('video removed ', peer);
-        var remotes = $("#remotesMain video:visible").length<2?$("#remotesMain")[0]:$("#remotesSecondary")[0]
-        console.error("REMOVE VIDEO", remotes)
+        var remotes = $("#remotesMain video:visible").length<2?$("#remotesMain")[0]:$("#remotesSecondary")[0];
+        console.error("REMOVE VIDEO", remotes);
         if (remotes) {
-            $(video).hide()
+            $(video).hide();
             remotes.removeChild(video);
         }
     });

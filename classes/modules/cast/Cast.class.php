@@ -64,10 +64,9 @@ class ModuleCast extends Module
 			$oViewerLocal->Assign('oUserMarked', $oUser);
 
 			if ($sTarget == "topic") {
-
-				$notificationTitle = $this->oUserCurrent->getLogin()." упомянул вас в посте ".$oTarget->getTitle();
-				$notificationText = $oTarget->getTitle();
 				$notificationLink = "/blog/undefined/".$oTarget->getId();
+				$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> упомянул вас в посте <a href='".$notificationLink."'>".$oTarget->getTitle()."</a> ";
+				$notificationText = $oTarget->getTitle();
 				$notification = Engine::GetEntity(
 					'Notification',
 					array(
@@ -85,9 +84,9 @@ class ModuleCast extends Module
 					)
 				);
 			} else {
-				$notificationTitle = $this->oUserCurrent->getLogin()." упомянул вас в комментарии ".$oParentTarget->getTitle();
-				$notificationText = $oTarget->getText();
 				$notificationLink = "/blog/undefined/".$oTarget->getTargetId()."#comment".$oTarget->getId();
+				$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> упомянул вас в <a href='".$notificationLink."'>комментарии</a> ".$oParentTarget->getTitle();
+				$notificationText = $oTarget->getText();
 				$notification = Engine::GetEntity(
 					'Notification',
 					array(

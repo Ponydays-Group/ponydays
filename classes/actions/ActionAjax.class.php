@@ -111,7 +111,7 @@ class ActionAjax extends Action
 			$sLogText = $this->oUserCurrent->getLogin()." разбанил пользователя ".$iUserId;
 			$this->Logger_Notice($sLogText);
 
-			$notificationTitle = "Пользователь ".$this->oUserCurrent->getLogin()." разбанил вас на сайте";
+			$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> разбанил вас на сайте";
 			$notification = Engine::GetEntity(
 				'Notification',
 				array(
@@ -147,7 +147,7 @@ class ActionAjax extends Action
         $sLogText = $this->oUserCurrent->getLogin()." забанил пользователя ".$iUserId;
         $this->Logger_Notice($sLogText);
 
-		$notificationTitle = "Пользователь ".$this->oUserCurrent->getLogin()." забанил вас на сайте";
+		$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> забанил вас на сайте";
 		$notification = Engine::GetEntity(
 			'Notification',
 			array(
@@ -1556,15 +1556,15 @@ class ActionAjax extends Action
 		/**
 		 * Отправка уведомления пользователям
 		 */
+		$notificationLink = "/blog/undefined/".$oComment->getTargetId()."#comment".$oComment->getId();
 		if ((bool)$oComment->getDelete()) {
-			$notificationTitle = $this->oUserCurrent->getLogin()." удалил ваш комментарий\nПричина: ".$oComment->getDeleteReason();
+			$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> удалил ваш <a href='".$notificationLink."'>комментарий</a>\nПричина: ".$oComment->getDeleteReason();
 			$notificationType = 7;
 		} else {
-			$notificationTitle = $this->oUserCurrent->getLogin()." восстановил ваш комментарий";
+			$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> восстановил ваш <a href='".$notificationLink."'>комментарий</a>";
 			$notificationType = 8;
 		}
 		$notificationText = $oComment->getText();
-		$notificationLink = "/blog/undefined/".$oComment->getTargetId()."#comment".$oComment->getId();
 		$notification = Engine::GetEntity(
 			'Notification',
 			array(
@@ -1586,9 +1586,9 @@ class ActionAjax extends Action
 		}
 
 		if ($this->oUserCurrent->getId() != $lastdeleteUser) {
-			$notificationTitle = $this->oUserCurrent->getLogin()." восстановил удаленный вами комментарий";
-			$notificationText = $oComment->getText();
 			$notificationLink = "/blog/undefined/".$oComment->getTargetId()."#comment".$oComment->getId();
+			$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> восстановил удаленный вами <a href='".$notificationLink."'>комментарий</a>";
+			$notificationText = $oComment->getText();
 			$notification = Engine::GetEntity(
 				'Notification',
 				array(
@@ -2077,9 +2077,9 @@ class ActionAjax extends Action
 				/**
 				 * Отправка уведомления пользователям
 				 */
-				$notificationTitle = $this->oUserCurrent->getLogin() . " отредактировал комментарий в посте " . $oComment->getTarget()->getTitle();
-				$notificationText = $oComment->getText();
 				$notificationLink = "/blog/undefined/" . $oComment->getTargetId() . "#comment" . $oComment->getId();
+				$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a>" . " отредактировал <a href='".$notificationLink."'>комментарий</a> в посте <a href='/blog/undefined/" . $oComment->getTargetId()."'>".$oComment->getTarget()->getTitle()."</a>";
+				$notificationText = $oComment->getText();
 				$notification = Engine::GetEntity(
 					'Notification',
 					array(
@@ -2111,9 +2111,9 @@ class ActionAjax extends Action
 					/**
 					 * Отправка уведомления пользователям
 					 */
-					$notificationTitle = $this->oUserCurrent->getLogin() . " отредактировал комментарий в личке " . $oTalk->getTitle();
-					$notificationText = "";
 					$notificationLink = "/blog/undefined/" . $oComment->getTargetId() . "#comment" . $oComment->getId();
+					$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a>" . " отредактировал <a href='".$notificationLink."'>комментарий</a> в личке " . $oTalk->getTitle();
+					$notificationText = "";
 					$notification = Engine::GetEntity(
 						'Notification',
 						array(

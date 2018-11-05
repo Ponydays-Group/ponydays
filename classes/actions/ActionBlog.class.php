@@ -1362,9 +1362,10 @@ class ActionBlog extends Action
 			/**
 			 * Отправка уведомления пользователям
 			 */
-			$notificationTitle = $this->oUserCurrent->getLogin()." ответил вам в посте ".$oTopic->getTitle();
+			$postLink = "/blog/undefined/".$oCommentNew->getTargetId();
+			$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> ответил вам в посте <a href='".$postLink."'>".$oTopic->getTitle()."</a>";
 			$notificationText = $oCommentNew->getText();
-			$notificationLink = "/blog/undefined/".$oCommentNew->getTargetId()."#comment".$oCommentNew->getId();
+			$notificationLink = $postLink."#comment".$oCommentNew->getId();
 			if ($oCommentParent && $this->oUserCurrent->getId() != $oCommentParent->getUserId()) {
 				$notification = Engine::GetEntity(
 					'Notification',
@@ -1388,9 +1389,9 @@ class ActionBlog extends Action
 			}
 
 			if ($this->oUserCurrent->getId() != $oTopic->getUserId()) {
-				$notificationTitle = $this->oUserCurrent->getLogin() . " оставил комментарий в вашем посте " . $oTopic->getTitle();
+				$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> оставил комментарий в вашем посте <a href='".$postLink."'>".$oTopic->getTitle()."</a>";
 				$notificationText = $oCommentNew->getText();
-				$notificationLink = "/blog/undefined/" . $oCommentNew->getTargetId() . "#comment" . $oCommentNew->getId();
+				$notificationLink = $postLink . "#comment" . $oCommentNew->getId();
 				$notification = Engine::GetEntity(
 					'Notification',
 					array(

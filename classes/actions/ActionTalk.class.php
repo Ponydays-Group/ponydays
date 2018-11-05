@@ -423,9 +423,9 @@ class ActionTalk extends Action
             $aUsersTalk = $this->Talk_GetUsersTalk($oTalk->getId(), ModuleTalk::TALK_USER_ACTIVE);
             foreach ($aUsersTalk as $oUserTalk) {
 				if ($oUserTalk->getId() != $this->oUserCurrent->getId()) {
-					$notificationTitle = "Пользователь " . $this->oUserCurrent->getLogin() . " отправил вам личное письмо";
-					$notificationText = $oTalk->getTitle();
 					$notificationLink = "/talk/read/" . $oTalk->getId();
+					$notificationTitle = "Пользователь " . $this->oUserCurrent->getLogin() . " отправил вам <a href='".$notificationLink."'>личное письмо</a>";
+					$notificationText = $oTalk->getTitle();
 					$notification = Engine::GetEntity(
 						'Notification',
 						array(
@@ -868,9 +868,10 @@ class ActionTalk extends Action
 					/**
 					 * Отправка уведомления пользователям
 					 */
-					$notificationTitle = $this->oUserCurrent->getLogin()." ответил вам в личке ".$oTalk->getTitle();
-					$notificationText = "";
 					$notificationLink = "/talk/read/".$oCommentNew->getTargetId()."#comment".$oCommentNew->getId();
+					$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() .
+						"</a> ответил вам в личке <a href='".$notificationLink."'>".$oTalk->getTitle()."</a>";
+					$notificationText = "";
 					$notification = Engine::GetEntity(
 						'Notification',
 						array(
@@ -1237,7 +1238,9 @@ class ActionTalk extends Action
         );
 
 
-		$notificationTitle = $this->oUserCurrent->getLogin()." приглашает вас вернуться в переписку " . $oTalk->getTitle();
+        $notificationLink = "/talk/read/".$idTalk;
+		$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() .
+			"</a> приглашает вас вернуться в переписку <a href='".$notificationLink."'>".$oTalk->getTitle()."</a>";
 		$notificationText = "<div id=\"accept_invite_talk_back\"><a href=\"#\" idTalk=\"" . $idTalk . "\" id=\"speaker_accept_restore_item_" . $idTarget .
 			"\" class=\"delete\" onclick=\"ls.talk.acceptInviteBackToTalk(this)\">Вернуться в переписку</a></div>";
 		$notification = Engine::GetEntity(

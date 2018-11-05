@@ -19,11 +19,6 @@
 			</span>
 		</h3>
 		<p>{$oNotification->getText()}</p>
-		{if $oNotification->getLink()}
-			<a id="notice-id-{$oNotification->getId()}" class="n-box n-notice" href="{$oNotification->getLink()}" style="display: inline;">
-				Ссылка
-			</a>
-		{/if}
 	</li>
 
 {/for}

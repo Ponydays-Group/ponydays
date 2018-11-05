@@ -72,6 +72,7 @@
 				array_push($aUsers, $this->User_GetUserById($oNotification->getSenderUserId()));
 			}
 
+			$this->Viewer_AddHtmlTitle($this->Lang_Get('notifications.header'));
 			$this->Viewer_Assign('aNotifications', $aNotifications);
 			$this->Viewer_Assign('aUsers', $aUsers);
 			$this->Viewer_Assign('iPage', 2);

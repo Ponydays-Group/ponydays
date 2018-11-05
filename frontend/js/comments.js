@@ -839,7 +839,7 @@ export function init() {
         Emitter.on('socket-new-comment', (data) => {
             if (!document.getElementById('autoload').checked)
                 return
-            ls.comments.load(targetId, targetType, false, true)
+            ls.comments.load(data.group_target_id, data.group_target_type, false, true)
         })
     }
 

@@ -64,19 +64,19 @@ class ModuleRating extends Module {
 		$oUserComment->setSkill($iSkillNew);
 		$this->User_Update($oUserComment);
 
-		$notificationTitle = "Пользователь ".$oUser->getLogin();
+		$notificationTitle = "Пользователь <a href='".$oUser->getUserWebPath()."'>".$oUser->getLogin() . "</a>";
 		$rating = $iValue;
+		$notificationLink = "/blog/undefined/".$oComment->getTargetId()."#comment".$oComment->getId();
 		if ($iVoteType == 0) {
-			$notificationTitle = $notificationTitle." проголосовал за ваш комментарий";
+			$notificationTitle = $notificationTitle." проголосовал за ваш <a href='".$notificationLink."'>комментарий</a>";
 		} elseif ($iVoteType == 1) {
-			$notificationTitle = $notificationTitle."  изменил голос за ваш комментарий";
+			$notificationTitle = $notificationTitle." изменил голос за ваш <a href='".$notificationLink."'>комментарий</a>";
 			$rating = $rating / 2;
 		} else {
-			$notificationTitle = $notificationTitle." отменил голос за ваш комментарий";
+			$notificationTitle = $notificationTitle." отменил голос за ваш <a href='".$notificationLink."'>комментарий</a>";
 			$rating = 0;
 		}
 		$notificationText = $oComment->getText();
-		$notificationLink = "/blog/undefined/".$oComment->getTargetId()."#comment".$oComment->getId();
 		$notification = Engine::GetEntity(
 			'Notification',
 			array(
@@ -124,16 +124,16 @@ class ModuleRating extends Module {
 		$oUserTopic->setSkill($iSkillNew);
 		$this->User_Update($oUserTopic);
 
-		$notificationTitle = "Пользователь ".$oUser->getLogin();
+		$notificationTitle = "Пользователь <a href='".$oUser->getUserWebPath()."'>".$oUser->getLogin() . "</a>";
 		if ($iVoteType == 0) {
 			$notificationTitle = $notificationTitle." проголосовал за ваш пост";
 		} elseif ($iVoteType == 1) {
-			$notificationTitle = $notificationTitle."  изменил голос за ваш пост";
+			$notificationTitle = $notificationTitle." изменил голос за ваш пост";
 		} else {
 			$notificationTitle = $notificationTitle." отменил голос за ваш пост";
 		}
-		$notificationText = $oTopic->getTitle();
 		$notificationLink = "/blog/undefined/".$oTopic->getId();
+		$notificationText = "<a href='".$notificationLink."'>".$oTopic->getTitle()."</a>";
 		$notification = Engine::GetEntity(
 			'Notification',
 			array(

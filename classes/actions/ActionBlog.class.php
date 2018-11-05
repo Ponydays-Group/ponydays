@@ -1363,9 +1363,9 @@ class ActionBlog extends Action
 			 * Отправка уведомления пользователям
 			 */
 			$postLink = "/blog/undefined/".$oCommentNew->getTargetId();
-			$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> ответил вам в посте <a href='".$postLink."'>".$oTopic->getTitle()."</a>";
-			$notificationText = $oCommentNew->getText();
 			$notificationLink = $postLink."#comment".$oCommentNew->getId();
+			$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> <a href='".$notificationLink."'>ответил</a> вам в посте <a href='".$postLink."'>".$oTopic->getTitle()."</a>";
+			$notificationText = $oCommentNew->getText();
 			if ($oCommentParent && $this->oUserCurrent->getId() != $oCommentParent->getUserId()) {
 				$notification = Engine::GetEntity(
 					'Notification',
@@ -1389,9 +1389,9 @@ class ActionBlog extends Action
 			}
 
 			if ($this->oUserCurrent->getId() != $oTopic->getUserId()) {
-				$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> оставил комментарий в вашем посте <a href='".$postLink."'>".$oTopic->getTitle()."</a>";
-				$notificationText = $oCommentNew->getText();
 				$notificationLink = $postLink . "#comment" . $oCommentNew->getId();
+				$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> оставил <a href='".$notificationLink."'>комментарий</a> в вашем посте <a href='".$postLink."'>".$oTopic->getTitle()."</a>";
+				$notificationText = $oCommentNew->getText();
 				$notification = Engine::GetEntity(
 					'Notification',
 					array(
@@ -1408,9 +1408,11 @@ class ActionBlog extends Action
 						'group_target_id' => $oCommentNew->getTargetId()
 					)
 				);
-				if ($notificationCreated = $this->Notification_createNotification($notification)) {
-					$this->Nower_PostNotification($notificationCreated);
-				}
+				//TODO: Требуется система подписок, чтобы не создавать копии постов.
+//				if ($notificationCreated = $this->Notification_createNotification($notification)) {
+//					$this->Nower_PostNotification($notificationCreated);
+//				}
+                $this->Nower_PostNotification($notification);
 			}
 
             $this->Hook_Run('comment_add_after', array('oCommentNew' => $oCommentNew, 'oCommentParent' => $oCommentParent, 'oTopic' => $oTopic));

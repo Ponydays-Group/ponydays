@@ -52,7 +52,7 @@ class ModuleCast extends Module
     
     
     public function sendCastNotifyToUser($sTarget,$oTarget,$oParentTarget,$oUser){
-    	    	
+
     	if (!$this->oMapper->castExist($sTarget,$oTarget->getId(),$oUser->getId())){
     		
     		$this->oUserCurrent = $this->User_GetUserCurrent();    		
@@ -63,14 +63,15 @@ class ModuleCast extends Module
 			$oViewerLocal->Assign('oParentTarget', $oParentTarget);
 			$oViewerLocal->Assign('oUserMarked', $oUser);
 
+			$topicLink = "/blog/undefined/".$oTarget->getId();
 			if ($sTarget == "topic") {
-				$notificationLink = "/blog/undefined/".$oTarget->getId();
+				$notificationLink = $topicLink;
 				$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> упомянул вас в посте <a href='".$notificationLink."'>".$oTarget->getTitle()."</a> ";
 				$notificationText = $oTarget->getTitle();
 				$notification = Engine::GetEntity(
 					'Notification',
 					array(
-						'user_id' => $oTarget->getUserId(),
+						'user_id' => $oUser->getId(),
 						'text' => $notificationText,
 						'title' => $notificationTitle,
 						'link' => $notificationLink,
@@ -84,13 +85,13 @@ class ModuleCast extends Module
 					)
 				);
 			} else {
-				$notificationLink = "/blog/undefined/".$oTarget->getTargetId()."#comment".$oTarget->getId();
-				$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> упомянул вас в <a href='".$notificationLink."'>комментарии</a> ".$oParentTarget->getTitle();
+				$notificationLink = $topicLink."#comment".$oTarget->getId();
+				$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> упомянул вас в <a href='".$notificationLink."'>комментарии</a> <a href='".$topicLink."'>".$oParentTarget->getTitle()."</a>";
 				$notificationText = $oTarget->getText();
 				$notification = Engine::GetEntity(
 					'Notification',
 					array(
-						'user_id' => $oTarget->getUserId(),
+						'user_id' => $oUser->getId(),
 						'text' => $notificationText,
 						'title' => $notificationTitle,
 						'link' => $notificationLink,
@@ -107,38 +108,6 @@ class ModuleCast extends Module
 			if ($notificationCreated = $this->Notification_createNotification($notification)) {
 				$this->Nower_PostNotification($notificationCreated);
 			}
-
-			//TODO: Use it optionally
-//			$aAssigin = array(
-//				'oUser' => $this->oUserCurrent,
-//				'oTarget' => $oTarget,
-//				'oParentTarget' => $oParentTarget,
-//				'oUserMarked' => $oUser,
-//			);
-//
-//			$sTemplateName = 'notify.'.$sTarget.'.tpl';
-//
-//			$sLangDir = 'notify/' . $this->Lang_GetLang();
-//			if (is_dir($sLangDir)) {
-//				$sPath = $sLangDir.'/'.$sTemplateName;
-//			} else {
-//				$sPath = 'notify/' . $this->Lang_GetLangDefault() .'/'. $sTemplateName;
-//			}
-//
-//			$sText = $oViewerLocal->Fetch($sPath);
-//
-//			$aTitles = $this->Lang_Get('notify_title');
-//			$sTitle = $aTitles[$sTarget];
-//
-//			$oTalk = $this->Talk_SendTalk($sTitle, $sText, $this->oUserCurrent, array($oUser), false, false);
-//
-//			$this->Notify_Send(
-//				$oUser, $sTemplateName , $sTitle, $aAssigin, 'castuser'
-//			);
-//
-//			$this->Talk_DeleteTalkUserByArray($oTalk->getId(), $this->oUserCurrent->getId());
-//
-//			$this->oMapper->saveExist($sTarget,$oTarget->getId(),$oUser->getId());
     	}
     }    
     

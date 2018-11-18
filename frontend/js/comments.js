@@ -845,6 +845,11 @@ export function init() {
             sock.emit("listenTopic", {id: targetId})
             sock.on("reconnect", () => sock.emit("listenTopic", {id: targetId}))
         }
+        if (targetType == "talk") {
+            sock.emit("listenTalk", {id: targetId})
+            sock.on("reconnect", () => sock.emit("listenTalk", {id: targetId}))
+
+        }
 
         Emitter.on('socket-edit-comment', (data) => updateCommentEdited(data.target_id, data.comment_extra.text))
         Emitter.on('socket-delete-comment', (data) => updateCommentDeleted(data.target_id, 1, data.comment_extra.deleteReason, data.comment_extra.deleteUserLogin))

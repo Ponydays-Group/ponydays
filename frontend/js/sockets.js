@@ -178,7 +178,11 @@ sock.on('notification', function (data) {
         } else if (data.rating * 1 < 0) {
             title += "<span><span class=\"" + options.classes.vote + " " + options.classes.negative + "\"><span class=\"" + options.classes.vote_count + "\">" + data.rating + "</span></span></span>";
         }
-        ls.msg.notice(title, data.text, data.link, false);
+        let text = "";
+        if (data.comment_extra != null && data.group_target_type != 'talk') {
+            text = data.comment_extra.text;
+        }
+        ls.msg.notice(title, text, data.link, false);
 
         if (checkPerm("sound_notice")) {
             nAudio.play();

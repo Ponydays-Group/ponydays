@@ -66,7 +66,7 @@ class ModuleRating extends Module {
 
 		$notificationTitle = "Пользователь <a href='".$oUser->getUserWebPath()."'>".$oUser->getLogin() . "</a>";
 		$rating = $iValue;
-		$notificationLink = "/blog/undefined/".$oComment->getTargetId()."#comment".$oComment->getId();
+		$notificationLink = $this->Topic_GetTopicById($oComment->getTargetId())->getUrl()."#comment".$oComment->getId();
 		if ($iVoteType == 0) {
 			$notificationTitle = $notificationTitle." проголосовал за ваш <a href='".$notificationLink."'>комментарий</a>";
 		} elseif ($iVoteType == 1) {
@@ -76,7 +76,7 @@ class ModuleRating extends Module {
 			$notificationTitle = $notificationTitle." отменил голос за ваш <a href='".$notificationLink."'>комментарий</a>";
 			$rating = 0;
 		}
-		$notificationText = $oComment->getText();
+		$notificationText = "";
 		$notification = Engine::GetEntity(
 			'Notification',
 			array(
@@ -132,7 +132,7 @@ class ModuleRating extends Module {
 		} else {
 			$notificationTitle = $notificationTitle." отменил голос за ваш пост";
 		}
-		$notificationLink = "/blog/undefined/".$oTopic->getId();
+		$notificationLink = $this->Topic_GetTopicById($oTopic->getId())->getUrl();
 		$notificationText = "<a href='".$notificationLink."'>".$oTopic->getTitle()."</a>";
 		$notification = Engine::GetEntity(
 			'Notification',

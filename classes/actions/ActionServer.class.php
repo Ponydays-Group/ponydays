@@ -145,12 +145,12 @@ class ActionServer extends Action
 			return;
 		}
 
-		$oUser = $this->User_GetUserById(getRequest("userId"));
-		$sTalkId = $this->Topic_GetTopicById(getRequest("talkId"));
+		$sUserId = getRequest("userId");
+		$sTalkId = getRequest("talkId");
 		/**
 		 * Пользователь есть в переписке?
 		 */
-		if (!($oTalkUser = $this->Talk_GetTalkUser($sTalkId, $oUser))) {
+		if (!($oTalkUser = $this->Talk_GetTalkUser($sTalkId, $sUserId))) {
 			$this->Viewer_AssignAjax("bAccess", false);
 			return;
 		}

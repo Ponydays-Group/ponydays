@@ -63,11 +63,11 @@ class ModuleCast extends Module
 			$oViewerLocal->Assign('oParentTarget', $oParentTarget);
 			$oViewerLocal->Assign('oUserMarked', $oUser);
 
-			$topicLink = "/blog/undefined/".$oTarget->getId();
+			$topicLink = $this->Topic_GetTopicById($oTarget->getTargetId())->getUrl();
 			if ($sTarget == "topic") {
 				$notificationLink = $topicLink;
 				$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> упомянул вас в посте <a href='".$notificationLink."'>".$oTarget->getTitle()."</a> ";
-				$notificationText = $oTarget->getTitle();
+				$notificationText = "";
 				$notification = Engine::GetEntity(
 					'Notification',
 					array(
@@ -84,10 +84,13 @@ class ModuleCast extends Module
 						'group_target_id' => -1
 					)
 				);
+				if ($notificationCreated = $this->Notification_createNotification($notification)) {
+					$this->Nower_PostNotification($notificationCreated);
+				}
 			} else {
 				$notificationLink = $topicLink."#comment".$oTarget->getId();
 				$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> упомянул вас в <a href='".$notificationLink."'>комментарии</a> <a href='".$topicLink."'>".$oParentTarget->getTitle()."</a>";
-				$notificationText = $oTarget->getText();
+				$notificationText = "";
 				$notification = Engine::GetEntity(
 					'Notification',
 					array(
@@ -104,9 +107,9 @@ class ModuleCast extends Module
 						'group_target_id' => -1
 					)
 				);
-			}
-			if ($notificationCreated = $this->Notification_createNotification($notification)) {
-				$this->Nower_PostNotification($notificationCreated);
+				if ($notificationCreated = $this->Notification_createNotification($notification)) {
+					$this->Nower_PostNotificationWithComment($notificationCreated, $oTarget);
+				}
 			}
     	}
     }    

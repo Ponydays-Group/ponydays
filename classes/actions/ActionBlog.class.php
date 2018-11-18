@@ -1362,10 +1362,10 @@ class ActionBlog extends Action
 			/**
 			 * Отправка уведомления пользователям
 			 */
-			$postLink = "/blog/undefined/".$oCommentNew->getTargetId();
+			$postLink = $this->Topic_GetTopicById($oCommentNew->getTargetId())->getUrl();
 			$notificationLink = $postLink."#comment".$oCommentNew->getId();
 			$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> <a href='".$notificationLink."'>ответил</a> вам в посте <a href='".$postLink."'>".$oTopic->getTitle()."</a>";
-			$notificationText = $oCommentNew->getText();
+			$notificationText = "";
 			if ($oCommentParent && $this->oUserCurrent->getId() != $oCommentParent->getUserId()) {
 				$notification = Engine::GetEntity(
 					'Notification',
@@ -1384,14 +1384,14 @@ class ActionBlog extends Action
 					)
 				);
 				if ($notificationCreated = $this->Notification_createNotification($notification)) {
-					$this->Nower_PostNotification($notificationCreated);
+					$this->Nower_PostNotificationWithComment($notificationCreated, $oCommentNew);
 				}
 			}
 
 			if ($this->oUserCurrent->getId() != $oTopic->getUserId()) {
 				$notificationLink = $postLink . "#comment" . $oCommentNew->getId();
 				$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> оставил <a href='".$notificationLink."'>комментарий</a> в вашем посте <a href='".$postLink."'>".$oTopic->getTitle()."</a>";
-				$notificationText = $oCommentNew->getText();
+				$notificationText = "";
 				$notification = Engine::GetEntity(
 					'Notification',
 					array(
@@ -1410,9 +1410,9 @@ class ActionBlog extends Action
 				);
 				//TODO: Требуется система подписок, чтобы не создавать копии постов.
 //				if ($notificationCreated = $this->Notification_createNotification($notification)) {
-//					$this->Nower_PostNotification($notificationCreated);
+//                    $this->Nower_PostNotificationWithComment($notificationCreated, $oCommentNew);
 //				}
-                $this->Nower_PostNotification($notification);
+                $this->Nower_PostNotificationWithComment($notification, $oCommentNew);
 			}
 
             $this->Hook_Run('comment_add_after', array('oCommentNew' => $oCommentNew, 'oCommentParent' => $oCommentParent, 'oTopic' => $oTopic));

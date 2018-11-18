@@ -2172,7 +2172,7 @@ class ActionAjax extends Action
 				/**
 				 * Отправка уведомления пользователям
 				 */
-				$notificationLink = $this->Topic_GetTopicById($oComment->getTargetId())->getUrl(). "#comment" . $oComment->getId();
+				$notificationLink = "/talk/" . $oComment->getTargetId() . "#comment" . $oComment->getId();
 				$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a>" . " отредактировал ваш <a href='".$notificationLink."'>комментарий</a> в личке " . $oTalk->getTitle();
 				$notificationText = "";
 				$notification = Engine::GetEntity(

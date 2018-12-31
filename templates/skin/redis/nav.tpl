@@ -29,7 +29,7 @@
                             href="{router page='quotes'}">{$aLang.quotes_title}</a></li>
                 <li><a href="https://ponyfiction.org/" target="_blank">Библиотека</a></li>
 
-<li>
+<li id="NYtimer">
 <a href="#">
 {literal}
 <script type="text/javascript">

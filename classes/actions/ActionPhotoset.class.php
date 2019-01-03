@@ -96,7 +96,7 @@ class ActionPhotoset extends Action {
 		/**
 		 * Существует ли топик
 		 */
-		$oTopic = $this->Topic_getTopicById(getRequestStr('topic_id'));
+		$oTopic = $this->Topic_getTopicById((int)getRequestStr('topic_id'));
 		if (!$oTopic || !getRequest('last_id')) {
 			$this->Message_AddError($this->Lang_Get('system_error'), $this->Lang_Get('error'));
 			return false;
@@ -104,7 +104,7 @@ class ActionPhotoset extends Action {
 		/**
 		 * Получаем список фото
 		 */
-		$aPhotos = $oTopic->getPhotosetPhotos(getRequestStr('last_id'), Config::Get('module.topic.photoset.per_page'));
+		$aPhotos = $oTopic->getPhotosetPhotos((int)getRequestStr('last_id'), Config::Get('module.topic.photoset.per_page'));
 		$aResult = array();
 		if (count($aPhotos)) {
 			/**
@@ -136,7 +136,7 @@ class ActionPhotoset extends Action {
 		/**
 		 * Поиск фото по id
 		 */
-		$oPhoto = $this->Topic_getTopicPhotoById(getRequestStr('id'));
+		$oPhoto = $this->Topic_getTopicPhotoById((int)getRequestStr('id'));
 		if ($oPhoto) {
 			if ($oPhoto->getTopicId()) {
 				/**
@@ -187,7 +187,7 @@ class ActionPhotoset extends Action {
 		/**
 		 * Поиск фото по id
 		 */
-		$oPhoto = $this->Topic_getTopicPhotoById(getRequestStr('id'));
+		$oPhoto = $this->Topic_getTopicPhotoById((int)getRequestStr('id'));
 		if ($oPhoto) {
 			if ($oPhoto->getTopicId()) {
 				// проверяем права на топик
@@ -231,7 +231,7 @@ class ActionPhotoset extends Action {
 			return false;
 		}
 
-		$iTopicId = getRequestStr('topic_id');
+		$iTopicId = (int)getRequestStr('topic_id');
 		$sTargetId = null;
 		$iCountPhotos = 0;
 		// Если от сервера не пришёл id топика, то пытаемся определить временный код для нового топика. Если и его нет. то это ошибка
@@ -429,7 +429,7 @@ class ActionPhotoset extends Action {
 		/**
 		 * Заполняем поля для валидации
 		 */
-		$oTopic->setBlogId(getRequestStr('blog_id'));
+		$oTopic->setBlogId((int)getRequestStr('blog_id'));
 		$oTopic->setTitle(strip_tags(getRequestStr('topic_title')));
 		$oTopic->setTextSource(getRequestStr('topic_text'));
 		$oTopic->setTags(getRequestStr('topic_tags'));
@@ -585,7 +585,7 @@ class ActionPhotoset extends Action {
 		/**
 		 * Заполняем поля для валидации
 		 */
-		$oTopic->setBlogId(getRequestStr('blog_id'));
+		$oTopic->setBlogId((int)getRequestStr('blog_id'));
 		$oTopic->setTitle(strip_tags(getRequestStr('topic_title')));
 		$oTopic->setTextSource(getRequestStr('topic_text'));
 		$oTopic->setTags(getRequestStr('topic_tags'));

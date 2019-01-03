@@ -217,7 +217,7 @@ class ActionAjax extends Action
     protected
     function EventGeoGetRegions()
     {
-        $iCountryId = getRequestStr('country');
+        $iCountryId = (int)getRequestStr('country');
         $iLimit = 200;
         if (is_numeric(getRequest('limit')) and getRequest('limit') > 0) {
             $iLimit = getRequest('limit');
@@ -259,7 +259,7 @@ class ActionAjax extends Action
     protected
     function EventGeoGetCities()
     {
-        $iRegionId = getRequestStr('region');
+        $iRegionId = (int)getRequestStr('region');
         $iLimit = 500;
         if (is_numeric(getRequest('limit')) and getRequest('limit') > 0) {
             $iLimit = getRequest('limit');
@@ -313,7 +313,7 @@ class ActionAjax extends Action
         /**
          * Комментарий существует?
          */
-        if (!($oComment = $this->Comment_GetCommentById(getRequestStr('idComment', null, 'post')))) {
+        if (!($oComment = $this->Comment_GetCommentById((int)getRequestStr('idComment', null, 'post')))) {
             $this->Message_AddErrorSingle($this->Lang_Get('comment_vote_error_noexists'), $this->Lang_Get('error'));
             return;
         }
@@ -419,7 +419,7 @@ class ActionAjax extends Action
         /**
          * Топик существует?
          */
-        if (!($oTopic = $this->Topic_GetTopicById(getRequestStr('idTopic', null, 'post')))) {
+        if (!($oTopic = $this->Topic_GetTopicById((int)getRequestStr('idTopic', null, 'post')))) {
             $this->Message_AddErrorSingle($this->Lang_Get('system_error') , $this->Lang_Get('error'));
             return;
         }
@@ -542,7 +542,7 @@ class ActionAjax extends Action
         /**
          * Блог существует?
          */
-        if (!($oBlog = $this->Blog_GetBlogById(getRequestStr('idBlog', null, 'post')))) {
+        if (!($oBlog = $this->Blog_GetBlogById((int)getRequestStr('idBlog', null, 'post')))) {
             $this->Message_AddErrorSingle($this->Lang_Get('system_error') , $this->Lang_Get('error'));
             return;
         }
@@ -639,7 +639,7 @@ class ActionAjax extends Action
         /**
          * Пользователь существует?
          */
-        if (!($oUser = $this->User_GetUserById(getRequestStr('idUser', null, 'post')))) {
+        if (!($oUser = $this->User_GetUserById((int)getRequestStr('idUser', null, 'post')))) {
             $this->Message_AddErrorSingle($this->Lang_Get('system_error') , $this->Lang_Get('error'));
             return;
         }
@@ -738,8 +738,8 @@ class ActionAjax extends Action
         /**
          * Параметры голосования
          */
-        $idAnswer = getRequestStr('idAnswer', null, 'post');
-        $idTopic = getRequestStr('idTopic', null, 'post');
+        $idAnswer = (int)getRequestStr('idAnswer', null, 'post');
+        $idTopic = (int)getRequestStr('idTopic', null, 'post');
         /**
          * Топик существует?
          */
@@ -818,7 +818,7 @@ class ActionAjax extends Action
         /**
          * Объект уже должен быть в избранном
          */
-        if ($oFavourite = $this->Favourite_GetFavourite(getRequestStr('target_id') , getRequestStr('target_type') , $this->oUserCurrent->getId())) {
+        if ($oFavourite = $this->Favourite_GetFavourite((int)getRequestStr('target_id') , getRequestStr('target_type') , $this->oUserCurrent->getId())) {
             /**
              * Обрабатываем теги
              */
@@ -884,7 +884,7 @@ class ActionAjax extends Action
         /**
          * Топик существует?
          */
-        if (!($oTopic = $this->Topic_GetTopicById(getRequestStr('idTopic', null, 'post')))) {
+        if (!($oTopic = $this->Topic_GetTopicById((int)getRequestStr('idTopic', null, 'post')))) {
             $this->Message_AddErrorSingle($this->Lang_Get('system_error') , $this->Lang_Get('error'));
             return;
         }
@@ -974,7 +974,7 @@ class ActionAjax extends Action
         /**
          * Комментарий существует?
          */
-        if (!($oComment = $this->Comment_GetCommentById(getRequestStr('idComment', null, 'post')))) {
+        if (!($oComment = $this->Comment_GetCommentById((int)getRequestStr('idComment', null, 'post')))) {
             $this->Message_AddErrorSingle($this->Lang_Get('system_error') , $this->Lang_Get('error'));
             return;
         }
@@ -1064,7 +1064,7 @@ class ActionAjax extends Action
         /**
          *	Сообщение существует?
          */
-        if (!($oTalk = $this->Talk_GetTalkById(getRequestStr('idTalk', null, 'post')))) {
+        if (!($oTalk = $this->Talk_GetTalkById((int)getRequestStr('idTalk', null, 'post')))) {
             $this->Message_AddErrorSingle($this->Lang_Get('system_error') , $this->Lang_Get('error'));
             return;
         }
@@ -1527,7 +1527,7 @@ class ActionAjax extends Action
         /**
          * Комментарий существует?
          */
-        $idComment = getRequestStr('idComment', null, 'post');
+        $idComment = (int)getRequestStr('idComment', null, 'post');
         $sDeleteReason = getRequestStr('sDeleteReason', null, 'post');
         if (!($oComment = $this->Comment_GetCommentById($idComment))) {
             $this->Message_AddErrorSingle($this->Lang_Get('system_error') , $this->Lang_Get('error'));
@@ -1666,7 +1666,7 @@ class ActionAjax extends Action
         /**
          * Топик существует?
          */
-        if (!($oTopic = $this->Topic_GetTopicById(getRequestStr('idTopic', null, 'post')))) {
+        if (!($oTopic = $this->Topic_GetTopicById((int)getRequestStr('idTopic', null, 'post')))) {
             $this->Message_AddErrorSingle($this->Lang_Get('system_error') , $this->Lang_Get('error'));
             return;
         }
@@ -2203,7 +2203,7 @@ class ActionAjax extends Action
     }
 
     protected function EventGetComment() {
-    	$idComment=getRequestStr('idComment', null, 'post');
+    	$idComment=(int)getRequestStr('idComment', null, 'post');
 		if(!($oComment=$this->Comment_GetCommentById($idComment))) {
 			$this->Message_AddErrorSingle($this->Lang_Get('system_error') , $this->Lang_Get('error'));
 			return;

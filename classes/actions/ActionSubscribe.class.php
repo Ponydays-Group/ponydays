@@ -104,7 +104,7 @@ class ActionSubscribe extends Action {
 			$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
 			return ;
 		}
-		$sTargetId=getRequestStr('target_id') ? (int)getRequestStr('target_id') : null;
+		$sTargetId=getRequestStr('target_id') ? getRequestStr('target_id') : null;
 		$iValue=getRequest('value') ? 1 : 0;
 
 		$oSubscribe=null;

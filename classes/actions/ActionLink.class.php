@@ -219,7 +219,7 @@ class ActionLink extends Action {
 		/**
 		 * Заполняем поля для валидации
 		 */
-		$oTopic->setBlogId((int)getRequestStr('blog_id'));
+		$oTopic->setBlogId(getRequestStr('blog_id'));
 		$oTopic->setTitle(strip_tags(getRequestStr('topic_title')));
 		$oTopic->setTextSource(getRequestStr('topic_text'));
 		$oTopic->setTags(getRequestStr('topic_tags'));
@@ -347,7 +347,7 @@ class ActionLink extends Action {
 		/**
 		 * Заполняем поля для валидации
 		 */
-		$oTopic->setBlogId((int)getRequestStr('blog_id'));
+		$oTopic->setBlogId(getRequestStr('blog_id'));
 		$oTopic->setTitle(strip_tags(getRequestStr('topic_title')));
 		$oTopic->setLinkUrl(getRequestStr('topic_link_url'));
 		$oTopic->setTextSource(getRequestStr('topic_text'));

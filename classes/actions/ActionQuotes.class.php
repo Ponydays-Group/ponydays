@@ -136,7 +136,7 @@ class ActionQuotes extends Action {
 			case 'delete':
 				$this->Viewer_SetResponseAjax('json');
 
-				if ($this->Quotes_deleteQuote((int)getRequestStr('id'))) {
+				if ($this->Quotes_deleteQuote(getRequestStr('id'))) {
 					$this->Message_AddNotice($this->Lang_Get('quotes_deleted'), $this->Lang_Get('attention'));
 					return true;
 				}
@@ -148,7 +148,7 @@ class ActionQuotes extends Action {
 			case 'update':
 				$this->Viewer_SetResponseAjax('json');
 
-				if ($this->Quotes_updateQuote((int)getRequestStr('id'), getRequestStr('data'))) {
+				if ($this->Quotes_updateQuote(getRequestStr('id'), getRequestStr('data'))) {
 					$this->Message_AddNotice($this->Lang_Get('quotes_updated'), $this->Lang_Get('attention'));
 					return true;
 				}
@@ -160,7 +160,7 @@ class ActionQuotes extends Action {
 			case 'restore':
 				$this->Viewer_SetResponseAjax('json');
 
-				if ($this->Quotes_restoreQuote((int)getRequestStr('id'))) {
+				if ($this->Quotes_restoreQuote(getRequestStr('id'))) {
 					$this->Message_AddNotice($this->Lang_Get('quotes_added'), $this->Lang_Get('attention'));
 					return true;
 				}

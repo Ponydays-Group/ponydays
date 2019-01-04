@@ -558,11 +558,11 @@ class ActionSettings extends Action {
 			 * Определяем гео-объект
 			 */
 			if (getRequest('geo_city')) {
-				$oGeoObject=$this->Geo_GetGeoObject('city',(int)getRequestStr('geo_city'));
+				$oGeoObject=$this->Geo_GetGeoObject('city',getRequestStr('geo_city'));
 			} elseif (getRequest('geo_region')) {
-				$oGeoObject=$this->Geo_GetGeoObject('region',(int)getRequestStr('geo_region'));
+				$oGeoObject=$this->Geo_GetGeoObject('region',getRequestStr('geo_region'));
 			} elseif (getRequest('geo_country')) {
-				$oGeoObject=$this->Geo_GetGeoObject('country',(int)getRequestStr('geo_country'));
+				$oGeoObject=$this->Geo_GetGeoObject('country',getRequestStr('geo_country'));
 			} else {
 				$oGeoObject=null;
 			}
@@ -586,7 +586,7 @@ class ActionSettings extends Action {
 			 * Проверяем дату рождения
 			 */
 			if (func_check(getRequestStr('profile_birthday_day'),'id',1,2) and func_check(getRequestStr('profile_birthday_month'),'id',1,2) and func_check(getRequestStr('profile_birthday_year'),'id',4,4)) {
-				$this->oUserCurrent->setProfileBirthday(date("Y-m-d H:i:s",mktime(0,0,0,(int)getRequestStr('profile_birthday_month'),(int)getRequestStr('profile_birthday_day'),(int)getRequestStr('profile_birthday_year'))));
+				$this->oUserCurrent->setProfileBirthday(date("Y-m-d H:i:s",mktime(0,0,0,getRequestStr('profile_birthday_month'),getRequestStr('profile_birthday_day'),getRequestStr('profile_birthday_year'))));
 			} else {
 				$this->oUserCurrent->setProfileBirthday(null);
 			}

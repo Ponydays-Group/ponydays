@@ -94,7 +94,7 @@ class ActionUserfeed extends Action {
 		/**
 		 * Проверяем последний просмотренный ID топика
 		 */
-		$iFromId = (int)getRequestStr('last_id');
+		$iFromId = getRequestStr('last_id');
 		if (!$iFromId)  {
 			$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
 			return;
@@ -145,11 +145,11 @@ class ActionUserfeed extends Action {
 				/**
 				 * Проверяем существование блога
 				 */
-				if (!$this->Blog_GetBlogById((int)getRequestStr('id'))) {
+				if (!$this->Blog_GetBlogById(getRequestStr('id'))) {
 					$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
 					return;
 				}
-				if(!in_array($this->Blog_GetBlogById((int)getRequestStr('id'))->getId(), $this->Blog_GetAccessibleBlogsByUser($this->User_GetUserCurrent())) and in_array($this->Blog_GetBlogById((int)getRequestStr('id'))->getType(), array("close", "invite"))){
+				if(!in_array($this->Blog_GetBlogById(getRequestStr('id'))->getId(), $this->Blog_GetAccessibleBlogsByUser($this->User_GetUserCurrent())) and in_array($this->Blog_GetBlogById(getRequestStr('id'))->getType(), array("close", "invite"))){
 					$this->Message_AddNotice("У вас нет разрешения подписываться на этот блог", "Ошибка");
 					return;
 				}
@@ -161,7 +161,7 @@ class ActionUserfeed extends Action {
 		/**
 		 * Подписываем
 		 */
-		$this->Userfeed_subscribeUser($this->oUserCurrent->getId(), $iType, (int)getRequestStr('id'));
+		$this->Userfeed_subscribeUser($this->oUserCurrent->getId(), $iType, getRequestStr('id'));
 		$this->Message_AddNotice($this->Lang_Get('userfeed_subscribes_updated'), "Внимание");
 	}
 	/**
@@ -238,7 +238,7 @@ class ActionUserfeed extends Action {
 		/**
 		 * Отписываем пользователя
 		 */
-		$this->Userfeed_unsubscribeUser($this->oUserCurrent->getId(), $iType, (int)getRequestStr('id'));
+		$this->Userfeed_unsubscribeUser($this->oUserCurrent->getId(), $iType, getRequestStr('id'));
 		$this->Message_AddNotice($this->Lang_Get('userfeed_subscribes_updated'), $this->Lang_Get('attention'));
 	}
 	/**

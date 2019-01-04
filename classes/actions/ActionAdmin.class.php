@@ -290,7 +290,6 @@ class ActionAdmin extends Action {
 	 */
 	protected function EventUserFields()
 	{
-		$iFieldId = (int)getRequestStr('id');
 		switch(getRequestStr('action')) {
 			/**
 			 * Создание нового поля
@@ -334,11 +333,11 @@ class ActionAdmin extends Action {
 				 * Обрабатываем как ajax запрос (json)
 				 */
 				$this->Viewer_SetResponseAjax('json');
-				if (!$iFieldId) {
+				if (!getRequestStr('id')) {
 					$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
 					return;
 				}
-				$this->User_deleteUserField($iFieldId);
+				$this->User_deleteUserField(getRequestStr('id'));
 				$this->Message_AddNotice($this->Lang_Get('user_field_deleted'),$this->Lang_Get('attention'));
 				break;
 			/**
@@ -349,11 +348,11 @@ class ActionAdmin extends Action {
 				 * Обрабатываем как ajax запрос (json)
 				 */
 				$this->Viewer_SetResponseAjax('json');
-				if (!$iFieldId) {
+				if (!getRequestStr('id')) {
 					$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
 					return;
 				}
-				if (!$this->User_userFieldExistsById($iFieldId)) {
+				if (!$this->User_userFieldExistsById(getRequestStr('id'))) {
 					$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
 					return false;
 				}
@@ -361,7 +360,7 @@ class ActionAdmin extends Action {
 					return;
 				}
 				$oField = Engine::GetEntity('User_Field');
-				$oField->setId($iFieldId);
+				$oField->setId(getRequestStr('id'));
 				$oField->setName(getRequestStr('name'));
 				$oField->setTitle(getRequestStr('title'));
 				$oField->setPattern(getRequestStr('pattern'));
@@ -411,7 +410,7 @@ class ActionAdmin extends Action {
 		/**
 		 * Не допускаем дубликатов по имени
 		 */
-		if ($this->User_userFieldExistsByName(getRequestStr('name'), (int)getRequestStr('id'))) {
+		if ($this->User_userFieldExistsByName(getRequestStr('name'), getRequestStr('id'))) {
 			$this->Message_AddError($this->Lang_Get('user_field_error_name_exists'),$this->Lang_Get('error'));
 			return false;
 		}

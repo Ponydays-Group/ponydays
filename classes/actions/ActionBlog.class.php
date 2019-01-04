@@ -1241,7 +1241,7 @@ class ActionBlog extends Action
         /**
          * Проверяем топик
          */
-        if (!($oTopic = $this->Topic_GetTopicById((int)getRequestStr('cmt_target_id')))) {
+        if (!($oTopic = $this->Topic_GetTopicById(getRequestStr('cmt_target_id')))) {
             $this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
             return;
         }
@@ -1487,7 +1487,7 @@ class ActionBlog extends Action
         /**
          * Топик существует?
          */
-        $idTopic = (int)getRequestStr('idTarget', null, 'post');
+        $idTopic = getRequestStr('idTarget', null, 'post');
         if (!($oTopic = $this->Topic_GetTopicById($idTopic))) {
             $this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
             return;
@@ -1506,8 +1506,8 @@ class ActionBlog extends Action
             }
         }
 
-        $idCommentLast = (int)getRequestStr('idCommentLast', null, 'post');
-        $selfIdComment = (int)getRequestStr('selfIdComment', null, 'post');
+        $idCommentLast = getRequestStr('idCommentLast', null, 'post');
+        $selfIdComment = getRequestStr('selfIdComment', null, 'post');
         $aComments = array();
         /**
          * Если используется постраничность, возвращаем только добавленный комментарий
@@ -1590,7 +1590,7 @@ class ActionBlog extends Action
          */
         $this->Viewer_SetResponseAjax('json');
         $sUsers = getRequest('users', null, 'post');
-        $sBlogId = (int)getRequestStr('idBlog', null, 'post');
+        $sBlogId = getRequestStr('idBlog', null, 'post');
         /**
          * Если пользователь не авторизирован, возвращаем ошибку
          */
@@ -1738,8 +1738,8 @@ class ActionBlog extends Action
          * Устанавливаем формат Ajax ответа
          */
         $this->Viewer_SetResponseAjax('json');
-        $sUserId = (int)getRequestStr('idUser', null, 'post');
-        $sBlogId = (int)getRequestStr('idBlog', null, 'post');
+        $sUserId = getRequestStr('idUser', null, 'post');
+        $sBlogId = getRequestStr('idBlog', null, 'post');
         /**
          * Если пользователь не авторизирован, возвращаем ошибку
          */
@@ -1790,8 +1790,8 @@ class ActionBlog extends Action
          * Устанавливаем формат Ajax ответа
          */
         $this->Viewer_SetResponseAjax('json');
-        $sUserId = (int)getRequestStr('idUser', null, 'post');
-        $sBlogId = (int)getRequestStr('idBlog', null, 'post');
+        $sUserId = getRequestStr('idUser', null, 'post');
+        $sBlogId = getRequestStr('idBlog', null, 'post');
         /**
          * Если пользователь не авторизирован, возвращаем ошибку
          */
@@ -2020,7 +2020,7 @@ class ActionBlog extends Action
                  *
                  * (-1) - выбран пункт меню "удалить топики".
                  */
-                if ($sBlogIdNew = ((int)getRequestStr('topic_move_to')) and ($sBlogIdNew != -1) and is_array($aTopics) and count($aTopics)) {
+                if ($sBlogIdNew = getRequestStr('topic_move_to') and ($sBlogIdNew != -1) and is_array($aTopics) and count($aTopics)) {
                     if (!$oBlogNew = $this->Blog_GetBlogById($sBlogIdNew)) {
                         $this->Message_AddErrorSingle($this->Lang_Get('blog_admin_delete_move_error'), $this->Lang_Get('error'), true);
                         Router::Location($oBlog->getUrlFull());
@@ -2167,7 +2167,7 @@ class ActionBlog extends Action
          * Устанавливаем формат Ajax ответа
          */
         $this->Viewer_SetResponseAjax('json');
-        $sBlogId = (int)getRequestStr('idBlog', null, 'post');
+        $sBlogId = getRequestStr('idBlog', null, 'post');
         /**
          * Определяем тип блога и получаем его
          */
@@ -2207,7 +2207,7 @@ class ActionBlog extends Action
         /**
          * Блог существует?
          */
-        $idBlog = (int)getRequestStr('idBlog', null, 'post');
+        $idBlog = getRequestStr('idBlog', null, 'post');
         if (!($oBlog = $this->Blog_GetBlogById($idBlog))) {
             $this->Message_AddErrorSingle($this->Lang_Get('system_error'), $this->Lang_Get('error'));
             return;

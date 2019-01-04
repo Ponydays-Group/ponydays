@@ -196,7 +196,7 @@ class ActionQuestion extends Action {
 		/**
 		 * Заполняем поля для валидации
 		 */
-		$oTopic->setBlogId((int)getRequestStr('blog_id'));
+		$oTopic->setBlogId(getRequestStr('blog_id'));
 		$oTopic->setTitle(strip_tags(getRequestStr('topic_title')));
 		$oTopic->setTextSource(getRequestStr('topic_text'));
 		$oTopic->setTags(getRequestStr('topic_tags'));
@@ -330,7 +330,7 @@ class ActionQuestion extends Action {
 		/**
 		 * Заполняем поля для валидации
 		 */
-		$oTopic->setBlogId((int)getRequestStr('blog_id'));
+		$oTopic->setBlogId(getRequestStr('blog_id'));
 		if ($oTopic->getQuestionCountVote()==0) {
 			$oTopic->setTitle(strip_tags(getRequestStr('topic_title')));
 		}

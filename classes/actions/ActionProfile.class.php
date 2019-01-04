@@ -412,7 +412,7 @@ class ActionProfile extends Action {
 		$oWall->setWallUserId($this->oUserProfile->getId());
 		$oWall->setUserId($this->oUserCurrent->getId());
 		$oWall->setText(getRequestStr('sText'));
-		$oWall->setPid((int)getRequestStr('iPid'));
+		$oWall->setPid(getRequestStr('iPid'));
 
 		$this->Hook_Run('wall_add_validate_before', array('oWall'=>$oWall));
 		if ($oWall->_Validate()) {
@@ -463,7 +463,7 @@ class ActionProfile extends Action {
 		/**
 		 * Получаем запись
 		 */
-		if (!($oWall=$this->Wall_GetWallById((int)getRequestStr('iId')))) {
+		if (!($oWall=$this->Wall_GetWallById(getRequestStr('iId')))) {
 			return parent::EventNotFound();
 		}
 		/**
@@ -522,7 +522,7 @@ class ActionProfile extends Action {
 		if (!$this->CheckUserProfile()) {
 			return parent::EventNotFound();
 		}
-		if (!($oWall=$this->Wall_GetWallById((int)getRequestStr('iPid'))) or $oWall->getPid()) {
+		if (!($oWall=$this->Wall_GetWallById(getRequestStr('iPid'))) or $oWall->getPid()) {
 			return parent::EventNotFound();
 		}
 		/**
@@ -568,7 +568,7 @@ class ActionProfile extends Action {
 		 * Создаем заметку и проводим валидацию
 		 */
 		$oNote=Engine::GetEntity('ModuleUser_EntityNote');
-		$oNote->setTargetUserId((int)getRequestStr('iUserId'));
+		$oNote->setTargetUserId(getRequestStr('iUserId'));
 		$oNote->setUserId($this->oUserCurrent->getId());
 		$oNote->setText(getRequestStr('text'));
 
@@ -598,7 +598,7 @@ class ActionProfile extends Action {
 			return parent::EventNotFound();
 		}
 
-		if (!($oUserTarget=$this->User_GetUserById((int)getRequestStr('iUserId')))) {
+		if (!($oUserTarget=$this->User_GetUserById(getRequestStr('iUserId')))) {
 			return parent::EventNotFound();
 		}
 		if (!($oNote=$this->User_GetUserNote($oUserTarget->getId(),$this->oUserCurrent->getId()))) {
@@ -733,7 +733,7 @@ class ActionProfile extends Action {
 		 * Устанавливаем формат Ajax ответа
 		 */
 		$this->Viewer_SetResponseAjax('json');
-		$sUserId=(int)getRequestStr('idUser',null,'post');
+		$sUserId=getRequestStr('idUser',null,'post');
 		/**
 		 * Если пользователь не авторизирован, возвращаем ошибку
 		 */
@@ -853,7 +853,7 @@ class ActionProfile extends Action {
 		 * Устанавливаем формат Ajax ответа
 		 */
 		$this->Viewer_SetResponseAjax('json');
-		$sUserId=(int)getRequestStr('idUser');
+		$sUserId=getRequestStr('idUser');
 		$sUserText=getRequestStr('userText','');
 		/**
 		 * Если пользователь не авторизирован, возвращаем ошибку
@@ -1077,7 +1077,7 @@ class ActionProfile extends Action {
 		 * Устанавливаем формат Ajax ответа
 		 */
 		$this->Viewer_SetResponseAjax('json');
-		$sUserId=(int)getRequestStr('idUser',null,'post');
+		$sUserId=getRequestStr('idUser',null,'post');
 		/**
 		 * Если пользователь не авторизирован, возвращаем ошибку
 		 */

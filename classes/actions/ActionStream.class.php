@@ -157,7 +157,7 @@ class ActionStream extends Action {
 		/**
 		 * Необходимо передать последний просмотренный ID событий
 		 */
-		$iFromId = (int)getRequestStr('last_id');
+		$iFromId = getRequestStr('last_id');
 		if (!$iFromId)  {
 			$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
 			return;
@@ -198,7 +198,7 @@ class ActionStream extends Action {
 		/**
 		 * Необходимо передать последний просмотренный ID событий
 		 */
-		$iFromId = (int)getRequestStr('last_id');
+		$iFromId = getRequestStr('last_id');
 		if (!$iFromId)  {
 			$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
 			return;
@@ -239,12 +239,12 @@ class ActionStream extends Action {
 		/**
 		 * Необходимо передать последний просмотренный ID событий
 		 */
-		$iFromId = (int)getRequestStr('last_id');
+		$iFromId = getRequestStr('last_id');
 		if (!$iFromId)  {
 			$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
 			return;
 		}
-		if (!($oUser=$this->User_GetUserById((int)getRequestStr('user_id')))) {
+		if (!($oUser=$this->User_GetUserById(getRequestStr('user_id')))) {
 			$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
 			return;
 		}
@@ -284,17 +284,17 @@ class ActionStream extends Action {
 		/**
 		 * Проверяем существование пользователя
 		 */
-		if (!$this->User_getUserById((int)getRequestStr('id'))) {
+		if (!$this->User_getUserById(getRequestStr('id'))) {
 			$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
 		}
-		if ($this->oUserCurrent->getId() == (int)getRequestStr('id')) {
+		if ($this->oUserCurrent->getId() == getRequestStr('id')) {
 			$this->Message_AddError($this->Lang_Get('stream_error_subscribe_to_yourself'),$this->Lang_Get('error'));
 			return;
 		}
 		/**
 		 * Подписываем на пользователя
 		 */
-		$this->Stream_subscribeUser($this->oUserCurrent->getId(), (int)getRequestStr('id'));
+		$this->Stream_subscribeUser($this->oUserCurrent->getId(), getRequestStr('id'));
 		$this->Message_AddNotice($this->Lang_Get('stream_subscribes_updated'), $this->Lang_Get('attention'));
 	}
 	/**
@@ -356,13 +356,13 @@ class ActionStream extends Action {
 		/**
 		 * Пользователь с таким ID существует?
 		 */
-		if (!$this->User_getUserById((int)getRequestStr('id'))) {
+		if (!$this->User_getUserById(getRequestStr('id'))) {
 			$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
 		}
 		/**
 		 * Отписываем
 		 */
-		$this->Stream_unsubscribeUser($this->oUserCurrent->getId(), (int)getRequestStr('id'));
+		$this->Stream_unsubscribeUser($this->oUserCurrent->getId(), getRequestStr('id'));
 		$this->Message_AddNotice($this->Lang_Get('stream_subscribes_updated'), $this->Lang_Get('attention'));
 	}
 	/**

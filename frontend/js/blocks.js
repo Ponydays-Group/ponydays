@@ -159,7 +159,9 @@ export function init(block, params) {
             $(this).removeClass('fa-spin');
         }.bind(this), 600);
     });
+}
 
+export function initQuotes() {
     $('.js-block-quote-update').click(function () {
         $(this).addClass('fa-spin');
         loadRandomQuote()

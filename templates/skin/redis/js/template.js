@@ -154,6 +154,7 @@ jQuery(document).ready(function($){
 	// инизиализация блоков
 	ls.blocks.init('stream',{group_items: true, group_min: 3});
 	ls.blocks.init('blogs');
+	ls.blocks.initQuotes();
 	ls.blocks.initSwitch('tags');
 	ls.blocks.initSwitch('upload-img');
 	ls.blocks.initSwitch('favourite-topic-tags');

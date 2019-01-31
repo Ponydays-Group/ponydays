@@ -324,6 +324,7 @@ export default function init() {
             group_min: 3
         });
         Blocks.init('blogs');
+        Blocks.initQuotes();
         Blocks.initSwitch('tags');
         Blocks.initSwitch('upload-img');
         Blocks.initSwitch('favourite-topic-tags');

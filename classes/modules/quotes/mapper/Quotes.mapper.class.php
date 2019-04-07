@@ -163,10 +163,12 @@ class ModuleQuotes_MapperQuotes extends Mapper {
 	/**
 	 * Возвращает количества элементов в таблице
 	 *
+	 * @param bool $bDeleted
 	 * @return int
 	 */
-	public function GetCount () : int {
-		$sql = "SELECT COUNT(*) FROM " . Config::Get('db.table.quotes') . " WHERE deleted = 0";
+	public function GetCount (bool $bDeleted = false) : int {
+		$val = ($bDeleted) ? '1' : '0';
+		$sql = "SELECT COUNT(*) FROM " . Config::Get('db.table.quotes') . " WHERE deleted = $val";
 
 		return (int)($this->oDb->query($sql))[0]['COUNT(*)'];
 	}

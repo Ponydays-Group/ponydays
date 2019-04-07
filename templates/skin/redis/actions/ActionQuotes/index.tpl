@@ -44,7 +44,7 @@
     {*<div style="float: right;">*}
     {*{include file='paging.tpl' aPaging=$aPaging}*}
     {*</div>*}
-    <div class="table-wrapper">
+    <div class="table-wrapper" style="overflow-x: unset;">
         <table class="table table-hover">
             <thead>
             <tr>
@@ -57,32 +57,7 @@
 
             <tbody id="quotes_list">
             {foreach from=$aQuotes key=iKey item=sData}
-                <tr id="field_{$iKey}" class="quote_element">
-                    <td class="quotes_data">{$sData}</td>
-                    <td>
-                        <div class="quotes-actions">
-                            {if $bIsAdmin}
-                                <span style="float: left">
-                        <a href="#" onclick="ls.quotes.showEditForm({$iKey}); return false;"
-                           title="{$aLang.quotes_update}"><i class="fa fa-pencil" style="float:left;"
-                                                             aria-hidden="true"></i></a>
-                        &nbsp;
-                        <a href="/quotes/{$iKey}"
-                           onclick="prompt('{$aLang.quotes_link}', '{cfg name='path.root.web'}/quotes/{$iKey}'); return false;"
-                           title="{$aLang.quotes_link}"><i class="fa fa-hashtag" aria-hidden="true"></i></a>
-                    </span>
-                                <a href="#" onclick="ls.quotes.deleteQuotes({$iKey}); return false;"
-                                   title="{$aLang.quotes_delete}"><i class="fa fa-trash" style="float:right;"
-                                                                     aria-hidden="true"></i></a>
-                            {else}
-                                <a href="/quotes/{$iKey}"
-                                   onclick="prompt('{$aLang.quotes_link}', '{cfg name='path.root.web'}/quotes/{$iKey}'); return false;"
-                                   title="{$aLang.quotes_link}"><i class="fa fa-hashtag" style="float:right;"
-                                                                   aria-hidden="true"></i></a>
-                            {/if}
-                        </div>
-                    </td>
-                </tr>
+                {include file='quote.tpl' bDelete=true bEdit=true bHash=true}
             {/foreach}
             </tbody>
         </table>

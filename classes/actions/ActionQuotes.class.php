@@ -197,6 +197,7 @@ class ActionQuotes extends Action {
 			return Router::Action('error');
 		}
 
+		$iCountQuotes = $this->Quotes_GetCount(true);
 
 		$this->Lang_AddLangJs(array ('quotes_add', 'quotes_restore'));
 
@@ -205,6 +206,7 @@ class ActionQuotes extends Action {
 
 		// Передаем в шаблон цитатки
 		$this->Viewer_Assign('aQuotes', $this->Quotes_getDeletedQuotes());
+		$this->Viewer_Assign('iCountQuotes', $iCountQuotes);
 		$this->Viewer_AddHtmlTitle($this->Lang_Get('quotes_trash'));
 		$this->SetTemplateAction('trash');
 

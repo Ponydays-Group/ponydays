@@ -176,9 +176,8 @@ class ModuleQuotes extends Module {
 	 *
 	 * @return int
 	 */
-	public function GetCount (): int {
-		return $this->oMapper->GetCount();
+	public function GetCount (bool $bDeleted = false): int {
+		return $this->oMapper->GetCount($bDeleted);
 	}
-
 
 }

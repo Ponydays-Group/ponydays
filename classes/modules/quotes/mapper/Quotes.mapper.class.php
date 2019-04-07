@@ -152,7 +152,7 @@ class ModuleQuotes_MapperQuotes extends Mapper {
 	}
 
 	public function GetRandom() {
-        $sql = "SELECT * FROM " . Config::Get('db.table.quotes') . " ORDER BY RAND() LIMIT 1;";
+        $sql = "SELECT * FROM " . Config::Get('db.table.quotes') . " WHERE deleted = 0 ORDER BY RAND() LIMIT 1;";
         if ($aRows = $this->oDb->query($sql)) {
             return $aRows[0];
         }

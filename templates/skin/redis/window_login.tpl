@@ -107,9 +107,11 @@
 					<i class="icon-ok-green validate-ok-field-password_confirm" style="display: none"></i>
 					<small class="validate-error-hide validate-error-field-password_confirm"></small></p>
 
+					{if $oConfig->GetValue('reCaptcaha.enabled')}
 					{hookb run="popup_registration_captcha"}
 						<div class="g-recaptcha" data-sitekey="{cfg name="reCaptcha.key"}"></div>
 					{/hookb}
+					{/if}
 
 					{hook run='form_registration_end' isPopup=true}
 

@@ -588,9 +588,9 @@ button#comment-button-history {
 }
 
 .dice_icon {
-    background: url(/dice.svg);
+    background: url(images/dice.svg);
     @if $text-color == white {
-        background: url(/dice_white.svg);
+        background: url(images/dice_white.svg);
     }
     width: 12px;
     background-size: cover;

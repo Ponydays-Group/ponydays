@@ -1,4 +1,5 @@
 import $ from 'jquery'
+import './jquery/jquery.notifier'
 
 /**
  * Управление всплывающими сообщениями

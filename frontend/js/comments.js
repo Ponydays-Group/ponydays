@@ -1,4 +1,6 @@
 import $ from "jquery"
+import 'jquery.hotkeys/jquery.hotkeys'
+import './jquery/jquery.serialize'
 
 import * as Registry from "./registry"
 import * as Blocks from "./blocks"

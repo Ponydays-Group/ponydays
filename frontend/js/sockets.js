@@ -1,3 +1,4 @@
+import "@babel/polyfill/noConflict";
 import {options} from "./vote"
 
 function getCookie(name) {

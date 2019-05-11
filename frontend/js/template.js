@@ -9,6 +9,10 @@ import * as Hook from './hook'
 import Emitter from './emitter'
 import hljs from 'highlightjs'
 
+import './jquery/jquery.jqmodal'
+import './jquery/jquery-ui'
+import './jquery/jquery.poshytip'
+
 function showFloatBlock($) {
 
     if (!$('.block-type-stream').length) {

@@ -146,24 +146,26 @@ class ActionRegistration extends Action {
 		 * Устанавливаем формат Ajax ответа
 		 */
 		$this->Viewer_SetResponseAjax('json');
-        $sCaptchaResponse = getRequest('g-recaptcha-response');
+		if(Config::Get('reCaptcha.enabled')) {
+			$sCaptchaResponse = getRequest('g-recaptcha-response');
 
-        $myCurl = curl_init();
-        curl_setopt_array($myCurl, array(
-            CURLOPT_URL => 'https://www.google.com/recaptcha/api/siteverify',
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_POST => true,
-            CURLOPT_POSTFIELDS => http_build_query(array(
-                "secret" => Config::Get('reCaptcha.secret'),
-                "response" => $sCaptchaResponse
-            ))
-        ));
-        $captchaData = json_decode(curl_exec($myCurl));
-        curl_close($myCurl);
+			$myCurl = curl_init();
+			curl_setopt_array($myCurl, array(
+				CURLOPT_URL => 'https://www.google.com/recaptcha/api/siteverify',
+				CURLOPT_RETURNTRANSFER => true,
+				CURLOPT_POST => true,
+				CURLOPT_POSTFIELDS => http_build_query(array(
+					"secret" => Config::Get('reCaptcha.secret'),
+					"response" => $sCaptchaResponse
+				))
+			));
+			$captchaData = json_decode(curl_exec($myCurl));
+			curl_close($myCurl);
 
-        if (!$captchaData->success) {
-            $this->Message_AddErrorSingle($this->Lang_Get('system_error'));
-            return;
+			if (!$captchaData->success) {
+				$this->Message_AddErrorSingle($this->Lang_Get('system_error'));
+				return;
+			}
 		}
 		/**
 		 * Создаем объект пользователя и устанавливаем сценарий валидации

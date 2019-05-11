@@ -69,7 +69,7 @@
         {*{/literal}*}
     {*</section>*}
     <div id=change_theme_wrapper">
-        <img src="/dark-to-day.png" class="switch-theme" onclick="switchTheme()" id="change_theme">
+        <img src="{cfg name='path.static.skin'}/images/dark-to-day.png" class="switch-theme" onclick="switchTheme()" id="change_theme">
     </div>
 </footer>
 
@@ -83,7 +83,8 @@
 
 {hook run='body_end'}
 
-<script src="/static/{cfg name="frontend.version"}/sockets.bundle.js"></script>
+<script src="/static/relevant/{cfg name="frontend.webpack.vendor~sockets.js"}"></script>
+<script src="/static/relevant/{cfg name="frontend.webpack.sockets.js"}"></script>
 
 </body>
 </html>

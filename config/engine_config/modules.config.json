@@ -155,8 +155,8 @@
             "disable_vote_events": false
         },
         "ls": {
-            "send_general": true,
-            "use_counter": true
+            "send_general": false,
+            "use_counter": false
         },
         "wall": {
             "count_last_reply": 3,

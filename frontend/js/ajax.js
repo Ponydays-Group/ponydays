@@ -1,5 +1,6 @@
 ﻿import * as Msg from './msg'
 import $ from 'jquery'
+import './jquery/jquery.form'
 import * as Tools from './tools'
 import Emitter from './emitter'
 

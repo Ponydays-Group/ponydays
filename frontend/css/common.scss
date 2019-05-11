@@ -44,7 +44,6 @@
   display: inline-block;
   cursor: pointer;
   vertical-align: text-top;
-  background: url(images/icons.png) no-repeat;
   opacity: .5;
   filter: alpha(opacity=50);
   transition: opacity .3s;
@@ -93,7 +92,6 @@
 .favourite {
   display: inline-block;
   vertical-align: middle;
-  background: url(images/icons.png) -96px 0 no-repeat;
   opacity: .3;
   filter: alpha(opacity=30);
   cursor: pointer;
@@ -681,15 +679,14 @@ a.inactive {
 
 #head_image {
   //height: 200px;
-  height: 0px;
+  height: 0;
   width: 100%;
-  //background-image: url(/head_image.png);
   background-color: $brand;
   z-index: 3;
   position: absolute;
   top: 0;
   transition: height .2s;
-  background-image: url(https://static.lunavod.ru/img/1ae1c25101ed2fed5cf62d537724a75e253feae8.png), url(https://static.lunavod.ru/img/43827168610c7bb57fa7b4d5a2a3e2a80808d35d.png);
+  background-image: url(images/head_image_top.png), url(images/head_image_bottom.png);
   background-size: contain, cover;
   background-position: center, center;
   background-repeat: no-repeat, repeat;

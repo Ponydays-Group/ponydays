@@ -1,3 +1,6 @@
+import '@babel/polyfill';
+import './jquery';
+import './jquery/jquery.markitup'
 import hljs from "highlightjs";
 
 window.getCookie = function (name) {
@@ -152,8 +155,9 @@ async function handler(e) {
         if (e.target == info.target) {
             return
         }
-        info.target = e.target
         let s = e.target.getAttribute("href") ||$(e.target).parents("a")[0].getAttribute("href")
+        if(!s) return
+        info.target = e.target
         if (s.match(profile_exp))
             info.action = "profile"
         if (s.match(profile_exp_s))

@@ -15,3 +15,5 @@ static/*
 .c9/*
 img/*
 /nbproject/private/
+*.swp
+*.save

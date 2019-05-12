@@ -9,7 +9,6 @@ import * as Msg from "./msg"
 import * as Ajax from "./ajax"
 var hljs = require('highlightjs')
 
-import Tree from "./Tree"
 import * as Vote from "./vote";
 
 var dateFormat = require("dateformat")

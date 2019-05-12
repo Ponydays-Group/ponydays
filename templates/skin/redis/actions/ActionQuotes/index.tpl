@@ -31,7 +31,7 @@
     {/if}
 
     <h4 class="table-header" style="font-size: 18px; float: left;">
-        Всего цитат: <i id="quotes_count">{$iCountQuotes}</i>
+        {$aLang.quotes_total}<i id="quotes_count">{$iCountQuotes}</i>
         {if $bIsAdmin}
             <p><a href="#" onclick="ls.quotes.showAddForm(); return false;" class="link-dotted"
                   id="quotes_form_show">{$aLang.quotes_add}</a>&nbsp;
@@ -48,9 +48,9 @@
         <table class="table table-hover">
             <thead>
             <tr>
-                <th class="col-sm-11">Цитата</th>
+                <th class="col-sm-11">{$aLang.quotes_quote}</th>
                 <th class="col-sm-1" {if $bIsAdmin} style="text-align: center" {else} style="text-align: right" {/if}>
-                    Опции
+                    {$aLang.quotes_options}
                 </th>
             </tr>
             </thead>

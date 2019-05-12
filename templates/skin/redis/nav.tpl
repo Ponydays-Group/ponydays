@@ -27,7 +27,7 @@
                             href="{router page='feedbacks'}">{$aLang.feedbacks.header}</a></li>
                 <li {if $sMenuHeadItemSelect=='quotes'}class="active"{/if}><a
                             href="{router page='quotes'}">{$aLang.quotes_title}</a></li>
-                <li><a href="https://ponyfiction.org/" target="_blank">Библиотека</a></li>
+                <li><a href="https://ponyfiction.org/" target="_blank">{$aLang.library}</a></li>
 
 <li id="NYtimer">
 <a href="#">
@@ -40,7 +40,7 @@ function declOfNum(number, titles) {
 function fulltime ()
 {
 var time=new Date();
-var newYear=new Date("January,1,2019,00:00:00");
+var newYear=new Date("January,1,2020,00:00:00");
 var totalRemains=(newYear.getTime()-time.getTime());
 if (totalRemains>1){
 var RemainsSec = (parseInt(totalRemains/1000));//сколько всего осталось секунд

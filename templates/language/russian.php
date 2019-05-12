@@ -25,6 +25,7 @@ return array(
 	 * Блоги
 	 */
 	'freepony' => 'Форум freepony.ru',
+	'library' => 'Библиотека',
 	'blogs' => 'Блоги',
 	'blogs_search_title_hint' => 'Поиск по названию',
 	'blogs_search_empty' => 'Поиск не дал результатов',
@@ -1390,5 +1391,8 @@ return array(
 	'quotes_delete'     => 'Удалить цитату',
 	'quotes_data'       => 'Текст цитаты',
 	'quotes_link'       => 'Ссылка на цитату',
-	'quotes_delete_confirm' => 'Вы действительно хотите удалить цитату?'
+	'quotes_delete_confirm' => 'Вы действительно хотите удалить цитату?',
+	'quotes_total'      => 'Всего цитат: ',
+	'quotes_quote'      => 'Цитата',
+	'quotes_options'    => 'Опции',
 );

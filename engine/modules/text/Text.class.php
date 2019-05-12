@@ -363,7 +363,7 @@ class ModuleText extends Module {
         $html = str_get_html($oComment->getText(), true, true, 'UTF-8', false);
         foreach($html->find('.spoiler-body img') as $element) {
             $element->attr['data-src'] = $element->src;
-            $element->src = "#";
+            $element->src = "";
         }
         foreach($html->find('.spoiler-body iframe') as $element) {
             $element->attr['data-src'] = $element->src;

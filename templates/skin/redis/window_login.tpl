@@ -29,10 +29,6 @@
 			
 			
 			<div class="tab-content js-block-popup-login-content" data-type="login">
-				<h5><strong>Внимание!</strong></h5>
-				<p>На сайте был призведен сброс паролей. Если вы не получили новый пароль на почту, свяжитесь с администрацией по 
-почте (bunkerlunavodru@gmail.com) или иным способом для восстановления.</p><br />
-
 				{hook run='login_popup_begin'}
 				<form action="{router page='login'}" method="post" id="popup-login-form">
 					{hook run='form_login_popup_begin'}

@@ -7,7 +7,7 @@
 {/if}
 </div> <!-- /wrapper -->
 
-<div id="image-modal"><img src="#" id="image-modal-img"/></div>
+<div id="image-modal"><img src="" id="image-modal-img"/></div>
 
 <footer id="footer">
     {*<div class="copyright">*}

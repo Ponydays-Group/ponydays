@@ -1,6 +1,7 @@
 import '@babel/polyfill';
 import './jquery';
 import './jquery/jquery.markitup'
+import './jquery/jquery.file'
 import hljs from "highlightjs";
 
 window.getCookie = function (name) {

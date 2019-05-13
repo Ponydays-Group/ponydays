@@ -3,10 +3,8 @@ import * as Stream from './stream'
 import * as Msg from './msg'
 import Emitter from './emitter'
 import $ from 'jquery'
+import './jquery/jquery.Jcrop'
 import * as Ajax from './ajax'
-
-export let jcropAvatar = null;
-export let jcropFoto = null;
 
 /**
  * Добавление в друзья
@@ -48,7 +46,7 @@ export function addFriend(obj, idUser, sAction) {
         }
     });
     return false;
-};
+}
 
 /**
  * Удаление из друзей
@@ -69,7 +67,7 @@ export function removeFriend(obj, idUser, sAction) {
         }
     });
     return false;
-};
+}
 
 /**
  * Загрузка временной аватарки
@@ -94,7 +92,7 @@ export function uploadAvatar(form, input) {
             this.showResizeAvatar(data.sTmpFile);
         }
     }.bind(this));
-};
+}
 
 /**
  * Показывает форму для ресайза аватарки
@@ -103,6 +101,8 @@ export function uploadAvatar(form, input) {
 export function showResizeAvatar(sImgFile) {
     if (this.jcropAvatar) {
         this.jcropAvatar.destroy();
+    } else {
+        this.jcropAvatar = null;
     }
     $('#avatar-resize-original-img').attr('src', sImgFile + '?' + Math.random());
     $('#avatar-resize').jqmShow();
@@ -114,7 +114,7 @@ export function showResizeAvatar(sImgFile) {
         $this.jcropAvatar = this;
         this.setSelect([0, 0, 500, 500]);
     });
-};
+}
 
 /**
  * Выполняет ресайз аватарки
@@ -140,7 +140,7 @@ export function resizeAvatar() {
     });
 
     return false;
-};
+}
 
 /**
  * Удаление аватарки
@@ -162,7 +162,7 @@ export function removeAvatar() {
     });
 
     return false;
-};
+}
 
 /**
  * Отмена ресайза аватарки, подчищаем временный данные
@@ -182,7 +182,7 @@ export function cancelAvatar() {
     });
 
     return false;
-};
+}
 
 /**
  * Загрузка временной фотки
@@ -207,7 +207,7 @@ export function uploadFoto(form, input) {
             }
         }.bind(this));
     })
-};
+}
 
 /**
  * Показывает форму для ресайза фотки
@@ -216,6 +216,8 @@ export function uploadFoto(form, input) {
 export function showResizeFoto(sImgFile, h) {
     if (this.jcropFoto) {
         this.jcropFoto.destroy();
+    } else {
+        this.jcropFoto = null;
     }
     $('#foto-resize-original-img').attr('src', sImgFile + '?' + Math.random());
     $('#foto-resize').jqmShow();
@@ -227,7 +229,7 @@ export function showResizeFoto(sImgFile, h) {
         $this.jcropFoto = this;
         this.setSelect([0, 0, 400, 40]);
     });
-};
+}
 
 /**
  * Выполняет ресайз фотки
@@ -254,7 +256,7 @@ export function resizeFoto() {
     });
 
     return false;
-};
+}
 
 /**
  * Удаление фотки
@@ -277,7 +279,7 @@ export function removeFoto() {
     });
 
     return false;
-};
+}
 
 /**
  * Отмена ресайза фотки, подчищаем временный данные
@@ -297,7 +299,7 @@ export function cancelFoto() {
     });
 
     return false;
-};
+}
 
 /**
  * Валидация полей формы при регистрации
@@ -326,7 +328,7 @@ export function validateRegistrationFields(aFields, sForm) {
         });
         Emitter.emit('ls_user_validate_registration_fields_after', [aFields, sForm, result]);
     });
-};
+}
 
 /**
  * Валидация конкретного поля формы
@@ -338,7 +340,7 @@ export function validateRegistrationField(sField, sValue, sForm, aParams) {
     var aFields = [];
     aFields.push({field: sField, value: sValue, params: aParams || {}});
     this.validateRegistrationFields(aFields, sForm);
-};
+}
 
 /**
  * Ajax регистрация пользователя с проверкой полей формы
@@ -375,7 +377,7 @@ export function registration(form) {
             Emitter.emit('ls_user_registration_after', [form, result]);
         }
     }.bind(this));
-};
+}
 
 /**
  * Ajax авторизация пользователя с проверкой полей формы
@@ -408,7 +410,7 @@ export function login(form) {
             Emitter.emit('ls_user_login_after', [form, result]);
         }
     }.bind(this));
-};
+}
 
 /**
  * Показывает лоадер в полях формы
@@ -426,7 +428,7 @@ export function formLoader(form, bHide) {
             $(v).addClass('loader');
         }
     });
-};
+}
 
 /**
  * Ajax запрос на смену пароля
@@ -457,7 +459,7 @@ export function reminder(form) {
             Emitter.emit('ls_user_reminder_after', [form, result]);
         }
     }.bind(this));
-};
+}
 
 /**
  * Ajax запрос на ссылку активации
@@ -483,7 +485,7 @@ export function reactivation(form) {
             Emitter.emit('ls_user_reactivation_after', [form, result]);
         }
     });
-};
+}
 
 /**
  * Поиск пользователей
@@ -505,7 +507,7 @@ export function searchUsers(form) {
             Emitter.emit('ls_user_search_users_after', [form, result]);
         }
     });
-};
+}
 
 export function searchBlogUsers(form) {
     var url = aRouter['blog'] + 'ajax-search/';
@@ -524,7 +526,7 @@ export function searchBlogUsers(form) {
             Emitter.emit('ls_user_search_users_after', [form, result]);
         }
     });
-};
+}
 
 
 
@@ -552,7 +554,7 @@ export function searchUsersByPrefix(sPrefix, obj) {
         }
     });
     return false;
-};
+}
 
 export function searchBlogUsersByPrefix(sPrefix, obj) {
     obj = $(obj);
@@ -575,7 +577,7 @@ export function searchBlogUsersByPrefix(sPrefix, obj) {
         }
     });
     return false;
-};
+}
 
 /**
  * Подписка
@@ -589,7 +591,7 @@ export function followToggle(obj, iUserId) {
         $(obj).toggleClass('followed').text(Lang.get('profile_user_unfollow'));
     }
     return false;
-};
+}
 
 export function banUser(form) {
     // Ajax.ajaxSubmit('ban', form)

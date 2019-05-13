@@ -57,15 +57,14 @@ export function toggle(idTarget, objFavourite, type) {
             } else {
                 this.hideTags(type, idTarget);
             }
-            if (type=="comment") {
-                console.log(result, $(objFavourite).find(".favourite-count"))
-                $(objFavourite).find(".favourite-count")[0].innerText = result.iCount? result.iCount : ""
+            if (type === "comment") {
+                $(objFavourite).parent().find(".favourite-count")[0].innerText = result.iCount? result.iCount : ""
             }
             Emitter.emit('ls_favourite_toggle_after', [idTarget, objFavourite, type, params, result], this);
         }
     }.bind(this));
     return false;
-};
+}
 
 export function showEditTags(idTarget, type, obj) {
     var form = $('#favourite-form-tags');
@@ -85,12 +84,12 @@ export function showEditTags(idTarget, type, obj) {
     form.jqmShow();
 
     return false;
-};
+}
 
 export function hideEditTags() {
     $('#favourite-form-tags').jqmHide();
     return false;
-};
+}
 
 export function saveTags(form) {
     var url = aRouter['ajax'] + 'favourite/save-tags/';
@@ -112,15 +111,15 @@ export function saveTags(form) {
         }
     }.bind(this));
     return false;
-};
+}
 
 export function hideTags(targetType, targetId) {
     var tags = $('.js-favourite-tags-' + targetType + '-' + targetId);
     tags.find('.js-favourite-tag-user').detach();
     tags.find('.js-favourite-tag-edit').hide();
     this.hideEditTags();
-};
+}
 
 export function showTags(targetType, targetId) {
     $('.js-favourite-tags-' + targetType + '-' + targetId).find('.js-favourite-tag-edit').show();
-};
+}

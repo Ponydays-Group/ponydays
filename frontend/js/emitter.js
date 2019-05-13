@@ -1,5 +1,5 @@
-var EventEmitter = require("eventemitter3")
+import EventEmitter from 'eventemitter3';
 
-var Emitter = new EventEmitter()
+const Emitter = new EventEmitter();
 
-export default Emitter
+export default Emitter;

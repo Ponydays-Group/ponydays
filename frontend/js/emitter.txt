@@ -1,0 +1,189 @@
+ajax:
+    ls_ajax_before       - ajax()
+    ls_ajax_before       - asyncAjax()
+    ls_ajaxsubmit_before - ajaxSubmit()
+    ajaxUploadImgAfter   - ajaxUploadImg()
+
+blocks:
+    loadBefore                 - load()
+    onLoadBefore               - load()
+    ls_blocks_switch_tab_after - switchTab()
+    ls_block_onload_html_after - onLoad()
+
+blog:
+    toggleJoinBefore              - toggleJoin()
+    ls_blog_toggle_join_after     - toggleJoin()
+    addInviteBefore               - addInvite()
+    ls_blog_add_invite_user_after - addInvite()
+    ls_blog_add_invite_after      - addInvite()
+    repeatInviteBefore            - repeatInvite()
+    ls_blog_repeat_invite_after   - repeatInvite()
+    removeInviteBefore            - removeInvite()
+    ls_blog_remove_invite_after   - removeInvite()
+    loadInfoBefore                - loadInfo()
+    ls_blog_load_info_after       - loadInfo()
+    searchBlogsBefore             - searchBlogs()
+    ls_blog_search_blogs_after    - searchBlogs()
+
+comments:
+    ls_comments_add_after    - add()
+    comments-new-loaded      - load()
+    comments-edited-loaded   - load()
+    ls_comments_load_after   - load()
+    toggleBefore             - toggle()
+    ls_comments_toggle_after - toggle()
+    ls_comments_edit_after   - edit()
+    go-to-next-comment       - goToNextComment()
+    go-to-prev-comment       - goToPrevComment()
+    ls_comments_init_after   - init()
+    ls_comment_inject_after  - inject()
+    go-to-comment            - scrollToComment()
+
+favourite:
+    toggleBefore                 - toggle()
+    ls_favourite_toggle_after    - toggle()
+    saveTagsBefore               - saveTags()
+    ls_favourite_save_tags_after - saveTags()
+
+geo:
+    loadRegionsBefore         - loadRegions()
+    ls_geo_load_regions_after - loadRegions()
+    loadCitiesBefore          - loadCities()
+    ls_geo_load_cities_after  - loadCities()
+
+infobox:
+    ls_infobox_show_info_blog_after - showInfoBlog()
+
+poll:
+    voteBefore               - vote()
+    voteDisplayBefore        - vote()
+    ls_pool_vote_after       - vote()
+    ls_pool_add_answer_after - addAnswer()
+
+stream:
+    subscribeBefore                   - subscribe()
+    ls_stream_subscribe_after         - subscribe()
+    unsubscribeBefore                 - unsubscribe()
+    ls_stream_unsubscribe_after       - unsubscribe()
+    switchEventTypeBefore             - switchEventType()
+    ls_stream_switch_event_type_after - switchEventType()
+    appendUserBefore                  - appendUser()
+    ls_stream_append_user_after       - appendUser()
+    getMoreBefore                     - getMore()
+    ls_stream_get_more_after          - getMore()
+    getMoreAllBefore                  - getMoreAll()
+    ls_stream_get_more_all_after      - getMoreAll()
+    getMoreByUserBefore               - getMoreByUser()
+    ls_stream_get_more_by_user_after  - getMoreByUser()
+
+subscribe:
+    toggleBefore              - toggle()
+    ls_subscribe_toggle_after - toggle()
+
+talk:
+    addToTalkBefore                      - addToTalk()
+    ls_talk_add_to_talk_item_after       - addToTalk()
+    ls_talk_add_to_talk_after            - addToTalk()
+    removeFromTalkBefore                 - removeFromTalk()
+    ls_talk_remove_from_talk_after       - removeFromTalk()
+    addToBlackListBefore                 - addToBlackList()
+    ls_talk_add_to_black_list_item_after - addToBlackList()
+    ls_talk_add_to_black_list_after      - addToBlackList()
+    removeFromBlackListBefore            - removeFromBlackList()
+    ls_talk_remove_from_black_list_after - removeFromBlackList()
+
+template:
+    comments-calc-nesting  - Window.widemode()
+    ls_template_init_start - init()
+    ls_template_init_end   - init()
+
+tools:
+    textPreviewAjaxBefore    - textPreview()
+    textPreviewDisplayBefore - textPreview()
+    textPreviewDisplayAfter  - textPreview()
+
+topic:
+    previewBefore          - preview()
+    ls_topic_preview_after - preview()
+    topicLockControlBefore - lockControl()
+
+user:
+    addFriendBefore             - addFriend()
+    ls_user_add_friend_after    - addFriend()
+    removeFriendBefore          - removeFriend()
+    ls_user_remove_friend_after - removeFriend()
+    resizeAvatarBefore          - resizeAvatar()
+    ls_user_resize_avatar_after - resizeAvatar()
+    removeAvatarBefore          - removeAvatar()
+    ls_user_remove_avatar_after - removeAvatar()
+    cancelAvatarBefore          - cancelAvatar()
+    ls_user_cancel_avatar_after - cancelAvatar()
+    resizeFotoBefore            - resizeFoto()
+    ls_user_resize_foto_after   - resizeFoto()
+    removeFotoBefore            - removeFoto()
+    ls_user_remove_foto_after   - removeFoto()
+    cancelFotoBefore            - cancelFoto()
+    ls_user_cancel_foto_after   - cancelFoto()
+    registrationBefore          - registration()
+    ls_user_registration_after  - registration()
+    loginBefore                 - login()
+    ls_user_login_after         - login()
+    reminderBefore              - reminder()
+    ls_user_reminder_after      - reminder()
+    reactivationBefore          - reactivation()
+    ls_user_reactivation_after  - reactivation()
+    searchUsersBefore           - searchUsers()
+    ls_user_search_users_after  - searchUsers()
+    searchUsersBefore           - searchBlogUsers()
+    ls_user_search_users_after  - searchBlogUsers()
+    searchUsersByPrefixBefore            - searchUsersByPrefix()
+    ls_user_search_users_by_prefix_after - searchUsersByPrefix()
+    searchUsersByPrefixBefore            - searchBlogUsersByPrefix()
+    ls_user_search_users_by_prefix_after - searchBlogUsersByPrefix()
+    ls_user_validate_registration_fields_after - validateRegistrationFields()
+
+userfeed:
+    subscribeBefore                   - subscribe()
+    ls_userfeed_subscribe_after       - subscribe()
+    subscribeBefore                   - subscribeAll()
+    ls_userfeed_subscribe_all_after   - subscribeAll()
+    unsubscribeAllBefore              - unsubscribe()
+    ls_userfeed_unsubscribe_after     - unsubscribe()
+    unsubscribeAllBefore              - unsubscribeAll()
+    ls_userfeed_unsubscribe_all_after - unsubscribeAll()
+    getMoreBefore                     - getMore()
+    ls_userfeed_get_more_after        - getMore()
+    appendUserBefore                  - appendUser()
+
+userfield:
+    addUserfieldBefore                  - addUserfield()
+    ls_userfield_add_userfield_after    - addUserfield()
+    updateUserfieldBefore               - updateUserfield()
+    ls_userfield_update_userfield_after - updateUserfield()
+    deleteUserfieldBefore               - deleteUserfield()
+    ls_userfield_update_userfield_after - deleteUserfield()
+
+usernote:
+    saveBefore               - save()
+    ls_usernote_save_after   - save()
+    removeBefore             - remove()
+    ls_usernote_remove_after - remove()
+
+vote:
+    voteBefore - vote()
+
+wall:
+    addBefore                      - add()
+    ls_wall_add_after              - add()
+    addReplyBefore                 - addReply()
+    ls_wall_addreply_after         - addReply()
+    loadBefore                     - load()
+    ls_wall_loadnext_after         - loadNext()
+    ls_wall_loadnew_after          - loadNew()
+    loadReplyBefore                - loadReply()
+    ls_wall_loadreplynew_after     - loadReplyNew()
+    ls_wall_loadreplynext_after    - loadReplyNext()
+    removeBefore                   - remove()
+    ls_wall_remove_item_fade       - remove()
+    ls_wall_remove_reply_item_fade - remove()
+    ls_wall_remove_after           - remove()

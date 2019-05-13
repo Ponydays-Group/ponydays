@@ -5,7 +5,6 @@ import * as Registry from './registry'
 import * as Toolbar from './toolbar'
 import * as Autocomplete from './autocomplete'
 import * as Blocks from './blocks'
-import * as Hook from './hook'
 import Emitter from './emitter'
 import hljs from 'highlightjs'
 
@@ -139,8 +138,8 @@ export default function init() {
                 parseInt(localStorage.getItem("headCollapsed")) ? localStorage.setItem('headCollapsed', 0) : localStorage.setItem('headCollapsed', 1);
                 checkCollapse();
             })
-        // Хук начала инициализации javascript-составляющих шаблона
-        Hook.run('ls_template_init_start', [], window);
+
+        Emitter.emit('ls_template_init_start', [], window);
 
         $("title").data("title", document.title)
 
@@ -338,11 +337,6 @@ export default function init() {
         Comments.options.folding = false;
         Comments.init();
 
-        // избранное
-        Hook.add('ls_favourite_toggle_after', function (idTarget, objFavourite, type, params, result) {
-            $('#fav_count_' + type + '_' + idTarget).text((result.iCount > 0) ? result.iCount : '');
-        });
-
         /****************
          * TALK
          */
@@ -427,9 +421,7 @@ export default function init() {
 
         showFloatBlock($);
 
-
-        // Хук конца инициализации javascript-составляющих шаблона
-        Hook.run('ls_template_init_end', [], window);
+        Emitter.emit('ls_template_init_end', [], window);
 
         window.closeSpoiler = function (b) {
             $(b).hide(300);

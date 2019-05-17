@@ -173,7 +173,7 @@ export function LoadMoreActions(LastActionId){
 		}
 	});
 
-};
+}
 
 export function LoadMoreNotifications(Page){
 
@@ -195,7 +195,7 @@ export function LoadMoreNotifications(Page){
 		}
 	});
 
-};
+}
 
 export function saveConfig(){
     let changed={};

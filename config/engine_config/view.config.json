@@ -11,7 +11,8 @@
         "img_resize_width": 0,
         "img_max_width": 50000,
         "img_max_height": 50000,
-        "img_max_size_url": 500000
+        "img_max_size_url": 500000,
+        "new_year_timer": false
     },
     "seo": {
         "description_words_count": 20

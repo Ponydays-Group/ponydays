@@ -64,7 +64,7 @@ class ActionServer extends Action
             return false;
         }
         $this->Viewer_SetResponseAjax('json', true, false);
-        shell_exec('cd '.dirname(__FILE__)."/../../frontend/".' && git pull && webpack .');
+        shell_exec('cd '.dirname(__FILE__)."/../../frontend/".' && git pull && npm run webpack:production');
 //        $this->Nower_Post('/site-update');
     }
 

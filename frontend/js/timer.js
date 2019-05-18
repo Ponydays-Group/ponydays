@@ -2,7 +2,7 @@
  * Методы таймера например, запуск функии через интервал
  */
 
-export var aTimers = {};
+export const aTimers = {};
 
 /**
  * Запуск метода через определенный период, поддерживает пролонгацию
@@ -12,14 +12,13 @@ export function run(fMethod, sUniqKey, aParams, iTime) {
     aParams = aParams || [];
     sUniqKey = sUniqKey || Math.random();
 
-    if (aTimers[sUniqKey]) {
+    if(aTimers[sUniqKey]) {
         clearTimeout(aTimers[sUniqKey]);
         aTimers[sUniqKey] = null;
     }
-    let timeout = setTimeout(function () {
+    aTimers[sUniqKey] = setTimeout(function() {
         clearTimeout(aTimers[sUniqKey]);
         aTimers[sUniqKey] = null;
         fMethod.apply(this, aParams);
     }.bind(this), iTime);
-    aTimers[sUniqKey] = timeout;
 }

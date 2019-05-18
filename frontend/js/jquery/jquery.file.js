@@ -1,6 +1,4 @@
 ;(function($) {
-    console.log('jquery.file.js');
-
     jQuery.fn.choose = function(f) {
         $(this).bind('choose', f);
     };

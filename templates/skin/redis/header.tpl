@@ -41,8 +41,12 @@
         <meta HTTP-EQUIV="Refresh" CONTENT="3; URL={cfg name='path.root.web'}/">
     {/if}
 
-    <script src="/static/relevant/{cfg name="frontend.webpack.vendor~main~sockets.js"}"></script>
+    {if $oConfig->getValue('frontend.webpack.vendor~main~sockets')}
+        <script src="/static/relevant/{cfg name="frontend.webpack.vendor~main~sockets.js"}"></script>
+    {/if}
+    {if $oConfig->getValue('frontend.webpack.vendor~main')}
     <script src="/static/relevant/{cfg name="frontend.webpack.vendor~main.js"}"></script>
+    {/if}
 
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,100i,300,300i,400,400i,500,500i,700,700i,900,900i&amp;subset=cyrillic,cyrillic-ext,greek,greek-ext,latin-ext,vietnamese"
           rel="stylesheet">
@@ -76,8 +80,12 @@
         aRouter['{$sPage}'] = '{$sPath}';
         {/foreach}
     </script>
+    {if $oConfig->getValue('frontend.webpack.main~sockets')}
     <script src="/static/relevant/{cfg name="frontend.webpack.main~sockets.js"}"></script>
+    {/if}
+    {if $oConfig->getValue('frontend.webpack.main')}
     <script src="/static/relevant/{cfg name="frontend.webpack.main.js"}"></script>
+    {/if}
 
     <script type="text/javascript">
         var tinyMCE = false;

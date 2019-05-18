@@ -7,7 +7,7 @@ import * as Ajax from './ajax'
  * Стена пользователя
  */
 
-export let options = {
+export const options = {
     login: ''
 };
 
@@ -17,8 +17,8 @@ export let iIdForReply = null;
  */
 export function add(sText, iPid) {
     $('.js-button-wall-submit').attr('disabled', true);
-    var url = aRouter['profile'] + this.options.login + '/wall/add/';
-    var params = {sText: sText, iPid: iPid};
+    const url = aRouter['profile'] + this.options.login + '/wall/add/';
+    const params = {sText: sText, iPid: iPid};
 
     Emitter.emit('addBefore');
     $('#wall-text').addClass('loader');
@@ -35,12 +35,12 @@ export function add(sText, iPid) {
         $('#wall-text').removeClass('loader');
     }.bind(this));
     return false;
-};
+}
 
 export function addReply(sText, iPid) {
     $('.js-button-wall-submit').attr('disabled', true);
-    var url = aRouter['profile'] + this.options.login + '/wall/add/';
-    var params = {sText: sText, iPid: iPid};
+    const url = aRouter['profile'] + this.options.login + '/wall/add/';
+    const params = {sText: sText, iPid: iPid};
 
     Emitter.emit('addReplyBefore');
     $('#wall-reply-text-' + iPid).addClass('loader');
@@ -56,28 +56,29 @@ export function addReply(sText, iPid) {
         $('#wall-reply-text-' + iPid).removeClass('loader');
     }.bind(this));
     return false;
-};
+}
 
 export function load(iIdLess, iIdMore, callback) {
-    var url = aRouter['profile'] + this.options.login + '/wall/load/';
-    var params = {iIdLess: iIdLess ? iIdLess : '', iIdMore: iIdMore ? iIdMore : ''};
+    const url = aRouter['profile'] + this.options.login + '/wall/load/';
+    const params = {iIdLess: iIdLess ? iIdLess : '', iIdMore: iIdMore ? iIdMore : ''};
     Emitter.emit('loadBefore');
     Ajax.ajax(url, params, callback);
     return false;
-};
+}
 
 export function loadReply(iIdLess, iIdMore, iPid, callback) {
-    var url = aRouter['profile'] + this.options.login + '/wall/load-reply/';
-    var params = {iIdLess: iIdLess ? iIdLess : '', iIdMore: iIdMore ? iIdMore : '', iPid: iPid};
+    const url = aRouter['profile'] + this.options.login + '/wall/load-reply/';
+    const params = {iIdLess: iIdLess ? iIdLess : '', iIdMore: iIdMore ? iIdMore : '', iPid: iPid};
     Emitter.emit('loadReplyBefore');
     Ajax.ajax(url, params, callback);
     return false;
-};
+}
 
 export function loadNext() {
-    var divLast = $('#wall-container').find('.js-wall-item:last');
+    const divLast = $('#wall-container').find('.js-wall-item:last');
+    let idLess;
     if (divLast.length) {
-        var idLess = divLast.attr('id').replace('wall-item-', '');
+        idLess = divLast.attr('id').replace('wall-item-', '');
     } else {
         return false;
     }
@@ -89,7 +90,7 @@ export function loadNext() {
             if (result.iCountWall) {
                 $('#wall-container').append(result.sText);
             }
-            var iCount = result.iCountWall - result.iCountWallReturn;
+            const iCount = result.iCountWall - result.iCountWallReturn;
             if (iCount) {
                 $('#wall-count-next').text(iCount);
             } else {
@@ -100,14 +101,15 @@ export function loadNext() {
         $('#wall-button-next').removeClass('loader');
     }.bind(this));
     return false;
-};
+}
 
 export function loadNew() {
-    var divFirst = $('#wall-container').find('.js-wall-item:first');
+    const divFirst = $('#wall-container').find('.js-wall-item:first');
+    let idMore;
     if (divFirst.length) {
-        var idMore = divFirst.attr('id').replace('wall-item-', '');
+        idMore = divFirst.attr('id').replace('wall-item-', '');
     } else {
-        var idMore = -1;
+        idMore = -1;
     }
     this.load('', idMore, function (result) {
         if (result.bStateError) {
@@ -120,14 +122,15 @@ export function loadNew() {
         }
     }.bind(this));
     return false;
-};
+}
 
 export function loadReplyNew(iPid) {
-    var divFirst = $('#wall-reply-container-' + iPid).find('.js-wall-reply-item::last');
+    const divFirst = $('#wall-reply-container-' + iPid).find('.js-wall-reply-item::last'); //TODO: :: prefix?
+    let idMore;
     if (divFirst.length) {
-        var idMore = divFirst.attr('id').replace('wall-reply-item-', '');
+        idMore = divFirst.attr('id').replace('wall-reply-item-', '');
     } else {
-        var idMore = -1;
+        idMore = -1;
     }
     this.loadReply('', idMore, iPid, function (result) {
         if (result.bStateError) {
@@ -140,12 +143,13 @@ export function loadReplyNew(iPid) {
         }
     }.bind(this));
     return false;
-};
+}
 
 export function loadReplyNext(iPid) {
-    var divLast = $('#wall-reply-container-' + iPid).find('.js-wall-reply-item:first');
+    const divLast = $('#wall-reply-container-' + iPid).find('.js-wall-reply-item:first');
+    let idLess;
     if (divLast.length) {
-        var idLess = divLast.attr('id').replace('wall-reply-item-', '');
+        idLess = divLast.attr('id').replace('wall-reply-item-', '');
     } else {
         return false;
     }
@@ -157,7 +161,7 @@ export function loadReplyNext(iPid) {
             if (result.iCountWall) {
                 $('#wall-reply-container-' + iPid).prepend(result.sText);
             }
-            var iCount = result.iCountWall - result.iCountWallReturn;
+            const iCount = result.iCountWall - result.iCountWallReturn;
             if (iCount) {
                 $('#wall-reply-count-next-' + iPid).text(iCount);
             } else {
@@ -168,17 +172,17 @@ export function loadReplyNext(iPid) {
         $('#wall-reply-button-next-' + iPid).removeClass('loader');
     }.bind(this));
     return false;
-};
+}
 
 export function toggleReply(iId) {
     $('#wall-item-' + iId + ' .wall-submit-reply').addClass('active').toggle().children('textarea').focus();
     return false;
-};
+}
 
 export function expandReply(iId) {
     $('#wall-item-' + iId + ' .wall-submit-reply').addClass('active');
     return false;
-};
+}
 
 export function init(opt) {
     if (opt) {
@@ -199,6 +203,7 @@ export function init(opt) {
             e.stopPropagation();
         });
 
+        let key;
         $('.js-wall-reply-text').bind('keyup', function (e) {
             key = e.keyCode || e.which;
             if (e.ctrlKey && (key == 13)) {
@@ -215,11 +220,11 @@ export function init(opt) {
             }
         }.bind(this));
     }.bind(this));
-};
+}
 
 export function remove(iId) {
-    var url = aRouter['profile'] + this.options.login + '/wall/remove/';
-    var params = {iId: iId};
+    const url = aRouter['profile'] + this.options.login + '/wall/remove/';
+    const params = {iId: iId};
     Emitter.emit('removeBefore');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
@@ -235,4 +240,4 @@ export function remove(iId) {
         }
     });
     return false;
-};
+}

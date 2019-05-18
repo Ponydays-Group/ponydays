@@ -1,43 +1,46 @@
-import * as Msg from './msg'
-import Emitter from './emitter'
-import $ from 'jquery'
-import * as Ajax from './ajax'
+import * as Msg from "./msg"
+import Emitter from "./emitter"
+import $ from "jquery"
+import * as Ajax from "./ajax"
 
 /**
  * Опросы
  */
 
 export function preview(form, preview) {
-    form = $('#' + form);
-    preview = $('#' + preview);
-    var url = aRouter['ajax'] + 'preview/topic/';
-    Emitter.emit('previewBefore');
-    Ajax.ajaxSubmit(url, form, function (result) {
-        if (result.bStateError) {
+    form = $("#" + form);
+    preview = $("#" + preview);
+    const url = aRouter["ajax"] + "preview/topic/";
+    Emitter.emit("previewBefore");
+    Ajax.ajaxSubmit(url, form, function(result) {
+        if(result.bStateError) {
             Msg.error(null, result.sMsg);
         } else {
             preview.show().html(result.sText);
-            Emitter.emit('ls_topic_preview_after', [form, preview, result]);
+            Emitter.emit("ls_topic_preview_after", [form, preview, result]);
         }
     });
-};
+}
 
 export function insertImageToEditor(sUrl, bSpoil, sAlign, sTitle) {
-    sAlign = sAlign == 'center' ? 'class="image-center"' : 'align="' + sAlign + '"';
-    let s = false
-    if (bSpoil)
-        s = prompt('Спойлер','Спойлер')
-    $.markItUp({replaceWith:
-        (bSpoil&&s? '<span class="spoiler"><span class="spoiler-title spoiler-close">'+s+'</span><span class="spoiler-body">':'') +
-        '<img src="' + sUrl + '" title="' + sTitle + '" ' + sAlign + ' />'
-        +(bSpoil&&s?'</span></span>':'')});
-    $('#window_upload_img').find('input[type="text"]').val('');
-    $('#window_upload_img').jqmHide();
+    sAlign = sAlign == "center" ? "class=\"image-center\"" : "align=\"" + sAlign + "\"";
+    let s = false;
+    if(bSpoil)
+        s = prompt("Спойлер", "Спойлер");
+    $.markItUp({
+        replaceWith:
+            (bSpoil && s ? "<span class=\"spoiler\"><span class=\"spoiler-title spoiler-close\">" + s + "</span><span class=\"spoiler-body\">" : "") +
+            "<img src=\"" + sUrl + "\" title=\"" + sTitle + "\" " + sAlign + " />"
+            + (bSpoil && s ? "</span></span>" : ""),
+    });
+    const upload_img_sel = $("#window_upload_img");
+    upload_img_sel.find("input[type=\"text\"]").val("");
+    upload_img_sel.jqmHide();
     return false;
-};
+}
 
 export function onControlLocked(result) {
-    if (result.bStateError) {
+    if(result.bStateError) {
         this.checked = this.dataset.checkedOld == "1";
         Msg.error(null, result.sMsg);
     } else {
@@ -45,16 +48,17 @@ export function onControlLocked(result) {
         Msg.notice(null, result.sMsg);
     }
     delete this.dataset.checkedOld;
-};
-export function lockControl(idTopic, obj) {
-    var state = obj.checked;
-    obj.dataset.checkedOld = state ? "0" : "1";
-    var params = {};
-    params['idTopic'] = idTopic;
-    params['bState'] = state ? "1" : "0";
+}
 
-    var url = aRouter['ajax'] + 'topic-lock-control';
-    Emitter.emit('topicLockControlBefore');
+export function lockControl(idTopic, obj) {
+    const state = obj.checked;
+    obj.dataset.checkedOld = state ? "0" : "1";
+    const params = {};
+    params["idTopic"] = idTopic;
+    params["bState"] = state ? "1" : "0";
+
+    const url = aRouter["ajax"] + "topic-lock-control";
+    Emitter.emit("topicLockControlBefore");
     Ajax.ajax(url, params, this.onControlLocked.bind(obj));
     return true;
-};
+}

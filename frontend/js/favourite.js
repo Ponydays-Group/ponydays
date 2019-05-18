@@ -1,7 +1,7 @@
-import * as Msg from './msg'
-import Emitter from './emitter'
+import * as Msg from "./msg"
+import Emitter from "./emitter"
 import $ from "jquery"
-import * as Ajax from './ajax'
+import * as Ajax from "./ajax"
 
 /**
  * Добавление в избранное
@@ -10,76 +10,77 @@ import * as Ajax from './ajax'
 /**
  * Опции
  */
-export let options = {
-    active: 'active',
+export const options = {
+    active: "active",
     type: {
         topic: {
-            url: aRouter['ajax'] + 'favourite/topic/',
-            targetName: 'idTopic'
+            url: aRouter["ajax"] + "favourite/topic/",
+            targetName: "idTopic",
         },
         talk: {
-            url: aRouter['ajax'] + 'favourite/talk/',
-            targetName: 'idTalk'
+            url: aRouter["ajax"] + "favourite/talk/",
+            targetName: "idTalk",
         },
         comment: {
-            url: aRouter['ajax'] + 'favourite/comment/',
-            targetName: 'idComment'
-        }
-    }
+            url: aRouter["ajax"] + "favourite/comment/",
+            targetName: "idComment",
+        },
+    },
 };
 
 /**
  * Переключение избранного
  */
 export function toggle(idTarget, objFavourite, type) {
-    if (!this.options.type[type]) {
+    if(!this.options.type[type]) {
         return false;
     }
 
     this.objFavourite = $(objFavourite);
 
-    var params = {};
-    params['type'] = !this.objFavourite.hasClass(this.options.active);
+    const params = {};
+    params["type"] = !this.objFavourite.hasClass(this.options.active);
     params[this.options.type[type].targetName] = idTarget;
 
-    Emitter.emit('toggleBefore');
-    Ajax.ajax(this.options.type[type].url, params, function (result) {
-        $(this).trigger('toggle', [idTarget, objFavourite, type, params, result]);
-        if (result.bStateError) {
+    Emitter.emit("toggleBefore");
+    Ajax.ajax(this.options.type[type].url, params, function(result) {
+        $(this).trigger("toggle", [idTarget, objFavourite, type, params, result]);
+        if(result.bStateError) {
             Msg.error(null, result.sMsg);
         } else {
             Msg.notice(null, result.sMsg);
             this.objFavourite.removeClass(this.options.active);
-            if (result.bState) {
+            if(result.bState) {
                 this.objFavourite.addClass(this.options.active);
                 this.showTags(type, idTarget);
-                console.log(type)
             } else {
                 this.hideTags(type, idTarget);
             }
-            if (type === "comment") {
-                $(objFavourite).parent().find(".favourite-count")[0].innerText = result.iCount? result.iCount : ""
+            if(type === "comment") {
+                $(objFavourite).parent().find(".favourite-count")[0].innerText = result.iCount ? result.iCount : "";
             }
-            Emitter.emit('ls_favourite_toggle_after', [idTarget, objFavourite, type, params, result], this);
+            Emitter.emit("ls_favourite_toggle_after", [idTarget, objFavourite, type, params, result], this);
         }
     }.bind(this));
     return false;
 }
 
 export function showEditTags(idTarget, type, obj) {
-    var form = $('#favourite-form-tags');
-    $('#favourite-form-tags-target-type').val(type);
-    $('#favourite-form-tags-target-id').val(idTarget);
-    var text = '';
-    var tags = $('.js-favourite-tags-' + $('#favourite-form-tags-target-type').val() + '-' + $('#favourite-form-tags-target-id').val());
-    tags.find('.js-favourite-tag-user a').each(function (k, tag) {
-        if (text) {
-            text = text + ', ' + $(tag).text();
+    const form = $("#favourite-form-tags");
+    const target_type_sel = $("#favourite-form-tags-target-type");
+    const target_id_sel = $("#favourite-form-tags-target-id");
+    target_type_sel.val(type);
+    target_id_sel.val(idTarget);
+    var text = "";
+    var tags = $(".js-favourite-tags-" + target_type_sel.val() + "-" + target_id_sel.val());
+    tags.find(".js-favourite-tag-user a").each(function(k, tag) {
+        if(text) {
+            text = text + ", " + $(tag).text();
         } else {
             text = $(tag).text();
         }
     });
-    $('#favourite-form-tags-tags').val(text);
+    $("#favourite-form-tags-tags").val(text);
     //$(obj).parents('.js-favourite-insert-after-form').after(form);
     form.jqmShow();
 
@@ -87,39 +88,39 @@ export function showEditTags(idTarget, type, obj) {
 }
 
 export function hideEditTags() {
-    $('#favourite-form-tags').jqmHide();
+    $("#favourite-form-tags").jqmHide();
     return false;
 }
 
 export function saveTags(form) {
-    var url = aRouter['ajax'] + 'favourite/save-tags/';
-    Emitter.emit('saveTagsBefore');
-    Ajax.ajaxSubmit(url, $(form), function (result) {
-        if (result.bStateError) {
+    const url = aRouter["ajax"] + "favourite/save-tags/";
+    Emitter.emit("saveTagsBefore");
+    Ajax.ajaxSubmit(url, $(form), function(result) {
+        if(result.bStateError) {
             Msg.error(null, result.sMsg);
         } else {
             this.hideEditTags();
-            var type = $('#favourite-form-tags-target-type').val();
-            var tags = $('.js-favourite-tags-' + type + '-' + $('#favourite-form-tags-target-id').val());
-            tags.find('.js-favourite-tag-user').detach();
-            var edit = tags.find('.js-favourite-tag-edit');
-            $.each(result.aTags, function (k, v) {
-                edit.before('<li class="' + type + '-tags-user js-favourite-tag-user">, <a rel="tag" href="' + v.url + '">' + v.tag + '</a></li>');
+            const type = $("#favourite-form-tags-target-type").val();
+            const tags = $(".js-favourite-tags-" + type + "-" + $("#favourite-form-tags-target-id").val());
+            tags.find(".js-favourite-tag-user").detach();
+            const edit = tags.find(".js-favourite-tag-edit");
+            $.each(result.aTags, function(k, v) {
+                edit.before("<li class=\"" + type + "-tags-user js-favourite-tag-user\">, <a rel=\"tag\" href=\"" + v.url + "\">" + v.tag + "</a></li>");
             });
 
-            Emitter.emit('ls_favourite_save_tags_after', [form, result], this);
+            Emitter.emit("ls_favourite_save_tags_after", [form, result], this);
         }
     }.bind(this));
     return false;
 }
 
 export function hideTags(targetType, targetId) {
-    var tags = $('.js-favourite-tags-' + targetType + '-' + targetId);
-    tags.find('.js-favourite-tag-user').detach();
-    tags.find('.js-favourite-tag-edit').hide();
+    const tags = $(".js-favourite-tags-" + targetType + "-" + targetId);
+    tags.find(".js-favourite-tag-user").detach();
+    tags.find(".js-favourite-tag-edit").hide();
     this.hideEditTags();
 }
 
 export function showTags(targetType, targetId) {
-    $('.js-favourite-tags-' + targetType + '-' + targetId).find('.js-favourite-tag-edit').show();
+    $(".js-favourite-tags-" + targetType + "-" + targetId).find(".js-favourite-tag-edit").show();
 }

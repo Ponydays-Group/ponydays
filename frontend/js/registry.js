@@ -3,7 +3,7 @@
  */
 
 
-export var aData = {};
+export const aData = {};
 
 /**
  * Сохранение

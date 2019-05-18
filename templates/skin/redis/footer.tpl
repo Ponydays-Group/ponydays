@@ -83,8 +83,12 @@
 
 {hook run='body_end'}
 
+{if $oConfig->getValue('frontend.webpack.vendor~sockets')}
 <script src="/static/relevant/{cfg name="frontend.webpack.vendor~sockets.js"}"></script>
+{/if}
+{if $oConfig->getValue('frontend.webpack.sockets')}
 <script src="/static/relevant/{cfg name="frontend.webpack.sockets.js"}"></script>
+{/if}
 
 </body>
 </html>

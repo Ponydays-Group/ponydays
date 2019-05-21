@@ -106,16 +106,29 @@ class ModuleComment_MapperComment extends Mapper {
 	 * @return array
 	 */
 	public function GetCommentsAll($sTargetType,&$iCount,$iCurrPage,$iPerPage,$aExcludeTarget=array(),$aExcludeParentTarget=array()) {
-		$sql = "SELECT 					
-					comment_id 				
-				FROM 
-					".Config::Get('db.table.comment')." 
-				WHERE 								
-					target_type = ?
+		$targetTable = "";
+		$targetIdTest = "1 = 1";
+		if($sTargetType == "topic") {
+			$targetTable = ", ".Config::Get('db.table.topic')." as t
+							, ".Config::Get('db.table.blog')." as b";
+			$targetIdTest = "t.topic_id = c.target_id AND b.blog_id = t.blog_id AND t.topic_deleted = 0 AND b.blog_deleted = 0";
+		} else if($sTargetType == "talk") {
+			$targetTable = ", ".Config::Get('db.table.talk')." as t";
+			$targetIdTest = "t.talk_id = c.target_id AND t.talk_deleted = 0";
+		}
+		$sql = "SELECT
+					comment_id
+				FROM
+					".Config::Get('db.table.comment')." as c
+					".$targetTable."
+				WHERE
+					c.target_type = ?
 					AND
-					comment_delete = 0
+					c.comment_delete = 0
 					AND
-					comment_publish = 1
+					c.comment_publish = 1
+					AND
+					".$targetIdTest."
 					{ AND target_id NOT IN(?a) }
 					{ AND target_parent_id NOT IN(?a) }
 				ORDER by comment_id desc
@@ -135,7 +148,22 @@ class ModuleComment_MapperComment extends Mapper {
 		return $aComments;
 	}
 	public function GetCommentsOlderThenEdited($sTargetType, $iTargetId, $iEditedCommentId ) {
-		$sql = "SELECT comment_id from " . Config::Get('db.table.comment') . " WHERE target_type = ? AND target_id = ?d AND comment_edit_date > (SELECT comment_date FROM " . Config::Get('db.table.comment') . " WHERE comment_id=?d)";
+		$sql = "SELECT comment_id
+				FROM
+					".Config::Get('db.table.comment')."
+				WHERE
+					target_type = ?
+					AND
+					target_id = ?d
+					AND
+					comment_edit_date > (
+						SELECT comment_date
+						FROM
+							".Config::Get('db.table.comment')."
+						WHERE
+							comment_id = ?d
+					)
+					";
 		$aComments=array();
 		if ($aRows=$this->oDb->select($sql,$sTargetType,$iTargetId,$iEditedCommentId)) {
 			foreach ($aRows as $aRow) {

@@ -199,17 +199,15 @@
 }
 
 @media screen and (max-width: 800px) {
-.modal, .modal-image-upload {
-    width: 100% !important;
-    margin-left: 0 !important;
-    height: 100% !important;
-    margin: 0 !important;
-    top: 0 !important;
-    .modal-content {
-	height: calc(100% - 20px);
-	overflow: scroll;
+    .modal, .modal-image-upload {
+        width: 100% !important;
+        margin-left: 0 !important;
+        height: 100% !important;
+        margin: 0 !important;
+        top: 0 !important;
+        .modal-content {
+            height: calc(100% - 20px);
+            overflow: scroll;
+        }
     }
 }
-}
-
-

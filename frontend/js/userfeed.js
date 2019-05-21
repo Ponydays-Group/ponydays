@@ -90,13 +90,13 @@ export function appendUser() {
 }
 
 export function getMore() {
-    if(this.isBusy) {
+    if(isBusy) {
         return;
     }
     const lastId = $("#userfeed_last_id").val();
     if(!lastId) return;
     $("#userfeed_get_more").addClass("userfeed_loading");
-    this.isBusy = true;
+    isBusy = true;
 
     const url = aRouter["feed"] + "get_more/";
     const params = {"last_id": lastId};
@@ -112,6 +112,7 @@ export function getMore() {
         }
         $("#userfeed_get_more").removeClass("userfeed_loading");
         Emitter.emit("ls_userfeed_get_more_after", [lastId, data]);
-        this.isBusy = false;
+
+        isBusy = false;
     }.bind(this));
 }

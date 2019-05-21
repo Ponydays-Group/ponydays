@@ -55,7 +55,7 @@ export function show(oLink, sContent, aOpt) {
         this.hideAll();
     }
 
-    $oLink = $(oLink);
+    const $oLink = $(oLink);
     if($oLink.data("isPoshytip")) {
         $oLink.poshytip("update", sContent);
     } else {
@@ -131,7 +131,7 @@ export function showInfoBlog(oLink, iBlogId) {
             this.hide(oLink);
         } else {
             this.show(oLink, result.sText);
-            Emitter.emit("ls_infobox_show_info_blog_after", [oLink, iBlogId, result]);
+            Emitter.emit("infobox_showinfoblog_after", [oLink, iBlogId, result]);
         }
     }.bind(this));
     return false;

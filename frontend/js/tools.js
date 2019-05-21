@@ -43,7 +43,7 @@ export function textPreview(textId, save, divPreview) {
         save: save,
         form_comment_mark: form_comment_mark ? (form_comment_mark.checked ? "on" : "off") : "off",
     };
-    Emitter.emit("textPreviewAjaxBefore");
+    Emitter.emit("tools_textpreview_ajax_before");
     Ajax.ajax(ajaxUrl, ajaxOptions, function(result) {
         if(!result) {
             Msg.error("Error", "Please try again later");
@@ -55,11 +55,11 @@ export function textPreview(textId, save, divPreview) {
                 divPreview = "text_preview";
             }
             const elementPreview = $("#" + divPreview);
-            Emitter.emit("textPreviewDisplayBefore");
+            Emitter.emit("tools_textpreview_display_before");
             if(elementPreview.length) {
                 elementPreview.html(result.sText);
                 elementPreview.find(`pre code`).each((k, el) => hljs.highlightBlock(el));
-                Emitter.emit("textPreviewDisplayAfter");
+                Emitter.emit("tools_textpreview_display_after");
             }
         }
     });

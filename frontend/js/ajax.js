@@ -40,7 +40,7 @@ export function ajax(url, params, callback, more) {
         }.bind(this),
     };
 
-    Emitter.emit("ls_ajax_before", [ajaxOptions], this);
+    Emitter.emit("ajax_before", [ajaxOptions], this);
 
     return $.ajax(ajaxOptions);
 }
@@ -79,7 +79,7 @@ export async function asyncAjax(url, params, callback, more) {
         }.bind(this),
     };
 
-    Emitter.emit("ls_ajax_before", [ajaxOptions], this);
+    Emitter.emit("ajax_before", [ajaxOptions], this);
 
     return $.ajax(ajaxOptions);
 }
@@ -112,7 +112,7 @@ export function ajaxSubmit(url, form, callback, more) {
         }.bind(this),
     };
 
-    Emitter.emit("ls_ajaxsubmit_before", [options], this);
+    Emitter.emit("ajax_submit_before", [options], this);
 
     form.ajaxSubmit(options);
 }
@@ -145,7 +145,7 @@ export async function ajaxUploadImg(form, sToLoad, spoilSelector) {
             const upload_img_sel = $("#window_upload_img");
             upload_img_sel.find("input[type=\"text\"], input[type=\"file\"]").val("");
             upload_img_sel.jqmHide();
-            Emitter.emit("ajaxUploadImgAfter");
+            Emitter.emit("ajax_uploadimg_after");
             submit_sel.toggleClass("hovered");
             submit_sel.attr("disabled", false);
         }

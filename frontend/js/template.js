@@ -141,7 +141,7 @@ export default function init() {
                 checkCollapse();
             });
 
-        Emitter.emit("ls_template_init_start", [], window);
+        Emitter.emit("template_init_start", [], window);
 
         $("title").data("title", document.title);
 
@@ -419,7 +419,7 @@ export default function init() {
 
         showFloatBlock($);
 
-        Emitter.emit("ls_template_init_end", [], window);
+        Emitter.emit("template_init_end", [], window);
 
         window.closeSpoiler = function(b) {
             $(b).hide(300);
@@ -517,7 +517,7 @@ export default function init() {
                 content.removeClass("col-md-12").addClass("col-md-9");
             }
 
-            Emitter.emit("comments-calc-nesting");
+            Emitter.emit("do_comments_calc_nesting");
         }.bind(this);
 
         updateImgs();

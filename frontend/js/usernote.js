@@ -31,14 +31,14 @@ export function hideForm() {
 export function save(iUserId) {
     const url = aRouter["profile"] + "ajax-note-save/";
     const params = {iUserId: iUserId, text: $("#usernote-form-text").val()};
-    Emitter.emit("saveBefore");
+    Emitter.emit("usernote_save_before");
     Ajax.ajax(url, params, function(result) {
         if(result.bStateError) {
             Msg.error(null, result.sMsg);
         } else {
             this.sText = result.sText;
             this.showNote();
-            Emitter.emit("ls_usernote_save_after", [params, result]);
+            Emitter.emit("usernote_save_after", [params, result]);
         }
     }.bind(this));
     return false;
@@ -53,7 +53,7 @@ export function showNote() {
 export function remove(iUserId) {
     const url = aRouter["profile"] + "ajax-note-remove/";
     const params = {iUserId: iUserId};
-    Emitter.emit("removeBefore");
+    Emitter.emit("usernote_remove_before");
     Ajax.ajax(url, params, function(result) {
         if(result.bStateError) {
             Msg.error(null, result.sMsg);
@@ -61,7 +61,7 @@ export function remove(iUserId) {
             $("#usernote-note").hide();
             $("#usernote-button-add").show();
             this.sText = "";
-            Emitter.emit("ls_usernote_remove_after", [params, result]);
+            Emitter.emit("usernote_remove_after", [params, result]);
         }
     }.bind(this));
     return false;

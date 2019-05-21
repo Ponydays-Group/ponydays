@@ -11,13 +11,13 @@ export function subscribe(iTargetUserId) {
     const url = aRouter["stream"] + "subscribe/";
     const params = {"id": iTargetUserId};
 
-    Emitter.emit("subscribeBefore");
+    Emitter.emit("stream_subscribe_before");
     Ajax.ajax(url, params, function(data) {
         if(data.bStateError) {
             Msg.error(data.sMsgTitle, data.sMsg);
         } else {
             Msg.notice(data.sMsgTitle, data.sMsg);
-            Emitter.emit("ls_stream_subscribe_after", [params, data]);
+            Emitter.emit("stream_subscribe_after", [params, data]);
         }
     });
 }
@@ -26,11 +26,11 @@ export function unsubscribe(iId) {
     const url = aRouter["stream"] + "unsubscribe/";
     const params = {"id": iId};
 
-    Emitter.emit("unsubscribeBefore");
+    Emitter.emit("stream_unsubscribe_before");
     Ajax.ajax(url, params, function(data) {
         if(!data.bStateError) {
             Msg.notice(data.sMsgTitle, data.sMsg);
-            Emitter.emit("ls_stream_unsubscribe_after", [params, data]);
+            Emitter.emit("stream_unsubscribe_after", [params, data]);
         }
     });
 }
@@ -39,11 +39,11 @@ export function switchEventType(iType) {
     const url = aRouter["stream"] + "switchEventType/";
     const params = {"type": iType};
 
-    Emitter.emit("switchEventTypeBefore");
+    Emitter.emit("stream_switcheventtype_before");
     Ajax.ajax(url, params, function(data) {
         if(!data.bStateError) {
             Msg.notice(data.sMsgTitle, data.sMsg);
-            Emitter.emit("ls_stream_switch_event_type_after", [params, data]);
+            Emitter.emit("stream_switcheventtype_after", [params, data]);
         }
     });
 }
@@ -55,7 +55,7 @@ export function appendUser() {
     const url = aRouter["stream"] + "subscribeByLogin/";
     const params = {"login": sLogin};
 
-    Emitter.emit("appendUserBefore");
+    Emitter.emit("stream_appenduser_before");
     Ajax.ajax(url, params, function(data) {
         if(!data.bStateError) {
             $("#stream_no_subscribed_users").remove();
@@ -72,7 +72,7 @@ export function appendUser() {
                 $("#stream_block_users_list").append(liElement);
                 Msg.notice(data.sMsgTitle, data.sMsg);
             }
-            Emitter.emit("ls_stream_append_user_after", [checkbox.length, data]);
+            Emitter.emit("stream_appenduser_after", [checkbox.length, data]);
         } else {
             Msg.error(data.sMsgTitle, data.sMsg);
         }
@@ -91,7 +91,7 @@ export function getMore() {
     const url = aRouter["stream"] + "get_more/";
     const params = {"last_id": lastId, "date_last": this.dateLast};
 
-    Emitter.emit("getMoreBefore");
+    Emitter.emit("stream_getmore_before");
     Ajax.ajax(url, params, function(data) {
         if(!data.bStateError && data.events_count) {
             $("#stream-list").append(data.result);
@@ -101,7 +101,7 @@ export function getMore() {
             $("#stream_get_more").hide();
         }
         $("#stream_get_more").removeClass("stream_loading");
-        Emitter.emit("ls_stream_get_more_after", [lastId, data]);
+        Emitter.emit("stream_getmore_after", [lastId, data]);
         this.isBusy = false;
     }.bind(this));
 }
@@ -118,7 +118,7 @@ export function getMoreAll() {
     const url = aRouter["stream"] + "get_more_all/";
     const params = {"last_id": lastId, "date_last": this.dateLast};
 
-    Emitter.emit("getMoreAllBefore");
+    Emitter.emit("stream_getmoreall_before");
     Ajax.ajax(url, params, function(data) {
         if(!data.bStateError && data.events_count) {
             $("#stream-list").append(data.result);
@@ -128,7 +128,7 @@ export function getMoreAll() {
             $("#stream_get_more").hide();
         }
         $("#stream_get_more").removeClass("stream_loading");
-        Emitter.emit("ls_stream_get_more_all_after", [lastId, data]);
+        Emitter.emit("stream_getmoreall_after", [lastId, data]);
         this.isBusy = false;
     }.bind(this));
 }
@@ -145,7 +145,7 @@ export function getMoreByUser(iUserId) {
     const url = aRouter["stream"] + "get_more_user/";
     const params = {"last_id": lastId, user_id: iUserId, "date_last": this.dateLast};
 
-    Emitter.emit("getMoreByUserBefore");
+    Emitter.emit("stream_getmorebyuser_before");
     Ajax.ajax(url, params, function(data) {
         if(!data.bStateError && data.events_count) {
             $("#stream-list").append(data.result);
@@ -155,7 +155,7 @@ export function getMoreByUser(iUserId) {
             $("#stream_get_more").hide();
         }
         $("#stream_get_more").removeClass("stream_loading");
-        Emitter.emit("ls_stream_get_more_by_user_after", [lastId, iUserId, data]);
+        Emitter.emit("stream_getmorebyuser_after", [lastId, iUserId, data]);
         this.isBusy = false;
     }.bind(this));
 }

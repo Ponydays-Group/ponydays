@@ -38,7 +38,7 @@ export function loadRegions($country) {
 
     const url = aRouter["ajax"] + "geo/get/regions/";
     const params = {country: $country.val()};
-    Emitter.emit("loadRegionsBefore");
+    Emitter.emit("geo_loadregions_before");
     Ajax.ajax(url, params, function(result) {
         if(result.bStateError) {
             Msg.error(null, result.sMsg);
@@ -47,7 +47,7 @@ export function loadRegions($country) {
                 $region.append("<option value=\"" + v.id + "\">" + v.name + "</option>");
             });
             $region.show();
-            Emitter.emit("ls_geo_load_regions_after", [$country, result]);
+            Emitter.emit("geo_loadregions_after", [$country, result]);
         }
     });
 }
@@ -64,7 +64,7 @@ export function loadCities($region) {
 
     const url = aRouter["ajax"] + "geo/get/cities/";
     const params = {region: $region.val()};
-    Emitter.emit("loadCitiesBefore");
+    Emitter.emit("geo_loadcities_before");
     Ajax.ajax(url, params, function(result) {
         if(result.bStateError) {
             Msg.error(null, result.sMsg);
@@ -73,7 +73,7 @@ export function loadCities($region) {
                 $city.append("<option value=\"" + v.id + "\">" + v.name + "</option>");
             });
             $city.show();
-            Emitter.emit("ls_geo_load_cities_after", [$region, result]);
+            Emitter.emit("geo_loadcities_after", [$region, result]);
         }
     });
 }

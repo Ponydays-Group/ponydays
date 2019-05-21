@@ -48,7 +48,7 @@ export function addUserfield() {
     const url = aRouter["admin"] + "userfields";
     const params = {"action": "add", "name": name, "title": title, "pattern": pattern, "type": type};
 
-    Emitter.emit("addUserfieldBefore");
+    Emitter.emit("userfield_adduserfield_before");
     Ajax.ajax(url, params, function(data) {
         if(!data.bStateError) {
             const liElement = $("<li id=\"field_" + data.id + "\"><span class=\"userfield_admin_name\"></span > / <span class=\"userfield_admin_title\"></span> / <span class=\"userfield_admin_pattern\"></span> / <span class=\"userfield_admin_type\"></span>"
@@ -61,7 +61,7 @@ export function addUserfield() {
             $("#field_" + data.id + " .userfield_admin_pattern").text(pattern);
             $("#field_" + data.id + " .userfield_admin_type").text(type);
             Msg.notice(data.sMsgTitle, data.sMsg);
-            Emitter.emit("ls_userfield_add_userfield_after", [params, data], liElement);
+            Emitter.emit("userfield_adduserfield_after", [params, data], liElement);
         } else {
             Msg.error(data.sMsgTitle, data.sMsg);
         }
@@ -78,7 +78,7 @@ export function updateUserfield() {
     const url = aRouter["admin"] + "userfields";
     const params = {"action": "update", "id": id, "name": name, "title": title, "pattern": pattern, "type": type};
 
-    Emitter.emit("updateUserfieldBefore");
+    Emitter.emit("userfield_updateuserfield_before");
     Ajax.ajax(url, params, function(data) {
         if(!data.bStateError) {
             $("#field_" + id + " .userfield_admin_name").text(name);
@@ -86,7 +86,7 @@ export function updateUserfield() {
             $("#field_" + id + " .userfield_admin_pattern").text(pattern);
             $("#field_" + id + " .userfield_admin_type").text(type);
             Msg.notice(data.sMsgTitle, data.sMsg);
-            Emitter.emit("ls_userfield_update_userfield_after", [params, data]);
+            Emitter.emit("userfield_updateuserfield_after", [params, data]);
         } else {
             Msg.error(data.sMsgTitle, data.sMsg);
         }
@@ -101,12 +101,12 @@ export function deleteUserfield(id) {
     const url = aRouter["admin"] + "userfields";
     const params = {"action": "delete", "id": id};
 
-    Emitter.emit("deleteUserfieldBefore");
+    Emitter.emit("userfield_deleteuserfield_before");
     Ajax.ajax(url, params, function(data) {
         if(!data.bStateError) {
             $("#field_" + id).remove();
             Msg.notice(data.sMsgTitle, data.sMsg);
-            Emitter.emit("ls_userfield_update_userfield_after", [params, data]);
+            Emitter.emit("userfield_deleteuserfield_after", [params, data]);
         } else {
             Msg.error(data.sMsgTitle, data.sMsg);
         }
@@ -156,3 +156,6 @@ export function removeFormField(obj) {
     $(obj).parent(".js-user-field-item").detach();
     return false;
 }
+
+Emitter.meta('userfield-about-to-change', 'userfield_updateuserfield_before', 'userfield_deleteuserfield_before');
+Emitter.meta('userfield-has-changed', 'userfield_updateuserfield_after', 'userfield_deleteuserfield_after');

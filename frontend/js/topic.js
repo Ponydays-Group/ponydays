@@ -11,13 +11,13 @@ export function preview(form, preview) {
     form = $("#" + form);
     preview = $("#" + preview);
     const url = aRouter["ajax"] + "preview/topic/";
-    Emitter.emit("previewBefore");
+    Emitter.emit("topic_preview_before");
     Ajax.ajaxSubmit(url, form, function(result) {
         if(result.bStateError) {
             Msg.error(null, result.sMsg);
         } else {
             preview.show().html(result.sText);
-            Emitter.emit("ls_topic_preview_after", [form, preview, result]);
+            Emitter.emit("topic_preview_after", [form, preview, result]);
         }
     });
 }
@@ -58,7 +58,7 @@ export function lockControl(idTopic, obj) {
     params["bState"] = state ? "1" : "0";
 
     const url = aRouter["ajax"] + "topic-lock-control";
-    Emitter.emit("topicLockControlBefore");
+    Emitter.emit("topic_lockcontrol_before");
     Ajax.ajax(url, params, this.onControlLocked.bind(obj));
     return true;
 }

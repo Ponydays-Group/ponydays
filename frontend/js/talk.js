@@ -31,7 +31,7 @@ export function addToTalk(idTalk) {
     const url = aRouter["talk"] + "ajaxaddtalkuser/";
     const params = {users: sUsers, idTalk: idTalk};
 
-    Emitter.emit("addToTalkBefore");
+    Emitter.emit("talk_addtotalk_before");
     Ajax.ajax(url, params, function(result) {
         if(result.bStateError) {
             Msg.error(null, result.sMsg);
@@ -47,11 +47,11 @@ export function addToTalk(idTalk) {
                     }
                     var listItem = $("<li id=\"speaker_item_" + item.sUserId + "_area\"><a href=\"" + item.sUserLink + "\" class=\"user\">" + item.sUserLogin + "</a> - <a href=\"#\" id=\"speaker_item_" + item.sUserId + "\" class=\"delete\">" + Lang.get("delete") + "</a></li>")
                     list.append(listItem);
-                    Emitter.emit("ls_talk_add_to_talk_item_after", [idTalk, item], listItem);
+                    Emitter.emit("talk_addtotalk_item_after", [idTalk, item], listItem);
                 }
             });
 
-            Emitter.emit("ls_talk_add_to_talk_after", [idTalk, result]);
+            Emitter.emit("talk_addtotalk_after", [idTalk, result]);
         }
     });
     return false;
@@ -100,7 +100,7 @@ export function removeFromTalk(link, idTalk) {
         $("#speaker_item_" + idTarget + "_area > #speaker_item_" + idTarget).attr("id", "speaker_restore_item_" + idTarget).html("Восстановить");
         $("#speaker_item_" + idTarget + "_area > .user").addClass("inactive");
 
-        Emitter.emit("removeFromTalkBefore");
+        Emitter.emit("talk_removefromtalk_before");
         Ajax.ajax(url, params, function(result) {
             if(!result) {
                 Msg.error("Error", "Please try again later");
@@ -112,7 +112,7 @@ export function removeFromTalk(link, idTalk) {
             } else {
                 Msg.notice(null, result.sMsg);
             }
-            Emitter.emit("ls_talk_remove_from_talk_after", [idTalk, idTarget], link);
+            Emitter.emit("talk_removefromtalk_after", [idTalk, idTarget], link);
         });
     }
 
@@ -159,7 +159,7 @@ export function addToBlackList() {
     const url = aRouter["talk"] + "ajaxaddtoblacklist/";
     const params = {users: sUsers};
 
-    Emitter.emit("addToBlackListBefore");
+    Emitter.emit("talk_addtoblacklist_before");
     Ajax.ajax(url, params, function(result) {
         if(result.bStateError) {
             Msg.error(null, result.sMsg);
@@ -175,10 +175,10 @@ export function addToBlackList() {
                     }
                     var listItem = $("<li id=\"blacklist_item_" + item.sUserId + "_area\"><a href=\"#\" class=\"user\">" + item.sUserLogin + "</a> - <a href=\"#\" id=\"blacklist_item_" + item.sUserId + "\" class=\"delete\">" + Lang.get("delete") + "</a></li>");
                     $("#black_list").append(listItem);
-                    Emitter.emit("ls_talk_add_to_black_list_item_after", [item], listItem);
+                    Emitter.emit("talk_addtoblacklist_item_after", [item], listItem);
                 }
             });
-            Emitter.emit("ls_talk_add_to_black_list_after", [result]);
+            Emitter.emit("talk_addtoblacklist_after", [result]);
         }
     });
     return false;
@@ -198,7 +198,7 @@ export function removeFromBlackList(link) {
     const url = aRouter["talk"] + "ajaxdeletefromblacklist/";
     const params = {idTarget: idTarget};
 
-    Emitter.emit("removeFromBlackListBefore");
+    Emitter.emit("talk_removefromblacklist_before");
     Ajax.ajax(url, params, function(result) {
         if(!result) {
             Msg.error("Error", "Please try again later");
@@ -208,7 +208,8 @@ export function removeFromBlackList(link) {
             Msg.error(null, result.sMsg);
             link.parent("li").show();
         }
-        Emitter.emit("ls_talk_remove_from_black_list_after", [idTarget], link);
+        Emitter.emit("talk_removefromblacklist_after", [idTarget
+        ], link);
     });
     return false;
 }

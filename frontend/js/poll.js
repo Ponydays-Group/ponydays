@@ -14,16 +14,16 @@ import * as Ajax from "./ajax"
 export function vote(idTopic, idAnswer) {
     const url = aRouter["ajax"] + "vote/question/";
     const params = {idTopic: idTopic, idAnswer: idAnswer};
-    Emitter.emit("voteBefore");
+    Emitter.emit("poll_vote_before");
     Ajax.ajax(url, params, function(result) {
         if(result.bStateError) {
             Msg.error(null, result.sMsg);
         } else {
             Msg.notice(null, result.sMsg);
             var area = $("#topic_question_area_" + idTopic);
-            Emitter.emit("voteDisplayBefore");
+            Emitter.emit("poll_vote_display_before");
             area.html(result.sText);
-            Emitter.emit("ls_pool_vote_after", [idTopic, idAnswer, result], area);
+            Emitter.emit("poll_vote_after", [idTopic, idAnswer, result], area);
         }
     });
 }
@@ -44,7 +44,7 @@ export function addAnswer() {
     }.bind(this));
     newItem.appendTo("#question_list").append(removeAnchor);
     newItem.find("input").val("");
-    Emitter.emit("ls_pool_add_answer_after", [removeAnchor], newItem);
+    Emitter.emit("poll_addanswer_after", [removeAnchor], newItem);
 }
 
 /**

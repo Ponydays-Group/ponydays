@@ -40,16 +40,16 @@ sock.on("notification_group", function(data) {
     case 4: //comment_mention
         break;
     case 5: //topic_new_comment
-        ls.emitter.emit("socket-new-comment", data);
+        ls.emitter.emit("sockets_comment_new", data);
         break;
     case 6: //comment_edit
-        ls.emitter.emit("socket-edit-comment", data);
+        ls.emitter.emit("sockets_comment_edit", data);
         break;
     case 7: //comment_delete
-        ls.emitter.emit("socket-delete-comment", data);
+        ls.emitter.emit("sockets_comment_delete", data);
         break;
     case 8: //comment_restore
-        ls.emitter.emit("socket-restore-comment", data);
+        ls.emitter.emit("sockets_comment_restore", data);
         break;
     case 9: //comment_restore_deleted_by_you
         break;
@@ -203,7 +203,7 @@ sock.on("reply-info", function(data) {
 
 sock.on("edit-comment-info", function(data) {
     if(checkPerm("notice_comment_delete")) {
-        const url = "/blog/undefined/" + data.targetId + "#comment" + data.commentData.id;
+        let url = "/blog/undefined/" + data.targetId + "#comment" + data.commentData.id;
         let blank = true;
         if(location.pathname.startsWith("/blog/") && location.pathname.endsWith(data.targetId)) {
             url = "#comment" + data.commentData.id;
@@ -297,10 +297,10 @@ sock.on("vote-info", function(data) {
     }
 });
 
-sock.on("edit-comment", (data) => ls.emitter.emit("socket-edit-comment", data));
-sock.on("delete-comment", (data) => ls.emitter.emit("socket-delete-comment", data));
+sock.on("edit-comment", (data) => ls.emitter.emit("sockets_comment_edit", data));
+sock.on("delete-comment", (data) => ls.emitter.emit("sockets_comment_delete", data));
 sock.on("new-comment", (data) => {
-    ls.emitter.emit("socket-new-comment", data);
+    ls.emitter.emit("sockets_comment_new", data);
 });
 
 sock.on("new-vote", function(data) {
@@ -336,6 +336,7 @@ sock.on("new-vote", function(data) {
 });
 
 sock.on("site-update", function() {
+    //TODO: Локализовать
     ls.msg.notice("Сайт был обновлен", "Рекомендуется перезагрузить страницу");
     if(checkPerm("sound_notice"))
         nAudio.play();

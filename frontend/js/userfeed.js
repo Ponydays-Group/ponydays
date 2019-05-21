@@ -9,11 +9,11 @@ export function subscribe(sType, iId) {
     const url = aRouter["feed"] + "subscribe/";
     const params = {"type": sType, "id": iId};
 
-    Emitter.emit("subscribeBefore");
+    Emitter.emit("userfeed_subscribe_before");
     Ajax.ajax(url, params, function(data) {
         if(!data.bStateError) {
             Msg.notice(data.sMsgTitle, data.sMsg);
-            Emitter.emit("ls_userfeed_subscribe_after", [sType, iId, data]);
+            Emitter.emit("userfeed_subscribe_after", [sType, iId, data]);
         }
     });
 }
@@ -22,11 +22,11 @@ export function subscribeAll() {
     const url = aRouter["feed"] + "subscribe_all/";
     const params = {};
 
-    Emitter.emit("subscribeBefore");
+    Emitter.emit("userfeed_subscribeall_before");
     Ajax.ajax(url, params, function(data) {
         if(!data.bStateError) {
             Msg.notice(data.sMsgTitle, data.sMsg);
-            Emitter.emit("ls_userfeed_subscribe_all_after", [data]);
+            Emitter.emit("userfeed_subscribeall_after", [data]);
             location.reload();
         }
     });
@@ -36,11 +36,11 @@ export function unsubscribe(sType, iId) {
     const url = aRouter["feed"] + "unsubscribe/";
     const params = {"type": sType, "id": iId};
 
-    Emitter.emit("unsubscribeAllBefore");
+    Emitter.emit("userfeed_unsubscribe_before");
     Ajax.ajax(url, params, function(data) {
         if(!data.bStateError) {
             Msg.notice(data.sMsgTitle, data.sMsg);
-            Emitter.emit("ls_userfeed_unsubscribe_after", [sType, iId, data]);
+            Emitter.emit("userfeed_unsubscribe_after", [sType, iId, data]);
         }
     });
 }
@@ -49,11 +49,11 @@ export function unsubscribeAll() {
     const url = aRouter["feed"] + "unsubscribe_all/";
     const params = {};
 
-    Emitter.emit("unsubscribeAllBefore");
+    Emitter.emit("userfeed_unsubscribeall_before");
     Ajax.ajax(url, params, function(data) {
         if(!data.bStateError) {
             Msg.notice(data.sMsgTitle, data.sMsg);
-            Emitter.emit("ls_userfeed_unsubscribe_all_after", [data]);
+            Emitter.emit("userfeed_unsubscribeall_after", [data]);
             location.reload();
         }
     });
@@ -66,7 +66,7 @@ export function appendUser() {
     const url = aRouter["feed"] + "subscribeByLogin/";
     const params = {"login": sLogin};
 
-    Emitter.emit("appendUserBefore");
+    Emitter.emit("userfeed_appenduser_before");
     Ajax.ajax(url, params, function(data) {
         if(data.bStateError) {
             Msg.error(data.sMsgTitle, data.sMsg);
@@ -101,7 +101,7 @@ export function getMore() {
     const url = aRouter["feed"] + "get_more/";
     const params = {"last_id": lastId};
 
-    Emitter.emit("getMoreBefore");
+    Emitter.emit("userfeed_getmore_before");
     Ajax.ajax(url, params, function(data) {
         if(!data.bStateError && data.topics_count) {
             $("#userfeed_loaded_topics").append(data.result);
@@ -111,7 +111,7 @@ export function getMore() {
             $("#userfeed_get_more").hide();
         }
         $("#userfeed_get_more").removeClass("userfeed_loading");
-        Emitter.emit("ls_userfeed_get_more_after", [lastId, data]);
+        Emitter.emit("userfeed_getmore_after", [lastId, data]);
 
         isBusy = false;
     }.bind(this));

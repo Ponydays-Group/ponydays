@@ -131,12 +131,12 @@ export default class Tree {
     constructor() {
         this.obj = $("#comments-tree");
 
-        Emitter.on("comments-new-loaded", this.handleNewComments.bind(this));
-        Emitter.on("comments-edited-loaded", this.checkEdited.bind(this));
-        Emitter.on("go-to-next-comment", this.goToNextComment.bind(this));
-        Emitter.on("go-to-prev-comment", this.goToPrevComment.bind(this));
-        Emitter.on("go-to-comment", this.goToComment.bind(this));
-        Emitter.on("comments-calc-nesting", this.updateNesting.bind(this));
+        Emitter.on("comments_load_new_loaded", this.handleNewComments.bind(this));
+        Emitter.on("comments_load_edited_loaded", this.checkEdited.bind(this));
+        Emitter.on("comments_gotonextcomment_before", this.goToNextComment.bind(this));
+        Emitter.on("comments_gotoprevcomment_before", this.goToPrevComment.bind(this));
+        Emitter.on("comments_gotocomment_after", this.goToComment.bind(this));
+        Emitter.on("do_comments_calc_nesting", this.updateNesting.bind(this));
     }
 
     updateCommentDeleted(id, deleted, reason) {
@@ -204,9 +204,9 @@ export default class Tree {
 
             // let sCmtHtml = render_comment(aNewComments[id], iMaxNesting)
             const cmt = this.state.aComments[id];
-            let foldable = false''
+            let foldable = false;
             if(i < this.state.aSortedIds.length - 1) {
-                foldable = this.state.aComments[this.state.aSortedIds[i + 1]].level > cmt.level''
+                foldable = this.state.aComments[this.state.aSortedIds[i + 1]].level > cmt.level;
             }
             const sCmtHtml = cmt.render(false, foldable);
             const oPrevCmt = $(`[data-id=${iPrevId}]`);
@@ -412,9 +412,9 @@ export default class Tree {
             sock.on("reconnect", () => sock.emit("listenTopic", {id: targetId}));
         }
 
-        Emitter.on("socket-edit-comment", (data) => this.updateCommentEdited(data.commentData.id, data.commentData.text));
-        Emitter.on("socket-delete-comment", (data) => this.updateCommentDeleted(data.commentData.id, parseInt(data.delete), data.deleteReason));
-        Emitter.on("socket-new-comment", (data) => {
+        Emitter.on("sockets_comment_edit", (data) => this.updateCommentEdited(data.commentData.id, data.commentData.text));
+        Emitter.on("sockets_comment_delete", (data) => this.updateCommentDeleted(data.commentData.id, parseInt(data.delete), data.deleteReason));
+        Emitter.on("sockets_comment_new", (data) => {
             if(!document.getElementById("autoload").checked)
                 return;
             // let a = {}

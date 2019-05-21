@@ -33,7 +33,7 @@ export const options = {
  */
 export function load(obj, block, params) {
     let type = $(obj).data("type") || "comment";
-    Emitter.emit("loadBefore");
+    Emitter.emit("blocks_load_before");
 
     if(!type) return;
     type = block + "_" + type;
@@ -48,7 +48,7 @@ export function load(obj, block, params) {
 
     Ajax.ajax(options.type[type].url, params, function(result) {
         let args = [content, result];
-        Emitter.emit("onLoadBefore");
+        Emitter.emit("blocks_onload_before");
         onLoad.apply(this, args);
         //     if (block == "stream") {
         //             $('.js-title-comment, .js-title-topic').poshytip({
@@ -98,7 +98,7 @@ export function switchTab(obj, block) {
         }
     });
 
-    Emitter.emit("ls_blocks_switch_tab_after", [obj, block], this);
+    Emitter.emit("blocks_switch_tab_after", [obj, block], this);
 
     return true;
 }
@@ -121,7 +121,7 @@ export function onLoad(content, result) {
         Msg.error(null, result.sMsg);
     } else {
         content.html(result.sText);
-        Emitter.emit("ls_block_onload_html_after", arguments, this);
+        Emitter.emit("blocks_onload_html_after", arguments, this);
     }
 }
 

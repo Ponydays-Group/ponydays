@@ -57,7 +57,7 @@ export function vote(idTarget, objVote, value, type) {
     params["value"] = value;
     params[this.options.type[type].targetName] = idTarget;
 
-    Emitter.emit("voteBefore");
+    Emitter.emit("vote_vote_before");
     Ajax.ajax(this.options.type[type].url, params, function(result) {
         const args = [idTarget, objVote, value, type, result];
         this.onVote.apply(this, args);

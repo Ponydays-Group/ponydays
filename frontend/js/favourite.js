@@ -42,7 +42,7 @@ export function toggle(idTarget, objFavourite, type) {
     params["type"] = !this.objFavourite.hasClass(this.options.active);
     params[this.options.type[type].targetName] = idTarget;
 
-    Emitter.emit("toggleBefore");
+    Emitter.emit("favourite_toggle_before");
     Ajax.ajax(this.options.type[type].url, params, function(result) {
         $(this).trigger("toggle", [idTarget, objFavourite, type, params, result]);
         if(result.bStateError) {
@@ -59,7 +59,7 @@ export function toggle(idTarget, objFavourite, type) {
             if(type === "comment") {
                 $(objFavourite).parent().find(".favourite-count")[0].innerText = result.iCount ? result.iCount : "";
             }
-            Emitter.emit("ls_favourite_toggle_after", [idTarget, objFavourite, type, params, result], this);
+            Emitter.emit("favourite_toggle_after", [idTarget, objFavourite, type, params, result], this);
         }
     }.bind(this));
     return false;
@@ -94,7 +94,7 @@ export function hideEditTags() {
 
 export function saveTags(form) {
     const url = aRouter["ajax"] + "favourite/save-tags/";
-    Emitter.emit("saveTagsBefore");
+    Emitter.emit("favourite_savetags_before");
     Ajax.ajaxSubmit(url, $(form), function(result) {
         if(result.bStateError) {
             Msg.error(null, result.sMsg);
@@ -108,7 +108,7 @@ export function saveTags(form) {
                 edit.before("<li class=\"" + type + "-tags-user js-favourite-tag-user\">, <a rel=\"tag\" href=\"" + v.url + "\">" + v.tag + "</a></li>");
             });
 
-            Emitter.emit("ls_favourite_save_tags_after", [form, result], this);
+            Emitter.emit("favourite_savetags_after", [form, result], this);
         }
     }.bind(this));
     return false;

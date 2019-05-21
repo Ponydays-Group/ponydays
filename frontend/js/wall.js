@@ -20,7 +20,7 @@ export function add(sText, iPid) {
     const url = aRouter['profile'] + this.options.login + '/wall/add/';
     const params = {sText: sText, iPid: iPid};
 
-    Emitter.emit('addBefore');
+    Emitter.emit('wall_add_before');
     $('#wall-text').addClass('loader');
     Ajax.ajax(url, params, function (result) {
         $('.js-button-wall-submit').attr('disabled', false);
@@ -30,7 +30,7 @@ export function add(sText, iPid) {
             $('.js-wall-reply-parent-text').val('');
             $('#wall-note-list-empty').hide();
             this.loadNew();
-            Emitter.emit('ls_wall_add_after', [sText, iPid, result]);
+            Emitter.emit('wall_add_after', [sText, iPid, result]);
         }
         $('#wall-text').removeClass('loader');
     }.bind(this));
@@ -42,7 +42,7 @@ export function addReply(sText, iPid) {
     const url = aRouter['profile'] + this.options.login + '/wall/add/';
     const params = {sText: sText, iPid: iPid};
 
-    Emitter.emit('addReplyBefore');
+    Emitter.emit('wall_addreply_before');
     $('#wall-reply-text-' + iPid).addClass('loader');
     Ajax.ajax(url, params, function (result) {
         $('.js-button-wall-submit').attr('disabled', false);
@@ -51,7 +51,7 @@ export function addReply(sText, iPid) {
         } else {
             $('.js-wall-reply-text').val('');
             this.loadReplyNew(iPid);
-            Emitter.emit('ls_wall_addreply_after', [sText, iPid, result]);
+            Emitter.emit('wall_addreply_after', [sText, iPid, result]);
         }
         $('#wall-reply-text-' + iPid).removeClass('loader');
     }.bind(this));
@@ -61,7 +61,7 @@ export function addReply(sText, iPid) {
 export function load(iIdLess, iIdMore, callback) {
     const url = aRouter['profile'] + this.options.login + '/wall/load/';
     const params = {iIdLess: iIdLess ? iIdLess : '', iIdMore: iIdMore ? iIdMore : ''};
-    Emitter.emit('loadBefore');
+    Emitter.emit('wall_load_before');
     Ajax.ajax(url, params, callback);
     return false;
 }
@@ -69,7 +69,7 @@ export function load(iIdLess, iIdMore, callback) {
 export function loadReply(iIdLess, iIdMore, iPid, callback) {
     const url = aRouter['profile'] + this.options.login + '/wall/load-reply/';
     const params = {iIdLess: iIdLess ? iIdLess : '', iIdMore: iIdMore ? iIdMore : '', iPid: iPid};
-    Emitter.emit('loadReplyBefore');
+    Emitter.emit('wall_loadreply_before');
     Ajax.ajax(url, params, callback);
     return false;
 }
@@ -96,7 +96,7 @@ export function loadNext() {
             } else {
                 $('#wall-button-next').detach();
             }
-            Emitter.emit('ls_wall_loadnext_after', [idLess, result]);
+            Emitter.emit('wall_loadnext_after', [idLess, result]);
         }
         $('#wall-button-next').removeClass('loader');
     }.bind(this));
@@ -118,14 +118,14 @@ export function loadNew() {
             if (result.iCountWall) {
                 $('#wall-container').prepend(result.sText);
             }
-            Emitter.emit('ls_wall_loadnew_after', [idMore, result]);
+            Emitter.emit('wall_loadnew_after', [idMore, result]);
         }
     }.bind(this));
     return false;
 }
 
 export function loadReplyNew(iPid) {
-    const divFirst = $('#wall-reply-container-' + iPid).find('.js-wall-reply-item::last'); //TODO: :: prefix?
+    const divFirst = $('#wall-reply-container-' + iPid).find('.js-wall-reply-item:last');
     let idMore;
     if (divFirst.length) {
         idMore = divFirst.attr('id').replace('wall-reply-item-', '');
@@ -139,7 +139,7 @@ export function loadReplyNew(iPid) {
             if (result.iCountWall) {
                 $('#wall-reply-container-' + iPid).append(result.sText);
             }
-            Emitter.emit('ls_wall_loadreplynew_after', [iPid, idMore, result]);
+            Emitter.emit('wall_loadreplynew_after', [iPid, idMore, result]);
         }
     }.bind(this));
     return false;
@@ -167,7 +167,7 @@ export function loadReplyNext(iPid) {
             } else {
                 $('#wall-reply-button-next-' + iPid).detach();
             }
-            Emitter.emit('ls_wall_loadreplynext_after', [iPid, idLess, result]);
+            Emitter.emit('wall_loadreplynext_after', [iPid, idLess, result]);
         }
         $('#wall-reply-button-next-' + iPid).removeClass('loader');
     }.bind(this));
@@ -225,18 +225,18 @@ export function init(opt) {
 export function remove(iId) {
     const url = aRouter['profile'] + this.options.login + '/wall/remove/';
     const params = {iId: iId};
-    Emitter.emit('removeBefore');
+    Emitter.emit('wall_remove_before');
     Ajax.ajax(url, params, function (result) {
         if (result.bStateError) {
             Msg.error(null, result.sMsg);
         } else {
             $('#wall-item-' + iId).fadeOut('slow', function () {
-                Emitter.emit('ls_wall_remove_item_fade', [iId, result], this);
+                Emitter.emit('wall_remove_item_fade', [iId, result], this);
             });
             $('#wall-reply-item-' + iId).fadeOut('slow', function () {
-                Emitter.emit('ls_wall_remove_reply_item_fade', [iId, result], this);
+                Emitter.emit('wall_remove_reply_item_fade', [iId, result], this);
             });
-            Emitter.emit('ls_wall_remove_after', [iId, result]);
+            Emitter.emit('wall_remove_after', [iId, result]);
         }
     });
     return false;

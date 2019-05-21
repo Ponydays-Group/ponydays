@@ -27,7 +27,7 @@ export function addFriend(obj, idUser, sAction) {
 
     const params = {idUser: idUser, userText: sText};
 
-    Emitter.emit("addFriendBefore");
+    Emitter.emit("user_addfriend_before");
     Ajax.ajax(url, params, function(result) {
         $("#add_friend_form").children().each(function(i, item) {
             $(item).removeAttr("disabled")
@@ -42,7 +42,7 @@ export function addFriend(obj, idUser, sAction) {
             $("#add_friend_form").jqmHide();
             $("#add_friend_item").remove();
             $("#profile_actions").prepend($(result.sToggleText));
-            Emitter.emit("ls_user_add_friend_after", [idUser, sAction, result], obj);
+            Emitter.emit("user_addfriend_after", [idUser, sAction, result], obj);
         }
     });
     return false;
@@ -55,7 +55,7 @@ export function removeFriend(obj, idUser, sAction) {
     const url = aRouter.profile + "ajaxfrienddelete/";
     const params = {idUser: idUser, sAction: sAction};
 
-    Emitter.emit("removeFriendBefore");
+    Emitter.emit("user_removefriend_before");
     Ajax.ajax(url, params, function(result) {
         if(result.bStateError) {
             Msg.error(null, result.sMsg);
@@ -63,7 +63,7 @@ export function removeFriend(obj, idUser, sAction) {
             Msg.notice(null, result.sMsg);
             $("#delete_friend_item").remove();
             $("#profile_actions").prepend($(result.sToggleText));
-            Emitter.emit("ls_user_remove_friend_after", [idUser, sAction, result], obj);
+            Emitter.emit("user_removefriend_after", [idUser, sAction, result], obj);
         }
     });
     return false;
@@ -127,7 +127,7 @@ export function resizeAvatar() {
     const url = aRouter.settings + "profile/resize-avatar/";
     const params = {size: this.jcropAvatar.tellSelect()};
 
-    Emitter.emit("resizeAvatarBefore");
+    Emitter.emit("user_resizeavatar_before");
     Ajax.ajax(url, params, function(result) {
         if(result.bStateError) {
             Msg.error(null, result.sMsg);
@@ -136,7 +136,7 @@ export function resizeAvatar() {
             $("#avatar-resize").jqmHide();
             $("#avatar-remove").show();
             $("#avatar-upload").text(result.sTitleUpload);
-            Emitter.emit("ls_user_resize_avatar_after", [params, result]);
+            Emitter.emit("user_resizeavatar_after", [params, result]);
         }
     });
 
@@ -150,7 +150,7 @@ export function removeAvatar() {
     const url = aRouter.settings + "profile/remove-avatar/";
     const params = {};
 
-    Emitter.emit("removeAvatarBefore");
+    Emitter.emit("user_removeavatar_before");
     Ajax.ajax(url, params, function(result) {
         if(result.bStateError) {
             Msg.error(null, result.sMsg);
@@ -158,7 +158,7 @@ export function removeAvatar() {
             $("#avatar-img").attr("src", result.sFile + "?" + Math.random());
             $("#avatar-remove").hide();
             $("#avatar-upload").text(result.sTitleUpload);
-            Emitter.emit("ls_user_remove_avatar_after", [params, result]);
+            Emitter.emit("user_removeavatar_after", [params, result]);
         }
     });
 
@@ -172,13 +172,13 @@ export function cancelAvatar() {
     const url = aRouter.settings + "profile/cancel-avatar/";
     const params = {};
 
-    Emitter.emit("cancelAvatarBefore");
+    Emitter.emit("user_cancelavatar_before");
     Ajax.ajax(url, params, function(result) {
         if(result.bStateError) {
             Msg.error(null, result.sMsg);
         } else {
             $("#avatar-resize").jqmHide();
-            Emitter.emit("ls_user_cancel_avatar_after", [params, result]);
+            Emitter.emit("user_cancelavatar_after", [params, result]);
         }
     });
 
@@ -244,7 +244,7 @@ export function resizeFoto() {
     const url = aRouter.settings + "profile/resize-foto/";
     const params = {size: this.jcropFoto.tellSelect()};
 
-    Emitter.emit("resizeFotoBefore");
+    Emitter.emit("user_resizefoto_before");
     Ajax.ajax(url, params, function(result) {
         if(result.bStateError) {
             Msg.error(null, result.sMsg);
@@ -253,7 +253,7 @@ export function resizeFoto() {
             $("#foto-resize").jqmHide();
             $("#foto-remove").show();
             $("#foto-upload").text(result.sTitleUpload);
-            Emitter.emit("ls_user_resize_foto_after", [params, result]);
+            Emitter.emit("user_resizefoto_after", [params, result]);
             location.reload()
         }
     });
@@ -268,7 +268,7 @@ export function removeFoto() {
     const url = aRouter.settings + "profile/remove-foto/";
     const params = {};
 
-    Emitter.emit("removeFotoBefore");
+    Emitter.emit("user_removefoto_before");
     Ajax.ajax(url, params, function(result) {
         if(result.bStateError) {
             Msg.error(null, result.sMsg);
@@ -276,7 +276,7 @@ export function removeFoto() {
             $("#foto-img").attr("src", result.sFile + "?" + Math.random());
             $("#foto-remove").hide();
             $("#foto-upload").text(result.sTitleUpload);
-            Emitter.emit("ls_user_remove_foto_after", [params, result]);
+            Emitter.emit("user_removefoto_after", [params, result]);
             location.reload()
         }
     });
@@ -291,13 +291,13 @@ export function cancelFoto() {
     const url = aRouter.settings + "profile/cancel-foto/";
     const params = {};
 
-    Emitter.emit("cancelFotoBefore");
+    Emitter.emit("user_cancelfoto_before");
     Ajax.ajax(url, params, function(result) {
         if(result.bStateError) {
             Msg.error(null, result.sMsg);
         } else {
             $("#foto-resize").jqmHide();
-            Emitter.emit("ls_user_cancel_foto_after", [params, result]);
+            Emitter.emit("user_cancelfoto_after", [params, result]);
         }
     });
 
@@ -329,7 +329,7 @@ export function validateRegistrationFields(aFields, sForm) {
                 sForm.find(".validate-ok-field-" + aField.field).show();
             }
         });
-        Emitter.emit("ls_user_validate_registration_fields_after", [aFields, sForm, result]);
+        Emitter.emit("user_validateregistrationfields_after", [aFields, sForm, result]);
     });
 }
 
@@ -353,7 +353,7 @@ export function registration(form) {
     const url = aRouter.registration + "ajax-registration/";
 
     this.formLoader(form);
-    Emitter.emit("registrationBefore");
+    Emitter.emit("user_registration_before");
     Ajax.ajaxSubmit(url, form, function(result) {
         this.formLoader(form, true);
         if(result.bStateError) {
@@ -377,7 +377,7 @@ export function registration(form) {
                     window.location = result.sUrlRedirect;
                 }
             }
-            Emitter.emit("ls_user_registration_after", [form, result]);
+            Emitter.emit("user_registration_after", [form, result]);
         }
     }.bind(this));
 }
@@ -390,7 +390,7 @@ export function login(form) {
     const url = aRouter.login + "ajax-login/";
 
     this.formLoader(form);
-    Emitter.emit("loginBefore");
+    Emitter.emit("user_login_before");
     Ajax.ajaxSubmit(url, form, function(result) {
         this.formLoader(form, true);
         if(typeof (form) == "string") {
@@ -410,7 +410,7 @@ export function login(form) {
             if(result.sKey) {
                 localStorage.setItem("sKey", result.sKey)
             }
-            Emitter.emit("ls_user_login_after", [form, result]);
+            Emitter.emit("user_login_after", [form, result]);
         }
     }.bind(this));
 }
@@ -441,7 +441,7 @@ export function reminder(form) {
     const url = aRouter.login + "ajax-reminder/";
 
     this.formLoader(form);
-    Emitter.emit("reminderBefore");
+    Emitter.emit("user_reminder_before");
     Ajax.ajaxSubmit(url, form, function(result) {
         this.formLoader(form, true);
         if(typeof (form) == "string") {
@@ -459,7 +459,7 @@ export function reminder(form) {
             if(result.sUrlRedirect) {
                 window.location = result.sUrlRedirect;
             }
-            Emitter.emit("ls_user_reminder_after", [form, result]);
+            Emitter.emit("user_reminder_after", [form, result]);
         }
     }.bind(this));
 }
@@ -471,7 +471,7 @@ export function reminder(form) {
 export function reactivation(form) {
     const url = aRouter.login + "ajax-reactivation/";
 
-    Emitter.emit("reactivationBefore");
+    Emitter.emit("user_reactivation_before");
     Ajax.ajaxSubmit(url, form, function(result) {
         if(typeof (form) == "string") {
             form = $("#" + form);
@@ -485,7 +485,7 @@ export function reactivation(form) {
             if(result.sMsg) {
                 Msg.notice(null, result.sMsg);
             }
-            Emitter.emit("ls_user_reactivation_after", [form, result]);
+            Emitter.emit("user_reactivation_after", [form, result]);
         }
     });
 }
@@ -498,7 +498,7 @@ export function searchUsers(form) {
     const inputSearch = $("#" + form).find("input");
     inputSearch.addClass("loader");
 
-    Emitter.emit("searchUsersBefore");
+    Emitter.emit("user_searchusers_before");
     Ajax.ajaxSubmit(url, form, function(result) {
         inputSearch.removeClass("loader");
         if(result.bStateError) {
@@ -507,7 +507,7 @@ export function searchUsers(form) {
         } else {
             $("#users-list-original").hide();
             $("#users-list-search").html(result.sText).show();
-            Emitter.emit("ls_user_search_users_after", [form, result]);
+            Emitter.emit("user_searchusers_after", [form, result]);
         }
     });
 }
@@ -517,7 +517,7 @@ export function searchBlogUsers(form) {
     const inputSearch = $("#" + form).find("input");
     inputSearch.addClass("loader");
 
-    Emitter.emit("searchUsersBefore");
+    Emitter.emit("user_searchblogusers_before");
     Ajax.ajaxSubmit(url, form, function(result) {
         inputSearch.removeClass("loader");
         if(result.bStateError) {
@@ -526,7 +526,7 @@ export function searchBlogUsers(form) {
         } else {
             $("#users-list-original").addClass("hidden");
             $("#users-list-search").html(result.sText).removeClass("hidden");
-            Emitter.emit("ls_user_search_users_after", [form, result]);
+            Emitter.emit("user_searchblogusers_after", [form, result]);
         }
     });
 }
@@ -541,7 +541,7 @@ export function searchUsersByPrefix(sPrefix, obj) {
     const params = {user_login: sPrefix, isPrefix: 1};
     $("#search-user-login").addClass("loader");
 
-    Emitter.emit("searchUsersByPrefixBefore");
+    Emitter.emit("user_searchusersbyprefix_before");
     Ajax.ajax(url, params, function(result) {
         $("#search-user-login").removeClass("loader");
         $("#user-prefix-filter").find(".active").removeClass("active");
@@ -552,7 +552,7 @@ export function searchUsersByPrefix(sPrefix, obj) {
         } else {
             $("#users-list-original").hide();
             $("#users-list-search").html(result.sText).show();
-            Emitter.emit("ls_user_search_users_by_prefix_after", [sPrefix, obj, result]);
+            Emitter.emit("user_searchusersbyprefix_after", [sPrefix, obj, result]);
         }
     });
     return false;
@@ -564,7 +564,7 @@ export function searchBlogUsersByPrefix(sPrefix, obj) {
     const params = {user_login: sPrefix, isPrefix: 1};
     $("#search-user-login").addClass("loader");
 
-    Emitter.emit("searchUsersByPrefixBefore");
+    Emitter.emit("user_searchblogusersbyprefix_before");
     Ajax.ajax(url, params, function(result) {
         $("#search-user-login").removeClass("loader");
         $("#user-prefix-filter").find(".active").removeClass("active");
@@ -575,7 +575,7 @@ export function searchBlogUsersByPrefix(sPrefix, obj) {
         } else {
             $("#users-list-original").hide();
             $("#users-list-search").html(result.sText).show();
-            Emitter.emit("ls_user_search_users_by_prefix_after", [sPrefix, obj, result]);
+            Emitter.emit("user_searchusersbyprefix_after", [sPrefix, obj, result]);
         }
     });
     return false;

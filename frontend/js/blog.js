@@ -15,7 +15,7 @@ export function toggleJoin(obj, idBlog) {
     const url = aRouter["blog"] + "ajaxblogjoin/";
     const params = {idBlog: idBlog};
 
-    Emitter.emit("toggleJoinBefore");
+    Emitter.emit("blog_togglejoin_before");
     Ajax.ajax(url, params, function(result) {
         if(result.bStateError) {
             Msg.error(null, result.sMsg);
@@ -32,7 +32,7 @@ export function toggleJoin(obj, idBlog) {
             obj.toggleClass("active");
 
             $("#blog_user_count_" + idBlog).text(result.iCountUser);
-            Emitter.emit("ls_blog_toggle_join_after", [idBlog, result], obj);
+            Emitter.emit("blog_togglejoin_after", [idBlog, result], obj);
         }
     });
 }
@@ -66,7 +66,7 @@ export function addInvite(idBlog) {
     const url = aRouter["blog"] + "ajaxaddbloginvite/";
     const params = {users: sUsers, idBlog: idBlog};
 
-    Emitter.emit("addInviteBefore");
+    Emitter.emit("blog_addinvite_before");
     Ajax.ajax(url, params, function(result) {
         if(result.bStateError) {
             Msg.error(null, result.sMsg);
@@ -82,10 +82,10 @@ export function addInvite(idBlog) {
                     const listItem = $("<li><a href=\"" + item.sUserWebPath + "\" class=\"user\">" + item.sUserLogin + "</a></li>");
                     invited_list_sel.append(listItem);
                     $("#blog-invite-empty").hide();
-                    Emitter.emit("ls_blog_add_invite_user_after", [idBlog, item], listItem);
+                    Emitter.emit("blog_addinvite_user_after", [idBlog, item], listItem);
                 }
             });
-            Emitter.emit("ls_blog_add_invite_after", [idBlog, sUsers, result]);
+            Emitter.emit("blog_addinvite_after", [idBlog, sUsers, result]);
         }
     });
 
@@ -100,13 +100,13 @@ export function repeatInvite(idUser, idBlog) {
     const url = aRouter["blog"] + "ajaxrebloginvite/";
     const params = {idUser: idUser, idBlog: idBlog};
 
-    Emitter.emit("repeatInviteBefore");
+    Emitter.emit("blog_repeatinvite_before");
     Ajax.ajax(url, params, function(result) {
         if(result.bStateError) {
             Msg.error(null, result.sMsg);
         } else {
             Msg.notice(null, result.sMsg);
-            Emitter.emit("ls_blog_repeat_invite_after", [idUser, idBlog, result]);
+            Emitter.emit("blog_repeatinvite_after", [idUser, idBlog, result]);
         }
     });
 
@@ -121,7 +121,7 @@ export function removeInvite(idUser, idBlog) {
     const url = aRouter["blog"] + "ajaxremovebloginvite/";
     const params = {idUser: idUser, idBlog: idBlog};
 
-    Emitter.emit("removeInviteBefore");
+    Emitter.emit("blog_removeinvite_before");
     Ajax.ajax(url, params, function(result) {
         if(result.bStateError) {
             Msg.error(null, result.sMsg);
@@ -129,7 +129,7 @@ export function removeInvite(idUser, idBlog) {
             $("#blog-invite-remove-item-" + idBlog + "-" + idUser).remove();
             Msg.notice(null, result.sMsg);
             if($("#invited_list li").length === 0) $("#blog-invite-empty").show();
-            Emitter.emit("ls_blog_remove_invite_after", [idUser, idBlog, result]);
+            Emitter.emit("blog_removeinvite_after", [idUser, idBlog, result]);
         }
     });
 
@@ -144,14 +144,14 @@ export function loadInfo(idBlog) {
     const url = aRouter["blog"] + "ajaxbloginfo/";
     const params = {idBlog: idBlog};
 
-    Emitter.emit("loadInfoBefore");
+    Emitter.emit("blog_loadinfo_before");
     Ajax.ajax(url, params, function(result) {
         if(result.bStateError) {
             Msg.error(null, result.sMsg);
         } else {
             const block = $("#block_blog_info");
             block.html(result.sText);
-            Emitter.emit("ls_blog_load_info_after", [idBlog, result], block);
+            Emitter.emit("blog_loadinfo_after", [idBlog, result], block);
         }
     });
 }
@@ -173,7 +173,7 @@ export function searchBlogs(form) {
     const inputSearch = $("#" + form).find("input");
     inputSearch.addClass("loader");
 
-    Emitter.emit("searchBlogsBefore");
+    Emitter.emit("blog_searchblogs_before");
     Ajax.ajaxSubmit(url, form, function(result) {
         inputSearch.removeClass("loader");
         if(result.bStateError) {
@@ -182,7 +182,7 @@ export function searchBlogs(form) {
         } else {
             $("#blogs-list-original").hide();
             $("#blogs-list-search").html(result.sText).show();
-            Emitter.emit("ls_blog_search_blogs_after", [form, result]);
+            Emitter.emit("blog_searchblogs_after", [form, result]);
         }
     });
 }

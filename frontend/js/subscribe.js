@@ -12,13 +12,13 @@ import * as Ajax from "./ajax"
 export function toggle(sTargetType, iTargetId, sMail, iValue) {
     const url = aRouter["subscribe"] + "ajax-subscribe-toggle/";
     const params = {target_type: sTargetType, target_id: iTargetId, mail: sMail, value: iValue};
-    Emitter.emit("toggleBefore");
+    Emitter.emit("subscribe_toggle_before");
     Ajax.ajax(url, params, function(result) {
         if(result.bStateError) {
             Msg.error(null, result.sMsg);
         } else {
             Msg.notice(null, result.sMsg);
-            Emitter.emit("ls_subscribe_toggle_after", [sTargetType, iTargetId, sMail, iValue, result]);
+            Emitter.emit("subscribe_toggle_after", [sTargetType, iTargetId, sMail, iValue, result]);
         }
     });
     return false;

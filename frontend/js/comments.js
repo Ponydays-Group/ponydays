@@ -169,7 +169,7 @@ export function add(formObj, targetId, targetType) {
 
             load(targetId, targetType, result.sCommentId, true);
 
-            Emitter.emit("ls_comments_add_after", [formObj, targetId, targetType, result]);
+            Emitter.emit("comments_add_after", [formObj, targetId, targetType, result]);
         }
     }.bind(this), {
         error: function() {
@@ -274,10 +274,10 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
                 localStorage.setItem("lastcomment_" + targetType + "_" + targetId, lastNewComment);
             }
 
-            Emitter.emit("comments-new-loaded", result.aComments, selfIdComment, bNotFlushNew);
+            Emitter.emit("comments_load_new_loaded", result.aComments, selfIdComment, bNotFlushNew);
 
             if(Object.keys(result.aEditedComments).length > 0) {
-                Emitter.emit("comments-edited-loaded", result.aEditedComments);
+                Emitter.emit("comments_load_edited_loaded", result.aEditedComments);
             }
 
             let iCountOld = 0;
@@ -384,7 +384,7 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
             Blocks.load(curItemBlock, "stream");
         }
 
-        Emitter.emit("ls_comments_load_after", [idTarget, typeTarget, selfIdComment, bNotFlushNew, result]);
+        Emitter.emit("comments_load_after", [idTarget, typeTarget, selfIdComment, bNotFlushNew, result]);
 
     }.bind(this));
 }
@@ -408,7 +408,7 @@ export function inject(idCommentParent, idComment, sHtml) {
     } else {
         $("#comments").append(newComment);
     }
-    Emitter.emit("ls_comment_inject_after", arguments, newComment);
+    Emitter.emit("comments_inject_after", arguments, newComment);
 }
 
 // Удалить/восстановить комментарий
@@ -427,7 +427,7 @@ export function toggle(obj, commentId) {
         sDeleteReason: deleteReason,
     };
 
-    Emitter.emit("toggleBefore");
+    Emitter.emit("comments_toggle_before");
     Ajax.ajax(url, params, function(result) {
         if(!result) {
             Msg.error("Error", "Please try again later");
@@ -447,7 +447,7 @@ export function toggle(obj, commentId) {
                 oComment.find(".delete-reason").remove();
                 ls.comments.showHiddenComment(commentId);
             }
-            Emitter.emit("ls_comments_toggle_after", [obj, commentId, result]);
+            Emitter.emit("comments_toggle_after", [obj, commentId, result]);
         }
     }.bind(this));
 }
@@ -501,7 +501,7 @@ export function calcNewComments() {
 export function goToNextComment() {
     if($("#next_new").hasClass("disabled"))
         return false;
-    Emitter.emit("go-to-next-comment");
+    Emitter.emit("comments_gotonextcomment_before");
     const id = $(".comment-new:visible")[0].dataset.id;
     scrollToComment(id);
 }
@@ -510,7 +510,7 @@ export function goToPrevComment() {
     const prev_new_sel = $("#prev_new");
     if(prev_new_sel.hasClass("disabled"))
         return false;
-    Emitter.emit("go-to-prev-comment");
+    Emitter.emit("comments_gotoprevcomment_before");
     scrollToComment(aCommentNewOld.splice(-2, 1)[0]);
     if(aCommentNewOld.length < 2)
         prev_new_sel.addClass("disabled");
@@ -542,7 +542,7 @@ export function scrollToComment(id, offset, speed) {
             $("#prev_new").removeClass("disabled");
         oComment.removeClass("comment-new");
     }
-    Emitter.emit("go-to-comment", id);
+    Emitter.emit("comments_gotocomment_after", id);
     calcNewComments();
 }
 
@@ -838,10 +838,10 @@ export function init() {
 
         }
 
-        Emitter.on("socket-edit-comment", (data) => updateCommentEdited(data.target_id, data.comment_extra.text));
-        Emitter.on("socket-delete-comment", (data) => updateCommentDeleted(data.target_id, 1, data.comment_extra.deleteReason, data.comment_extra.deleteUserLogin));
-        Emitter.on("socket-restore-comment", (data) => updateCommentDeleted(data.target_id, 0, data.comment_extra.deleteReason, data.comment_extra.deleteUserLogin));
-        Emitter.on("socket-new-comment", (data) => {
+        Emitter.on("sockets_comment_edit", (data) => updateCommentEdited(data.target_id, data.comment_extra.text));
+        Emitter.on("sockets_comment_delete", (data) => updateCommentDeleted(data.target_id, 1, data.comment_extra.deleteReason, data.comment_extra.deleteUserLogin));
+        Emitter.on("sockets_comment_restore", (data) => updateCommentDeleted(data.target_id, 0, data.comment_extra.deleteReason, data.comment_extra.deleteUserLogin));
+        Emitter.on("sockets_comment_new", (data) => {
             if(!document.getElementById("autoload").checked)
                 return;
             ls.comments.load(data.group_target_id, data.group_target_type, false, true);
@@ -858,7 +858,7 @@ export function init() {
         comment_mark_sel[0].checked = JSON.parse(localStorage.getItem("comment_use_mark"));
     }
 
-    Emitter.emit("ls_comments_init_after", [], this);
+    Emitter.emit("comments_init_after", [], this);
 }
 
 export function updateCommentDeleted(id, deleted, reason, deleteUserLogin) {
@@ -1096,7 +1096,7 @@ export function edit(formObject, targetId, targetType) {
                 }
             }
 
-            Emitter.emit("ls_comments_edit_after", [formObj, targetId, targetType, result]);
+            Emitter.emit("comments_edit_after", [formObj, targetId, targetType, result]);
         }
     }.bind(this));
 }

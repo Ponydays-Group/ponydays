@@ -201,7 +201,7 @@ async function handler(e) {
 
         const resp = await Ajax.asyncAjax("/info/" + info.action, data);
 
-        lastWindow += 1;
+        window.lastWindow += 1;
         info.currentWindow = lastWindow;
 
         $(e.target).data("floatwindow", info.currentWindow);

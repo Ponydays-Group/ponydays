@@ -101,7 +101,7 @@ export function ajaxSubmit(url, form, callback, more) {
             if(typeof (data) === "string") {
                 data = JSON.parse(data);
             }
-            callback(data);
+            if(callback) callback(data);
         } || function() {
             Tools.debug("ajax success: ");
             Tools.debug.apply(this, arguments);

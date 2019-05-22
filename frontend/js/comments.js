@@ -12,8 +12,6 @@ import hljs from 'highlightjs'
 
 import * as Vote from "./vote";
 
-var dateFormat = require("dateformat")
-
 /**
  * Опции
  */
@@ -324,7 +322,6 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
                     let level = (parseInt(parent.data("level")) + 1);
                     let prev = null;
                     let next = null;
-                    console.warn(parent.next(".comment"));
                     window.pel = parent;
                     if(parent.hasClass("comment-folding-start")) {
                         $(cmt.html).appendTo(`#folded_branch_${parent.data("id")} .folding-comments`).css("margin-left", level * 20 + "px").attr("data-level", level);
@@ -332,14 +329,12 @@ export function load(idTarget, typeTarget, selfIdComment, bNotFlushNew) {
                     }
                     parent.nextAll(".comment").each(function(k, v) {
                         v = $(v);
-                        console.warn(v.data("level"));
                         if(next == null && parseInt(v.data("level")) > (level - 1)) {
                             prev = v;
                         } else if(next == null && parseInt(v.data("level")) <= (level - 1)) {
                             next = v;
                         }
                     });
-                    console.warn(prev, parent);
                     level = level < window.iMaxNesting ? level : window.iMaxNesting;
                     if(prev) {
                         $(cmt.html).insertAfter(prev).css("margin-left", level * 20 + "px").attr("data-level", level);
@@ -605,11 +600,29 @@ export function collapseCommentAll() {
 
 export function initShortcuts() {
     function goToPrevCommentS() {
-        scrollToComment($(".comment-current").prevAll(".comment")[0].dataset.id);
+        const current_comment = $(".comment-current");
+        //Переходим к последнему комменту, если текущий не определен.
+        if(current_comment[0]) {
+            const previous_comment = current_comment.prevAll(".comment")[0];
+            if(previous_comment) {
+                scrollToComment(previous_comment.dataset.id);
+            }
+        } else {
+            goToLastComment();
+        }
     }
 
     function goToNextCommentS() {
-        scrollToComment($(".comment-current").nextAll(".comment")[0].dataset.id);
+        const current_comment = $(".comment-current");
+        //Переходим к первому комменту, если текущий не определен
+        if(current_comment[0]) {
+            const next_comment = current_comment.nextAll(".comment")[0];
+            if(next_comment) {
+                scrollToComment(next_comment.dataset.id);
+            }
+        } else {
+            goToFirstComment();
+        }
     }
 
     function goToLastComment() {

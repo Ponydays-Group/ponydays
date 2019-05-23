@@ -105,12 +105,16 @@ class ModuleUser_EntityUser extends Entity {
 	public function getLogin() {
 		return $this->_getDataOne('user_login');
 	}
-	public function isGlobalModerator() {
-		if (in_array($this->getId(), Config::Get('moderator'))) {
-			return true;
-		}
-		return false;
+
+	public function hasPrivileges($iAskedPrivs): bool {
+		$iPrivs = $this->User_GetUserPrivileges($this->getId());
+		return ($iPrivs & $iAskedPrivs) == $iAskedPrivs;
 	}
+
+	public function isGlobalModerator(): bool {
+		return $this->hasPrivileges(ModuleUser::USER_PRIV_MODERATOR);
+	}
+
 	/**
 	 * Возвращает пароль (ввиде хеша)
 	 *

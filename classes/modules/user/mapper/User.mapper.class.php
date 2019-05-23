@@ -1532,6 +1532,21 @@ class ModuleUser_MapperUser extends Mapper
         }
         return false;
     }
-}
 
-?>
+    public function GetUserPrivileges($iUserId): int {
+    	$sql = "SELECT
+    				user_perms
+    			FROM
+    				".Config::Get('db.table.user')."
+    			WHERE
+    				user_id = ?d
+    			";
+    	$aResult = $this->oDb->query($sql, $iUserId);
+
+    	if($aResult) {
+    		return $aResult[0]['user_perms'];
+		}
+
+    	return 0;
+	}
+}

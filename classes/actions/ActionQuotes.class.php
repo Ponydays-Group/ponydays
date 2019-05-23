@@ -225,14 +225,7 @@ class ActionQuotes extends Action {
 	    if ($this->oUserCurrent->isAdministrator()) {
 	        return true;
         }
-		$aQuotesAdmins = Config::Get('quotes_admin');
-		foreach ($aQuotesAdmins as $iId) {
-			if ((int)$this->oUserCurrent->getId() === $iId) {
-				return true;
-			}
-		}
-
-		return false;
+	    return $this->oUserCurrent->hasPrivileges(ModuleUser::USER_PRIV_QUOTES);
 	}
 
 	/**

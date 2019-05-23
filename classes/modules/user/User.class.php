@@ -32,6 +32,12 @@ class ModuleUser extends Module
     const USER_FRIEND_REJECT = 8;
     const USER_FRIEND_NULL = 16;
 
+    /**
+     * Биты привилегий пользователя
+     */
+    const USER_PRIV_MODERATOR = 0b01;
+    const USER_PRIV_QUOTES    = 0b10;
+
     const TYPE_IGNORE_COMMENTS = 'comments';
     const TYPE_IGNORE_TOPICS = 'topics';
     /**
@@ -1961,6 +1967,16 @@ class ModuleUser extends Module
         return md5($oUser->getLogin() . '--' . $oUser->getPassword());
     }
 
+    /**
+     * Возвращает биты привелегий пользователя
+     *
+     * @param $iUserId
+     * @return integer
+     */
+    public
+    function GetUserPrivileges($iUserId) {
+        return $this->oMapper->GetUserPrivileges($iUserId);
+    }
 }
 
 ?>

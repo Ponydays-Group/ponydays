@@ -15,7 +15,6 @@
             "prefix": "prefix_"
         }
     },
-    "moderator": [],
     "module": {
         "comment": {
             "bad": "-100000"
@@ -51,7 +50,6 @@
         "name": "Бункер",
         "referrer_policy": "strict-origin-when-cross-origin"
     },
-    "quotes_admin": [ 1 ],
     "sockets_url": "https://socket.lunavod.ru",
     "reCaptcha": {
         "secret": "",

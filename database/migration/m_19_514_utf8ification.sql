@@ -1,3 +1,19 @@
+/**
+ * Перевод базы данных на четырехбайтный utf8.
+ * Перед выполнением этого файла установите в конфигурации mysql-сервера такие параметры:
+ *  [client]
+ *  default-character-set = utf8mb4
+ *  [mysql]
+ *  default-character-set = utf8mb4
+ *  [mysqld]
+ *  character-set-client-handshake = FALSE
+ *  character-set-server = utf8mb4
+ *  collation-server = utf8mb4_unicode_ci
+ * И выполните sql-выражение:
+ *  ALTER DATABASE <имя базы данных> CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+ * Затем передайте данный файл на выполнение в этой базе данных.
+ */
+
 ALTER TABLE prefix_adminban CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ALTER TABLE prefix_adminips CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ALTER TABLE prefix_adminset CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

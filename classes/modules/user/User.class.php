@@ -1977,6 +1977,17 @@ class ModuleUser extends Module
     function GetUserPrivileges($iUserId) {
         return $this->oMapper->GetUserPrivileges($iUserId);
     }
+
+    /**
+     * Устанавливает биты привелегий пользователя
+     *
+     * @param $iUserId
+     * @param $iPrivs
+     */
+    public
+    function SetUserPrivileges($iUserId, $iPrivs) {
+        $this->oMapper->SetUserPrivileges($iUserId, $iPrivs);
+    }
 }
 
 ?>

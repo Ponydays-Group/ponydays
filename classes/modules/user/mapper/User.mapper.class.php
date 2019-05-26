@@ -1549,4 +1549,16 @@ class ModuleUser_MapperUser extends Mapper
 
     	return 0;
 	}
+
+	public function SetUserPrivileges($iUserId, $iPrivs) {
+    	$sql = "UPDATE
+    				".Config::Get('db.table.user')."
+    			SET
+    				user_perms = ?d
+    			WHERE
+    				user_id = ?d
+    			";
+
+    	return $this->oDb->query($sql, $iPrivs, $iUserId);
+	}
 }

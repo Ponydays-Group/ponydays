@@ -88,6 +88,14 @@ class ActionAdmin extends Action {
         $oUser->setRank($sRank);
         $oUser->setMail($sMail);
         $oUser->setLogin($sLogin);
+        $iPrivs = 0;
+        if(getRequest('user_privileges_moderator') == 'on') {
+        	$iPrivs |= ModuleUser::USER_PRIV_MODERATOR;
+		}
+        if(getRequest('user_privileges_quotes') == 'on') {
+        	$iPrivs |= ModuleUser::USER_PRIV_QUOTES;
+		}
+        $this->User_SetUserPrivileges($oUser->getId(), $iPrivs);
         $this->User_Update($oUser);
     }
 

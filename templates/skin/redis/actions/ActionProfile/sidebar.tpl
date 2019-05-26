@@ -17,6 +17,20 @@
             <input id="user_rank" class="input-width-300" style="margin-bottom: 10px;" name="user_rank" value="{$oUserProfile->getRank()}" />
             <label for="user_login">User login:</label>
             <input id="user_login" class="input-width-300" style="margin-bottom: 10px;" name="user_login" value="{$oUserProfile->getLogin()}" />
+            <br/>
+            <label>User privileges:</label>
+            <div class="checkbox">
+                <span>
+                    <input type="checkbox" class="input-checkbox" id="user_privileges_moderator" name="user_privileges_moderator" value="on" {if $oUserProfile->hasPrivileges(ModuleUser::USER_PRIV_MODERATOR)}checked{/if}>
+                    <label for="user_privileges_moderator">Глобальный модератор</label>
+                </span>
+            </div>
+            <div class="checkbox">
+                <span>
+                    <input type="checkbox" class="input-checkbox" id="user_privileges_quotes" name="user_privileges_quotes" value="on" {if $oUserProfile->hasPrivileges(ModuleUser::USER_PRIV_QUOTES)}checked{/if}>
+                    <label for="user_privileges_quotes">Администратор цитатника</label>
+                </span>
+            </div>
             <button class="button button-primary" type="submit" onclick="ls.ajax.saveUserAdmin(); return false;">Save</button>
         </form>
     </section>

@@ -60,12 +60,24 @@ class ActionServer extends Action
     protected
     function EventDeploy()
     {
-        if (getRequest('token')!=Config::Get('deploy_token')) {
-            return false;
+		$this->Viewer_SetResponseJson();
+		if (getRequest('token') != Config::Get('deploy_token')) {
+			$this->Viewer_AssignAjax("success", false);
+			$this->Viewer_AssignAjax("msg", "Wrong deploy token");
+            return;
         }
-        $this->Viewer_SetResponseAjax('json', true, false);
-        shell_exec('cd '.dirname(__FILE__)."/../../frontend/".' && git pull && npm run webpack:production');
-//        $this->Nower_Post('/site-update');
+		$output = array();
+		$return = 1;
+        exec('./database/deploy.sh 2>&1', $output, $return);
+        if($return != 0) {
+        	$this->Viewer_AssignAjax("success", false);
+        	$this->Viewer_AssignAjax("msg", "An error occurred during execution");
+        	$this->Viewer_AssignAjax("output", $output);
+        	return;
+		}
+        $this->Viewer_AssignAjax("success", true);
+        $this->Viewer_AssignAjax("msg", "The project has been successfully deployed");
+//      $this->Nower_Post('/site-update');
     }
 
     function EventGetUserByKey() {

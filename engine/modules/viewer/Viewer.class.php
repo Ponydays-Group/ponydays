@@ -362,23 +362,25 @@ class ModuleViewer extends Module {
 		/**
 		 * Загружаем статус ответа и сообщение
 		 */
-		$bStateError=false;
-		$sMsgTitle='';
-		$sMsg='';
-		$aMsgError=$this->Message_GetError();
-		$aMsgNotice=$this->Message_GetNotice();
-		if (count($aMsgError)>0) {
-			$bStateError=true;
-			$sMsgTitle=$aMsgError[0]['title'];
-			$sMsg=$aMsgError[0]['msg'];
-		} elseif (count($aMsgNotice)>0) {
-			$sMsgTitle=$aMsgNotice[0]['title'];
-			$sMsg=$aMsgNotice[0]['msg'];
+		if($sType != 'clear_json') {
+			$bStateError = false;
+			$sMsgTitle = '';
+			$sMsg = '';
+			$aMsgError = $this->Message_GetError();
+			$aMsgNotice = $this->Message_GetNotice();
+			if (count($aMsgError) > 0) {
+				$bStateError = true;
+				$sMsgTitle = $aMsgError[0]['title'];
+				$sMsg = $aMsgError[0]['msg'];
+			} elseif (count($aMsgNotice) > 0) {
+				$sMsgTitle = $aMsgNotice[0]['title'];
+				$sMsg = $aMsgNotice[0]['msg'];
+			}
+			$this->AssignAjax('sMsgTitle', $sMsgTitle);
+			$this->AssignAjax('sMsg', $sMsg);
+			$this->AssignAjax('bStateError', $bStateError);
 		}
-		$this->AssignAjax('sMsgTitle',$sMsgTitle);
-		$this->AssignAjax('sMsg',$sMsg);
-		$this->AssignAjax('bStateError',$bStateError);
-		if ($sType=='json') {
+		if ($sType == 'json' || $sType == 'clear_json') {
 			if ($this->bResponseSpecificHeader and !headers_sent()) {
 				header('Content-type: application/json');
 			}
@@ -422,6 +424,13 @@ class ModuleViewer extends Module {
 		}
 		$this->sResponseAjax=$sResponseAjax;
 		$this->bResponseSpecificHeader=$bResponseSpecificHeader;
+	}
+
+	/**
+	 * Устанавливает тип ответа как чистый JSON, без значений по умолчанию, как "sMsg" и "bStateError"
+	 */
+	public function SetResponseJson() {
+		$this->SetResponseAjax('clear_json', true, false);
 	}
 	/**
 	 * Загружает переменную в шаблон

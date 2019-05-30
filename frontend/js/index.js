@@ -2,6 +2,7 @@ import "@babel/polyfill";
 import "./jquery";
 import "./jquery/jquery.markitup"
 import "./jquery/jquery.file"
+import "../css/bootstrap/assets/javascripts/bootstrap.min"
 import hljs from "highlightjs"
 
 window.getCookie = function(name) {

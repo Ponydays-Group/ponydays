@@ -194,6 +194,7 @@ export function _toggleCommentForm(idComment, bNoFocus) {
 
     if(iCurrentShowFormComment === idComment && reply.is(":visible")) {
         reply.hide();
+        Emitter.emit("comments.comment_form_hidden");
         return;
     }
     if(options.wysiwyg) {
@@ -218,6 +219,7 @@ export function _toggleCommentForm(idComment, bNoFocus) {
     }
     if(!bNoFocus)
         formCommentText.focus();
+    Emitter.emit("comments.comment_form_shown");
 }
 
 // Подгружает новые комментарии
@@ -1144,3 +1146,5 @@ export function showHistory(cId) {
         }
     }.bind(this));
 }
+
+Emitter.meta('comments.comment_form_toggled', 'comments.comment_form_hidden', 'comments.comment_form_shown');

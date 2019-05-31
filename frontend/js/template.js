@@ -21,6 +21,7 @@ function showFloatBlock($) {
         return;
     }
     let showFloat = false;
+    let showFloatAbsolute = false;
     const reinit = function() {
         const floatBlock = $(".block-type-stream");
         if($(window).width() < 1024 || $(window).height() < 500 || screen.width < 1024) {
@@ -32,10 +33,9 @@ function showFloatBlock($) {
         }
         const sidebar = $("#sidebar");
         const last_block = $($(".block:not(.hidden)")[$(".block:not(.hidden)").length - 1]);
-        if(last_block.hasClass("block-type-stream")) {
-            bottomPos = 0
-        } else {
-            var bottomPos = last_block.offset().top + last_block.outerHeight();
+        let bottomPos = 0;
+        if(!last_block.hasClass("block-type-stream")) {
+            bottomPos = last_block.offset().top + last_block.outerHeight();
         }
         /*if(showFloat) {
             //bottomPos += floatBlock.outerHeight();
@@ -54,15 +54,34 @@ function showFloatBlock($) {
                 });
                 showFloat = true;
             }
+            const wrapper = $("#wrapper");
+            if(!showFloatAbsolute && floatBlock.offset().top + floatBlock.height() >= wrapper.offset().top + wrapper.height() - 50) {
+                floatBlock.css("position", "absolute");
+                floatBlock.css("top", wrapper.height() - floatBlock.height() - 40);
+                showFloatAbsolute = true;
+            }
+            if(showFloatAbsolute && window.pageYOffset < wrapper.offset().top + wrapper.height() - floatBlock.height() - 40) {
+                floatBlock.css("position", "");
+                floatBlock.css("top", "");
+                showFloatAbsolute = false;
+            }
         } else {
             if(showFloat) {
                 floatBlock.removeClass("stream-fixed");
                 showFloat = false;
+                floatBlock.css("position", "");
+                floatBlock.css("top", "");
+                showFloatAbsolute = false;
             }
         }
     };
-    if($(window).width() > 1000)
+    //TODO: Обрабатывать изменение размеров окна
+    if($(window).width() > 1000) {
         $(window).bind("scroll resize", reinit);
+        Emitter.on("comments_load_new_loaded", reinit);
+        Emitter.on("comments.comment_form_hidden", function() { showFloatAbsolute = false; reinit(); });
+        Emitter.on("comments.comment_form_shown", reinit);
+    }
 
     reinit();
 }

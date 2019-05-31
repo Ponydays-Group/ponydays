@@ -42,6 +42,11 @@ comments:
     comments_gotocomment_after      - scrollToComment()
     comments_load_new_loaded        - load()
     comments_load_edited_loaded     - load()
+    #on
+    comments.comment_form_hidden    - _toggleCommentForm()
+    comments.comment_form_shown     - _toggleCommentForm()
+    #meta
+    comments.comment_form_toggled = comments.comment_form_hidden | comments.comment_form_shown
 
 favourite:
     #local

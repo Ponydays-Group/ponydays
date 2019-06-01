@@ -76,7 +76,7 @@ export function removeFriend(obj, idUser, sAction) {
  */
 export function uploadAvatar(form, input) {
     if(!form && input) {
-        const form = $("<form method=\"post\" enctype=\"multipart/form-data\"></form>").css({
+        form = $("<form method=\"post\" enctype=\"multipart/form-data\"></form>").css({
             "display": "none",
         }).appendTo("body");
         const clone = input.clone(true);

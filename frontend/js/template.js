@@ -100,7 +100,7 @@ export function updateImgs(el = $(document)) {
 
 export default function init() {
     $(document).ready(function($) {
-        let shortcuts_shown = false
+        let shortcuts_shown = false;
         $(".keyboard_shortcuts_trigger").click(function() {
             $("#comment-shortcuts-description").animate({"right": shortcuts_shown ? "-450px" : "74px"}, 200);
             shortcuts_shown = !shortcuts_shown

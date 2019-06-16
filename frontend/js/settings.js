@@ -154,7 +154,7 @@ export function getMarkitupComment() {
             },
             {name: Lang.get("panel_u"), className: "fa fa-underline", key: "U", openWith: "<u>", closeWith: "</u>"},
             {name: "sup", className: "fa fa-superscript", openWith: "<sup>", closeWith: "</sup>"},
-            {name: "sup", className: "fa fa-subscript", openWith: "<sub>", closeWith: "</sub>"},
+            {name: "sub", className: "fa fa-subscript", openWith: "<sub>", closeWith: "</sub>"},
             {name: "small", className: "fa fa-text-height", openWith: "<small>", closeWith: "</small>"},
             {separator: "---------------"},
             {name: "left", className: "fa fa-align-left", openWith: "<span class=\"left\">", closeWith: "</span>"},

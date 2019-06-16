@@ -119,6 +119,9 @@ template:
     #local
     template_init_start - init()
     template_init_end   - init()
+    #on
+    template.spoiler_opened - window.openSpoiler()
+    template.spoiler_closed - window.closeSpoiler()
 
 tools:
     #local

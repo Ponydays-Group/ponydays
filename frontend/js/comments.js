@@ -71,9 +71,9 @@ export function updateNesting() {
 
     let foldings = localStorage.getItem("foldings_" + targetType + "_" + targetId); //||"".split(',') || []
     if(!foldings) {
-        foldings = []
+        foldings = [];
     } else {
-        foldings = foldings.split(",")
+        foldings = foldings.split(",");
     }
 
     let prev = null;
@@ -834,7 +834,7 @@ export function init() {
     calcNewComments();
     checkFolding();
     calcNesting();
-    if(location.pathname.match(/\/blog\/[a-zA-Z]+\/\d+/) || location.pathname.match(/\/talk\/read\/\d+/)) {
+    if((location.pathname.match(/\/blog\/[a-zA-Z]+\/\d+/) || location.pathname.match(/\/talk\/read\/\d+/)) && typeof targetType !== 'undefined') {
         update_hidden();
         updateNesting();
         toggleCommentForm(iCurrentShowFormComment);

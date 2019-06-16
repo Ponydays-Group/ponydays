@@ -22,8 +22,8 @@ function showFloatBlock($) {
     }
     let showFloat = false;
     let showFloatAbsolute = false;
+    const floatBlock = $(".block-type-stream");
     const reinit = function() {
-        const floatBlock = $(".block-type-stream");
         if($(window).width() < 1024 || $(window).height() < 500 || screen.width < 1024) {
             if(showFloat) {
                 floatBlock.removeClass("stream-fixed");
@@ -77,10 +77,18 @@ function showFloatBlock($) {
     };
     //TODO: Обрабатывать изменение размеров окна
     if($(window).width() > 1000) {
+        const remove = function() {
+            floatBlock.css("position", "");
+            floatBlock.css("top", "");
+            showFloatAbsolute = false;
+            reinit();
+        };
         $(window).bind("scroll resize", reinit);
-        Emitter.on("comments_load_new_loaded", reinit);
-        Emitter.on("comments.comment_form_hidden", function() { showFloatAbsolute = false; reinit(); });
+        Emitter.on("comments_load_new_loaded", remove);
+        Emitter.on("comments.comment_form_hidden", remove);
         Emitter.on("comments.comment_form_shown", reinit);
+        Emitter.on("template.spoiler_opened", reinit);
+        Emitter.on("template.spoiler_closed", remove);
     }
 
     reinit();
@@ -116,12 +124,12 @@ export default function init() {
             if(parseInt(localStorage.getItem("headCollapsed", 0))) {
                 $(document.body).css("paddingTop", "0px");
                 $("#head_image").css("height", "0px");
-                $("#head_collaps i")[0].innerText = "keyboard_arrow_down";
+                $(".head_collapse i").text("keyboard_arrow_down");
                 $("#rightbar").animate({paddingTop: "0px"}, 200);
             } else {
                 $(document.body).css("paddingTop", "200px");
                 $("#head_image").css("height", "200px");
-                $("#head_collaps i")[0].innerText = "keyboard_arrow_up";
+                $(".head_collapse i").text("keyboard_arrow_up");
                 $("#rightbar").animate({paddingTop: "200px"}, 200);
             }
         }
@@ -129,6 +137,13 @@ export default function init() {
         function checkSidebarPadding() {
             $("#rightbar").css("paddingTop", el.getBoundingClientRect().bottom > 0 ? el.getBoundingClientRect().bottom + "px" : "0px");
         }
+
+        function checkAnimations() {
+            if(parseInt(localStorage.getItem("disable_animations"))) {
+                window.jQuery.fx.off = true;
+            }
+        }
+        checkAnimations();
 
         function scrollBottom() {
             const body = $("html, body");
@@ -154,7 +169,7 @@ export default function init() {
             document.addEventListener("scroll", checkSidebarPadding);
 
         checkCollapse();
-        $("#head_collaps").click(
+        $(".head_collapse").click(
             function() {
                 parseInt(localStorage.getItem("headCollapsed")) ? localStorage.setItem("headCollapsed", 0) : localStorage.setItem("headCollapsed", 1);
                 checkCollapse();
@@ -441,15 +456,20 @@ export default function init() {
         Emitter.emit("template_init_end", [], window);
 
         window.closeSpoiler = function(b) {
-            $(b).hide(300);
+            $(b).hide(300, function() {
+                Emitter.emit("template.spoiler_closed")
+            });
             if(!b.parentElement.getElementsByClassName("spoiler-title").length) {
                 return;
             }
             b.parentElement.getElementsByClassName("spoiler-title")[0].className = "spoiler-title spoiler-close";
+
         };
 
         window.openSpoiler = function(b) {
-            $(b).show(300);
+            $(b).show(300, function() {
+                Emitter.emit("template.spoiler_opened");
+            });
             b.style.display = "block";
             $(b).find("img, iframe").each(function(k, v) {
                 if(v.getAttribute("data-src")) {

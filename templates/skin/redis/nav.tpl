@@ -37,7 +37,7 @@
             </ul>
             <ul class="nav navbar-nav navbar-right" id="navbar-right-big">
                 {if $oUserCurrent}
-                    <li id="head_collaps" title="Свернуть/развернуть шапку">
+                    <li class="head_collapse" title="Свернуть/развернуть шапку">
                         <i class="material-icons">keyboard_arrow_up</i>
                     </li>
                     <li>
@@ -60,7 +60,7 @@
                                     class="material-icons">exit_to_app</i></a>
                     </li>
                 {else}
-                    <li id="head_collaps"  title="Свернуть/развернуть шапку">
+                    <li class="head_collapse"  title="Свернуть/развернуть шапку">
                         <i class="material-icons">keyboard_arrow_up</i>
                     </li>
                     <li><a title="Войти" href="{router page='login'}" class="js-login-form-show">{$aLang.user_login_submit}</a></li>
@@ -84,7 +84,7 @@
                                     alt="avatar" class="avatar"/></span></a>
                     <ul class="dropd">
                         {if $oUserCurrent}
-                            <li id="head_collaps" title="Свернуть/развернуть шапку">
+                            <li class="head_collapse" title="Свернуть/развернуть шапку">
                                 <i class="material-icons">keyboard_arrow_up</i>
                             </li>
                             <li>
@@ -107,7 +107,7 @@
                                             class="material-icons">exit_to_app</i></a>
                             </li>
                         {else}
-                            <li id="head_collaps"  title="Свернуть/развернуть шапку">
+                            <li class="head_collapse"  title="Свернуть/развернуть шапку">
                                 <i class="material-icons">keyboard_arrow_up</i>
                             </li>
                             <li><a title="Войти" href="{router page='login'}" class="js-login-form-show">{$aLang.user_login_submit}</a></li>

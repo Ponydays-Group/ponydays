@@ -488,9 +488,9 @@
   height: 64px;
 }
 
-#head_collaps {
+.head_collapse {
   width: 64px;
-  display: flex;
+  display: flex !important;
   justify-content: center;
   align-items: center;
   color: white;

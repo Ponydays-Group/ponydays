@@ -33,7 +33,14 @@
 			</span>
 		</span>
 	</fieldset>
-
+	<fieldset>
+		<span class="checkbox">
+			<span>
+				<input type="checkbox" id="disable_animations" name="disable_animations" data-default=0 data-save=1 class="input-checkbox">
+				<label for="disable_animations">Отключить анимации</label>
+			</span>
+		</span>
+	</fieldset>
 	<fieldset>
 		<span class="checkbox"><span>
 			<input type="checkbox" id="talk_new_topic" name="talk_new_topic" data-default=1 data-save=1 class="input-checkbox" />
@@ -112,30 +119,29 @@
 	
     {literal}
 	<script>
-	    $('#behavior-form  [data-save=1]').each(function(k,v){
+	    $('#behavior-form  [data-save=1]').each(function(k,v) {
 	    	if (v.type=="checkbox") {
-	    		console.log("Chуckbox:", localStorage.getItem(v.name))
-	    		v.checked = parseInt(localStorage.getItem(v.name))
+	    		console.log("Chуckbox:", localStorage.getItem(v.name));
+	    		v.checked = parseInt(localStorage.getItem(v.name));
 				if (localStorage.getItem(v.name)==null) {
-	    		    v.checked = parseInt(v.dataset.default)
+	    		    v.checked = parseInt(v.dataset.default);
                 }
-	    		return
+	    		return;
 	    	}
-	    	v.value = localStorage.getItem(v.name) || v.dataset.default
+	    	v.value = localStorage.getItem(v.name) || v.dataset.default;
 	    });
 	    
 	    function saveBehaviorSettings(e) {
-	        $('#behavior-form  [data-save=1]').each(function(k,v){
+	        $('#behavior-form  [data-save=1]').each(function(k,v) {
 	        	if (v.type=="checkbox") {
-	        		console.log("Chackbox:", v.checked)
-	    			localStorage.setItem(v.name, v.checked?1:0)
-	    			return
+	        		console.log("Chackbox:", v.checked);
+	    			localStorage.setItem(v.name, v.checked?1:0);
 	    		} else {
-                    localStorage.setItem(v.name, v.value || v.dataset.default)
-                    console.log(v.name, v.value, v.dataset.default)
+                    localStorage.setItem(v.name, v.value || v.dataset.default);
+                    console.log(v.name, v.value, v.dataset.default);
                 }
-	        })
-	        ls.msg.notice('','Настройки сохранены')
+	        });
+	        ls.msg.notice('','Настройки сохранены');
 	        return false;
 	    }
 	</script>

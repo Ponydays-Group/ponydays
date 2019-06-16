@@ -89,6 +89,9 @@ class ActionApi extends Action
                 /**
                  * Сверяем хеши паролей и проверяем активен ли юзер
                  */
+
+                //TODO: DRY IT.
+
                 // ежели пароль - несолёный md5, но совпадает, обновим его, и сделаем вид, что так и было
                 if ( strlen($oUser->getPassword()) == 32 && $oUser->getPassword() == func_encrypt(getRequest('password')) )  {
                     $oUser->setPassword(encryptPassword(getRequest('password')));

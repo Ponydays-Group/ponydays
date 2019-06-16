@@ -236,18 +236,6 @@ function func_check($sValue,$sParam,$iMin=1,$iMax=100) {
 }
 
 /**
- * Шифрование
- *
- * @param unknown_type $sData
- * @return unknown
- */
-function func_encrypt($sData) {
-	return md5($sData);
-}
-
-
-
-/**
  * Определяет IP адрес
  *
  * @return unknown

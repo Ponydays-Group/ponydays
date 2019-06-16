@@ -77,18 +77,19 @@ class ActionLogin extends Action {
                 $this->User_Logout();
                 $this->Session_DropSession();
                 return Router::Action('error');
-            }
+			}
+
+			/**
+			 * Обновляем хеш пароля, если md5
+			 */
+			if (strlen($oUser->getPassword()) < 64 && $oUser->getPassword() == md5(getRequest('password')) )  {
+				$oUser->setPassword(encryptPassword(getRequest('password')));
+				$this->User_Update($oUser);
+			}
 
 			/**
 			 * Сверяем хеши паролей и проверяем активен ли юзер
 			 */
-
-            // ежели пароль - несолёный md5, но совпадает, обновим его, и сделаем вид, что так и было
-            if ( strlen($oUser->getPassword()) < 64 && $oUser->getPassword() == func_encrypt(getRequest('password')) )  {
-                $oUser->setPassword(encryptPassword(getRequest('password')));
-                $this->User_Update($oUser);
-            }
-
 			if (checkPassword($oUser->getPassword(), getRequest('password'))) {
 				if (!$oUser->getActivate()) {
 					$this->Message_AddErrorSingle($this->Lang_Get('user_not_activated', array('reactivation_path' => Router::GetPath('login') . 'reactivation')));

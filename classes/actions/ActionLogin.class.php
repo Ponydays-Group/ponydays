@@ -80,17 +80,18 @@ class ActionLogin extends Action {
 			}
 
 			/**
-			 * Обновляем хеш пароля, если md5
+			 * Проверяем пароль и обновляем хеш, если нужно
 			 */
-			if (strlen($oUser->getPassword()) < 64 && $oUser->getPassword() == md5(getRequest('password')) )  {
-				$oUser->setPassword(encryptPassword(getRequest('password')));
-				$this->User_Update($oUser);
-			}
+			$user_password = $oUser->getPassword();
+			if(crypto_password_verify($user_password, getRequest('password'))) {
+				if(crypto_password_needs_rehash($user_password)) {
+					$oUser->setPassword(crypto_password_hash($user_password));
+					$this->User_Update($oUser);
+				}
 
-			/**
-			 * Сверяем хеши паролей и проверяем активен ли юзер
-			 */
-			if (checkPassword($oUser->getPassword(), getRequest('password'))) {
+				/**
+			 	* Проверяем активен ли юзер
+			 	*/
 				if (!$oUser->getActivate()) {
 					$this->Message_AddErrorSingle($this->Lang_Get('user_not_activated', array('reactivation_path' => Router::GetPath('login') . 'reactivation')));
 					return;
@@ -218,14 +219,14 @@ class ActionLogin extends Action {
 			if ($oReminder=$this->User_GetReminderByCode($this->GetParam(0))) {
 				if (!$oReminder->getIsUsed() and strtotime($oReminder->getDateExpire())>time() and $oUser=$this->User_GetUserById($oReminder->getUserId())) {
 					$sNewPassword=func_generator(7);
-					$oUser->setPassword(encryptPassword($sNewPassword));
+					$oUser->setPassword(crypto_password_hash($sNewPassword));
 					if ($this->User_Update($oUser)) {
 						$oReminder->setDateUsed(date("Y-m-d H:i:s"));
 						$oReminder->setIsUsed(1);
 						$this->User_UpdateReminder($oReminder);
 						$this->Notify_SendReminderPassword($oUser,$sNewPassword);
 						$this->SetTemplateAction('reminder_confirm');
-						return ;
+						return;
 					}
 				}
 			}

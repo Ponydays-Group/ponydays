@@ -37,8 +37,7 @@
             "quotes": "ActionQuotes",
             "server": "ActionServer",
             "info": "ActionInfo",
-            "voice": "ActionVoice",
-            "api": "ActionApi"
+            "voice": "ActionVoice"
         },
         "config": {
             "action_default": "index",

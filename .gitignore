@@ -17,3 +17,5 @@ img/*
 /nbproject/private/
 *.swp
 *.save
+composer.phar
+vendor/

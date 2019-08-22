@@ -492,14 +492,3 @@ function func_convert_entity_to_array(Entity $oEntity, $aMethods = null, $sPrefi
 	}
 	return $aEntity;
 }
-
-function checkPassword($hashedPassword, $password) {
-    return hash_equals($hashedPassword, encryptPassword($password));
-}
-
-function encryptPassword($password) {
-    return hash('sha512', $password . hash('sha512', $password) . 'plenty of ponies');
-}
-
-
-?>

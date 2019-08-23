@@ -19,10 +19,19 @@ final class PasswordTest extends TestCase {
 		'password'  => '$sha512$5c2c58b8402550a71d62eca7775ae4129712ed6988f3e4debec16b78d8376d32baf006b431ad4ab166ae066d3e16dff8804b8234f1982b3222df9bacadf579f7'
 	);
 
-	const EXAMPLES_PBKDF2_1000 = array(
+	const EXAMPLES_PBKDF2 = array(
 		''          => '$pbkdf2$sha256$15000$24$32$/iVjY2p1x6FEhZrVpkscBUPzecjPyyHl$OME4AJIcqUXCv9qiBODy4EgOh6hDhnuV9u8X85xIkzQ=',
 		'123456789' => '$pbkdf2$sha512$1000$48$64$kaqRKrL4Qo8TNyfn4Xx2dOqpSW8rgQpP4N3EohRYLN0Truin2j3zYm+vnPtC6G8w$6/IZ7Uy0cMHgHYGvWvicwQYrMFr8yVEyRM0v2vA5pt4ODYPI7F5v+QZ7Od3FJd4KHWdEo6Aw2/JRX//UJPIoXA==',
 		'password'  => '$pbkdf2$sha256$1001$49$65$ShXSrykBm5Jbvv0rJUQ/q7AppY91O0Mihu39A2RKUslPa7ZsUaFenGBxFZs2bz/6yQ==$3AmsutLM9g9cmeG9rvKfAQpLmn67jmGmHelGqysLKWdEsp/nhgDsyQRuTyKi18IGGB0n3HIyTuA2slN1V7yR9z4='
+	);
+
+	const EXAMPLES_WRAPPED = array(
+		''          => '$wrapped$md5$sha512$$$ZmFjYTk2MGQwMmI5YjM5NWRkM2MwYjY5MTQzOTg2YjFmMjg4ZDEyNjhjYWQ2MDZkNjE1NzQ4ODYxOGNlMmYxNmI4ZTY5YzkzZjVmYjdkNWRhZmNlZGNlNjhhZmM3MzljYTQ5YzhhMjFkZTg3ZWNhNDI2NWM3MTg4NzI3ODQ3NzI=',
+		'123456789' => '$wrapped$sha512$md5$$$MWIzYzg1ODliNGMyMmRlYjQ4YWE3ZWRiZDE3YjA3NWU=',
+		'password'  => '$wrapped$md5$pbkdf2$$c2hhMjU2JDEwMDAkMjQkMzIkcXNqNm5WT2lldzNlR1B2K2s2TG9ZV0RURkFKU2NOMDM=$Qi9zVDQxZnhzSjVqV253b2xrQTFTM2lyL3JsSlFyYnMrTUFnL3ZsYmxCTT0=',
+		'hello'     => '$wrapped$sha512$pbkdf2$$c2hhMjU2JDEwMDAkMjQkMzIkSlhWUW82SU1NOXRLTnU5eGtpUUU3UXpQWlk0cVJhSjc=$SE9LT3gzOFpFUVhRTUpPNHBDNUNUWTNReEh4SXMwSGtYVFUzdkt0d2d0VT0=',
+		'world!'    => '$wrapped$pbkdf2$md5$c2hhMjU2JDEwMDAkMjQkMzIkeGtIU0tBL1A5RGdLU0RwdlRRMlVxOWVVOXVERVZueGI=$$ZTY5YmQ1MWJlYmFiMTgzYTQzN2EzYjU5NmI0YzQwZTE=',
+		'pbkdf2'    => '$wrapped$pbkdf2$pbkdf2$c2hhMjU2JDEwMDAkMjQkMzIkcUdIcEo2VlBCR1E2US9GOENobklZbXNvRzZncDJCZC8=$c2hhMjU2JDEwMDAkMjQkMzIkMm1Qd1BsTVZGeWpFUmx6akgveUc4OUtxYWtCQ3dxdks=$K1ZZd1krcUhYaXcvTk1Dc2dXK2E2NnpvbGh1UnRMM0pTeVVSMlk1dnBnbz0='
 	);
 
 	const EXAMPLES_PASSWORDS = array(
@@ -55,29 +64,30 @@ final class PasswordTest extends TestCase {
 
 	private function checkVerify(string $algo, array $data): void {
 		foreach($data as $pass => $hash) {
-			self::assertTrue(crypto_password_verify($hash, $pass), "$algo failed for pass '$pass'");
+			self::assertTrue(crypto_password_verify($pass, $hash), "$algo failed for pass '$pass'");
 		}
 	}
 
 	public function testVerify(): void {
 		self::checkVerify('md5', self::EXAMPLES_MD5);
 		self::checkVerify('sha512', self::EXAMPLES_SHA512);
-		self::checkVerify('pbkdf2', self::EXAMPLES_PBKDF2_1000);
+		self::checkVerify('pbkdf2', self::EXAMPLES_PBKDF2);
+		self::checkVerify('wrapped', self::EXAMPLES_WRAPPED);
 	}
 
 	public function testCreateAndVerify(): void {
 		foreach(self::EXAMPLES_PASSWORDS as $pass) {
-			self::assertTrue(crypto_password_verify(crypto_password_hash_ext($pass, 'md5'), $pass), "md5 failed for pass '$pass'");
-			self::assertTrue(crypto_password_verify(crypto_password_hash_ext($pass, 'sha512'), $pass), "sha512 failed for pass '$pass'");
-			self::assertTrue(crypto_password_verify(crypto_password_hash_ext($pass, 'pbkdf2'), $pass), "pbkdf2 failed for pass '$pass'");
+			self::assertTrue(crypto_password_verify($pass, crypto_password_hash_ext($pass, 'md5')), "md5 failed for pass '$pass'");
+			self::assertTrue(crypto_password_verify($pass, crypto_password_hash_ext($pass, 'sha512')), "sha512 failed for pass '$pass'");
+			self::assertTrue(crypto_password_verify($pass, crypto_password_hash_ext($pass, 'pbkdf2')), "pbkdf2 failed for pass '$pass'");
 		}
 	}
 
 	public function testWrongPassword(): void {
 		foreach(self::EXAMPLES_PASSWORDS as $pass) {
-			self::assertFalse(crypto_password_verify(crypto_password_hash_ext($pass, 'md5'), 'wrong_password'), "md5 failed for pass '$pass'");
-			self::assertFalse(crypto_password_verify(crypto_password_hash_ext($pass, 'sha512'), 'wrong_password'), "sha512 failed for pass '$pass'");
-			self::assertFalse(crypto_password_verify(crypto_password_hash_ext($pass, 'pbkdf2'), 'wrong_password'), "pbkdf2 failed for pass '$pass'");
+			self::assertFalse(crypto_password_verify('wrong_password', crypto_password_hash_ext($pass, 'md5')), "md5 failed for pass '$pass'");
+			self::assertFalse(crypto_password_verify('wrong_password', crypto_password_hash_ext($pass, 'sha512')), "sha512 failed for pass '$pass'");
+			self::assertFalse(crypto_password_verify('wrong_password', crypto_password_hash_ext($pass, 'pbkdf2')), "pbkdf2 failed for pass '$pass'");
 		}
 	}
 
@@ -85,7 +95,7 @@ final class PasswordTest extends TestCase {
 		self::assertTrue(crypto_password_needs_rehash(crypto_password_hash_ext('password', 'md5')), 'md5 failed');
 		self::assertTrue(crypto_password_needs_rehash(crypto_password_hash_ext('password', 'sha512')), 'sha512 failed');
 		self::assertTrue(crypto_password_needs_rehash(crypto_password_hash_ext('password', 'pbkdf2', array('sha512'))), 'pbkdf2 failed');
-		self::assertFalse (crypto_password_needs_rehash(crypto_password_hash_ext('password', 'pbkdf2')), 'pbkdf2 failed');
+		self::assertFalse(crypto_password_needs_rehash(crypto_password_hash_ext('password', 'pbkdf2')), 'pbkdf2 failed');
 		self::assertFalse(crypto_password_needs_rehash(crypto_password_hash('password')), 'current failed');
 	}
 }

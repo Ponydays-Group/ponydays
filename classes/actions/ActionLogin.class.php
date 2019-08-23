@@ -83,9 +83,9 @@ class ActionLogin extends Action {
 			 * Проверяем пароль и обновляем хеш, если нужно
 			 */
 			$user_password = $oUser->getPassword();
-			if(crypto_password_verify($user_password, getRequest('password'))) {
+			if(crypto_password_verify(getRequest('password'), $user_password)) {
 				if(crypto_password_needs_rehash($user_password)) {
-					$oUser->setPassword(crypto_password_hash($user_password));
+					$oUser->setPassword(crypto_password_hash(getRequest('password')));
 					$this->User_Update($oUser);
 				}
 

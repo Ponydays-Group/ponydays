@@ -146,6 +146,11 @@ class ActionRegistration extends Action {
 		 * Устанавливаем формат Ajax ответа
 		 */
 		$this->Viewer_SetResponseAjax('json');
+
+		$log = fopen('log.txt', 'w');
+		fwrite($log, json_encode($_REQUEST));
+		fclose($log);
+
 		if(Config::Get('reCaptcha.enabled')) {
 			$sCaptchaResponse = getRequest('g-recaptcha-response');
 

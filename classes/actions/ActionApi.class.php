@@ -92,12 +92,19 @@ class ActionApi extends Action
 
                 //TODO: DRY IT.
 
-                // ежели пароль - несолёный md5, но совпадает, обновим его, и сделаем вид, что так и было
-                if ( strlen($oUser->getPassword()) == 32 && $oUser->getPassword() == func_encrypt(getRequest('password')) )  {
-                    $oUser->setPassword(encryptPassword(getRequest('password')));
-                    $this->User_Update($oUser);
-                }
-                if (checkPassword($oUser->getPassword(), getRequest('password'))) {
+				/**
+				 * Проверяем пароль и обновляем хеш, если нужно
+				 */
+				$user_password = $oUser->getPassword();
+				if(crypto_password_verify(getRequest('password'), $user_password)) {
+					if(crypto_password_needs_rehash($user_password)) {
+						$oUser->setPassword(crypto_password_hash(getRequest('password')));
+						$this->User_Update($oUser);
+					}
+
+					/**
+					 * Проверяем активен ли юзер
+					 */
                     if (!$oUser->getActivate()) {
                         $this->Viewer_AssignAjax('message', "Login or password isn't a string");
                         return;

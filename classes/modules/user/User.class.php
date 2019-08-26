@@ -585,8 +585,9 @@ class ModuleUser extends Module
         if ($bRemember) {
             setcookie('key', $sKey, time() + Config::Get('sys.cookie.time'), Config::Get('sys.cookie.path'), Config::Get('sys.cookie.host'), false, false);
             setcookie('wskey', $sKey, time() + Config::Get('sys.cookie.time'), Config::Get('sys.cookie.path'), Config::Get('sys.cookie.host'), false, false);
+        } else {
+            setcookie('wskey', $sKey, 0, Config::Get('sys.cookie.path'), Config::Get('sys.cookie.host'), false, false);
         }
-        setcookie('wskey', $sKey, 0, Config::Get('sys.cookie.path'), Config::Get('sys.cookie.host'), false, false);
         return true;
     }
 
@@ -1964,7 +1965,12 @@ class ModuleUser extends Module
     public
     function GenerateUserKey(ModuleUser_EntityUser $oUser)
     {
-        return md5($oUser->getLogin() . '--' . $oUser->getPassword());
+        $payload = array(
+            'sub' => $oUser->getId(),
+            'exp' => Config::Get('')
+        );
+        $sec_key = $this->Crypto_GetLastKeyFor('user');
+        return $this->Auth_GenerateKey($payload, $sec_key, Config::Get('crypto.auth.signature'), 'msgpack');
     }
 
     /**

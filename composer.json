@@ -1,9 +1,17 @@
 {
   "require": {
-    "ext-msgpack": "2.0.3",
-    "ext-openssl": "*"
+    "ext-msgpack": "^2",
+    "ext-openssl": "*",
+    "ext-mbstring": "*",
+    "ext-json": "*"
   },
   "require-dev": {
     "phpunit/phpunit": "^8"
+  },
+  "autoload-dev": {
+    "classmap": [
+      "engine/",
+      "classes/"
+    ]
   }
 }

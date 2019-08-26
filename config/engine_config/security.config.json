@@ -12,6 +12,10 @@
       "sha512": {
         "salt": "never_ever"
       }
+    },
+    "auth": {
+      "signature": "HS256",
+      "secret_key": "GrQ8I/cWZv1125Y+3bhKc3u0hCTW6SuoNb12+Whxq8byIi88V/d3TN1xE/nw5Rwy4MOawtq8MWOAfLQpUn5Kgw=="
     }
   }
 }

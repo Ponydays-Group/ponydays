@@ -2,9 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('engine/lib/internal/ConfigSimple/Config.class.php');
-
-require_once('engine/include/crypto.php');
+class Engine {}
 
 final class PasswordTest extends TestCase {
 	const EXAMPLES_MD5 = array(
@@ -41,7 +39,10 @@ final class PasswordTest extends TestCase {
 		'qxa\5&@PC%jyCdUY'
 	);
 
-	public function setUp(): void {
+	private static $crypto;
+
+	public static function setUpBeforeClass(): void {
+		self::$crypto = new Crypto(new Engine());
 		Config::Set('crypto.password.current_algo', 'pbkdf2');
 		Config::Set('crypto.password.sha512.salt', 'testsalt');
 		Config::Set('crypto.password.pbkdf2.hash_algo', 'sha256');
@@ -53,7 +54,7 @@ final class PasswordTest extends TestCase {
 
 	private function checkHash(string $algo, array $data): void {
 		foreach($data as $pass => $hash) {
-			self::assertEquals($hash, crypto_password_hash_ext($pass, $algo));
+			self::assertEquals($hash, self::$crypto->PasswordHashExt($pass, $algo));
 		}
 	}
 
@@ -64,7 +65,7 @@ final class PasswordTest extends TestCase {
 
 	private function checkVerify(string $algo, array $data): void {
 		foreach($data as $pass => $hash) {
-			self::assertTrue(crypto_password_verify($pass, $hash), "$algo failed for pass '$pass'");
+			self::assertTrue(self::$crypto->PasswordVerify($pass, $hash), "$algo failed for pass '$pass'");
 		}
 	}
 
@@ -77,25 +78,25 @@ final class PasswordTest extends TestCase {
 
 	public function testCreateAndVerify(): void {
 		foreach(self::EXAMPLES_PASSWORDS as $pass) {
-			self::assertTrue(crypto_password_verify($pass, crypto_password_hash_ext($pass, 'md5')), "md5 failed for pass '$pass'");
-			self::assertTrue(crypto_password_verify($pass, crypto_password_hash_ext($pass, 'sha512')), "sha512 failed for pass '$pass'");
-			self::assertTrue(crypto_password_verify($pass, crypto_password_hash_ext($pass, 'pbkdf2')), "pbkdf2 failed for pass '$pass'");
+			self::assertTrue(self::$crypto->PasswordVerify($pass, self::$crypto->PasswordHashExt($pass, 'md5')), "md5 failed for pass '$pass'");
+			self::assertTrue(self::$crypto->PasswordVerify($pass, self::$crypto->PasswordHashExt($pass, 'sha512')), "sha512 failed for pass '$pass'");
+			self::assertTrue(self::$crypto->PasswordVerify($pass, self::$crypto->PasswordHashExt($pass, 'pbkdf2')), "pbkdf2 failed for pass '$pass'");
 		}
 	}
 
 	public function testWrongPassword(): void {
 		foreach(self::EXAMPLES_PASSWORDS as $pass) {
-			self::assertFalse(crypto_password_verify('wrong_password', crypto_password_hash_ext($pass, 'md5')), "md5 failed for pass '$pass'");
-			self::assertFalse(crypto_password_verify('wrong_password', crypto_password_hash_ext($pass, 'sha512')), "sha512 failed for pass '$pass'");
-			self::assertFalse(crypto_password_verify('wrong_password', crypto_password_hash_ext($pass, 'pbkdf2')), "pbkdf2 failed for pass '$pass'");
+			self::assertFalse(self::$crypto->PasswordVerify('wrong_password', self::$crypto->PasswordHashExt($pass, 'md5')), "md5 failed for pass '$pass'");
+			self::assertFalse(self::$crypto->PasswordVerify('wrong_password', self::$crypto->PasswordHashExt($pass, 'sha512')), "sha512 failed for pass '$pass'");
+			self::assertFalse(self::$crypto->PasswordVerify('wrong_password', self::$crypto->PasswordHashExt($pass, 'pbkdf2')), "pbkdf2 failed for pass '$pass'");
 		}
 	}
 
 	public function testNeedsRehash(): void {
-		self::assertTrue(crypto_password_needs_rehash(crypto_password_hash_ext('password', 'md5')), 'md5 failed');
-		self::assertTrue(crypto_password_needs_rehash(crypto_password_hash_ext('password', 'sha512')), 'sha512 failed');
-		self::assertTrue(crypto_password_needs_rehash(crypto_password_hash_ext('password', 'pbkdf2', array('sha512'))), 'pbkdf2 failed');
-		self::assertFalse(crypto_password_needs_rehash(crypto_password_hash_ext('password', 'pbkdf2')), 'pbkdf2 failed');
-		self::assertFalse(crypto_password_needs_rehash(crypto_password_hash('password')), 'current failed');
+		self::assertTrue(self::$crypto->PasswordNeedsRehash(self::$crypto->PasswordHashExt('password', 'md5')), 'md5 failed');
+		self::assertTrue(self::$crypto->PasswordNeedsRehash(self::$crypto->PasswordHashExt('password', 'sha512')), 'sha512 failed');
+		self::assertTrue(self::$crypto->PasswordNeedsRehash(self::$crypto->PasswordHashExt('password', 'pbkdf2', array('sha512'))), 'pbkdf2 failed');
+		self::assertFalse(self::$crypto->PasswordNeedsRehash(self::$crypto->PasswordHashExt('password', 'pbkdf2')), 'pbkdf2 failed');
+		self::assertFalse(self::$crypto->PasswordNeedsRehash(self::$crypto->PasswordHash('password')), 'current failed');
 	}
 }

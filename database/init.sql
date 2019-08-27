@@ -1,8 +1,8 @@
--- MySQL dump 10.17  Distrib 10.3.12-MariaDB, for Linux (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.25, for Linux (x86_64)
 --
--- Host: localhost    Database: ponydays
+-- Host: localhost    Database: social
 -- ------------------------------------------------------
--- Server version	10.3.12-MariaDB
+-- Server version	5.7.25-0ubuntu0.16.04.2
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -25,12 +25,12 @@ DROP TABLE IF EXISTS `prefix_adminban`;
 CREATE TABLE `prefix_adminban` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `user_id` bigint(20) NOT NULL,
-  `banwarn` int(11) NOT NULL DEFAULT 0,
+  `banwarn` int(11) NOT NULL DEFAULT '0',
   `bandate` datetime NOT NULL,
   `banline` datetime DEFAULT NULL,
   `bancomment` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `banunlim` tinyint(4) NOT NULL DEFAULT 0,
-  `banactive` tinyint(4) NOT NULL DEFAULT 0,
+  `banunlim` tinyint(4) NOT NULL DEFAULT '0',
+  `banactive` tinyint(4) NOT NULL DEFAULT '0',
   `moder_id` bigint(20) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
@@ -47,12 +47,12 @@ DROP TABLE IF EXISTS `prefix_adminips`;
 CREATE TABLE `prefix_adminips` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `ip1` bigint(20) DEFAULT NULL,
-  `ip2` bigint(20) DEFAULT 0,
+  `ip2` bigint(20) DEFAULT '0',
   `bandate` datetime NOT NULL,
   `banline` datetime DEFAULT NULL,
   `bancomment` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `banunlim` tinyint(4) NOT NULL DEFAULT 0,
-  `banactive` tinyint(4) NOT NULL DEFAULT 0,
+  `banunlim` tinyint(4) NOT NULL DEFAULT '0',
+  `banactive` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `user_id` (`ip1`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -104,20 +104,21 @@ CREATE TABLE `prefix_blog` (
   `blog_type` enum('personal','open','invite','close') COLLATE utf8mb4_unicode_ci DEFAULT 'personal',
   `blog_date_add` datetime NOT NULL,
   `blog_date_edit` datetime DEFAULT NULL,
-  `blog_rating` float(9,3) NOT NULL DEFAULT 0.000,
-  `blog_count_vote` int(11) unsigned NOT NULL DEFAULT 0,
-  `blog_count_user` int(11) unsigned NOT NULL DEFAULT 0,
-  `blog_count_topic` int(10) unsigned NOT NULL DEFAULT 0,
-  `blog_limit_rating_topic` float(9,3) NOT NULL DEFAULT 0.000,
+  `blog_rating` float(9,3) NOT NULL DEFAULT '0.000',
+  `blog_count_vote` int(11) unsigned NOT NULL DEFAULT '0',
+  `blog_count_user` int(11) unsigned NOT NULL DEFAULT '0',
+  `blog_count_topic` int(10) unsigned NOT NULL DEFAULT '0',
+  `blog_limit_rating_topic` float(9,3) NOT NULL DEFAULT '0.000',
   `blog_url` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `blog_avatar` varchar(250) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `blog_deleted` tinyint(1) NOT NULL DEFAULT 0,
+  `blog_deleted` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`blog_id`),
   KEY `user_owner_id` (`user_owner_id`),
   KEY `blog_type` (`blog_type`),
   KEY `blog_url` (`blog_url`),
   KEY `blog_title` (`blog_title`),
   KEY `blog_count_topic` (`blog_count_topic`),
+  KEY `blog_deleted` (`blog_deleted`),
   CONSTRAINT `prefix_blog_fk` FOREIGN KEY (`user_owner_id`) REFERENCES `prefix_user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -132,7 +133,7 @@ DROP TABLE IF EXISTS `prefix_blog_user`;
 CREATE TABLE `prefix_blog_user` (
   `blog_id` int(11) unsigned NOT NULL,
   `user_id` int(11) unsigned NOT NULL,
-  `user_role` int(3) DEFAULT 1,
+  `user_role` int(3) DEFAULT '1',
   UNIQUE KEY `blog_id_user_id_uniq` (`blog_id`,`user_id`),
   KEY `blog_id` (`blog_id`),
   KEY `user_id` (`user_id`),
@@ -151,27 +152,27 @@ DROP TABLE IF EXISTS `prefix_comment`;
 CREATE TABLE `prefix_comment` (
   `comment_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `comment_pid` int(11) unsigned DEFAULT NULL,
-  `comment_left` int(11) NOT NULL DEFAULT 0,
-  `comment_right` int(11) NOT NULL DEFAULT 0,
-  `comment_level` int(11) NOT NULL DEFAULT 0,
+  `comment_left` int(11) NOT NULL DEFAULT '0',
+  `comment_right` int(11) NOT NULL DEFAULT '0',
+  `comment_level` int(11) NOT NULL DEFAULT '0',
   `target_id` int(11) unsigned DEFAULT NULL,
   `target_type` enum('topic','talk') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'topic',
-  `target_parent_id` int(11) NOT NULL DEFAULT 0,
+  `target_parent_id` int(11) NOT NULL DEFAULT '0',
   `user_id` int(11) unsigned NOT NULL,
-  `comment_text` text COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `comment_text` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
   `comment_text_hash` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
   `comment_date` datetime NOT NULL,
   `comment_user_ip` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `comment_rating` float(9,3) NOT NULL DEFAULT 0.000,
-  `comment_count_vote` int(11) unsigned NOT NULL DEFAULT 0,
-  `comment_count_favourite` int(11) unsigned NOT NULL DEFAULT 0,
-  `comment_delete` tinyint(4) NOT NULL DEFAULT 0,
-  `comment_publish` tinyint(1) NOT NULL DEFAULT 1,
-  `comment_edit_count` int(11) NOT NULL DEFAULT 0,
-  `comment_edit_date` datetime NOT NULL DEFAULT current_timestamp(),
-  `delete_reason` mediumtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `comment_rating` float(9,3) NOT NULL DEFAULT '0.000',
+  `comment_count_vote` int(11) unsigned NOT NULL DEFAULT '0',
+  `comment_count_favourite` int(11) unsigned NOT NULL DEFAULT '0',
+  `comment_delete` tinyint(4) NOT NULL DEFAULT '0',
+  `comment_publish` tinyint(1) NOT NULL DEFAULT '1',
+  `comment_edit_count` int(11) NOT NULL DEFAULT '0',
+  `comment_edit_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `delete_reason` mediumtext COLLATE utf8mb4_unicode_ci,
   `delete_user_id` int(11) unsigned DEFAULT NULL,
-  `user_rank` mediumtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_rank` mediumtext COLLATE utf8mb4_unicode_ci,
   `user_avatar` varchar(250) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`comment_id`),
   KEY `comment_pid` (`comment_pid`),
@@ -203,15 +204,15 @@ DROP TABLE IF EXISTS `prefix_comment_online`;
 CREATE TABLE `prefix_comment_online` (
   `comment_online_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `target_id` int(11) unsigned DEFAULT NULL,
-  `target_type` enum('topic','talk') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'topic',
-  `target_parent_id` int(11) NOT NULL DEFAULT 0,
+  `target_type` enum('topic','talk') NOT NULL DEFAULT 'topic',
+  `target_parent_id` int(11) NOT NULL DEFAULT '0',
   `comment_id` int(11) unsigned NOT NULL,
   PRIMARY KEY (`comment_online_id`),
   UNIQUE KEY `id_type` (`target_id`,`target_type`),
   KEY `comment_id` (`comment_id`),
   KEY `type_parent` (`target_type`,`target_parent_id`),
   CONSTRAINT `prefix_topic_comment_online_fk1` FOREIGN KEY (`comment_id`) REFERENCES `prefix_comment` (`comment_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -226,7 +227,7 @@ CREATE TABLE `prefix_editcomment_data` (
   `comment_id` int(11) unsigned DEFAULT NULL,
   `user_id` int(11) unsigned DEFAULT NULL,
   `date_add` datetime NOT NULL,
-  `comment_text_source` mediumtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `comment_text_source` mediumtext COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `comment_id` (`comment_id`),
@@ -247,7 +248,7 @@ CREATE TABLE `prefix_favourite` (
   `user_id` int(11) unsigned NOT NULL,
   `target_id` int(11) unsigned DEFAULT NULL,
   `target_type` enum('topic','comment','talk') COLLATE utf8mb4_unicode_ci DEFAULT 'topic',
-  `target_publish` tinyint(1) DEFAULT 1,
+  `target_publish` tinyint(1) DEFAULT '1',
   `tags` varchar(250) COLLATE utf8mb4_unicode_ci NOT NULL,
   UNIQUE KEY `user_id_target_id_type` (`user_id`,`target_id`,`target_type`),
   KEY `target_publish` (`target_publish`),
@@ -267,7 +268,7 @@ CREATE TABLE `prefix_favourite_tag` (
   `user_id` int(10) unsigned NOT NULL,
   `target_id` int(11) NOT NULL,
   `target_type` enum('topic','comment','talk') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `is_user` tinyint(1) NOT NULL DEFAULT 0,
+  `is_user` tinyint(1) NOT NULL DEFAULT '0',
   `text` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   KEY `user_id_target_type_id` (`user_id`,`target_type`,`target_id`),
   KEY `target_type_id` (`target_type`,`target_id`),
@@ -323,8 +324,8 @@ DROP TABLE IF EXISTS `prefix_friend`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `prefix_friend` (
-  `user_from` int(11) unsigned NOT NULL DEFAULT 0,
-  `user_to` int(11) unsigned NOT NULL DEFAULT 0,
+  `user_from` int(11) unsigned NOT NULL DEFAULT '0',
+  `user_to` int(11) unsigned NOT NULL DEFAULT '0',
   `status_from` int(4) NOT NULL,
   `status_to` int(4) NOT NULL,
   PRIMARY KEY (`user_from`,`user_to`),
@@ -347,7 +348,7 @@ CREATE TABLE `prefix_geo_city` (
   `region_id` int(11) NOT NULL,
   `name_ru` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `name_en` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `sort` int(11) NOT NULL DEFAULT 0,
+  `sort` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `sort` (`sort`),
   KEY `country_id` (`country_id`),
@@ -371,7 +372,7 @@ CREATE TABLE `prefix_geo_country` (
   `name_ru` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `name_en` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `code` varchar(5) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `sort` int(11) NOT NULL DEFAULT 0,
+  `sort` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `sort` (`sort`),
   KEY `name_ru` (`name_ru`),
@@ -392,7 +393,7 @@ CREATE TABLE `prefix_geo_region` (
   `country_id` int(11) NOT NULL,
   `name_ru` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `name_en` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `sort` int(11) NOT NULL DEFAULT 0,
+  `sort` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `sort` (`sort`),
   KEY `country_id` (`country_id`),
@@ -442,7 +443,7 @@ CREATE TABLE `prefix_invite` (
   `user_to_id` int(11) unsigned DEFAULT NULL,
   `invite_date_add` datetime NOT NULL,
   `invite_date_used` datetime DEFAULT NULL,
-  `invite_used` tinyint(1) unsigned NOT NULL DEFAULT 0,
+  `invite_used` tinyint(1) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`invite_id`),
   UNIQUE KEY `invite_code` (`invite_code`),
   KEY `user_from_id` (`user_from_id`),
@@ -463,8 +464,8 @@ DROP TABLE IF EXISTS `prefix_mhb`;
 CREATE TABLE `prefix_mhb` (
   `mhb_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `blog_id` int(10) unsigned NOT NULL,
-  `auto_join` tinyint(1) NOT NULL DEFAULT 0,
-  `cant_leave` tinyint(1) NOT NULL DEFAULT 0,
+  `auto_join` tinyint(1) NOT NULL DEFAULT '0',
+  `cant_leave` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`mhb_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -480,11 +481,11 @@ CREATE TABLE `prefix_notification` (
   `notification_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `sender_user_id` int(11) NOT NULL,
-  `date` timestamp NOT NULL DEFAULT current_timestamp(),
-  `text` longtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `title` longtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `link` longtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `rating` int(11) DEFAULT 0,
+  `date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `text` longtext COLLATE utf8mb4_unicode_ci,
+  `title` longtext COLLATE utf8mb4_unicode_ci,
+  `link` longtext COLLATE utf8mb4_unicode_ci,
+  `rating` int(11) DEFAULT '0',
   `notification_type` int(11) NOT NULL,
   `target_type` varchar(256) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `target_id` int(11) DEFAULT NULL,
@@ -505,7 +506,7 @@ DROP TABLE IF EXISTS `prefix_notification_type`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `prefix_notification_type` (
   `notification_type_id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` longtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `name` longtext COLLATE utf8mb4_unicode_ci,
   PRIMARY KEY (`notification_type_id`),
   UNIQUE KEY `prefix_notification_type_notification_type_id_uindex` (`notification_type_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -523,7 +524,7 @@ CREATE TABLE `prefix_notify_task` (
   `user_login` varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `user_mail` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `notify_subject` varchar(200) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `notify_text` mediumtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `notify_text` mediumtext COLLATE utf8mb4_unicode_ci,
   `date_created` datetime DEFAULT NULL,
   `notify_task_status` tinyint(2) unsigned DEFAULT NULL,
   PRIMARY KEY (`notify_task_id`),
@@ -549,10 +550,10 @@ CREATE TABLE `prefix_page` (
   `page_date_edit` datetime DEFAULT NULL,
   `page_seo_keywords` varchar(250) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `page_seo_description` varchar(250) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `page_active` tinyint(1) unsigned NOT NULL DEFAULT 1,
-  `page_main` tinyint(1) unsigned NOT NULL DEFAULT 0,
+  `page_active` tinyint(1) unsigned NOT NULL DEFAULT '1',
+  `page_main` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `page_sort` int(11) NOT NULL,
-  `page_auto_br` tinyint(1) NOT NULL DEFAULT 1,
+  `page_auto_br` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`page_id`),
   KEY `page_pid` (`page_pid`),
   KEY `page_url_full` (`page_url_full`,`page_active`),
@@ -593,7 +594,7 @@ DROP TABLE IF EXISTS `prefix_quotes`;
 CREATE TABLE `prefix_quotes` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `data` mediumtext COLLATE utf8mb4_unicode_ci NOT NULL,
-  `deleted` tinyint(1) NOT NULL DEFAULT 0,
+  `deleted` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -611,7 +612,7 @@ CREATE TABLE `prefix_reminder` (
   `reminder_date_add` datetime NOT NULL,
   `reminder_date_used` datetime DEFAULT '0000-00-00 00:00:00',
   `reminder_date_expire` datetime NOT NULL,
-  `reminde_is_used` tinyint(1) unsigned NOT NULL DEFAULT 0,
+  `reminde_is_used` tinyint(1) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`reminder_code`),
   UNIQUE KEY `user_id` (`user_id`),
   CONSTRAINT `prefix_reminder_fk` FOREIGN KEY (`user_id`) REFERENCES `prefix_user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -626,13 +627,11 @@ DROP TABLE IF EXISTS `prefix_session`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `prefix_session` (
-  `session_key` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
   `user_id` int(11) unsigned NOT NULL,
   `session_ip_create` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL,
   `session_ip_last` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `session_date_create` datetime NOT NULL DEFAULT current_timestamp(),
+  `session_date_create` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `session_date_last` datetime NOT NULL,
-  PRIMARY KEY (`session_key`),
   UNIQUE KEY `user_id` (`user_id`),
   KEY `session_date_last` (`session_date_last`),
   CONSTRAINT `prefix_session_fk` FOREIGN KEY (`user_id`) REFERENCES `prefix_user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -651,8 +650,8 @@ CREATE TABLE `prefix_stream_event` (
   `event_type` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `target_id` int(11) NOT NULL,
   `user_id` int(11) unsigned NOT NULL,
-  `date_added` timestamp NOT NULL DEFAULT current_timestamp(),
-  `publish` tinyint(1) NOT NULL DEFAULT 1,
+  `date_added` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `publish` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   KEY `event_type` (`event_type`,`user_id`),
   KEY `user_id` (`user_id`),
@@ -708,7 +707,7 @@ CREATE TABLE `prefix_subscribe` (
   `date_remove` datetime DEFAULT NULL,
   `ip` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
   `key` varchar(32) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `status` tinyint(1) NOT NULL DEFAULT 1,
+  `status` tinyint(1) NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   KEY `type` (`target_type`),
   KEY `mail` (`mail`),
@@ -736,8 +735,8 @@ CREATE TABLE `prefix_talk` (
   `talk_user_id_last` int(11) NOT NULL,
   `talk_user_ip` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL,
   `talk_comment_id_last` int(11) DEFAULT NULL,
-  `talk_count_comment` int(11) NOT NULL DEFAULT 0,
-  `talk_deleted` tinyint(1) DEFAULT 0,
+  `talk_count_comment` int(11) NOT NULL DEFAULT '0',
+  `talk_deleted` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`talk_id`),
   KEY `user_id` (`user_id`),
   KEY `talk_title` (`talk_title`),
@@ -758,8 +757,8 @@ DROP TABLE IF EXISTS `prefix_talk_bell`;
 CREATE TABLE `prefix_talk_bell` (
   `talk_bell_id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) DEFAULT NULL,
-  `user_data_talk` longtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `user_data_comment` longtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_data_talk` longtext COLLATE utf8mb4_unicode_ci,
+  `user_data_comment` longtext COLLATE utf8mb4_unicode_ci,
   `date` datetime DEFAULT NULL,
   PRIMARY KEY (`talk_bell_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -793,9 +792,9 @@ CREATE TABLE `prefix_talk_user` (
   `talk_id` int(11) unsigned NOT NULL,
   `user_id` int(11) unsigned NOT NULL,
   `date_last` datetime DEFAULT NULL,
-  `comment_id_last` int(11) NOT NULL DEFAULT 0,
-  `comment_count_new` int(11) NOT NULL DEFAULT 0,
-  `talk_user_active` tinyint(1) DEFAULT 1,
+  `comment_id_last` int(11) NOT NULL DEFAULT '0',
+  `comment_count_new` int(11) NOT NULL DEFAULT '0',
+  `talk_user_active` tinyint(1) DEFAULT '1',
   UNIQUE KEY `talk_id_user_id` (`talk_id`,`user_id`),
   KEY `user_id` (`user_id`),
   KEY `date_last` (`date_last`),
@@ -824,22 +823,22 @@ CREATE TABLE `prefix_topic` (
   `topic_date_add` datetime NOT NULL,
   `topic_date_edit` datetime DEFAULT NULL,
   `topic_user_ip` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `topic_publish` tinyint(1) NOT NULL DEFAULT 0,
-  `topic_publish_draft` tinyint(1) NOT NULL DEFAULT 1,
-  `topic_publish_index` tinyint(1) NOT NULL DEFAULT 0,
-  `topic_rating` float(9,3) NOT NULL DEFAULT 0.000,
-  `topic_count_vote` int(11) unsigned NOT NULL DEFAULT 0,
-  `topic_count_vote_up` int(11) NOT NULL DEFAULT 0,
-  `topic_count_vote_down` int(11) NOT NULL DEFAULT 0,
-  `topic_count_vote_abstain` int(11) NOT NULL DEFAULT 0,
-  `topic_count_read` int(11) unsigned NOT NULL DEFAULT 0,
-  `topic_count_comment` int(11) unsigned NOT NULL DEFAULT 0,
-  `topic_count_favourite` int(11) unsigned NOT NULL DEFAULT 0,
+  `topic_publish` tinyint(1) NOT NULL DEFAULT '0',
+  `topic_publish_draft` tinyint(1) NOT NULL DEFAULT '1',
+  `topic_publish_index` tinyint(1) NOT NULL DEFAULT '0',
+  `topic_rating` float(9,3) NOT NULL DEFAULT '0.000',
+  `topic_count_vote` int(11) unsigned NOT NULL DEFAULT '0',
+  `topic_count_vote_up` int(11) NOT NULL DEFAULT '0',
+  `topic_count_vote_down` int(11) NOT NULL DEFAULT '0',
+  `topic_count_vote_abstain` int(11) NOT NULL DEFAULT '0',
+  `topic_count_read` int(11) unsigned NOT NULL DEFAULT '0',
+  `topic_count_comment` int(11) unsigned NOT NULL DEFAULT '0',
+  `topic_count_favourite` int(11) unsigned NOT NULL DEFAULT '0',
   `topic_cut_text` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `topic_forbid_comment` tinyint(1) NOT NULL DEFAULT 0,
+  `topic_forbid_comment` tinyint(1) NOT NULL DEFAULT '0',
   `topic_text_hash` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `topic_lock_control` tinyint(3) unsigned NOT NULL DEFAULT 0,
-  `topic_deleted` tinyint(1) NOT NULL DEFAULT 0,
+  `topic_lock_control` tinyint(3) unsigned NOT NULL DEFAULT '0',
+  `topic_deleted` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`topic_id`),
   KEY `blog_id` (`blog_id`),
   KEY `user_id` (`user_id`),
@@ -848,6 +847,7 @@ CREATE TABLE `prefix_topic` (
   KEY `topic_publish` (`topic_publish`),
   KEY `topic_text_hash` (`topic_text_hash`),
   KEY `topic_count_comment` (`topic_count_comment`),
+  KEY `topic_deleted` (`topic_deleted`),
   CONSTRAINT `prefix_topic_fk` FOREIGN KEY (`blog_id`) REFERENCES `prefix_blog` (`blog_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `prefix_topic_fk1` FOREIGN KEY (`user_id`) REFERENCES `prefix_user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -882,7 +882,7 @@ CREATE TABLE `prefix_topic_photo` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `topic_id` int(11) unsigned DEFAULT NULL,
   `path` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` mediumtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `description` mediumtext COLLATE utf8mb4_unicode_ci,
   `target_tmp` varchar(40) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `topic_id` (`topic_id`),
@@ -920,8 +920,8 @@ CREATE TABLE `prefix_topic_read` (
   `topic_id` int(11) unsigned NOT NULL,
   `user_id` int(11) unsigned NOT NULL,
   `date_read` datetime NOT NULL,
-  `comment_count_last` int(10) unsigned NOT NULL DEFAULT 0,
-  `comment_id_last` int(11) NOT NULL DEFAULT 0,
+  `comment_count_last` int(10) unsigned NOT NULL DEFAULT '0',
+  `comment_id_last` int(11) NOT NULL DEFAULT '0',
   UNIQUE KEY `topic_id_user_id` (`topic_id`,`user_id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `prefix_topic_read_fk` FOREIGN KEY (`topic_id`) REFERENCES `prefix_topic` (`topic_id`) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -965,14 +965,14 @@ CREATE TABLE `prefix_user` (
   `user_login` varchar(30) COLLATE utf8mb4_unicode_ci NOT NULL,
   `user_password` varchar(256) COLLATE utf8mb4_unicode_ci NOT NULL,
   `user_mail` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `user_skill` float(9,3) unsigned NOT NULL DEFAULT 0.000,
+  `user_skill` float(9,3) unsigned NOT NULL DEFAULT '0.000',
   `user_date_register` datetime NOT NULL,
   `user_date_activate` datetime DEFAULT NULL,
   `user_date_comment_last` datetime DEFAULT NULL,
   `user_ip_register` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `user_rating` float(9,3) NOT NULL DEFAULT 0.000,
-  `user_count_vote` int(11) unsigned NOT NULL DEFAULT 0,
-  `user_activate` tinyint(1) unsigned NOT NULL DEFAULT 0,
+  `user_rating` float(9,3) NOT NULL DEFAULT '0.000',
+  `user_count_vote` int(11) unsigned NOT NULL DEFAULT '0',
+  `user_activate` tinyint(1) unsigned NOT NULL DEFAULT '0',
   `user_activate_key` varchar(32) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `user_profile_name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `user_profile_sex` enum('man','woman','other') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'other',
@@ -980,18 +980,18 @@ CREATE TABLE `prefix_user` (
   `user_profile_region` varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `user_profile_city` varchar(30) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `user_profile_birthday` datetime DEFAULT NULL,
-  `user_profile_about` mediumtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_profile_about` mediumtext COLLATE utf8mb4_unicode_ci,
   `user_profile_date` datetime DEFAULT NULL,
   `user_profile_avatar` varchar(250) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `user_profile_foto` varchar(250) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `user_settings_notice_new_topic` tinyint(1) NOT NULL DEFAULT 1,
-  `user_settings_notice_new_comment` tinyint(1) NOT NULL DEFAULT 1,
-  `user_settings_notice_new_talk` tinyint(1) NOT NULL DEFAULT 1,
-  `user_settings_notice_reply_comment` tinyint(1) NOT NULL DEFAULT 1,
-  `user_settings_notice_new_friend` tinyint(1) NOT NULL DEFAULT 1,
+  `user_settings_notice_new_topic` tinyint(1) NOT NULL DEFAULT '1',
+  `user_settings_notice_new_comment` tinyint(1) NOT NULL DEFAULT '1',
+  `user_settings_notice_new_talk` tinyint(1) NOT NULL DEFAULT '1',
+  `user_settings_notice_reply_comment` tinyint(1) NOT NULL DEFAULT '1',
+  `user_settings_notice_new_friend` tinyint(1) NOT NULL DEFAULT '1',
   `user_settings_timezone` varchar(6) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `user_settings_talk_bell` tinyint(1) NOT NULL DEFAULT 1,
-  `user_rank` mediumtext COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `user_settings_talk_bell` tinyint(1) NOT NULL DEFAULT '1',
+  `user_rank` mediumtext COLLATE utf8mb4_unicode_ci,
   `user_perms` bit(8) NOT NULL DEFAULT b'0',
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `user_login` (`user_login`),
@@ -1052,8 +1052,8 @@ CREATE TABLE `prefix_user_changemail` (
   `mail_to` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `code_from` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
   `code_to` varchar(32) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `confirm_from` tinyint(1) NOT NULL DEFAULT 0,
-  `confirm_to` tinyint(1) NOT NULL DEFAULT 0,
+  `confirm_from` tinyint(1) NOT NULL DEFAULT '0',
+  `confirm_to` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `code_from` (`code_from`),
@@ -1176,11 +1176,11 @@ DROP TABLE IF EXISTS `prefix_vote`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `prefix_vote` (
-  `target_id` int(11) unsigned NOT NULL DEFAULT 0,
+  `target_id` int(11) unsigned NOT NULL DEFAULT '0',
   `target_type` enum('topic','blog','user','comment') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'topic',
   `user_voter_id` int(11) unsigned NOT NULL,
-  `vote_direction` tinyint(2) DEFAULT 0,
-  `vote_value` float(9,3) NOT NULL DEFAULT 0.000,
+  `vote_direction` tinyint(2) DEFAULT '0',
+  `vote_value` float(9,3) NOT NULL DEFAULT '0.000',
   `vote_date` datetime NOT NULL,
   `vote_ip` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
   PRIMARY KEY (`target_id`,`target_type`,`user_voter_id`),
@@ -1202,7 +1202,7 @@ CREATE TABLE `prefix_wall` (
   `pid` int(11) DEFAULT NULL,
   `wall_user_id` int(11) unsigned NOT NULL,
   `user_id` int(11) unsigned NOT NULL,
-  `count_reply` int(11) NOT NULL DEFAULT 0,
+  `count_reply` int(11) NOT NULL DEFAULT '0',
   `last_reply` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `date_add` datetime NOT NULL,
   `ip` varchar(60) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -1216,6 +1216,23 @@ CREATE TABLE `prefix_wall` (
   CONSTRAINT `prefix_wall_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `prefix_user` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `security_keyring`
+--
+
+DROP TABLE IF EXISTS `security_keyring`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `security_keyring` (
+  `key_id` int(11) NOT NULL AUTO_INCREMENT,
+  `key_type` char(8) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `expire_time` int(11) NOT NULL,
+  `sec_key` binary(64) NOT NULL,
+  PRIMARY KEY (`key_id`),
+  KEY `key_type` (`key_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -1226,4 +1243,4 @@ CREATE TABLE `prefix_wall` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2019-05-23 11:38:48
+-- Dump completed on 2019-08-28  0:47:54

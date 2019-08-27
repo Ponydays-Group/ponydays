@@ -477,8 +477,8 @@ class ActionSettings extends Action {
 			if (getRequestStr('password','')!='') {
 				if (func_check(getRequestStr('password'),'password',5)) {
 					if (getRequestStr('password')==getRequestStr('password_confirm')) {
-						if (crypto_password_verify(getRequestStr('password_now'), $this->oUserCurrent->getPassword())) {
-							$this->oUserCurrent->setPassword(crypto_password_hash(getRequestStr('password')));
+						if ($this->Crypto_PasswordVerify(getRequestStr('password_now'), $this->oUserCurrent->getPassword())) {
+							$this->oUserCurrent->setPassword($this->Crypto_PasswordHash(getRequestStr('password')));
                             $this->ModuleUser_Authorization($this->oUserCurrent);
 						} else {
 							$bError=true;

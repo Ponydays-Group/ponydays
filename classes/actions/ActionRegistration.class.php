@@ -202,7 +202,7 @@ class ActionRegistration extends Action {
 		 */
 		if ($oUser->_Validate()) {
 			$this->Hook_Run('registration_validate_after', array('oUser'=>$oUser));
-			$oUser->setPassword(crypto_password_hash($oUser->getPassword()));
+			$oUser->setPassword($this->Crypto_PasswordHash($oUser->getPassword()));
 			if ($this->User_Add($oUser)) {
 				$this->Hook_Run('registration_after', array('oUser'=>$oUser));
 				/**

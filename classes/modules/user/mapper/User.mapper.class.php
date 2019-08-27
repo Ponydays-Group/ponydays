@@ -122,27 +122,6 @@ class ModuleUser_MapperUser extends Mapper
     }
 
     /**
-     * Получить юзера по ключу сессии
-     *
-     * @param string $sKey Сессионный ключ
-     * @return int|null
-     */
-    public function GetUserBySessionKey($sKey)
-    {
-        $sql = "SELECT
-					s.user_id
-				FROM
-					" . Config::Get('db.table.session') . " as s
-				WHERE
-					s.session_key = ?
-				";
-        if ($aRow = $this->oDb->selectRow($sql, $sKey)) {
-            return $aRow['user_id'];
-        }
-        return null;
-    }
-
-    /**
      * Создание пользовательской сессии
      *
      * @param ModuleUser_EntitySession $oSession
@@ -152,14 +131,13 @@ class ModuleUser_MapperUser extends Mapper
     {
         $sql = "REPLACE INTO " . Config::Get('db.table.session') . "
 			SET
-				session_key = ? ,
 				user_id = ? ,
 				session_ip_create = ? ,
 				session_ip_last = ? ,
 				session_date_create = ? ,
 				session_date_last = ?
 		";
-        return $this->oDb->query($sql, $oSession->getKey(), $oSession->getUserId(), $oSession->getIpCreate(), $oSession->getIpLast(), $oSession->getDateCreate(), $oSession->getDateLast());
+        return $this->oDb->query($sql, $oSession->getUserId(), $oSession->getIpCreate(), $oSession->getIpLast(), $oSession->getDateCreate(), $oSession->getDateLast());
     }
 
     /**

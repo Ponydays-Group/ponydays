@@ -62,7 +62,8 @@
             "adminips": "___db.table.prefix___adminips",
             "quotes": "___db.table.prefix___quotes",
             "notification": "___db.table.prefix___notification",
-            "notification_type": "___db.table.prefix___notification_type"
+            "notification_type": "___db.table.prefix___notification_type",
+            "keyring": "security_keyring"
         },
         "tables": {
             "engine": "InnoDB"

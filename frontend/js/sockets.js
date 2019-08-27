@@ -8,7 +8,7 @@ function getCookie(name) {
     return matches ? decodeURIComponent(matches[1]) : undefined;
 }
 
-if(!(getCookie("key") || getCookie("wskey")) && LOGGED_IN) {
+if(!getCookie("key") && LOGGED_IN) {
     ls.msg.error("Необходимо войти в аккаунт еще раз.", "Были внесены изменения в механизм входа")
 }
 
@@ -22,7 +22,7 @@ window.sock = io(SOCKET_URL, {
 
 sock.on("reconnect_attempt", () => {
     sock.io.opts.query = {
-        token: getCookie("key") || getCookie("wskey"),
+        token: getCookie("key"),
     }
 });
 

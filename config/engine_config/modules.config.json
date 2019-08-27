@@ -76,7 +76,8 @@
             "userfield_max_identical": 2,
             "profile_photo_width": 1340,
             "name_max": 30,
-            "captcha_use_registration": true
+            "captcha_use_registration": true,
+            "session_time": 259200
         },
         "comment": {
             "per_page": 20,

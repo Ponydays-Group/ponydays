@@ -83,9 +83,9 @@ class ActionLogin extends Action {
 			 * Проверяем пароль и обновляем хеш, если нужно
 			 */
 			$user_password = $oUser->getPassword();
-			if(crypto_password_verify(getRequest('password'), $user_password)) {
-				if(crypto_password_needs_rehash($user_password)) {
-					$oUser->setPassword(crypto_password_hash(getRequest('password')));
+			if($this->Crypto_PasswordVerify(getRequest('password'), $user_password)) {
+				if($this->Crypto_PasswordNeedsRehash($user_password)) {
+					$oUser->setPassword($this->Crypto_PasswordHash(getRequest('password')));
 					$this->User_Update($oUser);
 				}
 
@@ -219,7 +219,7 @@ class ActionLogin extends Action {
 			if ($oReminder=$this->User_GetReminderByCode($this->GetParam(0))) {
 				if (!$oReminder->getIsUsed() and strtotime($oReminder->getDateExpire())>time() and $oUser=$this->User_GetUserById($oReminder->getUserId())) {
 					$sNewPassword=func_generator(7);
-					$oUser->setPassword(crypto_password_hash($sNewPassword));
+					$oUser->setPassword($this->Crypto_PasswordHash($sNewPassword));
 					if ($this->User_Update($oUser)) {
 						$oReminder->setDateUsed(date("Y-m-d H:i:s"));
 						$oReminder->setIsUsed(1);

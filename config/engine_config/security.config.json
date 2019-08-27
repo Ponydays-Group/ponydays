@@ -12,6 +12,12 @@
       "sha512": {
         "salt": "never_ever"
       }
+    },
+    "keyring": {
+      "max_key_life": 604800
+    },
+    "auth": {
+      "signature": "HS256"
     }
   }
 }

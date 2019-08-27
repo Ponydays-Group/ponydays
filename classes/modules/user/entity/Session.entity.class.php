@@ -23,14 +23,6 @@
  */
 class ModuleUser_EntitySession extends Entity {
 	/**
-	 * Возвращает ключ сессии
-	 *
-	 * @return string|null
-	 */
-	public function getKey() {
-		return $this->_getDataOne('session_key');
-	}
-	/**
 	 * Возвращает ID пользователя
 	 *
 	 * @return int|null
@@ -73,14 +65,6 @@ class ModuleUser_EntitySession extends Entity {
 
 
 	/**
-	 * Устанавливает ключ сессии
-	 *
-	 * @param string $data
-	 */
-	public function setKey($data) {
-		$this->_aData['session_key']=$data;
-	}
-	/**
 	 * Устанавливает ID пользователя
 	 *
 	 * @param int $data
@@ -121,4 +105,3 @@ class ModuleUser_EntitySession extends Entity {
 		$this->_aData['session_date_last']=$data;
 	}
 }
-?>

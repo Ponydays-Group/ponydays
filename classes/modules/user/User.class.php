@@ -483,8 +483,12 @@ class ModuleUser extends Module
      */
     public function GetUserBySessionKey($sKey)
     {
-        $id = $this->oMapper->GetUserBySessionKey($sKey);
-        return $this->GetUserById($id);
+        try {
+            $payload = $this->Auth_VerifyKey($sKey, 'msgpack');
+        } catch(AuthException $e) {
+            return null;
+        }
+        return $this->GetUserById($payload['sub']);
     }
 
     /**
@@ -571,7 +575,7 @@ class ModuleUser extends Module
         /**
          * Создаём новую сессию
          */
-        if (!$this->CreateSession($oUser, $sKey)) {
+        if (!$this->CreateSession($oUser)) {
             return false;
         }
         /**
@@ -584,9 +588,9 @@ class ModuleUser extends Module
          */
         if ($bRemember) {
             setcookie('key', $sKey, time() + Config::Get('sys.cookie.time'), Config::Get('sys.cookie.path'), Config::Get('sys.cookie.host'), false, false);
-            setcookie('wskey', $sKey, time() + Config::Get('sys.cookie.time'), Config::Get('sys.cookie.path'), Config::Get('sys.cookie.host'), false, false);
+        } else {
+            setcookie('key', $sKey, 0, Config::Get('sys.cookie.path'), Config::Get('sys.cookie.host'), false, false);
         }
-        setcookie('wskey', $sKey, 0, Config::Get('sys.cookie.path'), Config::Get('sys.cookie.host'), false, false);
         return true;
     }
 
@@ -597,8 +601,10 @@ class ModuleUser extends Module
     protected function AutoLogin()
     {
         if ($this->oUserCurrent) {
-            if (isset($_COOKIE['key']) and $_COOKIE['key'] != $this->GenerateUserKey($this->oUserCurrent)) {
-                $this->Logout();
+            if (isset($_COOKIE['key'])) {
+                if($this->CheckUserKey($_COOKIE['key'], $this->oUserCurrent->getId())) {
+                    $this->Logout();
+                }
             }
             return;
         }
@@ -608,7 +614,7 @@ class ModuleUser extends Module
                 $this->Logout();
                 return;
             }
-            if ($sKey == $this->GenerateUserKey($oUser)) {
+            if ($this->CheckUserKey($sKey, $oUser)) {
                 $this->Authorization($oUser);
             } else {
                 $this->Logout();
@@ -696,13 +702,12 @@ class ModuleUser extends Module
      * @return bool
      */
     protected
-    function CreateSession(ModuleUser_EntityUser $oUser, $sKey)
+    function CreateSession(ModuleUser_EntityUser $oUser)
     {
         $this->Cache_Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array('user_session_update'));
         $this->Cache_Delete("user_session_{$oUser->getId()}");
         $oSession = Engine::GetEntity('User_Session');
         $oSession->setUserId($oUser->getId());
-        $oSession->setKey($sKey);
         $oSession->setIpLast(func_getIp());
         $oSession->setIpCreate(func_getIp());
         $oSession->setDateLast(date("Y-m-d H:i:s"));
@@ -1964,7 +1969,22 @@ class ModuleUser extends Module
     public
     function GenerateUserKey(ModuleUser_EntityUser $oUser)
     {
-        return md5($oUser->getLogin() . '--' . $oUser->getPassword());
+        $payload = array(
+            'sub' => $oUser->getId(),
+            'exp' => time() + Config::Get('module.user.session_time'),
+            'iat' => time()
+        );
+        return $this->Auth_GenerateKey($payload, 'user', false, 'msgpack');
+    }
+
+    public function CheckUserKey(string $key, int $uid): bool
+    {
+        try {
+            $payload = $this->Auth_VerifyKey($key, 'msgpack');
+            return $payload['sub'] == $uid;
+        } catch(AuthException $e) {
+            return false;
+        }
     }
 
     /**
@@ -1989,5 +2009,3 @@ class ModuleUser extends Module
         $this->oMapper->SetUserPrivileges($iUserId, $iPrivs);
     }
 }
-
-?>

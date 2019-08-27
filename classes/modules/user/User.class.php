@@ -602,7 +602,7 @@ class ModuleUser extends Module
     {
         if ($this->oUserCurrent) {
             if (isset($_COOKIE['key'])) {
-                if($this->CheckUserKey($_COOKIE['key'], $this->oUserCurrent->getId())) {
+                if(!$this->CheckUserKey($_COOKIE['key'], $this->oUserCurrent->getId())) {
                     $this->Logout();
                 }
             }
@@ -614,7 +614,7 @@ class ModuleUser extends Module
                 $this->Logout();
                 return;
             }
-            if ($this->CheckUserKey($sKey, $oUser)) {
+            if ($this->CheckUserKey($sKey, $oUser->getId())) {
                 $this->Authorization($oUser);
             } else {
                 $this->Logout();

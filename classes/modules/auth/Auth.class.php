@@ -83,7 +83,7 @@ class ModuleAuth extends Module
 			throw new AuthException("error while getting a key", AuthException::EXPIRED_KEY, $e);
 		}
 		$signature_algo = $this->Crypto_GetSignature($algo[0]);
-		if(!$signature_algo->verify($header_data . $payload_data, $signature, $sign_key, array('hash' => $algo[1]))) {
+		if(!$signature_algo->verify($header_data . '.' . $payload_data, $signature, $sign_key, array('hash' => $algo[1]))) {
 			throw new AuthException("invalid signature", AuthException::INVALID_SIGNATURE);
 		}
 

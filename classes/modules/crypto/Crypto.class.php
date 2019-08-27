@@ -156,7 +156,7 @@ class ModuleCrypto extends Module
 				return self::GetKeyById($id);
 			}
 		}
-		throw new CryptoException("could not get a key for type", CryptoException::DB_ERROR);
+		throw new CryptoException("could not get a key for type '$type'", CryptoException::DB_ERROR);
 	}
 
 	/**
@@ -168,7 +168,11 @@ class ModuleCrypto extends Module
 	{
 		$data = $this->oMapper->GetKeyById($kid);
 		if($data) {
-			list($id, $type, $key) = $data;
+			list($id, $expires, $type, $key) = $data;
+			if($expires < time() - Config::Get("crypto.keyring.max_key_life")) {
+				$this->oMapper->DestroyKey($kid);
+				throw new CryptoException("key has been destroyed", CryptoException::DB_ERROR);
+			}
 			return array($id, $type, $key);
 		}
 		throw new CryptoException("could not get a key by id", CryptoException::DB_ERROR);
@@ -282,7 +286,7 @@ abstract class CryptoSignature
 	public abstract function sign(string $msg, string $sec_key, array $params): string;
 	public function verify(string $msg, string $signature, string $sec_key, array $params): bool
 	{
-		return hash_equals($signature, self::sign($msg, $sec_key, $params));
+		return hash_equals($signature, $this->sign($msg, $sec_key, $params));
 	}
 }
 

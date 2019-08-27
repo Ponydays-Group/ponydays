@@ -4,7 +4,7 @@
 CREATE TABLE `security_keyring` (
   `key_id` int AUTO_INCREMENT NOT NULL,
   `key_type` char(8) NOT NULL,
-  `expire_time` timestamp NOT NULL,
+  `expire_time` int NOT NULL,
   `sec_key` binary(64) NOT NULL,
 
   PRIMARY KEY (`key_id`),

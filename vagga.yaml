@@ -1,0 +1,110 @@
+containers:
+  app-base:
+    setup:
+      - !Alpine v3.10
+      - !Repo community
+      - !Install
+        - ca-certificates
+  app:
+    setup:
+      - !Container app-base
+      - !Install
+        - php7
+        - php7-fpm
+        - php7-openssl
+        - php7-mysqli
+        - php7-xml
+        - php7-mbstring
+        - php7-json
+        - php7-ctype
+        - php7-phar
+        - php7-dom
+        - php7-xmlwriter
+        - php7-tokenizer
+        - php7-pecl-msgpack
+        - php7-pecl-xdebug
+      - !ComposerConfig
+        install-runtime: false
+        runtime-exe: /usr/bin/php7
+        keep-composer: true
+      - !EnsureDir /work/vendor
+      - !EnsureDir /usr/local/lib/composer/vendor
+      - !Sh mount --bind,ro /usr/local/lib/composer/vendor /work/vendor
+      - !ComposerDependencies
+      - !Sh umount /work/vendor
+    volumes:
+        /work/vendor: !BindRO /vagga/root/usr/local/lib/composer/vendor
+        /var/log: !Snapshot
+        /etc/php7/php-fpm.conf: !BindRO /work/config/dev/php-fpm.conf
+        /etc/php7/php.ini: !BindRO /work/config/dev/php.ini
+  nginx:
+    setup:
+      - !Container app-base
+      - !Install
+        - nginx
+    volumes:
+      /var/log: !Snapshot
+      /etc/nginx/nginx.conf: !BindRO /work/config/dev/nginx-dev.conf
+  mysql:
+    setup:
+      - !Container app-base
+      - !Install
+        - mariadb
+        - mariadb-client
+      - !EnsureDir /data
+      - !EnsureDir /etc
+      - !Sh touch /etc/my.cnf.d/mysql.cnf
+    environ:
+      DB_DATABASE: ponydays
+      DB_USERNAME: ponydays
+      DB_PASSWORD: ponydays
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3307
+      DB_DATA_DIR: /data
+    volumes:
+      /etc/my.cnf: !BindRO /work/config/dev/mysql.conf
+      /data: !Persistent
+        name: mysql
+        init-command: _mysql-init
+      /run: !Tmpfs
+        subdirs:
+          mysqld: { mode: 0o777 }
+      /var/tmp: !Tmpfs
+commands:
+  _mysql-init: !Command
+    description: Init MySQL data volume
+    container: mysql
+    run: |
+      mysql_install_db --datadir=$DB_DATA_DIR
+      mysqld_safe --datadir=$DB_DATA_DIR --no-auto-restart
+      while [ ! -f /tmp/mysqld.pid ]; do sleep 0.2; done
+
+      mysqladmin create $DB_DATABASE
+      mysql -e "CREATE USER '$DB_USERNAME'@'localhost' IDENTIFIED BY '$DB_PASSWORD';"
+      mysql -e "GRANT ALL PRIVILEGES ON $DB_DATABASE.* TO '$DB_USERNAME'@'localhost';"
+      mysql -e "FLUSH PRIVILEGES;"
+
+      mysql $DB_DATABASE < /work/database/init.sql
+      mysql $DB_DATABASE < /work/database/geo.sql
+
+      mysqladmin -u root shutdown
+  run-fpm: &run-fpm !Command
+    container: app
+    user-id: 1
+    external-user-id: 0
+    description: run the development server
+    run: |
+      php-fpm7 -eFO
+  run-nginx: &run-nginx !Command
+    container: nginx
+    description: run nginx
+    run: [nginx]
+  run-mysql: &run-mysql !Command
+    container: mysql
+    run: |
+      mysqld_safe --console --gdb
+  run: !Supervise
+    children:
+      fpm: *run-fpm
+      nginx: *run-nginx
+      db: *run-mysql

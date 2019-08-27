@@ -82,4 +82,8 @@ if(file_exists(Config::Get('path.root.server').'/config/local.config.json')) {
 	Config::LoadFromFile(Config::Get('path.root.server').'/config/local.config.json',false);
 }
 
-?>
+if(getenv('APP_ENV') == 'development') {
+	if(file_exists(Config::Get('path.root.server').'/config/dev/dev.config.json')) {
+		Config::LoadFromFile(Config::Get('path.root.server').'/config/dev/dev.config.json', false);
+	}
+}

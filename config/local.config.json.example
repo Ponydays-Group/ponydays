@@ -2,19 +2,6 @@
     "max_edit_period": 172800,
     "deny_with_answers": true,
     "max_edit_period_from_first_answer": 3600,
-    "db": {
-        "params": {
-            "host": "localhost",
-            "port": "3306",
-            "user": "",
-            "pass": "",
-            "type": "mysqli",
-            "dbname": "social"
-        },
-        "table": {
-            "prefix": "prefix_"
-        }
-    },
     "module": {
         "comment": {
             "bad": "-100000"

@@ -1,0 +1,12 @@
+{
+  "db": {
+    "params": {
+      "host": "127.0.0.1",
+      "port": "3307",
+      "user": "ponydays",
+      "pass": "ponydays",
+      "type": "mysqli",
+      "dbname": "ponydays"
+    }
+  }
+}

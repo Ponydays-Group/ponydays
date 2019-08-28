@@ -492,3 +492,22 @@ function func_convert_entity_to_array(Entity $oEntity, $aMethods = null, $sPrefi
 	}
 	return $aEntity;
 }
+
+if (PHP_VERSION_ID < 70300) {
+	function setcookie_s($name, $value = "", $expire = 0, $path = "", $domain = "", $secure = false, $httponly = false, $samesite = "")
+	{
+		setcookie($name, $value, $expire, $path, $domain, $secure, $httponly);
+	}
+} else {
+	function setcookie_s($name, $value = "", $expire = 0, $path = "", $domain = "", $secure = false, $httponly = false, $samesite = "")
+	{
+		setcookie($name, $value, array(
+			'expires' => $expire,
+			'path' => $path,
+			'domain' => $domain,
+			'secure' => $secure,
+			'httponly' => $httponly,
+			'samesite' => $samesite
+		));
+	}
+}

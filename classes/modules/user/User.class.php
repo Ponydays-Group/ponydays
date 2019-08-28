@@ -586,11 +586,11 @@ class ModuleUser extends Module
         /**
          * Ставим куку
          */
+        $expires = 0;
         if ($bRemember) {
-            setcookie('key', $sKey, time() + Config::Get('sys.cookie.time'), Config::Get('sys.cookie.path'), Config::Get('sys.cookie.host'), false, false);
-        } else {
-            setcookie('key', $sKey, 0, Config::Get('sys.cookie.path'), Config::Get('sys.cookie.host'), false, false);
-        }
+			$expires = time() + Config::Get('sys.cookie.time');
+		}
+        setcookie_s('key', $sKey, $expires, Config::Get('sys.cookie.path'), Config::Get('sys.cookie.host'), false, false, "Lax");
         return true;
     }
 

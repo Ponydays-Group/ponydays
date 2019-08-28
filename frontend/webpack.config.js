@@ -18,7 +18,7 @@ module.exports = {
     },
     output: {
         path: path.join(__dirname, '..', 'static', 'relevant'),
-        filename: '[name].[contenthash:8].bundle.js'
+        filename: '[name].[contenthash:10].bundle.js'
     },
     module: {
         rules: [
@@ -47,7 +47,7 @@ module.exports = {
                             fallback: {
                                 loader: 'file-loader',
                                 options: {
-                                    name: 'img-[sha512:hash:base64:8].[ext]'
+                                    name: 'img-[sha512:hash:base64:10].[ext]'
                                 }
                             }
                         }
@@ -64,7 +64,7 @@ module.exports = {
                             fallback: {
                                 loader: 'file-loader',
                                 options: {
-                                    name: 'fnt-[sha512:hash:base64:8].[ext]'
+                                    name: 'fnt-[sha512:hash:base64:10].[ext]'
                                 }
                             }
                         }
@@ -109,7 +109,7 @@ module.exports = {
     },
     plugins: [
         new MiniCssExtractPlugin({
-            filename: '[name].[contenthash:8].css',
+            filename: '[name].[contenthash:10].css',
             chunkFilename: '[id].css'
         }),
         new AssetsWebpackPlugin({

@@ -238,11 +238,10 @@ class ActionRegistration extends Action {
 					 * Определяем URL для редиректа после авторизации
 					 */
 					$sUrl=Config::Get('module.user.redirect_after_registration');
-					if (getRequestStr('return-path')) {
-//						$sUrl=getRequestStr('return-path');
-						$sUrl='/blog/main/1721';
-					}
-					$this->Viewer_AssignAjax('sUrlRedirect',$sUrl ? $sUrl : Config::Get('path.root.web'));
+					/*if (getRequestStr('return-path')) {
+						$sUrl=getRequestStr('return-path');
+					}*/
+					$this->Viewer_AssignAjax('sUrlRedirect', $sUrl ? $sUrl : Config::Get('path.root.web'));
 					$this->Message_AddNoticeSingle($this->Lang_Get('registration_ok'));
 				}
 			} else {

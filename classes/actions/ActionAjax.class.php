@@ -55,7 +55,6 @@ class ActionAjax extends Action
     {
         $this->AddEventPreg('/^vote$/i', '/^comment$/', 'EventVoteComment');
         $this->AddEventPreg('/^vote$/i', '/^topic$/', 'EventVoteTopic');
-        $this->AddEventPreg('/^vote$/i', '/^blog$/', 'EventVoteBlog');
         $this->AddEventPreg('/^vote$/i', '/^user$/', 'EventVoteUser');
         $this->AddEventPreg('/^vote$/i', '/^question$/', 'EventVoteQuestion');
         $this->AddEventPreg('/^favourite$/i', '/^save-tags/', 'EventFavouriteSaveTags');
@@ -1415,7 +1414,6 @@ class ActionAjax extends Action
         }
         else {
             function reArrayFiles(&$file_post) {
-
                 $file_ary = array();
                 $file_count = count($file_post['name']);
                 $file_keys = array_keys($file_post);
@@ -1447,7 +1445,11 @@ class ActionAjax extends Action
                      * Если файл успешно загружен, формируем HTML вставки и возвращаем в ajax ответе
                      */
                     if ($sFile) {
-                        $sText.= $this->Image_BuildHTML($sFile, $_REQUEST);
+                    	if ($_REQUEST['just_url']) {
+                    		$sText.= $sFile;
+						} else {
+                        	$sText.= $this->Image_BuildHTML($sFile, $_REQUEST);
+                    	}
                     }
                 }
             } //foreach

@@ -11,7 +11,7 @@ const DelWebpackPlugin = require('del-webpack-plugin');
 
 module.exports = {
     entry: {
-        main: path.resolve(__dirname, 'js', 'index.js'),
+        main: ['@babel/polyfill', path.resolve(__dirname, 'js', 'index.js')],
         light: path.resolve(__dirname, 'css', 'light.scss'),
         dark: path.resolve(__dirname, 'css', 'dark.scss'),
         sockets: path.resolve(__dirname, 'js', 'sockets.js'),

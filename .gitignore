@@ -4,8 +4,6 @@ uploads/
 templates/compiled/
 templates/cache/
 frontend/node_modules/
-frontend/package-lock.json
-package-lock.json
 config/local.config.json
 config/engine_config/frontend.config.json
 .vagga/

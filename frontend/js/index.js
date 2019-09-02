@@ -87,7 +87,8 @@ import * as Autocomplete from "./autocomplete"
 import Emitter from "./emitter"
 import * as Msg from "./msg"
 import * as Quotes from "./quotes"
-
+import * as DragAndDrop from "./dragndrop"
+import * as Upload from "./upload"
 
 const ls = {
     ajax: Ajax,
@@ -117,6 +118,8 @@ const ls = {
     emitter: Emitter,
     msg: Msg,
     quotes: Quotes,
+    draggable: DragAndDrop,
+    upload: Upload
 };
 
 window.ls = ls;

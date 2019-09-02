@@ -1,0 +1,117 @@
+[draggable] {
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-user-drag: element;
+}
+
+.dnd-dragged {
+  opacity: 0.6;
+}
+
+.dnd-over {
+  border-top: 2px solid blue;
+}
+
+.draglist {
+  background: #f9f9f9;
+
+  overflow: hidden;
+  overflow-y: auto;
+  min-height: 156px;
+  height: 156px;
+  border: 1px solid #f9f9f9;
+  resize: vertical
+}
+
+.draglist-placeholder {
+  text-align: center;
+  opacity: 0.4;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+.draglist-el {
+  background: #fff;
+  margin-bottom: 3px;
+  cursor: move;
+  height: 48px;
+
+  :last-child {
+    margin-bottom: 0;
+  }
+}
+
+.draglist-el-tail {
+  background: #f9f9f9;
+  margin-bottom: 0;
+  cursor: default;
+  height: 100%;
+}
+
+.draglist-el-preview img {
+  max-width: 42px;
+  max-height: 42px;
+}
+
+.draglist-el-preview {
+  display: flex;
+  float: left;
+  margin-left: 5px;
+  margin-right: 7px;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 48px;
+}
+
+.draglist-el-info {
+  display: flex;
+  justify-content: space-evenly;
+  height: 100%;
+  flex-direction: column;
+  margin-right: 7px;
+
+  .progress {
+    height: 5px;
+  }
+}
+
+.draglist-el-panel {
+  white-space: nowrap;
+  margin-left: 3px;
+
+  .fa {
+    margin-left: 3px;
+
+    :last-child {
+      margin-left: 0;
+    }
+  }
+}
+
+.draglist-el-info-line {
+  display: inline-flex;
+  justify-content: space-between;
+}
+
+.draglist-el-name {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.draglist-el-state-text {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.file-upload-list-controls {
+  margin-top: 7px;
+  margin-bottom: 20px;
+}

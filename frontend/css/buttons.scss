@@ -51,12 +51,17 @@ $button-primary-border-color: #d44545;
 
 
 /* Button Primary */
-.button.button-primary 			{
+.button.button-primary {
 	background: $brand;
 	border: 1px solid darken($brand, 15%);
 }
 .button.button-primary:hover, .button.button-primary.hovered 	{ background: darken($brand, 10%); }
 .button.button-primary.active { background: $button-primary-border-color; }
+
+.button-red {
+	background-color: #d44336;
+	border-color: #a94442;
+}
 
 /* Button Icon (Without text) */
 .button.button-icon 			{ padding: 7px 10px; }

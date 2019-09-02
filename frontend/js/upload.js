@@ -231,6 +231,7 @@ function imageUploadStart(img_el, file) {
     setTimeout(() => {
         const preview = URL.createObjectURL(file);
         img_el.setPreview(preview);
+        imageUploadList.updateElement(img_el);
     }, 0);
 
     if(file.size > imageUploadMaxSize) {

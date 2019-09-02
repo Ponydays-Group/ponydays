@@ -228,16 +228,16 @@ export function imageUploadListRemove(id) {
 }
 
 function imageUploadStart(img_el, file) {
-    if(file.size > imageUploadMaxSize) {
-        img_el.setError("Ошибка: превышено максимальное значение размера файла");
-        imageUploadList.updateElement(img_el);
-        return;
-    }
-
     setTimeout(() => {
         const preview = URL.createObjectURL(file);
         img_el.setPreview(preview);
     }, 0);
+
+    if(file.size > imageUploadMaxSize) {
+        img_el.setError("Ошибка: изображение слишком тяжелое");
+        imageUploadList.updateElement(img_el);
+        return;
+    }
 
     const formData = new FormData();
     formData.append('img_file[]', file, file.name);

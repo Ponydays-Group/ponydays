@@ -118,10 +118,12 @@ export function openFileSelectDialog(files_cb, multiple=false) {
 }
 
 let imageUploadList = null;
+let imageUploadMaxSize = 1048576;
 Emitter.on('template_init_start', () => {
     const modal = document.getElementById('window_upload_img');
     if(modal) {
         imageUploadList = new DraggableList(modal.getElementsByClassName('draglist')[0]);
+        imageUploadMaxSize = +document.getElementById('max-upload-size').getAttribute('data-value') * 1048576;
     }
 });
 
@@ -226,12 +228,10 @@ export function imageUploadListRemove(id) {
 }
 
 function imageUploadStart(img_el, file) {
-    const reader = new FileReader();
-    reader.onload = e => {
-        img_el.setPreview(e.target.result);
-        imageUploadList.updateElement(img_el);
-    };
-    reader.readAsDataURL(file);
+    if(file.size > imageUploadMaxSize) {
+        img_el.setError("Ошибка: превышено максимальное значение размера файла");
+        return;
+    }
 
     setTimeout(() => {
         const preview = URL.createObjectURL(file);

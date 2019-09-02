@@ -12,7 +12,8 @@
 
         <div id="block_upload_img_content_pc" class="tab-content js-block-upload-img-content" data-type="pc">
             <div class="file-upload-list">
-                <label>{$aLang.uploadimg_files}:</label>
+                <span>{$aLang.uploadimg_files}:</span>
+                <span id="max-upload-size" style="float: right" data-value="{max_upload_size}">Максимальный размер файла: {max_upload_size}МБ</span>
                 <ul class="draglist"></ul>
                 <div class="file-upload-list-controls">
                     <button class="button" onclick="ls.upload.imageUploadingAdd(); return false;">{$aLang.uploadimg_add}</button>

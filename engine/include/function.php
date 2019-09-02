@@ -511,3 +511,38 @@ if (PHP_VERSION_ID < 70300) {
 		));
 	}
 }
+
+function get_maximum_upload_size()
+{
+	return min(
+		convert_config_size_to_bytes(ini_get('post_max_size')),
+		convert_config_size_to_bytes(ini_get('upload_max_filesize'))
+	);
+}
+
+function convert_config_size_to_bytes($sSize)
+{
+	$sSuffix = strtoupper(substr($sSize, -1));
+	if (!in_array($sSuffix,array('P','T','G','M','K'))){
+		return (int)$sSize;
+	}
+	$iValue = substr($sSize, 0, -1);
+	switch ($sSuffix) {
+		case 'P':
+			$iValue *= 1024;
+		// Fallthrough intended
+		case 'T':
+			$iValue *= 1024;
+		// Fallthrough intended
+		case 'G':
+			$iValue *= 1024;
+		// Fallthrough intended
+		case 'M':
+			$iValue *= 1024;
+		// Fallthrough intended
+		case 'K':
+			$iValue *= 1024;
+			break;
+	}
+	return (int)$iValue;
+}

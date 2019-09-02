@@ -118,7 +118,13 @@ export function openFileSelectDialog(files_cb, multiple=false) {
 }
 
 let imageUploadList = null;
-Emitter.on('template_init_start', () => imageUploadList = new DraggableList(document.getElementById('window_upload_img').getElementsByClassName('draglist')[0]));
+Emitter.on('template_init_start', () => {
+    const modal = document.getElementById('window_upload_img');
+    if(modal) {
+        imageUploadList = new DraggableList(modal.getElementsByClassName('draglist')[0]);
+    }
+});
+
 export let imageUploadingState = new class {
     uploading_now = 0;
 

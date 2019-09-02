@@ -14,13 +14,13 @@
 }
 
 .draglist {
-  background: #f9f9f9;
+  background: $second;
 
   overflow: hidden;
   overflow-y: auto;
   min-height: 156px;
   height: 156px;
-  border: 1px solid #f9f9f9;
+  border: 1px solid $second;
   resize: vertical
 }
 
@@ -36,7 +36,7 @@
 }
 
 .draglist-el {
-  background: #fff;
+  background: $first;
   margin-bottom: 3px;
   cursor: move;
   height: 48px;
@@ -44,13 +44,6 @@
   :last-child {
     margin-bottom: 0;
   }
-}
-
-.draglist-el-tail {
-  background: #f9f9f9;
-  margin-bottom: 0;
-  cursor: default;
-  height: 100%;
 }
 
 .draglist-el-preview img {

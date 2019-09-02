@@ -230,6 +230,7 @@ export function imageUploadListRemove(id) {
 function imageUploadStart(img_el, file) {
     if(file.size > imageUploadMaxSize) {
         img_el.setError("Ошибка: превышено максимальное значение размера файла");
+        imageUploadList.updateElement(img_el);
         return;
     }
 

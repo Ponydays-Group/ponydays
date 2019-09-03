@@ -80,13 +80,13 @@ export function appendUser() {
 }
 
 export function getMore() {
-    if(this.isBusy) {
+    if(isBusy) {
         return;
     }
     const lastId = $("#stream_last_id").val();
     if(!lastId) return;
     $("#stream_get_more").addClass("stream_loading");
-    this.isBusy = true;
+    isBusy = true;
 
     const url = aRouter["stream"] + "get_more/";
     const params = {"last_id": lastId, "date_last": this.dateLast};
@@ -107,13 +107,13 @@ export function getMore() {
 }
 
 export function getMoreAll() {
-    if(this.isBusy) {
+    if(isBusy) {
         return;
     }
     const lastId = $("#stream_last_id").val();
     if(!lastId) return;
     $("#stream_get_more").addClass("stream_loading");
-    this.isBusy = true;
+    isBusy = true;
 
     const url = aRouter["stream"] + "get_more_all/";
     const params = {"last_id": lastId, "date_last": this.dateLast};
@@ -129,18 +129,18 @@ export function getMoreAll() {
         }
         $("#stream_get_more").removeClass("stream_loading");
         Emitter.emit("stream_getmoreall_after", [lastId, data]);
-        this.isBusy = false;
+        isBusy = false;
     }.bind(this));
 }
 
 export function getMoreByUser(iUserId) {
-    if(this.isBusy) {
+    if(isBusy) {
         return;
     }
     const lastId = $("#stream_last_id").val();
     if(!lastId) return;
     $("#stream_get_more").addClass("stream_loading");
-    this.isBusy = true;
+    isBusy = true;
 
     const url = aRouter["stream"] + "get_more_user/";
     const params = {"last_id": lastId, user_id: iUserId, "date_last": this.dateLast};
@@ -156,6 +156,6 @@ export function getMoreByUser(iUserId) {
         }
         $("#stream_get_more").removeClass("stream_loading");
         Emitter.emit("stream_getmorebyuser_after", [lastId, iUserId, data]);
-        this.isBusy = false;
+        isBusy = false;
     }.bind(this));
 }

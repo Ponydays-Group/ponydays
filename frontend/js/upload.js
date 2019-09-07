@@ -1,8 +1,17 @@
 import Emitter from "./emitter"
-import {ListElement, DraggableList} from "./dragndrop";
+import {DraggableList, ListElement} from "./dragndrop";
+
+function htmlescape(text) {
+    return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 
 export class ImageUploadElement extends ListElement {
-    filename = '';
+    file = null;
     preview_src = '#';
     preview_needs_update = false;
 
@@ -14,9 +23,9 @@ export class ImageUploadElement extends ListElement {
     xhr = null;
     loaded_data = null;
 
-    constructor(filename) {
+    constructor(file) {
         super();
-        this.filename = filename;
+        this.file = file;
     }
 
     setPreview(preview_src) {
@@ -83,7 +92,7 @@ export class ImageUploadElement extends ListElement {
             </div>
             <div class="draglist-el-info">
                 <span class="draglist-el-info-line">
-                    <span class="draglist-el-name">${this.filename}</span>
+                    <span class="draglist-el-name">${htmlescape(this.file.name)}</span>
                     <span class="draglist-el-panel">
                         <span class="fa fa-pencil" style="cursor: pointer;" onclick="ls.upload.imageUploadListEdit(${this.element_id}); return false;"></span>
                         <span class="fa fa-close" style="margin-right: 3px; cursor: pointer;" onclick="ls.upload.imageUploadListRemove(${this.element_id}); return false;"></span>
@@ -104,6 +113,10 @@ export class ImageUploadElement extends ListElement {
         if(this.xhr) this.xhr.abort();
         if(this.preview_src) URL.revokeObjectURL(this.preview_src);
     }
+
+    created() {
+        imageUploadStart(this);
+    }
 }
 
 export function openFileSelectDialog(files_cb, multiple=false) {
@@ -123,6 +136,9 @@ Emitter.on('template_init_start', () => {
     const modal = document.getElementById('window_upload_img');
     if(modal) {
         imageUploadList = new DraggableList(modal.getElementsByClassName('draglist')[0]);
+        imageUploadList.setFileHandler(file => {
+            return new ImageUploadElement(file);
+        });
         imageUploadMaxSize = +document.getElementById('max-upload-size').getAttribute('data-value') * 1048576;
     }
 });
@@ -200,10 +216,8 @@ export function imageUploadingAdd() {
         if(!files || !files[0]) return;
         for(let file of files) {
             if(file) {
-                const img_el = new ImageUploadElement(file.name);
+                const img_el = new ImageUploadElement(file);
                 imageUploadList.addElement(img_el);
-
-                imageUploadStart(img_el, file);
             }
         }
     }, true);
@@ -212,10 +226,8 @@ export function imageUploadingAdd() {
 export function imageUploadListEdit(id) {
     openFileSelectDialog(files => {
        if(!files || !files[0]) return;
-       const img_el = new ImageUploadElement(files[0].name);
+       const img_el = new ImageUploadElement(files[0]);
        imageUploadList.setElement(id, img_el);
-
-       imageUploadStart(img_el, files[0]);
     });
 }
 
@@ -227,21 +239,21 @@ export function imageUploadListRemove(id) {
     }
 }
 
-function imageUploadStart(img_el, file) {
+function imageUploadStart(img_el) {
     setTimeout(() => {
-        const preview = URL.createObjectURL(file);
+        const preview = URL.createObjectURL(img_el.file);
         img_el.setPreview(preview);
         imageUploadList.updateElement(img_el);
     }, 0);
 
-    if(file.size > imageUploadMaxSize) {
+    if(img_el.file.size > imageUploadMaxSize) {
         img_el.setError("Ошибка: изображение слишком тяжелое");
         imageUploadList.updateElement(img_el);
         return;
     }
 
     const formData = new FormData();
-    formData.append('img_file[]', file, file.name);
+    formData.append('img_file[]', img_el.file, img_el.file.name);
     formData.append('just_url', '1');
     formData.append('security_ls_key', LIVESTREET_SECURITY_KEY);
 

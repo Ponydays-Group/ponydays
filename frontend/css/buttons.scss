@@ -63,6 +63,8 @@ $button-primary-border-color: #d44545;
 	border-color: #a94442;
 }
 
+.button.button-red:hover, .button.button-red.hovered 	{ background: darken(#d44336, 10%); }
+
 /* Button Icon (Without text) */
 .button.button-icon 			{ padding: 7px 10px; }
 

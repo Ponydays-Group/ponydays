@@ -14,7 +14,7 @@
             <div class="file-upload-list">
                 <span>{$aLang.uploadimg_files}:</span>
                 <span id="max-upload-size" style="float: right" data-value="{max_upload_size}">Максимальный размер файла: {max_upload_size}МБ</span>
-                <ul class="draglist"></ul>
+                <div class="draglist"></div>
                 <div class="file-upload-list-controls">
                     <button class="button" onclick="ls.upload.imageUploadingAdd(); return false;">{$aLang.uploadimg_add}</button>
                     <button class="button button-red" onclick="ls.upload.imageUploadingClear(); return false;" style="float: right">{$aLang.uploadimg_clear}</button>

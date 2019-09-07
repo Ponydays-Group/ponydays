@@ -9,10 +9,6 @@
   opacity: 0.6;
 }
 
-.dnd-over {
-  border-top: 2px solid blue;
-}
-
 .draglist {
   background: $second;
 
@@ -20,11 +16,17 @@
   overflow-y: auto;
   min-height: 156px;
   height: 156px;
-  border: 1px solid $second;
-  resize: vertical
+  resize: vertical;
+  position: relative;
 }
 
 .draglist-placeholder {
+  height: 2px;
+  background-color: blue;
+}
+
+.draglist-empty {
+  position: absolute;
   text-align: center;
   opacity: 0.4;
   justify-content: center;
@@ -37,7 +39,7 @@
 
 .draglist-el {
   background: $first;
-  margin-bottom: 3px;
+  border: 1px solid $second;
   cursor: move;
   height: 48px;
 

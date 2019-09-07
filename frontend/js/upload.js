@@ -283,9 +283,6 @@ function imageUploadStart(img_el) {
         img_el.setError("Ошибка: не найдено");
         imageUploadList.updateElement(img_el);
     };
-    xhr.upload.onloadend = e => {
-        imageUploadingState.decrement();
-    };
     xhr.upload.onload = e => {
         img_el.setProgress(100);
         imageUploadList.updateElement(img_el);
@@ -310,6 +307,9 @@ function imageUploadStart(img_el) {
             img_el.setDone("Завершено");
             imageUploadList.updateElement(img_el);
         }
+    };
+    xhr.onloadend = e => {
+        imageUploadingState.decrement();
     };
     xhr.send(formData);
 }

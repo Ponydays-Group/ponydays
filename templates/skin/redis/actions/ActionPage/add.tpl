@@ -2,7 +2,7 @@
 
 
 {if $oConfig->GetValue('view.tinymce')}
-	<script type="text/javascript" src="{cfg name='path.root.engine_lib'}/external/tinymce-jq/tiny_mce.js"></script>
+	<script type="text/javascript" src="/lib/tinymce-jq/tiny_mce.js"></script>
 	{literal}
 		<script type="text/javascript">
 			jQuery(function($){

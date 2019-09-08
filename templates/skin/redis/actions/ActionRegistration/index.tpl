@@ -56,8 +56,8 @@
 
 	{hookb run="registration_captcha"}
 	<p><label for="captcha">{$aLang.registration_captcha}</label>
-	<img src="{cfg name='path.root.engine_lib'}/external/kcaptcha/index.php?{$_sPhpSessionName}={$_sPhpSessionId}" 
-		 onclick="this.src='{cfg name='path.root.engine_lib'}/external/kcaptcha/index.php?{$_sPhpSessionName}={$_sPhpSessionId}&n='+Math.random();" 
+	<img src="./lib/kcaptcha/index.php?{$_sPhpSessionName}={$_sPhpSessionId}"
+		 onclick="this.src='./lib/kcaptcha/index.php?{$_sPhpSessionName}={$_sPhpSessionId}&n='+Math.random();"
 		 class="captcha-image" />
 	<input type="text" name="captcha" id="captcha" value="" maxlength="3" class="input-text input-width-100 js-ajax-validate" />
 	<small class="validate-error-hide validate-error-field-captcha"></small></p>

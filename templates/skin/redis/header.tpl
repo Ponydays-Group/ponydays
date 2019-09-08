@@ -24,7 +24,7 @@
     <meta name="referrer" content="{cfg name="view.referrer_policy"}">
     <meta name="robots" content="{cfg name="view.robots_policy"}">
 
-    <link href="{cfg name='path.static.skin'}/images/favicon.ico?v1" rel="shortcut icon"/>
+    <link href="favicon.ico" rel="shortcut icon"/>
     <link rel="search" type="application/opensearchdescription+xml" href="{router page='search'}opensearch/"
           title="{cfg name='view.name'}"/>
 
@@ -56,7 +56,7 @@
     <script type="text/javascript">
         var DIR_WEB_ROOT = '{cfg name="path.root.web"}';
         var DIR_STATIC_SKIN = '{cfg name="path.static.skin"}';
-        var DIR_ROOT_ENGINE_LIB = '{cfg name="path.root.engine_lib"}';
+        var DIR_ROOT_ENGINE_LIB = '/lib';
         var LIVESTREET_SECURITY_KEY = '{$LIVESTREET_SECURITY_KEY}';
         var SESSION_ID = '{$_sPhpSessionId}';
         var BLOG_USE_TINYMCE = '{cfg name="view.tinymce"}';

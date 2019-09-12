@@ -1936,6 +1936,53 @@ class ModuleTopic extends Module {
 		return ModuleImage::UPLOAD_IMAGE_ERROR;
 	}
 	/**
+	 * Загрузка изображений по переданному URL
+	 *
+	 * @param  string          $sUrl	URL изображения
+	 * @param  ModuleUser_EntityUser $oUser
+	 * @return string|int
+	 */
+	public function UploadTopicImageBase64($sBase64, $oUser) {
+		$data = explode(',', $sBase64);
+
+		$ext = preg_match('/image\/(.+);/', $data[0])[0][0];
+		$img_data = base64_decode($data[1]);
+
+        if (!$img_data) {
+            return ModuleImage::UPLOAD_IMAGE_ERROR;
+        }
+        /**
+         * Создаем tmp-файл, для временного хранения изображения
+         */
+        $sFileTmp=Config::Get('sys.cache.dir').func_generator();
+        $fp=fopen($sFileTmp,'w');
+        if (!fwrite($fp, $img_data)) {
+            return ModuleImage::UPLOAD_IMAGE_ERROR;
+        }
+        fclose($fp);
+
+		$sDirSave=$this->Image_GetIdDir($oUser->getId());
+		$aParams=$this->Image_BuildParams('topic');
+		/**
+		 * Передаем изображение на обработку
+		 */
+                $dir = Config::Get('plugin.staticdomain.static_server').'/';
+                $hash = hash_file("sha1", $sFileTmp);
+                $fullname = $hash . "." . $ext;
+                if (!file_exists($dir.$fullname)){
+			if ($sFileImg=$this->Image_Resize($sFileTmp,$sDirSave,$hash,Config::Get('view.img_max_width'),Config::Get('view.img_max_height'),Config::Get('view.img_resize_width'),null,true,$aParams)) {
+				@unlink($sFileTmp);
+				return $this->Image_GetWebPath($sFileImg);
+			}
+		} else {
+			@unlink($sFileTmp);
+			return Config::Get('plugin.staticdomain.static_web') . "/img/" . $fullname;
+                }
+
+		@unlink($sFileTmp);
+		return ModuleImage::UPLOAD_IMAGE_ERROR;
+	}
+	/**
 	 * Возвращает список фотографий к топику-фотосет по списку id фоток
 	 *
 	 * @param array $aPhotoId	Список ID фото

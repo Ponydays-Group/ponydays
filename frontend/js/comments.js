@@ -8,6 +8,8 @@ import Emitter from "./emitter"
 import * as Msg from "./msg"
 import * as Ajax from "./ajax"
 
+import { uploadBase64Image } from "./upload"
+
 import hljs from 'highlightjs'
 
 import * as Vote from "./vote";
@@ -924,6 +926,33 @@ export function initEvent() {
             }
         }.bind(this));
     }
+
+    // TODO: вынести в место получше
+    const target = document.querySelector("#form_comment_text") || document.querySelector("#topic_text")
+
+    if (!target) return
+
+    target.addEventListener("paste", event => {
+        const items = (event.clipboardData || event.originalEvent.clipboardData).items;
+        for (let index in items) {
+            const item = items[index];
+            if (item.kind === 'file') {
+                const blob = item.getAsFile();
+                const reader = new FileReader();
+                reader.onload = function(event){
+                    const result = event.target.result
+                    uploadBase64Image(result)
+                        .then(r => {
+                            $.markItUp({replaceWith: r.sText})
+                        })
+                        .catch(() => {
+                            Msg.error("Error", "Please try again later");
+                        })
+                }
+                reader.readAsDataURL(blob);
+            }
+        }
+    })
 }
 
 export function toggleCommentForm(idComment, bNoFocus) {

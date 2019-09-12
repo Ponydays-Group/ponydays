@@ -1411,8 +1411,34 @@ class ActionAjax extends Action
             if ($sFile) {
                 $sText = $this->Image_BuildHTML($sFile, $_REQUEST);
             }
-        }
-        else {
+        } elseif (isPost('img_base64')) {
+            /**
+             * Загрузка файла из Base64
+             */
+            $sFile = $this->Topic_UploadTopicImagebase64($_REQUEST['img_base64'], $this->oUserCurrent);
+            switch (true) {
+            case is_string($sFile):
+                break;
+
+            case ($sFile == ModuleImage::UPLOAD_IMAGE_ERROR_READ):
+                $this->Message_AddErrorSingle($this->Lang_Get('uploadimg_url_error_read') , $this->Lang_Get('error'));
+                return;
+            case ($sFile == ModuleImage::UPLOAD_IMAGE_ERROR_SIZE):
+                $this->Message_AddErrorSingle($this->Lang_Get('uploadimg_url_error_size') , $this->Lang_Get('error'));
+                return;
+            case ($sFile == ModuleImage::UPLOAD_IMAGE_ERROR_TYPE):
+                $this->Message_AddErrorSingle($this->Lang_Get('uploadimg_url_error_type') , $this->Lang_Get('error'));
+                return;
+            default:
+            case ($sFile == ModuleImage::UPLOAD_IMAGE_ERROR):
+                $this->Message_AddErrorSingle($this->Lang_Get('uploadimg_url_error') , $this->Lang_Get('error'));
+                return;
+            }
+
+            if ($sFile) {
+                $sText = $this->Image_BuildHTML($sFile, $_REQUEST);
+            }
+        } else {
             function reArrayFiles(&$file_post) {
                 $file_ary = array();
                 $file_count = count($file_post['name']);

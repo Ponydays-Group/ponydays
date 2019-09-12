@@ -313,3 +313,25 @@ function imageUploadStart(img_el) {
     };
     xhr.send(formData);
 }
+
+export function uploadBase64Image(b64) {
+    return new Promise((resolve, reject) => {
+        const formData = new FormData();
+        formData.append('img_base64', b64);
+        formData.append('security_ls_key', LIVESTREET_SECURITY_KEY);
+    
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', aRouter["ajax"] + '/upload/image');
+        xhr.responseType = 'json';
+    
+        xhr.onload = e => {
+            const data = xhr.response;
+            // console.log(data)
+            resolve(data)
+        };
+        xhr.upload.onerror = e => {
+            reject()
+        };
+        xhr.send(formData);
+    })
+}

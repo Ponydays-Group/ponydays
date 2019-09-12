@@ -343,4 +343,3 @@ abstract class Entity extends LsObject {
 		$this->sValidateScenario=$sValue;
 	}
 }
-?>

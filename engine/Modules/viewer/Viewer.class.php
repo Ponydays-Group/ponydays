@@ -229,7 +229,7 @@ class ModuleViewer extends Module {
 	 * @return ModuleViewer
 	 */
 	public function GetLocalViewer() {
-		$sClass = $this->Plugin_GetDelegate('module', __CLASS__);
+		$sClass = __CLASS__;
 
 		$oViewerLocal=new $sClass(Engine::getInstance());
 		$oViewerLocal->Init(true);
@@ -313,7 +313,6 @@ class ModuleViewer extends Module {
 		 * Предварительно проверяем наличие делегата
 		 */
 		if ($sTemplate) {
-			$sTemplate=$this->Plugin_GetDelegate('template',$sTemplate);
 			if ($this->TemplateExists($sTemplate)) {
 				$this->oSmarty->display($sTemplate);
 			} else {
@@ -441,10 +440,6 @@ class ModuleViewer extends Module {
 	 * @return string
 	 */
 	public function Fetch($sTemplate) {
-		/**
-		 * Проверяем наличие делегата
-		 */
-		$sTemplate=$this->Plugin_GetDelegate('template',$sTemplate);
 		return $this->oSmarty->fetch($sTemplate);
 	}
 	/**
@@ -475,13 +470,6 @@ class ModuleViewer extends Module {
 	 * @return bool
 	 */
 	public function AddBlock($sGroup,$sName,$aParams=array(),$iPriority=5) {
-		/**
-		 * Если не указана директория шаблона, но указана приналежность к плагину,
-		 * то "вычисляем" правильную директорию
-		 */
-		if(!isset($aParams['dir']) and isset($aParams['plugin'])) {
-			$aParams['dir'] = Plugin::GetTemplatePath($aParams['plugin']);
-		}
 		/**
 		 * Если смогли определить тип блока то добавляем его
 		 */

@@ -239,14 +239,7 @@ class Router extends LsObject {
 		$this->Hook_Run('init_action');
 
 		$sActionClass=$this->DefineActionClass();
-		/**
-		 * Определяем наличие делегата экшена
-		 */
-		if($aChain=$this->Plugin_GetDelegationChain('action',$sActionClass)) {
-			if(!empty($aChain)) {
-				$sActionClass=$aChain[0];
-			}
-		}
+
 		self::$sActionClass = $sActionClass;
 		/**
 		 * Если класс экешна начинается с Plugin*_, значит необходимо загрузить объект из указанного плагина

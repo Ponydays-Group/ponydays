@@ -281,20 +281,12 @@ abstract class Action extends LsObject {
 	 * @param string $sTemplate Путь до шаблона относительно каталога шаблонов экшена
 	 */
 	protected function SetTemplateAction($sTemplate) {
-		$aDelegates = $this->Plugin_GetDelegationChain('action',$this->GetActionClass());
+		$aDelegates = array($this->GetActionClass());
 		$sActionTemplatePath = $sTemplate.'.tpl';
 		foreach($aDelegates as $sAction) {
-			if(preg_match('/^(Plugin([\w]+)_)?Action([\w]+)$/i',$sAction,$aMatches)) {
-				$sTemplatePath = $this->Plugin_GetDelegate('template','actions/Action'.ucfirst($aMatches[3]).'/'.$sTemplate.'.tpl');
-				if(empty($aMatches[1])) {
-					$sActionTemplatePath = $sTemplatePath;
-				} else {
-					$sTemplatePath = Plugin::GetTemplatePath($sAction).$sTemplatePath;
-					if(is_file($sTemplatePath)) {
-						$sActionTemplatePath = $sTemplatePath;
-						break;
-					}
-				}
+			if(preg_match('/^Action([\w]+)$/i',$sAction,$aMatches)) {
+				$sTemplatePath = 'actions/Action'.ucfirst($aMatches[1]).'/'.$sTemplate.'.tpl';
+				$sActionTemplatePath = $sTemplatePath;
 			}
 		}
 		$this->sActionTemplate = $sActionTemplatePath;

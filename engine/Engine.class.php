@@ -283,26 +283,11 @@ class Engine extends LsObject {
 	 * @param bool $bHookParent	Вызывает хук на родительском модуле, от которого наследуется текущий
 	 */
 	protected function InitModule($oModule, $bHookParent = true){
-		$sOrigClassName = $sClassName = get_class($oModule);
+		$sClassName = get_class($oModule);
 		$bRunHooks = false;
 
-		if($this->isInitModule('ModuleHook')){
-			$bRunHooks = true;
-			if($bHookParent){
-				while(self::GetPluginName($sClassName)){
-					$sParentClassName = get_parent_class($sClassName);
-					if(!self::GetClassInfo($sParentClassName, self::CI_MODULE, true)){
-						break;
-					}
-					$sClassName = $sParentClassName;
-				}
-			}
-		}
 		if($bRunHooks || $sClassName == 'ModuleHook'){
 			$sHookPrefix = 'module_';
-			if($sPluginName = self::GetPluginName($sClassName)){
-				$sHookPrefix .= "plugin{$sPluginName}_";
-			}
 			$sHookPrefix .= self::GetModuleName($sClassName).'_init_';
 		}
 		if($bRunHooks){
@@ -322,9 +307,6 @@ class Engine extends LsObject {
 	 * @return bool
 	 */
 	public function isInitModule($sModuleClass) {
-		if(!in_array($sModuleClass,array('ModulePlugin','ModuleHook'))) {
-			$sModuleClass=$this->Plugin_GetDelegate('module',$sModuleClass);
-		}
 		if(isset($this->aModules[$sModuleClass]) and $this->aModules[$sModuleClass]->isInit()){
 			return true;
 		}
@@ -383,7 +365,6 @@ class Engine extends LsObject {
 		$this->LoadConfig();
 		foreach ($this->aConfigModule['autoLoad'] as $sModuleName) {
 			$sModuleClass='Module'.$sModuleName;
-			if(!in_array($sModuleName,array('Plugin','Hook'))) $sModuleClass=$this->Plugin_GetDelegate('module',$sModuleClass);
 
 			if (!isset($this->aModules[$sModuleClass])) {
 				$this->LoadModule($sModuleClass);
@@ -524,12 +505,6 @@ class Engine extends LsObject {
 		} else {
 			throw new Exception("Undefined method module: ".$sName);
 		}
-		/**
-		 * Подхватыем делегат модуля (в случае наличия такового)
-		 */
-		if(!in_array($sModuleName,array('Plugin','Hook'))){
-			$sModuleClass=$this->Plugin_GetDelegate('module',$sModuleClass);
-		}
 
 		if (isset($this->aModules[$sModuleClass])) {
 			$oModule=$this->aModules[$sModuleClass];
@@ -622,7 +597,6 @@ class Engine extends LsObject {
 			if (!$oConnect) {
 				$oConnect=Engine::getInstance()->Database_GetConnect();
 			}
-			$sClass=self::getInstance()->Plugin_GetDelegate('mapper',$sClass);
 			return new $sClass($oConnect);
 		}
 		return null;
@@ -725,13 +699,6 @@ class Engine extends LsObject {
 				$sClass='Module'.$sModule.'_Entity'.$sEntity;
 			}
 		}
-
-		/**
-		 * Определяем наличие делегата сущности
-		 * Делегирование указывается только в полной форме!
-		 */
-		$sClass=self::getInstance()->Plugin_GetDelegate('entity',$sClass);
-
 		$oEntity=new $sClass($aParams);
 		return $oEntity;
 	}
@@ -745,7 +712,7 @@ class Engine extends LsObject {
 	 * @return string|null
 	 */
 	public static function GetPluginName($oModule) {
-		return self::GetClassInfo($oModule, self::CI_PLUGIN, true);
+		throw new \Engine\Exceptions\ImplementationDestroyedException("GetPluginName");
 	}
 
 	/**

@@ -347,16 +347,14 @@ abstract class EntityORM extends Entity {
 	protected function _Method($sName) {
 		$sModuleName=Engine::GetModuleName($this);
 		$sEntityName=Engine::GetEntityName($this);
-		$sPluginPrefix=Engine::GetPluginPrefix($this);
 		/**
 		 * If Module not exists, try to find its root Delegater
 		 */
-		$aClassInfo = Engine::GetClassInfo($sPluginPrefix.'Module_'.$sModuleName,Engine::CI_MODULE);
-		if(empty($aClassInfo[Engine::CI_MODULE]) && $sRootDelegater=$this->Plugin_GetRootDelegater('entity',get_class($this))) {
+		$aClassInfo = Engine::GetClassInfo('Module_'.$sModuleName,Engine::CI_MODULE);
+		if(empty($aClassInfo[Engine::CI_MODULE]) && $sRootDelegater=get_class($this)) {
 			$sModuleName=Engine::GetModuleName($sRootDelegater);
-			$sPluginPrefix=Engine::GetPluginPrefix($sRootDelegater);
 		}
-		return Engine::GetInstance()->_CallModule("{$sPluginPrefix}{$sModuleName}_{$sName}{$sEntityName}",array($this));
+		return Engine::GetInstance()->_CallModule("{$sModuleName}_{$sName}{$sEntityName}",array($this));
 	}
 	/**
 	 * Устанавливает данные сущности
@@ -511,7 +509,6 @@ abstract class EntityORM extends Entity {
 
 					$sRelModuleName=Engine::GetModuleName($sEntityRel);
 					$sRelEntityName=Engine::GetEntityName($sEntityRel);
-					$sRelPluginPrefix=Engine::GetPluginPrefix($sEntityRel);
 					$sRelPrimaryKey='id';
 					if($oRelEntity=Engine::GetEntity($sEntityRel)) {
 						$sRelPrimaryKey=$oRelEntity->_getPrimaryKey();
@@ -522,11 +519,11 @@ abstract class EntityORM extends Entity {
 					$mCmdArgs=array();
 					switch ($sRelationType) {
 						case self::RELATION_TYPE_BELONGS_TO :
-							$sCmd="{$sRelPluginPrefix}{$sRelModuleName}_get{$sRelEntityName}By".func_camelize($sRelPrimaryKey);
+							$sCmd="{$sRelModuleName}_get{$sRelEntityName}By".func_camelize($sRelPrimaryKey);
 							$mCmdArgs=$this->_getDataOne($sRelationKey);
 							break;
 						case self::RELATION_TYPE_HAS_ONE :
-							$sCmd="{$sRelPluginPrefix}{$sRelModuleName}_get{$sRelEntityName}By".func_camelize($sRelationKey);
+							$sCmd="{$sRelModuleName}_get{$sRelEntityName}By".func_camelize($sRelationKey);
 							$mCmdArgs=$iPrimaryKeyValue;
 							break;
 						case self::RELATION_TYPE_HAS_MANY :
@@ -535,11 +532,11 @@ abstract class EntityORM extends Entity {
 							} else {
 								$aFilterAdd=array();
 							}
-							$sCmd="{$sRelPluginPrefix}{$sRelModuleName}_get{$sRelEntityName}ItemsByFilter";
+							$sCmd="{$sRelModuleName}_get{$sRelEntityName}ItemsByFilter";
 							$mCmdArgs=array_merge(array($sRelationKey => $iPrimaryKeyValue),$aFilterAdd);
 							break;
 						case self::RELATION_TYPE_MANY_TO_MANY :
-							$sCmd="{$sRelPluginPrefix}Module{$sRelModuleName}_get{$sRelEntityName}ItemsByJoinTable";
+							$sCmd="Module{$sRelModuleName}_get{$sRelEntityName}ItemsByJoinTable";
 							$mCmdArgs=array(
 								'#join_table'		=> Config::Get($sRelationJoinTable),
 								'#relation_key'		=> $sRelationKey,

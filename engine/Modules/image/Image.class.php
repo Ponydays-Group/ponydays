@@ -377,7 +377,7 @@ class ModuleImage extends Module {
 	 */
 	public function GetServerPath($sPath) {
         $bServer = (parse_url($sPath,PHP_URL_HOST) === parse_url(Config::Get('path.root.web'),PHP_URL_HOST));
-        $bStatic = (parse_url($sPath,PHP_URL_HOST) === parse_url(Config::Get('plugin.staticdomain.static_web'),PHP_URL_HOST));
+        $bStatic = (parse_url($sPath,PHP_URL_HOST) === parse_url(Config::Get('static_web'),PHP_URL_HOST));
         if (!$bServer && !$bStatic) {
             return $sPath;
         }

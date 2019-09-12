@@ -1918,19 +1918,20 @@ class ModuleTopic extends Module {
 		/**
 		 * Передаем изображение на обработку
 		 */
-                $dir = Config::Get('plugin.staticdomain.static_server').'/';
-                $hash = hash_file("sha1", $sFileTmp);
-                $type = substr($sUrl, strrpos($sUrl, ".")+1);
-                $fullname = $hash . "." . $type;
-                if (!file_exists($dir.$fullname)){
+		$dir = Config::Get('static_server').'/img/';
+		$hash = hash_file("sha1", $sFileTmp);
+		$type = substr($sUrl, strrpos($sUrl, '.')+1);
+		if($qmark = strrpos($type, '?')) $type = substr($type, 0, $qmark);
+		$fullname = $hash . "." . $type;
+		if (!file_exists($dir.$fullname)) {
 			if ($sFileImg=$this->Image_Resize($sFileTmp,$sDirSave,$hash,Config::Get('view.img_max_width'),Config::Get('view.img_max_height'),Config::Get('view.img_resize_width'),null,true,$aParams)) {
 				@unlink($sFileTmp);
 				return $this->Image_GetWebPath($sFileImg);
 			}
 		} else {
 			@unlink($sFileTmp);
-			return Config::Get('plugin.staticdomain.static_web') . "/img/" . $fullname;
-                }
+			return Config::Get('static_web') . "/img/" . $fullname;
+		}
 
 		@unlink($sFileTmp);
 		return ModuleImage::UPLOAD_IMAGE_ERROR;
@@ -2187,4 +2188,3 @@ class ModuleTopic extends Module {
         return $aFilter;
     }
 }
-?>

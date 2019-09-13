@@ -55,7 +55,7 @@ class Engine extends LsObject {
 	 * Имя плагина
 	 * @var int
 	 */
-	const CI_PLUGIN = 1;
+	//const CI_PLUGIN = 1;
 
 	/**
 	 * Имя экшна
@@ -141,7 +141,7 @@ class Engine extends LsObject {
 	 * CI_ACTION | CI_MAPPER | CI_HOOK | CI_PLUGIN | CI_ACTION | CI_MODULE | CI_ENTITY | CI_BLOCK
 	 * @var int
 	 */
-	const CI_OBJECT = 351 ;
+	const CI_OBJECT = 350;
 
 	/**
 	 * Текущий экземпляр движка, используется для синглтона.
@@ -156,12 +156,6 @@ class Engine extends LsObject {
 	 * @var array
 	 */
 	protected $aModules=array();
-	/**
-	 * Список загруженных плагинов
-	 *
-	 * @var array
-	 */
-	protected $aPlugins=array();
 	/**
 	 * Содержит конфиг модулей.
 	 * Используется для получания списка модулей для авто-загрузки. Остальные модули загружаются при первом обращении.
@@ -521,14 +515,8 @@ class Engine extends LsObject {
 	 * @param string $sName Имя модуля
 	 */
 	public function GetModuleObject($sName) {
-		if(self::GetPluginPrefix($sName)){
-			if(substr_count($sName,'_')<2) {
-				$sName.='_x';
-			}
-		} else {
-			if(substr_count($sName,'_')<1) {
-				$sName.='_x';
-			}
+		if(substr_count($sName,'_')<1) {
+			$sName.='_x';
 		}
 		$aCallArray=$this->GetModule($sName);
 		return $aCallArray[0];
@@ -628,7 +616,6 @@ class Engine extends LsObject {
 					$sName,
 					self::CI_ENTITY
 						|self::CI_MODULE
-						|self::CI_PLUGIN
 				);
 				if ($aInfo[self::CI_MODULE]
 					&& $aInfo[self::CI_ENTITY]) {
@@ -636,95 +623,15 @@ class Engine extends LsObject {
 				}
 
 				list($sModule,$sEntity) = explode('_',$sName,2);
-				/**
-				 * Обслуживание короткой записи сущностей плагинов
-				 * PluginTest_Test -> PluginTest_ModuleTest_EntityTest
-				 */
-				if($aInfo[self::CI_PLUGIN]) {
-					$sPlugin = $aInfo[self::CI_PLUGIN];
-					$sModule = $sEntity;
-				}
 				break;
-
-			case 2:
-				/**
-				 * Поддержка полного синтаксиса при вызове сущности плагина
-				 */
-				$aInfo = self::GetClassInfo(
-					$sName,
-					self::CI_ENTITY
-						|self::CI_MODULE
-						|self::CI_PLUGIN
-				);
-				if ($aInfo[self::CI_PLUGIN]
-					&& $aInfo[self::CI_MODULE]
-					&& $aInfo[self::CI_ENTITY]) {
-					$sName='Plugin'.$aInfo[self::CI_PLUGIN]
-						.'_'.$aInfo[self::CI_MODULE]
-						.'_'.$aInfo[self::CI_ENTITY]
-					;
-				}
-				/**
-				 * Entity плагина
-				 */
-				if($aInfo[self::CI_PLUGIN]) {
-					list(,$sModule,$sEntity)=explode('_',$sName);
-					$sPlugin = $aInfo[self::CI_PLUGIN];
-				} else {
-					throw new Exception("Unknown entity '{$sName}' given.");
-				}
-				break;
-
 			default:
 				throw new Exception("Unknown entity '{$sName}' given.");
 		}
 
-		$sClass=isset($sPlugin)
-			? 'Plugin'.$sPlugin.'_Module'.$sModule.'_Entity'.$sEntity
-			: 'Module'.$sModule.'_Entity'.$sEntity;
+		$sClass='Module'.$sModule.'_Entity'.$sEntity;
 
-		/**
-		 * If Plugin Entity doesn't exist, search among it's Module delegates
-		 */
-		if(isset($sPlugin) && !self::GetClassPath($sClass)) {
-			$aModulesChain = Engine::GetInstance()->Plugin_GetDelegationChain('module','Plugin'.$sPlugin.'_Module'.$sModule);
-			foreach($aModulesChain as $sModuleName) {
-				$sClassTest=$sModuleName.'_Entity'.$sEntity;
-				if(self::GetClassPath($sClassTest)) {
-					$sClass=$sClassTest;
-					break;
-				}
-			}
-			if(!self::GetClassPath($sClass)) {
-				$sClass='Module'.$sModule.'_Entity'.$sEntity;
-			}
-		}
 		$oEntity=new $sClass($aParams);
 		return $oEntity;
-	}
-
-	/**
-	 * Возвращает имя плагина моудля если модул принадлежит плагину.
-	 * Например <pre>Openid</pre>
-	 *
-	 * @static
-	 * @param Module $oModule Объект модуля
-	 * @return string|null
-	 */
-	public static function GetPluginName($oModule) {
-		throw new \Engine\Exceptions\ImplementationDestroyedException("GetPluginName");
-	}
-
-	/**
-	 * Возвращает префикс плагина
-	 * Например <pre>PluginOpenid_</pre>
-	 *
-	 * @static
-	 * @param Module $oModule Объект модуля
-	 * @return string	Если плагина нет, возвращает пустую строку
-	 */
-	public static function GetPluginPrefix($oModule) {
-		return self::GetClassInfo($oModule, self::CI_PPREFIX, true);
 	}
 
 	/**
@@ -776,12 +683,6 @@ class Engine extends LsObject {
 	public static function GetClassInfo($oObject,$iFlag=self::CI_DEFAULT,$bSingle=false){
 		$sClassName = is_string($oObject) ? $oObject : get_class($oObject);
 		$aResult = array();
-		if($iFlag & self::CI_PLUGIN){
-			$aResult[self::CI_PLUGIN] = preg_match('/^Plugin([^_]+)/',$sClassName,$aMatches)
-				? $aMatches[1]
-				: null
-			;
-		}
 		if($iFlag & self::CI_ACTION){
 			$aResult[self::CI_ACTION] = preg_match('/^(?:Plugin[^_]+_|)Action([^_]+)/',$sClassName,$aMatches)
 				? $aMatches[1]
@@ -832,13 +733,7 @@ class Engine extends LsObject {
 			;
 		}
 		if($iFlag & self::CI_PPREFIX){
-			$sPluginName = isset($aResult[self::CI_PLUGIN])
-				? $aResult[self::CI_PLUGIN]
-				: self::GetClassInfo($sClassName, self::CI_PLUGIN, true)
-			;
-			$aResult[self::CI_PPREFIX] = $sPluginName
-				? "Plugin{$sPluginName}_"
-				: ''
+			$aResult[self::CI_PPREFIX] = ''
 			;
 		}
 		if($iFlag & self::CI_INHERIT){
@@ -883,71 +778,39 @@ class Engine extends LsObject {
 		$sPath = Config::get('path.root.server').'/';
 		if($aInfo[self::CI_ENTITY]){
 			// Сущность
-			if($aInfo[self::CI_PLUGIN]) {
-				throw new \Engine\Exceptions\ImplementationDestroyedException('GetClassPath for plugin');
-			}else{
-				// Сущность модуля ядра
-				$sPath .= 'app/Modules/'.strtolower($aInfo[self::CI_MODULE])
-					.'/entity/'.$aInfo[self::CI_ENTITY].'.entity.class.php'
-				;
-				if(!is_file($sPath)) {
-					$sPath = str_replace('/app/Modules/','/engine/Modules/',$sPath);
-				}
+			$sPath .= 'app/Modules/'.strtolower($aInfo[self::CI_MODULE])
+				.'/entity/'.$aInfo[self::CI_ENTITY].'.entity.class.php'
+			;
+			if(!is_file($sPath)) {
+				$sPath = str_replace('/app/Modules/','/engine/Modules/',$sPath);
 			}
 		}elseif($aInfo[self::CI_MAPPER]){
 			// Маппер
-			if($aInfo[self::CI_PLUGIN]){
-				throw new \Engine\Exceptions\ImplementationDestroyedException('GetClassPath for plugin');
-			}else{
-				// Маппер модуля ядра
-				$sPath .= 'app/Modules/'.strtolower($aInfo[self::CI_MODULE])
-					.'/mapper/'.$aInfo[self::CI_MAPPER].'.mapper.class.php'
-				;
-				if(!is_file($sPath)) {
-					$sPath = str_replace('/app/Modules/','/engine/Modules/',$sPath);
-				}
+			$sPath .= 'app/Modules/'.strtolower($aInfo[self::CI_MODULE])
+				.'/mapper/'.$aInfo[self::CI_MAPPER].'.mapper.class.php'
+			;
+			if(!is_file($sPath)) {
+				$sPath = str_replace('/app/Modules/','/engine/Modules/',$sPath);
 			}
 		}elseif($aInfo[self::CI_ACTION]) {
 			// Экшн
-			if($aInfo[self::CI_PLUGIN]) {
-				throw new \Engine\Exceptions\ImplementationDestroyedException('GetClassPath for plugin');
-			}else{
-				// Экшн ядра
-				$sPath .= 'app/Actions/Action'
-					.$aInfo[self::CI_ACTION].'.class.php'
-				;
-			}
+			$sPath .= 'app/Actions/Action'
+				.$aInfo[self::CI_ACTION].'.class.php'
+			;
 		}elseif($aInfo[self::CI_MODULE]) {
 			// Модуль
-			if($aInfo[self::CI_PLUGIN]) {
-				throw new \Engine\Exceptions\ImplementationDestroyedException('GetClassPath for plugin');
-			}else{
-				// Модуль ядра
-				$sPath .= 'app/Modules/'.strtolower($aInfo[self::CI_MODULE])
-					.'/'.$aInfo[self::CI_MODULE].'.class.php'
-				;
-				if(!is_file($sPath)){
-					$sPath = str_replace('/app/Modules/','/engine/Modules/',$sPath);
-				}
+			$sPath .= 'app/Modules/'.strtolower($aInfo[self::CI_MODULE])
+				.'/'.$aInfo[self::CI_MODULE].'.class.php'
+			;
+			if(!is_file($sPath)){
+				$sPath = str_replace('/app/Modules/','/engine/Modules/',$sPath);
 			}
 		}elseif($aInfo[self::CI_HOOK]) {
 			// Хук
-			if($aInfo[self::CI_PLUGIN]) {
-				throw new \Engine\Exceptions\ImplementationDestroyedException('GetClassPath for plugin');
-			}else{
-				// Хук ядра
-				$sPath .= 'app/Hooks/Hook'.$aInfo[self::CI_HOOK].'.class.php';
-			}
+			$sPath .= 'app/Hooks/Hook'.$aInfo[self::CI_HOOK].'.class.php';
 		}elseif($aInfo[self::CI_BLOCK]){
 			// Блок
-			if($aInfo[self::CI_PLUGIN]){
-				throw new \Engine\Exceptions\ImplementationDestroyedException('GetClassPath for plugin');
-			}else{
-				// Блок ядра
-				$sPath .= 'app/Blocks/Block'.$aInfo[self::CI_BLOCK].'.class.php';
-			}
-		}elseif($aInfo[self::CI_PLUGIN]){
-			throw new \Engine\Exceptions\ImplementationDestroyedException('GetClassPath for plugin');
+			$sPath .= 'app/Blocks/Block'.$aInfo[self::CI_BLOCK].'.class.php';
 		}else{
 			$sClassName = is_string($oObject) ? $oObject : get_class($oObject);
 			$sPath .= 'engine/'.$sClassName.'.class.php';
@@ -969,7 +832,7 @@ class Engine extends LsObject {
 		);
 		if($aInfo[Engine::CI_INHERIT]){
 			$sInheritClass = $aInfo[Engine::CI_INHERIT];
-			$sParentClass = Engine::getInstance()->Plugin_GetParentInherit($sInheritClass);
+			$sParentClass = $sInheritClass;
 			if(!class_alias($sParentClass,$sClassName)){
 				dump("(autoload $sParentClass) Can not load CLASS-file");
 			} else {

@@ -1860,6 +1860,7 @@ class ModuleTopic extends Module {
 	 * @return string|int
 	 */
 	public function UploadTopicImageUrl($sUrl, $oUser) {
+		$sUrl = str_replace(Config::Get('static_web'), Config::Get('static_inner'), $sUrl);
         $ch = curl_init();
         // Url
         curl_setopt($ch, CURLOPT_URL, $sUrl);

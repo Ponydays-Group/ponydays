@@ -6,7 +6,9 @@
         "cookie": {
             "host": null,
             "path": "/",
-            "time": 259200
+            "time": 259200,
+            "secure": false,
+            "httponly": false
         },
         "session": {
             "standart": true,

@@ -23,5 +23,6 @@
         }
     },
     "static_web": "//static.lunavod.ru/",
+    "static_inner": "//static.lunavod.ru/",
     "static_server": "/var/www/static"
 }

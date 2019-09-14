@@ -277,21 +277,21 @@ class Engine extends LsObject {
 	 * @param bool $bHookParent	Вызывает хук на родительском модуле, от которого наследуется текущий
 	 */
 	protected function InitModule($oModule, $bHookParent = true){
-		$sClassName = get_class($oModule);
-		$bRunHooks = false;
+		/*$sClassName = get_class($oModule);
+		$bRunHooks = false;*/
 
-		if($bRunHooks || $sClassName == 'ModuleHook'){
+		/*if($bRunHooks || $sClassName == 'ModuleHook'){
 			$sHookPrefix = 'module_';
 			$sHookPrefix .= self::GetModuleName($sClassName).'_init_';
-		}
-		if($bRunHooks){
+		}*/
+		/*if($bRunHooks){
 			$this->Hook_Run($sHookPrefix.'before');
-		}
+		}*/
 		$oModule->Init();
 		$oModule->SetInit();
-		if($bRunHooks || $sClassName == 'ModuleHook'){
+		/*if($bRunHooks || $sClassName == 'ModuleHook') {
 			$this->Hook_Run($sHookPrefix.'after');
-		}
+		}*/
 	}
 
 	/**
@@ -330,7 +330,7 @@ class Engine extends LsObject {
 	 *
 	 * @param  string $sModuleClass	Класс модуля
 	 * @param  bool $bInit Инициализировать модуль или нет
-	 *
+	 * @deprecated Будет уничтожено в дальнейшем. Используйте make(Module::class)
 	 * @throws RuntimeException если класс $sModuleClass не существует
 	 *
 	 * @return Module
@@ -417,7 +417,7 @@ class Engine extends LsObject {
 	}
 	/**
 	 * Вызывает метод нужного модуля
-	 *
+	 * @deprecated Будет уничтожено в дальнейшем. Используйте make(Module::class)
 	 * @param string $sName	Название метода в полном виде.
 	 * Например <pre>Module_Method</pre>
 	 * @param array $aArgs	Список аргументов
@@ -464,7 +464,7 @@ class Engine extends LsObject {
 
 	/**
 	 * Возвращает объект модуля, имя модуля и имя вызванного метода
-	 *
+	 * @deprecated Будет уничтожено в дальнейшем. Используйте make(Module::class)
 	 * @param  string $sName	Имя метода модуля в полном виде
 	 * Например <pre>Module_Method</pre>
 	 * @return array
@@ -511,7 +511,7 @@ class Engine extends LsObject {
 
 	/**
 	 * Возвращает объект модуля
-	 *
+	 * @deprecated Не рекомендуется для использования в новом коде
 	 * @param string $sName Имя модуля
 	 */
 	public function GetModuleObject($sName) {
@@ -542,7 +542,7 @@ class Engine extends LsObject {
 
 	/**
 	 * Ставим хук на вызов неизвестного метода и считаем что хотели вызвать метод какого либо модуля
-	 *
+	 * @deprecated Будет уничтожено в дальнейшем. Используйте make(Module::class)
 	 * @param string $sName	Имя метода
 	 * @param array $aArgs	Аргументы
 	 * @return mixed
@@ -555,13 +555,11 @@ class Engine extends LsObject {
 	 * Блокируем копирование/клонирование объекта ядра
 	 *
 	 */
-	protected function __clone() {
-
-	}
+	protected function __clone() {}
 
 	/**
 	 * Получает объект маппера
-	 *
+	 * @deprecated Не рекомендуется для использования в новом коде
 	 * @param string $sClassName Класс модуля маппера
 	 * @param string|null $sName	Имя маппера
 	 * @param DbSimple_Mysql|null $oConnect	Объект коннекта к БД
@@ -592,7 +590,7 @@ class Engine extends LsObject {
 
 	/**
 	 * Создает объект сущности, контролируя варианты кастомизации
-	 *
+	 * @deprecated Не рекомендуется для использования в новом коде
 	 * @param  string $sName	Имя сущности, возможны сокращенные варианты.
 	 * Например <pre>ModuleUser_EntityUser</pre> эквивалентно <pre>User_User</pre> и эквивалентно <pre>User</pre> т.к. имя сущности совпадает с именем модуля
 	 * @param  array  $aParams
@@ -636,7 +634,7 @@ class Engine extends LsObject {
 
 	/**
 	 * Возвращает имя модуля
-	 *
+	 * @deprecated Не рекомендуется для использования в новом коде
 	 * @static
 	 * @param Module $oModule Объект модуля
 	 * @return string|null
@@ -647,7 +645,7 @@ class Engine extends LsObject {
 
 	/**
 	 * Возвращает имя сущности
-	 *
+	 * @deprecated Не рекомендуется для использования в новом коде
 	 * @static
 	 * @param Entity $oEntity Объект сущности
 	 * @return string|null
@@ -658,7 +656,7 @@ class Engine extends LsObject {
 
 	/**
 	 * Возвращает имя экшена
-	 *
+	 * @deprecated Не рекомендуется для использования в новом коде
 	 * @static
 	 * @param $oAction	Объект экшена
 	 * @return string|null
@@ -669,7 +667,7 @@ class Engine extends LsObject {
 
 	/**
 	 * Возвращает информацию об объекта или классе
-	 *
+	 * @deprecated Не рекомендуется для использования в новом коде
 	 * @static
 	 * @param LsObject|string $oObject	Объект или имя класса
 	 * @param int $iFlag	Маска по которой нужно вернуть рузультат. Доступные маски определены в константах CI_*
@@ -765,7 +763,7 @@ class Engine extends LsObject {
 	/**
 	 * Возвращает информацию о пути до файла класса.
 	 * Используется в {@link autoload автозагрузке}
-	 *
+	 * @deprecated Не рекомендуется для использования в новом коде
 	 * @static
 	 * @param LsObject $oObject Объект - модуль, экшен, плагин, хук, сущность
 	 * @return null|string
@@ -847,6 +845,19 @@ class Engine extends LsObject {
 		return false;
 	}
 
+	public function make(string $class): Module {
+		if(isset($this->aModules[$class])) {
+			return $this->aModules[$class];
+		} else {
+			if (!class_exists($class)) {
+				throw new RuntimeException(sprintf('Class "%s" not found!', $class));
+			}
+			$module=new $class($this);
+			$this->aModules[$class]=$module;
+			$this->InitModule($module);
+			return $module;
+		}
+	}
 }
 
 /**
@@ -856,7 +867,7 @@ spl_autoload_register(array('Engine','autoload'));
 
 /**
  * Короткий алиас для вызова основных методов движка
- *
+ * @deprecated Не рекомендуется для использования в новом коде
  * @package engine
  * @since 1.0
  */
@@ -947,4 +958,3 @@ class LS extends LsObject {
 		return call_user_func_array(array(self::E(),$sName),$aArgs);
 	}
 }
-?>

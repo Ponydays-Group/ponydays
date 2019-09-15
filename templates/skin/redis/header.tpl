@@ -24,7 +24,7 @@
     <meta name="referrer" content="{cfg name="view.referrer_policy"}">
     <meta name="robots" content="{cfg name="view.robots_policy"}">
 
-    <link href="favicon.ico" rel="shortcut icon"/>
+    <link href="/favicon.ico" rel="shortcut icon"/>
     <link rel="search" type="application/opensearchdescription+xml" href="{router page='search'}opensearch/"
           title="{cfg name='view.name'}"/>
 

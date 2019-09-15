@@ -50,8 +50,7 @@
             "cron": true,
             "cron_file": "cron.log",
             "profiler": false,
-            "profiler_file": "profiler.log",
-            "hacker_console": false
+            "profiler_file": "profiler.log"
         }
     },
     

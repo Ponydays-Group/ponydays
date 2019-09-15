@@ -5,7 +5,7 @@
 	<Url type="text/html" template="{router page='search'}topics/?q={literal}{searchTerms}{/literal}" /> 
 	<LongName>{$sHtmlDescription}</LongName> 
 	<Image height="64" width="64" type="image/png">{cfg name='path.static.skin'}/images/logo.png</Image> 
-	<Image height="16" width="16" type="image/vnd.microsoft.icon">{cfg name='path.static.skin'}/images/favicon.ico</Image> 
+	<Image height="16" width="16" type="image/vnd.microsoft.icon">favicon.ico</Image>
 	<Developer>{cfg name='view.name'} ({cfg name='path.root.web'})</Developer> 
 	<Attribution> 
 		© «{cfg name='view.name'}»

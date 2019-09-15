@@ -127,8 +127,8 @@
                 "round_corner_radius": "18",
                 "round_corner_rate": "40",
                 "path": {
-                    "watermarks": "___path.root.server___/engine/lib/external/LiveImage/watermarks/",
-                    "fonts": "___path.root.server___/engine/lib/external/LiveImage/fonts/"
+                    "watermarks": "___path.root.server___/lib/LiveImage/watermarks/",
+                    "fonts": "___path.root.server___/lib/LiveImage/fonts/"
                 },
                 "jpg_quality": 95
             },

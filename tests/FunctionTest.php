@@ -2,7 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 
-require_once('engine/include/function.php');
+require_once('include/function.php');
 
 class FunctionTest extends TestCase {
 	const EXAMPLES_B64URL = array(

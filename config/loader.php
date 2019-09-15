@@ -23,7 +23,7 @@ define('LS_VERSION','1.0.3');
 // /**
 //  * Operations with Config object
 //  */
-require_once(dirname(dirname(__FILE__))."/engine/lib/internal/ConfigSimple/Config.class.php");
+require_once(dirname(dirname(__FILE__))."/engine/Config.class.php");
 
 
 $sDirConf=dirname(__FILE__).'/engine_config/';
@@ -43,7 +43,7 @@ if ($hDirConf = opendir($sDirConf)) {
 /**
  * Инклудим все *.php файлы из каталога {path.root.engine}/include/ - это файлы ядра
  */
-$sDirInclude=Config::get('path.root.engine').'/include/';
+$sDirInclude='./include/';
 if ($hDirInclude = opendir($sDirInclude)) {
 	while (false !== ($sFileInclude = readdir($hDirInclude))) {
 		$sFileIncludePathFull=$sDirInclude.$sFileInclude;
@@ -81,5 +81,3 @@ if ($hDirInclude = opendir($sDirInclude)) {
 if(file_exists(Config::Get('path.root.server').'/config/local.config.json')) {
 	Config::LoadFromFile(Config::Get('path.root.server').'/config/local.config.json',false);
 }
-
-?>

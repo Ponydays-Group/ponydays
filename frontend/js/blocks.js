@@ -38,6 +38,8 @@ export function load(obj, block, params) {
     if(!type) return;
     type = block + "_" + type;
 
+    if(!options.type[type]) return;
+
     params = $.extend(true, {}, options.type[type].params || {}, params || {});
 
     let content = $(".js-block-" + block + "-content");

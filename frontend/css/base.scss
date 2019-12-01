@@ -7,7 +7,8 @@ body {
   font-family: Roboto, sans-serif;
   line-height: 18px;
   color: $text-color;
-  background-image: $background-image;
+  background: $background-image;
+  background-blend-mode: color;
   //padding-top: 200px;
   padding-top: 0px;
   transition: top .2s, padding-top .2s, padding .2s;

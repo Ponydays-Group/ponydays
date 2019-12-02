@@ -5,7 +5,7 @@ const path = require('path');
 const isProduction = process.env.NODE_ENV === 'production';
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 const AssetsWebpackPlugin = require('assets-webpack-plugin');
 const DelWebpackPlugin = require('del-webpack-plugin');
 
@@ -97,7 +97,8 @@ module.exports = {
         ]
     },
     optimization: {
-        minimizer: isProduction ? [new UglifyJsPlugin()] : [],
+        minimize: isProduction,
+        minimizer: isProduction ? [new TerserPlugin()] : [],
         splitChunks: {
             chunks: 'all',
             cacheGroups: {

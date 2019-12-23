@@ -120,3 +120,23 @@
     </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
 </nav>
+<div id="padorupadoru">
+    <div class="counter">
+        <div id="days"></div>,&nbsp;
+        <div id="hours"></div>,&nbsp;
+        <div id="minutes"></div>&nbsp;
+        до нового года!
+    </div>
+    <img src="https://i.imgur.com/cqv41jK.png" />
+</div>
+
+<script>
+function untilNewYear() {
+    var newYearDate = new Date('2020-01-01')
+    document.querySelector('#days').innerText = formatTime(newYearDate - new Date(), 'DD')
+    document.querySelector('#hours').innerText = formatTime(newYearDate - new Date(), 'HH')
+    document.querySelector('#minutes').innerText = formatTime(newYearDate - new Date(), 'MM')
+}
+untilNewYear()
+setInterval(()=>untilNewYear(), 60000)
+</script>

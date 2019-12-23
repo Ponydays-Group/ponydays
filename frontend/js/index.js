@@ -5,6 +5,10 @@ import "./jquery/jquery.file"
 import "../css/bootstrap/assets/javascripts/bootstrap.min"
 import hljs from "highlightjs"
 
+import formatTime from "./utils/TimeFormatter"
+
+window.formatTime = formatTime
+
 window.getCookie = function(name) {
     const matches = document.cookie.match(new RegExp(
         "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, "\\$1") + "=([^;]*)",

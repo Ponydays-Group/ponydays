@@ -14,5 +14,8 @@
       "engine/",
       "app/"
     ]
+  },
+  "scripts": {
+    "test": "vendor/bin/phpunit"
   }
 }

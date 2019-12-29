@@ -22,7 +22,6 @@
  * @since 1.0
  */
 class ActionAjax extends Action
-
 {
     /**
      * Текущий пользователь
@@ -34,7 +33,6 @@ class ActionAjax extends Action
      * Инициализация
      */
     public
-
     function Init()
     {
         /**

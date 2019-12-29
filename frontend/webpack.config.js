@@ -11,7 +11,7 @@ const DelWebpackPlugin = require('del-webpack-plugin');
 
 module.exports = {
     entry: {
-        main: ['@babel/polyfill', path.resolve(__dirname, 'js', 'index.js')],
+        main: path.resolve(__dirname, 'js', 'index.js'),
         light: path.resolve(__dirname, 'css', 'light.scss'),
         dark: path.resolve(__dirname, 'css', 'dark.scss'),
         sockets: path.resolve(__dirname, 'js', 'sockets.js'),
@@ -82,7 +82,9 @@ module.exports = {
                                 [
                                     '@babel/preset-env',
                                     {
-                                        targets: "> 0.25%, not dead"
+                                        targets: "> 0.25%, not dead",
+                                        useBuiltIns: "entry",
+                                        corejs: 3
                                     }
                                 ]
                             ],

@@ -17,3 +17,4 @@ img/*
 *.save
 composer.phar
 vendor/
+.phpunit.*

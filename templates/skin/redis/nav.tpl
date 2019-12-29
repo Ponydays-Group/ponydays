@@ -122,9 +122,7 @@
 </nav>
 <div id="padorupadoru">
     <div class="counter">
-        <div id="days"></div>,&nbsp;
-        <div id="hours"></div>,&nbsp;
-        <div id="minutes"></div>&nbsp;
+        <div id="new-year-timer"></div>&nbsp;
         до нового года!
     </div>
     <img src="https://i.imgur.com/cqv41jK.png" />
@@ -132,11 +130,9 @@
 
 <script>
 function untilNewYear() {
-    var newYearDate = new Date('2020-01-01')
-    document.querySelector('#days').innerText = formatTime(newYearDate - new Date(), 'DD')
-    document.querySelector('#hours').innerText = formatTime(newYearDate - new Date(), 'HH')
-    document.querySelector('#minutes').innerText = formatTime(newYearDate - new Date(), 'MM')
+    let newYearDate = new Date('2020-01-01 00:00:00');
+    document.querySelector('#new-year-timer').innerText = window.formatTime(newYearDate - new Date());
 }
-untilNewYear()
-setInterval(()=>untilNewYear(), 60000)
+untilNewYear();
+setInterval(()=>untilNewYear(), 30000);
 </script>

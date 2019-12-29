@@ -1,5 +1,6 @@
-import "@babel/polyfill/noConflict";
-import {options} from "./vote"
+import "core-js/stable";
+import "regenerator-runtime/runtime";
+import {options} from "./vote";
 
 function getCookie(name) {
     const matches = document.cookie.match(new RegExp(

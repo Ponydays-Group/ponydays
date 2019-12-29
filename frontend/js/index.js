@@ -1,13 +1,14 @@
-import "@babel/polyfill";
+import "core-js/stable";
+import "regenerator-runtime/runtime";
 import "./jquery";
 import "./jquery/jquery.markitup"
 import "./jquery/jquery.file"
 import "../css/bootstrap/assets/javascripts/bootstrap.min"
 import hljs from "highlightjs"
 
-import formatTime from "./utils/TimeFormatter"
+import formatTime from "./utils/TimeFormatter";
 
-window.formatTime = formatTime
+window.formatTime = formatTime;
 
 window.getCookie = function(name) {
     const matches = document.cookie.match(new RegExp(

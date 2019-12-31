@@ -122,18 +122,24 @@
 </nav>
 <div id="padorupadoru">
     <div class="counter">
-        <div id="new-year-timer"></div>&nbsp;
-        до нового года!
+        <div id="new-year-timer"></div>
+        <span id="new-year-text">&nbsp;до нового года!</span>
     </div>
-    <img src="https://i.imgur.com/cqv41jK.png" />
+    {* <img src="https://i.imgur.com/cqv41jK.png" /> *}
+    <img src="https://i.imgur.com/AkVE54g.gif" />
 </div>
 
 <script>
 function untilNewYear() {
     let newYearDate = new Date('2020-01-01 00:00:00');
-    document.querySelector('#new-year-timer').innerText = (newYearDate - new Date()) > 0 ? window.formatTime(newYearDate - new Date()) : 'С Новым Годом! ^~^'; 
+    if ((newYearDate - new Date()) > 0 ) {
+        document.querySelector('#new-year-timer').innerText = window.formatTime(newYearDate - new Date()); 
+    } else {
+        document.querySelector('#new-year-text').innerText = "С Новым Годом! ^~^";
+        clearInterval(window.newYearIntervalID);
+    }
 
 }
 untilNewYear();
-setInterval(()=>untilNewYear(), 30000);
+window.newYearIntervalID = setInterval(()=>untilNewYear(), 1000);
 </script>

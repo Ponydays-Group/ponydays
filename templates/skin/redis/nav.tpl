@@ -131,7 +131,8 @@
 <script>
 function untilNewYear() {
     let newYearDate = new Date('2020-01-01 00:00:00');
-    document.querySelector('#new-year-timer').innerText = window.formatTime(newYearDate - new Date());
+    document.querySelector('#new-year-timer').innerText = (newYearDate - new Date()) > 0 ? window.formatTime(newYearDate - new Date()) : 'С Новым Годом! ^~^'; 
+
 }
 untilNewYear();
 setInterval(()=>untilNewYear(), 30000);

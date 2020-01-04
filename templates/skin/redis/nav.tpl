@@ -36,6 +36,7 @@
                 {hook run='main_menu_item'}
             </ul>
             <ul class="nav navbar-nav navbar-right" id="navbar-right-big">
+			<li class="iconic running"><a><img src="https://i.imgur.com/AkVE54g.gif" /></a></li>
                 {if $oUserCurrent}
                     <li class="head_collapse" title="Свернуть/развернуть шапку">
                         <i class="material-icons">keyboard_arrow_up</i>
@@ -120,18 +121,19 @@
     </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
 </nav>
-<div id="padorupadoru">
+{* С наступающим, разработчики из будущего! Год уже новый стоит, просто уберите комменты. (с) Лу, 04.01.2020 *}
+
+{*<div id="padorupadoru">
     <div class="counter">
         <span id="new-year-timer"></span>
         <span id="new-year-text">&nbsp;до нового года!</span>
     </div>
-    {* <img src="https://i.imgur.com/cqv41jK.png" /> *}
     <img src="https://i.imgur.com/AkVE54g.gif" />
 </div>
 
 <script>
 function untilNewYear() {
-    let newYearDate = new Date('2020-01-01 00:00:00');
+    let newYearDate = new Date('2021-01-01 00:00:00');
     if ((newYearDate - new Date()) > 0 ) {
         document.querySelector('#new-year-timer').innerText = window.formatTime(newYearDate - new Date()); 
     } else {
@@ -142,4 +144,4 @@ function untilNewYear() {
 
 }
 const newYearIntervalID = setInterval(()=>untilNewYear(), 1000);
-</script>
+</script>*}

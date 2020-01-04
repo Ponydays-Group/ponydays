@@ -10,7 +10,12 @@
   li {
     position: relative;
     //height: $userbar-height;
-    float: left;
+	float: left;
+	
+	&.running img {
+		height: 48px;
+		transform: scaleX(-1);
+	}
 
     &:last-child {
       border-right: none;

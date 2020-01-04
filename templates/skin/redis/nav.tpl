@@ -36,7 +36,7 @@
                 {hook run='main_menu_item'}
             </ul>
             <ul class="nav navbar-nav navbar-right" id="navbar-right-big">
-			<li class="iconic running"><a><img src="https://i.imgur.com/AkVE54g.gif" /></a></li>
+			<li class="iconic running"><a href="/blog/flud/"><img src="https://i.imgur.com/AkVE54g.gif" /></a></li>
                 {if $oUserCurrent}
                     <li class="head_collapse" title="Свернуть/развернуть шапку">
                         <i class="material-icons">keyboard_arrow_up</i>

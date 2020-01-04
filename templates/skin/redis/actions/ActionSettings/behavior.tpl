@@ -114,7 +114,7 @@
 			<label for="sound_notice">Звук в уведомлениях</label>
 		</span></span>
 		<label for="notice_sound_url">URL звука в уведомлениях</label>
-		<input name="notice_sound_url" id="notice_sound_url" class="input-width-300" data-default="http://freesound.org/data/previews/245/245645_1038806-lq.mp3" data-save=1 /><br/>
+		<input name="notice_sound_url" id="notice_sound_url" class="input-width-300" data-default="/sounds/pop.mp3" data-save=1 /><br/>
 	</fieldset>
 	
     {literal}

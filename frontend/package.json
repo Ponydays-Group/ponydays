@@ -12,10 +12,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lunavod/ponydays.git"
+    "url": "https://github.com/lunavod/ponydays.git"
   },
   "author": "lunavod",
-  "license": "ISC",
+  "license": "UNLICENSED",
+  "private": true,
   "homepage": "https://github.com/lunavod/ponydays",
   "dependencies": {
     "classnames": "^2.2.6",

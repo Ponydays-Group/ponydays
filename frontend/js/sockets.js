@@ -28,7 +28,7 @@ sock.on("reconnect_attempt", () => {
 });
 
 window.nAudio = new Audio();
-nAudio.src = localStorage.getItem("notice_sound_url") || "http://freesound.org/data/previews/245/245645_1038806-lq.mp3";
+nAudio.src = localStorage.getItem("notice_sound_url") || "/sounds/pop.mp3";
 
 sock.on("notification_group", function(data) {
     switch(data.notification_type * 1) {

@@ -77,6 +77,7 @@ class ActionServer extends Action
 		}
         $this->Viewer_AssignAjax("success", true);
         $this->Viewer_AssignAjax("msg", "The project has been successfully deployed");
+		$this->Viewer_AssignAjax("output", $output);
 //      $this->Nower_Post('/site-update');
     }
 

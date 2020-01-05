@@ -61,7 +61,7 @@ class ActionServer extends Action
     function EventDeploy()
     {
 		$this->Viewer_SetResponseJson();
-		if (getRequest('token') != Config::Get('deploy_token')) {
+		if(!hash_equals(getRequest('token'), Config::Get('deploy_token'))) {
 			$this->Viewer_AssignAjax("success", false);
 			$this->Viewer_AssignAjax("msg", "Wrong deploy token");
             return;

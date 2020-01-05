@@ -45,7 +45,7 @@ class ActionServer extends Action
         }
         $output = array();
         $return = 1;
-        exec('./database/deploy.sh 2>&1', $output, $return);
+        exec('bash ./database/deploy.sh 2>&1', $output, $return);
         if ($return != 0) {
             $this->Viewer_AssignAjax("success", false);
             $this->Viewer_AssignAjax("msg", "An error occurred during execution");

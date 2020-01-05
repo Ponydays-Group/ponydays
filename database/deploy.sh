@@ -30,7 +30,7 @@ take_repo_hashes() {
 }
 
 check_production_changes() {
-    if [[ `git status --porcelain` ]];
+    if [[ `git status --porcelain` ]]
     then
         log "Warning: there are local changes in production!"
         git status --porcelain &> ./tmp/local_changes.deploy.out
@@ -69,7 +69,7 @@ start_deploy() {
     local HASHES_NOW=("${TAKEN_REPO_HASHES[@]}")
 
     for i in ${!REPO_HASH_FILES[@]}; do
-        if [[ ${HASHES_BEFORE[$i]} != ${HASHES_NOW[$i]} ]];
+        if [[ ${HASHES_BEFORE[$i]} != ${HASHES_NOW[$i]} ]]
         then
             log "'${REPO_HASH_FILES[$i]}' has been modified."
             log "Starting '${REPO_HASH_CALLBACKS[$i]}' sequence."
@@ -114,14 +114,14 @@ rebuild_frontend() {
 
 update_composer() {
     log "Updating Composer..."
-    php composer.phar install &> ./tmp/composer.deploy.out
+    ./composer.phar --ansi -n i &> ./tmp/composer.deploy.out
     rc=$?
     if [[ ${rc} != 0 ]]
     then
         log "Error: cannot update composer"
         log "code: $rc"
         log "output:"
-        log_file ../tmp/composer.deploy.out
+        log_file ./tmp/composer.deploy.out
     fi
 }
 

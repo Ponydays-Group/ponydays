@@ -83,7 +83,7 @@ class ActionServer extends Action
 
     function EventGetUserByKey() {
         $this->Viewer_SetResponseAjax('json', true, false);
-        if (getRequest('token')!=Config::Get('deploy_token')) {
+        if (!hash_equals(getRequest('token'), Config::Get('deploy_token'))) {
             return false;
         }
 
@@ -98,7 +98,7 @@ class ActionServer extends Action
 
     function EventHasTopicAccess() {
         $this->Viewer_SetResponseAjax('json', true, false);
-        if (getRequest('token')!=Config::Get('deploy_token')) {
+        if (!hash_equals(getRequest('token'), Config::Get('deploy_token'))) {
             $this->Viewer_AssignAjax("bAccess", false);
             return;
         }
@@ -153,7 +153,7 @@ class ActionServer extends Action
 
     function EventHasTalkAccess() {
 		$this->Viewer_SetResponseAjax('json', true, false);
-		if (getRequest('token')!=Config::Get('deploy_token')) {
+		if (!hash_equals(getRequest('token'), Config::Get('deploy_token'))) {
 			$this->Viewer_AssignAjax("bAccess", false);
 			return;
 		}

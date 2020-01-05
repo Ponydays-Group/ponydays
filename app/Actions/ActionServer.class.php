@@ -1,19 +1,4 @@
 <?php
-/*-------------------------------------------------------
-*
-*   LiveStreet Engine Social Networking
-*   Copyright © 2008 Mzhelskiy Maxim
-*
-*--------------------------------------------------------
-*
-*   Official site: www.livestreet.ru
-*   Contact e-mail: rus.engine@gmail.com
-*
-*   GNU General Public License, version 2:
-*   http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
-*
----------------------------------------------------------
-*/
 /**
  * Экшен обработки ajax запросов
  * Ответ отдает в JSON фомате
@@ -22,7 +7,6 @@
  * @since 1.0
  */
 class ActionServer extends Action
-
 {
     /**
      * Текущий пользователь
@@ -34,17 +18,12 @@ class ActionServer extends Action
     /**
      * Инициализация
      */
-    public
-
-    function Init()
-    {
-    }
+    public function Init() {}
 
     /**
      * Регистрация евентов
      */
-    protected
-    function RegisterEvent()
+    protected function RegisterEvent()
     {
         $this->AddEvent('deploy', 'EventDeploy');
         $this->AddEvent('getuserbykey', 'EventGetUserByKey');
@@ -57,27 +36,25 @@ class ActionServer extends Action
      **********************************************************************************
      */
 
-    protected
-    function EventDeploy()
-    {
-		$this->Viewer_SetResponseJson();
-		if(!hash_equals(getRequest('token'), Config::Get('deploy_token'))) {
-			$this->Viewer_AssignAjax("success", false);
-			$this->Viewer_AssignAjax("msg", "Wrong deploy token");
+    protected function EventDeploy() {
+        $this->Viewer_SetResponseJson();
+        if (!hash_equals(getRequest('token'), Config::Get('deploy_token'))) {
+            $this->Viewer_AssignAjax("success", false);
+            $this->Viewer_AssignAjax("msg", "Wrong deploy token");
             return;
         }
-		$output = array();
-		$return = 1;
+        $output = array();
+        $return = 1;
         exec('./database/deploy.sh 2>&1', $output, $return);
-        if($return != 0) {
-        	$this->Viewer_AssignAjax("success", false);
-        	$this->Viewer_AssignAjax("msg", "An error occurred during execution");
-        	$this->Viewer_AssignAjax("output", $output);
-        	return;
-		}
+        if ($return != 0) {
+            $this->Viewer_AssignAjax("success", false);
+            $this->Viewer_AssignAjax("msg", "An error occurred during execution");
+            $this->Viewer_AssignAjax("output", $output);
+            return;
+        }
         $this->Viewer_AssignAjax("success", true);
         $this->Viewer_AssignAjax("msg", "The project has been successfully deployed");
-		$this->Viewer_AssignAjax("output", $output);
+        $this->Viewer_AssignAjax("output", $output);
 //      $this->Nower_Post('/site-update');
     }
 
@@ -135,7 +112,7 @@ class ActionServer extends Action
         /**
          * Определяем права на отображение записи из закрытого блога
          */
-        if(in_array($oTopic->getBlog()->getType(), array('close', 'invite'))
+        if (in_array($oTopic->getBlog()->getType(), array('close', 'invite'))
             and (!$oUser
                 || !in_array(
                     $oTopic->getBlog()->getId(),
@@ -152,29 +129,29 @@ class ActionServer extends Action
     }
 
     function EventHasTalkAccess() {
-		$this->Viewer_SetResponseAjax('json', true, false);
-		if (!hash_equals(getRequest('token'), Config::Get('deploy_token'))) {
-			$this->Viewer_AssignAjax("bAccess", false);
-			return;
-		}
+        $this->Viewer_SetResponseAjax('json', true, false);
+        if (!hash_equals(getRequest('token'), Config::Get('deploy_token'))) {
+            $this->Viewer_AssignAjax("bAccess", false);
+            return;
+        }
 
-		$sUserId = getRequest("userId");
-		$sTalkId = getRequest("talkId");
-		/**
-		 * Пользователь есть в переписке?
-		 */
-		if (!($oTalkUser = $this->Talk_GetTalkUser($sTalkId, $sUserId))) {
-			$this->Viewer_AssignAjax("bAccess", false);
-			return;
-		}
-		/**
-		 * Пользователь активен в переписке?
-		 */
-		if ($oTalkUser->getUserActive() != ModuleTalk::TALK_USER_ACTIVE) {
-			$this->Viewer_AssignAjax("bAccess", false);
-			return;
-		}
-		$this->Viewer_AssignAjax("bAccess", true);
-		return;
-	}
+        $sUserId = getRequest("userId");
+        $sTalkId = getRequest("talkId");
+        /**
+         * Пользователь есть в переписке?
+         */
+        if (!($oTalkUser = $this->Talk_GetTalkUser($sTalkId, $sUserId))) {
+            $this->Viewer_AssignAjax("bAccess", false);
+            return;
+        }
+        /**
+         * Пользователь активен в переписке?
+         */
+        if ($oTalkUser->getUserActive() != ModuleTalk::TALK_USER_ACTIVE) {
+            $this->Viewer_AssignAjax("bAccess", false);
+            return;
+        }
+        $this->Viewer_AssignAjax("bAccess", true);
+        return;
+    }
 }

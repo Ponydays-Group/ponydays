@@ -89,7 +89,7 @@ class LiveImage {
 	/**
 	 * Last error text
 	 *
-	 * @var strng
+	 * @var string
 	 */
 	protected $last_err_text='';
 	/**
@@ -129,6 +129,10 @@ class LiveImage {
 				$tmp=imagecreatefromjpeg($file);
 				$this->format='jpg';
 				break;
+            case "image/webp":
+                $tmp=imagecreatefromwebp($file);
+                $this->format='webp';
+                break;
 			default:
 				$this->set_last_error(5);				
 				return false;
@@ -566,6 +570,16 @@ class LiveImage {
 					imagegif($this->image,$file);
 				}
 				break;
+
+            case 'webp':
+                @imagesavealpha($this->image,true);
+                if(!$file) {
+                    header("Content-type: image/webp");
+                    imagewebp($this->image);
+                } else {
+                    imagewebp($this->image,$file);
+                }
+                break;
 		}
 
 	}
@@ -594,6 +608,9 @@ class LiveImage {
 			case "image/jpg":
 				$tmp=imagecreatefromjpeg($file);
 				break;
+            case "image/webp":
+                $tmp=imagecreatefromwebp($file);
+                break;
 			default:
 				$this->set_last_error(5);				
 				return false;

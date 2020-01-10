@@ -43,8 +43,6 @@
 						</a>
 
 						<p>
-							<a href="#" onclick="return ls.infobox.showInfoBlog(this,{$oBlog->getId()});" class="icon-question-sign"></a>
-
 							<i class="blog-type-icon fa fa-{if $oBlog->getType() == 'close'}lock{/if}{if $oBlog->getType() == 'invite'}unlock-alt{/if}{if $oBlog->getType() == 'open'}unlock{/if}"></i>
 							<a href="{$oBlog->getUrlFull()}">{$oBlog->getTitle()|escape:'html'}</a>
 						</p>

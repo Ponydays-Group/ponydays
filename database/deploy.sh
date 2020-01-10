@@ -2,10 +2,10 @@
 
 DEPLOY_LOG="`pwd`/tmp/deploy.log"
 
-REPO_HASH_FILES=(
-    "HEAD:frontend/package-lock.json"
-    "HEAD:frontend"
-    "HEAD:composer.lock"
+REPO_FILES_TO_CHECK=(
+    "frontend/package-lock.json"
+    "frontend"
+    "composer.lock"
 )
 
 REPO_HASH_CALLBACKS=(
@@ -22,10 +22,11 @@ log_file() {
     cat "$@" | tee -a ${DEPLOY_LOG}
 }
 
-take_repo_hashes() {
-    TAKEN_REPO_HASHES=()
-    for i in ${!REPO_HASH_FILES[@]}; do
-        TAKEN_REPO_HASHES[$i]=$(git rev-parse ${REPO_HASH_FILES[$1]})
+check_repo_changes() {
+    CHECKED_REPO_CHANGES=()
+    for i in ${!REPO_FILES_TO_CHECK[@]}; do
+        git diff HEAD HEAD~1 -- ${REPO_FILES_TO_CHECK[$1]}
+        CHECKED_REPO_CHANGES[$i]=$?
     done
 }
 
@@ -56,22 +57,17 @@ start_deploy() {
 
     check_production_changes
 
-    log "Taking hashes of some repository blobs before synchronisation..."
-    take_repo_hashes
-    local HASHES_BEFORE=("${TAKEN_REPO_HASHES[@]}")
-
     log "Syncing the git repository..."
     pull_git_repo
     log_file ./tmp/git.deploy.out
 
-    log "Checking repository hashes..."
-    take_repo_hashes
-    local HASHES_NOW=("${TAKEN_REPO_HASHES[@]}")
+    log "Checking repository changes..."
+    check_repo_changes
 
-    for i in ${!REPO_HASH_FILES[@]}; do
-        if [[ ${HASHES_BEFORE[$i]} != ${HASHES_NOW[$i]} ]]
+    for i in ${!REPO_FILES_TO_CHECK[@]}; do
+        if [[ ${CHECKED_REPO_CHANGES[$i]} ]]
         then
-            log "'${REPO_HASH_FILES[$i]}' has been modified."
+            log "'${REPO_FILES_TO_CHECK[$i]}' has been modified."
             log "Starting '${REPO_HASH_CALLBACKS[$i]}' sequence."
             ${REPO_HASH_CALLBACKS[$i]}
         fi

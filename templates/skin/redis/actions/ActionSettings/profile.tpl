@@ -22,7 +22,7 @@
 	{/foreach}
 	</select>
 	<input type="text" name="profile_user_field_value[]" value="" class="input-text input-width-200">
-	<a class="icon-remove" title="{$aLang.user_field_delete}" href="#" onclick="return ls.userfield.removeFormField(this);"></a>
+	<a class="fa fa-close" title="{$aLang.user_field_delete}" href="#" onclick="return ls.userfield.removeFormField(this);"></a>
 </p>
 
 {hook run='settings_profile_begin'}
@@ -150,7 +150,7 @@
 				{/foreach}
 				</select>
 				<input type="text" name="profile_user_field_value[]" value="{$oField->getValue()|escape:'html'}" class="input-text input-width-200">
-				<a class="icon-remove" title="{$aLang.user_field_delete}" href="#" onclick="return ls.userfield.removeFormField(this);"></a>
+				<a class="fa fa-close" title="{$aLang.user_field_delete}" href="#" onclick="return ls.userfield.removeFormField(this);"></a>
 			</p>
 		{/foreach}
 		</div>

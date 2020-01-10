@@ -1396,22 +1396,33 @@ class ModuleUser extends Module
         $this->Image_RemoveFile($this->Image_GetServerPath($oUser->getProfileFoto()));
     }
 
+    const CHECK_LOGIN_SUCCESS = 0;
+    const CHECK_LOGIN_LENGTH = 1;
+    const CHECK_LOGIN_MIXED = 2;
+    const CHECK_LOGIN_WRONG = 3;
     /**
      * Проверяет логин на корректность
      *
      * @param string $sLogin Логин пользователя
-     * @return bool
+     * @return int
      */
     public
     function CheckLogin($sLogin)
     {
-        if (preg_match("/^[0-9а-яё\_\-]{" . Config::Get('module.user.login.min_size') . ',' . Config::Get('module.user.login.max_size') . "}$/iu", $sLogin)) {
-            return true;
+        if (mb_strlen($sLogin) < Config::Get('module.user.login.min_size')
+            || mb_strlen($sLogin) > Config::Get('module.user.login.max_size')) {
+            return self::CHECK_LOGIN_LENGTH;
         }
-        if (preg_match("/^[0-9a-z\_\-]{" . Config::Get('module.user.login.min_size') . ',' . Config::Get('module.user.login.max_size') . "}$/iu", $sLogin)) {
-            return true;
+        if (preg_match("/^[0-9a-zа-яё\_\-]+$/iu", $sLogin)) {
+            if (preg_match("/^[0-9а-яё\_\-]+$/iu", $sLogin)) {
+                return self::CHECK_LOGIN_SUCCESS;
+            }
+            if (preg_match("/^[0-9a-z\_\-]+$/iu", $sLogin)) {
+                return self::CHECK_LOGIN_SUCCESS;
+            }
+            return self::CHECK_LOGIN_MIXED;
         }
-        return false;
+        return self::CHECK_LOGIN_WRONG;
     }
 
     /**

@@ -13,20 +13,19 @@
 ------------------------------------------------------------------- */
 
 [class^="icon-"],
-[class*=" icon-"]  { 
+[class*=" icon-"]  {
 	display: inline-block;
 	vertical-align: text-top;
 	width: 14px;
 	height: 14px;
 	line-height: 14px;
-	/*background: url(images/icons.png) no-repeat;*/
 }
 
 /*.icon-white { background-image: url(images/icons-white.png); }*/
 
 /*.icon-glass              { background-position: 0      0; }*/
 /*.icon-music              { background-position: -24px  0; }*/
-.icon-search             { background-position: -48px  0; }
+.icon-search             { background: url(images/icons.png) no-repeat -48px 0; }
 /*.icon-envelope           { background-position: -72px  0; }*/
 /*.icon-heart              { background-position: -96px  0; }*/
 /*.icon-star               { background-position: -120px 0; }*/
@@ -37,7 +36,7 @@
 /*.icon-th                 { background-position: -240px 0; }*/
 /*.icon-th-list            { background-position: -264px 0; }*/
 /*.icon-ok                 { background-position: -288px 0; }*/
-.icon-remove             { background-position: -312px 0; }
+/*.icon-remove             { background-position: -312px 0; background: url(images/icons.png) no-repeat; }*/
 /*.icon-zoom-in            { background-position: -336px 0; }*/
 /*.icon-zoom-out           { background-position: -360px 0; }*/
 /*.icon-off                { background-position: -384px 0; }*/
@@ -57,7 +56,7 @@
 /*.icon-repeat             { background-position: -216px -24px; }*/
 /*.icon-refresh            { background-position: -240px -24px; }*/
 /*.icon-list-alt           { background-position: -264px -24px; }*/
-.icon-lock               { background-position: -287px -24px; }
+/*.icon-lock               { background-position: -287px -24px; }*/
 /*.icon-flag               { background-position: -312px -24px; }*/
 /*.icon-headphones         { background-position: -336px -24px; }*/
 /*.icon-volume-off         { background-position: -360px -24px; }*/
@@ -91,7 +90,7 @@
 /*.icon-map-marker         { background-position: -24px  -72px; }*/
 /*.icon-adjust             { background-position: -48px  -72px; }*/
 /*.icon-tint               { background-position: -72px  -72px; }*/
-.icon-edit               { background-position: -96px  -72px; }
+/*.icon-edit               { background-position: -96px  -72px; }*/
 /*.icon-share              { background-position: -120px -72px; }*/
 /*.icon-check              { background-position: -144px -72px; }*/
 /*.icon-move               { background-position: -168px -72px; }*/
@@ -112,7 +111,7 @@
 /*.icon-minus-sign         { background-position: -24px  -96px; }*/
 /*.icon-remove-sign        { background-position: -48px  -96px; }*/
 /*.icon-ok-sign            { background-position: -72px  -96px; }*/
-.icon-question-sign      { background-position: -96px  -96px; }
+.icon-question-sign      { background: url(images/icons.png) no-repeat -96px -96px; }
 /*.icon-info-sign          { background-position: -120px -96px; }*/
 /*.icon-screenshot         { background-position: -144px -96px; }*/
 /*.icon-remove-circle      { background-position: -168px -96px; }*/

@@ -52,8 +52,8 @@ export function addUserfield() {
     Ajax.ajax(url, params, function(data) {
         if(!data.bStateError) {
             const liElement = $("<li id=\"field_" + data.id + "\"><span class=\"userfield_admin_name\"></span > / <span class=\"userfield_admin_title\"></span> / <span class=\"userfield_admin_pattern\"></span> / <span class=\"userfield_admin_type\"></span>"
-                + "<div class=\"userfield-actions\"><a class=\"icon-edit\" href=\"javascript:ls.userfieldshowEditForm(" + data.id + ")\"></a> "
-                + "<a class=\"icon-remove\" href=\"javascript:ls.userfielddeleteUserfield(" + data.id + ")\"></a></div>")
+                + "<div class=\"userfield-actions\"><a class=\"fa fa-pencil\" href=\"javascript:ls.userfieldshowEditForm(" + data.id + ")\"></a> "
+                + "<a class=\"fa fa-close\" href=\"javascript:ls.userfielddeleteUserfield(" + data.id + ")\"></a></div>")
             ;
             $("#user_field_list").append(liElement);
             $("#field_" + data.id + " .userfield_admin_name").text(name);

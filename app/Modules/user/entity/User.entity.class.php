@@ -50,11 +50,21 @@ class ModuleUser_EntityUser extends Entity {
 	 *
 	 * @param string $sValue	Валидируемое значение
 	 * @param array $aParams	Параметры
-	 * @return bool
+	 * @return bool|string
 	 */
 	public function ValidateLogin($sValue,$aParams) {
-		if ($this->User_CheckLogin($sValue)) {
-			return true;
+		switch ($this->User_CheckLogin($sValue)) {
+			case ModuleUser::CHECK_LOGIN_SUCCESS:
+				return true;
+			case ModuleUser::CHECK_LOGIN_LENGTH:
+				return $this->Lang_Get('registration_login_error_length', array(
+					'min' => Config::Get('module.user.login.min_size'),
+					'max' => Config::Get('module.user.login.max_size')
+					));
+			case ModuleUser::CHECK_LOGIN_MIXED:
+				return $this->Lang_Get('registration_login_error_mixed');
+			case ModuleUser::CHECK_LOGIN_WRONG:
+				return $this->Lang_Get('registration_login_error_wrong');
 		}
 		return $this->Lang_Get('registration_login_error');
 	}

@@ -40,7 +40,7 @@
 		<img src="{$oBlog->getAvatarPath(48)}" alt="avatar" class="avatar" />
 
 
-		<h2>{if $oBlog->getType()=='close'}<i title="{$aLang.blog_closed}" class="icon icon-lock"></i> {/if}{if $bInTrash}[ КОРЗИНА ] {/if}{$oBlog->getTitle()|escape:'html'}</h2>
+		<h2>{if $oBlog->getType()=='close'}<i title="{$aLang.blog_closed}" class="blog-type-icon fa fa-lock"></i> {/if}{if $bInTrash}[ КОРЗИНА ] {/if}{$oBlog->getTitle()|escape:'html'}</h2>
 
 
 		<ul class="actions">

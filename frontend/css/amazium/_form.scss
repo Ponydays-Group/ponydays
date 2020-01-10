@@ -17,7 +17,7 @@ input, textarea, select                                     { border-color:#BBB;
 /***********************************************
 Forms with labels
 ***********************************************/
-form                                                        { margin:0 0 16px; padding:0; display:inline-block; width:100%; }
+form                                                        { margin:0 0 0; padding:0; display:inline-block; width:100%; }
 form :last-child                                            { margin-bottom:0; }
 
 /***** Fieldset *****/

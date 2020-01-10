@@ -76,7 +76,6 @@
             "userfield_max_identical": 2,
             "profile_photo_width": 1340,
             "name_max": 30,
-            "captcha_use_registration": true,
             "redirect_after_registration": "",
             "session_time": 259200
         },

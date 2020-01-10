@@ -56,7 +56,7 @@
 
 	{if $oConfig->GetValue('reCaptcha.enabled')}
 		{hookb run="popup_registration_captcha"}
-			<div class="g-recaptcha" data-sitekey="{cfg name="reCaptcha.key"}"></div>
+			<p><div class="g-recaptcha" data-sitekey="{cfg name="reCaptcha.key"}"></div></p>
 		{/hookb}
 	{/if}
 

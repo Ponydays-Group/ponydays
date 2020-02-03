@@ -28,7 +28,7 @@ class ModuleNower extends Module {
     private function post($json) {
 		$myCurl = curl_init();
 		curl_setopt_array($myCurl, array(
-			CURLOPT_URL => 'http://127.0.0.1:3000/notification',
+			CURLOPT_URL => 'http://127.0.0.1:3000/notification', //TODO: Вынести в конфиг
 			CURLOPT_RETURNTRANSFER => true,
 			CURLOPT_POST => true,
 			CURLOPT_POSTFIELDS => http_build_query($json)

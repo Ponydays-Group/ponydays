@@ -1859,8 +1859,16 @@ class ModuleTopic extends Module {
 	 * @param  ModuleUser_EntityUser $oUser
 	 * @return string|int
 	 */
-	public function UploadTopicImageUrl($sUrl, $oUser) {
-		$sUrl = str_replace(Config::Get('static_web'), Config::Get('static_inner'), $sUrl);
+	public function UploadTopicImageUrl($sUrl, $oUser, $secure=true) {
+	    if ($secure) {
+	        $host = parse_url($sUrl, PHP_URL_HOST);
+	        if ($host === 'localhost' || (
+	            (filter_var($host, FILTER_VALIDATE_IP) !== false)
+             && (filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE) === false)
+            )) return ModuleImage::UPLOAD_IMAGE_ERROR;
+	    }
+
+        $sUrl = str_replace(Config::Get('static_web'), Config::Get('static_inner'), $sUrl);
         $ch = curl_init();
         // Url
         curl_setopt($ch, CURLOPT_URL, $sUrl);
@@ -1868,6 +1876,8 @@ class ModuleTopic extends Module {
         curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:42.0) Gecko/20100101 Firefox/42.0");
         // Automatically follow Location: headers (ie redirects)
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+        // Protocol whitelist
+        curl_setopt($ch, CURLOPT_PROTOCOLS, CURLPROTO_HTTP | CURLPROTO_HTTPS | CURLPROTO_FTP | CURLPROTO_FTPS);
         // Auto set the referer in the event of a redirect
         curl_setopt($ch, CURLOPT_AUTOREFERER, true);
         // Make sure we dont get stuck in a loop

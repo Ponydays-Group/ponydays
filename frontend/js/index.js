@@ -6,7 +6,7 @@ import "./jquery/jquery.file"
 import "../css/bootstrap/assets/javascripts/bootstrap.min"
 import hljs from "highlightjs"
 
-import formatTime from "./utils/TimeFormatter";
+import formatTime from "./utils/time_formatter";
 
 window.formatTime = formatTime;
 

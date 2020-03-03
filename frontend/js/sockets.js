@@ -30,6 +30,12 @@ sock.on("reconnect_attempt", () => {
 window.nAudio = new Audio();
 nAudio.src = localStorage.getItem("notice_sound_url") || "/sounds/pop.mp3";
 
+function playNotification(title, msg, url, blank) {
+    ls.msg.notice(title, msg, url, blank);
+    if(checkPerm("sound_notice"))
+        nAudio.play();
+}
+
 sock.on("notification_group", function(data) {
     switch(data.notification_type * 1) {
     case 1: //talk_new_topic
@@ -180,11 +186,7 @@ sock.on("notification", function(data) {
         if(data.comment_extra != null && data.group_target_type != "talk") {
             text = data.comment_extra.text;
         }
-        ls.msg.notice(title, text, data.link, false);
-
-        if(checkPerm("sound_notice")) {
-            nAudio.play();
-        }
+        playNotification(title, text, data.link, false);
     }
 });
 
@@ -196,9 +198,7 @@ sock.on("reply-info", function(data) {
             url = "#comment" + data.commentData.id;
             blank = false;
         }
-        ls.msg.notice(data.senderLogin + " ответил вам в посте " + data.targetTitle, data.commentData.text, url, blank);
-        if(checkPerm("sound_notice"))
-            nAudio.play();
+        playNotification(data.senderLogin + " ответил вам в посте " + data.targetTitle, data.commentData.text, url, blank);
     }
 });
 
@@ -210,9 +210,7 @@ sock.on("edit-comment-info", function(data) {
             url = "#comment" + data.commentData.id;
             blank = false;
         }
-        ls.msg.notice(data.senderLogin + " отредактировал ваш комментарий", data.commentData.text, url, blank);
-        if(checkPerm("sound_notice"))
-            nAudio.play();
+        playNotification(data.senderLogin + " отредактировал ваш комментарий", data.commentData.text, url, blank);
     }
 });
 
@@ -226,12 +224,10 @@ sock.on("delete-comment-info", function(data) {
             blank = false;
         }
         if(data.delete) {
-            ls.msg.notice(data.senderLogin + " удалил ваш комментарий", data.deleteReason, url, blank);
+            playNotification(data.senderLogin + " удалил ваш комментарий", data.deleteReason, url, blank);
         } else {
-            ls.msg.notice(data.senderLogin + " восстановил ваш комментарий", data.commentText, url, blank);
+            playNotification(data.senderLogin + " восстановил ваш комментарий", data.commentText, url, blank);
         }
-        if(checkPerm("sound_notice"))
-            nAudio.play();
     }
 });
 
@@ -243,9 +239,7 @@ sock.on("talk-answer", function(data) {
             url = "#comment" + data.commentData.id;
             blank = false
         }
-        ls.msg.notice("Новый комментарий в " + data.targetTitle + ", от " + data.senderLogin, data.commentText, url, blank);
-        if(checkPerm("sound_notice"))
-            nAudio.play();
+        playNotification("Новый комментарий в " + data.targetTitle + ", от " + data.senderLogin, data.commentText, url, blank);
     }
 });
 
@@ -266,7 +260,7 @@ sock.on("vote-info", function(data) {
         }
         switch(data.voteType * 1) {
         case 0:
-            ls.msg.notice("Пользователь " + data.senderName + " проголосовал за ваш " +
+            playNotification("Пользователь " + data.senderName + " проголосовал за ваш " +
                 (data.targetType == "comment" ? "комментарий" : "пост") + ", поставив " +
                 (data.voteValue > 0 ?
                     "<span><span class=\"" + options.classes.vote + " " + options.classes.positive + "\"><span class=\"" + options.classes.vote_count + "\">+" + data.voteValue + "</span></span></span>" :
@@ -276,7 +270,7 @@ sock.on("vote-info", function(data) {
                 blank);
             break;
         case 1:
-            ls.msg.notice("Пользователь " + data.senderName + " изменил голос за ваш " +
+            playNotification("Пользователь " + data.senderName + " изменил голос за ваш " +
                 (data.targetType == "comment" ? "комментарий" : "пост") + " на " +
                 (data.voteValue > 0 ?
                     "<span><span class=\"" + options.classes.vote + " " + options.classes.positive + "\"><span class=\"" + options.classes.vote_count + "\">+" + data.voteValue + "</span></span></span>" :
@@ -286,15 +280,13 @@ sock.on("vote-info", function(data) {
                 blank);
             break;
         case 2:
-            ls.msg.notice("Пользователь " + data.senderName + " отменил свой голос за ваш " +
+            playNotification("Пользователь " + data.senderName + " отменил свой голос за ваш " +
                 (data.targetType == "comment" ? "комментарий" : "пост"),
                 data.commentText || data.topicTitle,
                 url,
                 blank);
             break;
         }
-        if(checkPerm("sound_notice"))
-            nAudio.play();
     }
 });
 
@@ -338,7 +330,5 @@ sock.on("new-vote", function(data) {
 
 sock.on("site-update", function() {
     //TODO: Локализовать
-    ls.msg.notice("Сайт был обновлен", "Рекомендуется перезагрузить страницу");
-    if(checkPerm("sound_notice"))
-        nAudio.play();
+    playNotification("Сайт был обновлен", "Рекомендуется перезагрузить страницу");
 });

@@ -271,6 +271,10 @@ class CryptoWrapped extends CryptoAlgorithm
 			base64_encode(end($outer_data))
 		);
 	}
+
+	public function needs_rehash(array $params): string {
+        return true;
+    }
 }
 
 class CryptoIncorrect extends CryptoAlgorithm

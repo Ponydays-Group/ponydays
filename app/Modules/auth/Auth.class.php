@@ -52,8 +52,7 @@ class ModuleAuth extends Module
 	/**
 	 * Проверяет подписанный ключ
 	 * @param string $key Строковое представление подписанного ключа
-	 * @param string $sign_key Секретный ключ для подписи
-	 * @param string $data_format Формат, в котором предоставлены данные ключа
+	 * @param string $data_format Формат, в котором предоставлены данные ключа (json, msgpack)
 	 * @return array Данные ключа, если ключ корректен и действителен
 	 */
 	public function VerifyKey(string $key, string $data_format = 'json'): array
@@ -64,9 +63,9 @@ class ModuleAuth extends Module
 		if(count($parts) != 3) throw new AuthException("wrong size", AuthException::INVALID_KEY_FORMAT);
 
 		list($header_data, $payload_data, $signature_data) = $parts;
-		$header = data_format_unpack($data_format, base64url_decode($header_data));
+		$header = data_format_unpack_type($data_format, base64url_decode($header_data), "array");
 		if(!$header) throw new AuthException("no header", AuthException::INVALID_KEY_FORMAT);
-		$payload = data_format_unpack($data_format, base64url_decode($payload_data));
+		$payload = data_format_unpack_type($data_format, base64url_decode($payload_data), "array");
 		if(!$payload) throw new AuthException("no payload", AuthException::INVALID_KEY_FORMAT);
 		$signature = base64url_decode($signature_data);
 		if(!$signature) throw new AuthException("no signature", AuthException::INVALID_KEY_FORMAT);

@@ -27,6 +27,9 @@ class ActionPage extends Action {
 	 */
 	protected function RegisterEvent() {
 		$this->AddEvent('admin','EventAdmin');
+
+		$this->AddEventPreg('/^filter$/i', '/^[\w\-\_]+$/i', 'EventFilter');
+
 		$this->AddEventPreg('/^[\w\-\_]*$/i','EventShowPage');
 	}
 
@@ -178,6 +181,31 @@ class ActionPage extends Action {
 		}
 		$this->Viewer_Assign('aPages',$aPages);
 	}
+
+	/**
+     * Поиск последнего топика, соответствующего данному фильтру, и редирект на него.
+     */
+	protected function EventFilter() {
+	    $filter_id = $this->GetParam(0);
+	    if(gettype($filter_id) != 'string' || !isset(Config::Get('page.filters')[$filter_id])) {
+	        return parent::EventNotFound();
+        }
+        $aFilter = Config::Get('page.filters')[$filter_id];
+
+        $eng = Engine::getInstance();
+
+	    /** @var \ModuleTopic $topic */
+	    $topic = $eng->make(ModuleTopic::class);
+
+	    /** @var \ModuleTopic_EntityTopic $last_topic */
+	    $last_topic = reset($topic->GetTopicsByFilter($aFilter, 1, 1, ['blog'])['collection']);
+
+        if(!$last_topic) {
+            return parent::EventNotFound();
+        }
+
+        return Router::Location($last_topic->getUrl());
+    }
 	/**
 	 * Обработка отправки формы при редактировании страницы
 	 *

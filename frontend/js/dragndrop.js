@@ -27,7 +27,7 @@ export class DraggableList {
     dnd_cur_over_dir = 0;
 
     constructor(el) {
-        this.dnd_placeholder = document.createElement('LI');
+        this.dnd_placeholder = document.createElement('DIV');
         this.dnd_placeholder.classList.add('draglist-placeholder');
         this.list_element = el;
         let ref = this;

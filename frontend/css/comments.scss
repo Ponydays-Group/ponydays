@@ -444,7 +444,7 @@ button#comment-button-history {
         &.for-topic {
             bottom: 60px;
             max-height: calc(100% - 153px);
-            overflow-y: scroll;
+            overflow-y: auto;
             border-radius: 9px;
             padding-bottom: 0px;
             .vote-list-item {

@@ -266,7 +266,9 @@ class ModuleText extends Module {
 	public function CallbackTagLs($sTag,$aParams) {
 		$sText='';
 		if (isset($aParams['user'])) {
-			if ($oUser=$this->User_getUserByLogin($aParams['user'])) {
+			/** @var \ModuleUser $user */
+			$user = LS::Make(ModuleUser::class);
+			if ($oUser=$user->getUserByLogin($aParams['user'])) {
 				$sText.="<a href=\"{$oUser->getUserWebPath()}\" class=\"ls-user\">{$oUser->getLogin()}</a> ";
 			}
 		}
@@ -355,9 +357,9 @@ class ModuleText extends Module {
 
 	public function CommentParser($oComment, $bDice = true) {
         if ($oComment->getTargetType()=="topic") {
-        	$oTarget = $this->Topic_GetTopicById($oComment->getTargetId());
+        	$oTarget = LS::Make(ModuleTopic::class)->GetTopicById($oComment->getTargetId());
 		} else {
-            $oTarget = $this->Talk_GetTalkById($oComment->getTargetId());
+            $oTarget = LS::Make(ModuleTalk::class)->GetTalkById($oComment->getTargetId());
 		}
 
         $html = str_get_html($oComment->getText(), true, true, 'UTF-8', false);
@@ -393,4 +395,3 @@ class ModuleText extends Module {
         return $sText;
 	}
 }
-?>

@@ -65,7 +65,7 @@ function smarty_modifier_declension_russian($forms, $count)
 function smarty_modifier_declension($count, $forms, $language='')
 {	
 	if (!$language)
-		$language = Engine::getInstance()->Lang_GetLang();
+		$language = Engine::getInstance()->make(ModuleLang::class)->GetLang();
 
 	$count = abs($count);
 
@@ -82,4 +82,3 @@ function smarty_modifier_declension($count, $forms, $language='')
 		return smarty_modifier_declension_english($forms, $count);
 	}
 }
-?>

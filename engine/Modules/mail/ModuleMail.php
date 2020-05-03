@@ -202,11 +202,13 @@ class ModuleMail extends Module {
 		$this->oMailer->AddAddress($sMail,$sName);
 		$this->sError = ob_get_clean();
 	}
-	/**
-	 * Отправляет сообщение(мыло)
-	 *
-	 * @return bool
-	 */
+
+    /**
+     * Отправляет сообщение(мыло)
+     *
+     * @return bool
+     * @throws \phpmailerException
+     */
 	public function Send() {
 		$this->oMailer->Subject=$this->sSubject;
 		$this->oMailer->Body=$this->sBody;
@@ -258,4 +260,3 @@ class ModuleMail extends Module {
 		return $this->sError;
 	}
 }
-?>

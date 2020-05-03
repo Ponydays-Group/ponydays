@@ -84,11 +84,8 @@ abstract class Module extends LsObject {
 	}
 	/**
 	 * Помечает модуль как инициализированный
-	 *
-	 * @return null
 	 */
 	public function SetInit() {
 		$this->bIsInit=true;
 	}
 }
-?>

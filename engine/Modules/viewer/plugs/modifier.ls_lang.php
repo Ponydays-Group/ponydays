@@ -14,4 +14,4 @@ function smarty_modifier_ls_lang($sString)
         $aTo[] = $sTo;
     }
     return str_replace($aFrom, $aTo, $sString);
-} 
+}

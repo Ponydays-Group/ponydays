@@ -64,8 +64,10 @@ class ModuleValidate_EntityValidatorUrl extends ModuleValidate_EntityValidator {
 	 * @return bool|string
 	 */
 	public function validate($sValue) {
+	    /** @var \ModuleLang $lang */
+	    $lang = LS::Make(ModuleLang::class);
 		if (is_array($sValue)) {
-			return $this->getMessage($this->Lang_Get('validate_url_not_valid',null,false),'msg');
+			return $this->getMessage($lang->Get('validate_url_not_valid',null,false),'msg');
 		}
 		if($this->allowEmpty && $this->isEmpty($sValue)) {
 			return true;
@@ -79,7 +81,7 @@ class ModuleValidate_EntityValidatorUrl extends ModuleValidate_EntityValidator {
 				$this->setValueOfCurrentEntity($this->sFieldCurrent,$sValue);
 			}
 		} else {
-			return $this->getMessage($this->Lang_Get('validate_url_not_valid',null,false),'msg');
+			return $this->getMessage($lang->Get('validate_url_not_valid',null,false),'msg');
 		}
 		return true;
 	}
@@ -107,4 +109,3 @@ class ModuleValidate_EntityValidatorUrl extends ModuleValidate_EntityValidator {
 		return false;
 	}
 }
-?>

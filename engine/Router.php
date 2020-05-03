@@ -133,7 +133,7 @@ class Router extends LsObject {
 	public function Shutdown($bExit=true) {
 		$this->AssignVars();
 		$this->oEngine->Shutdown();
-		$this->Viewer_Display($this->oAction->GetTemplate());
+		LS::Make(ModuleViewer::class)->Display($this->oAction->GetTemplate());
 		if ($bExit) {
 			exit();
 		}
@@ -187,7 +187,7 @@ class Router extends LsObject {
 	/**
 	 * Применяет к реквесту правила реврайта из конфига Config::Get('router.uri')
 	 *
-	 * @param $aRequestUrl	Массив реквеста
+	 * @param array $aRequestUrl	Массив реквеста
 	 * @return array
 	 */
 	protected function RewriteRequest($aRequestUrl) {
@@ -220,10 +220,12 @@ class Router extends LsObject {
 	 *
 	 */
 	protected function AssignVars() {
-		$this->Viewer_Assign('sAction',$this->Standart(self::$sAction));
-		$this->Viewer_Assign('sEvent',self::$sActionEvent);
-		$this->Viewer_Assign('aParams',self::$aParams);
-		$this->Viewer_Assign('PATH_WEB_CURRENT',self::$sPathWebCurrent);
+	    /** @var \ModuleViewer $viewer */
+	    $viewer = LS::Make(ModuleViewer::class);
+		$viewer->Assign('sAction',$this->Standart(self::$sAction));
+        $viewer->Assign('sEvent',self::$sActionEvent);
+        $viewer->Assign('aParams',self::$aParams);
+        $viewer->Assign('PATH_WEB_CURRENT',self::$sPathWebCurrent);
 	}
 	/**
 	 * Запускает на выполнение экшен
@@ -232,10 +234,12 @@ class Router extends LsObject {
 	 */
 	public function ExecAction() {
 		$this->DefineActionClass();
+		/** @var \ModuleHook $hook */
+		$hook = LS::Make(ModuleHook::class);
 		/**
 		 * Сначала запускаем инициализирующий евент
 		 */
-		$this->Hook_Run('init_action');
+		$hook->Run('init_action');
 
 		$sActionClass=$this->DefineActionClass();
 
@@ -254,9 +258,9 @@ class Router extends LsObject {
 		/**
 		 * Инициализируем экшен
 		 */
-		$this->Hook_Run("action_init_".strtolower($sActionClass)."_before");
+        $hook->Run("action_init_".strtolower($sActionClass)."_before");
 		$sInitResult = $this->oAction->Init();
-		$this->Hook_Run("action_init_".strtolower($sActionClass)."_after");
+        $hook->Run("action_init_".strtolower($sActionClass)."_after");
 
 		if ($sInitResult==='next') {
 			$this->ExecAction();
@@ -270,9 +274,9 @@ class Router extends LsObject {
 			$res=$this->oAction->ExecEvent();
 			self::$sActionEventName=$this->oAction->GetCurrentEventName();
 
-			$this->Hook_Run("action_shutdown_".strtolower($sActionClass)."_before");
+            $hook->Run("action_shutdown_".strtolower($sActionClass)."_before");
 			$this->oAction->EventShutdown();
-			$this->Hook_Run("action_shutdown_".strtolower($sActionClass)."_after");
+            $hook->Run("action_shutdown_".strtolower($sActionClass)."_after");
 
 			$oProfiler->Stop($iTimeId);
 
@@ -491,4 +495,3 @@ class Router extends LsObject {
 		func_header_location($sLocation);
 	}
 }
-?>

@@ -153,14 +153,14 @@ class ModuleSession extends Module {
 	 *
 	 */
 	protected function ReadData() {
-		$this->aData=$this->Cache_Get($this->sId);
+		$this->aData=LS::Make(ModuleCache::class)->Get($this->sId);
 	}
 	/**
 	 * Сохраняет данные сессии
 	 *
 	 */
 	protected function Save() {
-		$this->Cache_Set($this->aData,$this->sId,array(),Config::Get('sys.session.timeout'));
+        LS::Make(ModuleCache::class)->Set($this->aData,$this->sId,array(),Config::Get('sys.session.timeout'));
 	}
 	/**
 	 * Получает значение из сессии
@@ -234,4 +234,3 @@ class ModuleSession extends Module {
 		}
 	}
 }
-?>

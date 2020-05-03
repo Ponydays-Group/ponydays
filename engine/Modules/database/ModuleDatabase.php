@@ -376,7 +376,7 @@ class ModuleDatabase extends Module
             /**
              * Логируем
              */
-            $this->Logger_Critical($sMessage, array(), 'db_error');
+            LS::Make(ModuleLogger::class)->Critical($sMessage, array(), 'db_error');
         }
         /**
          * Если стоит вывод ошибок то выводим ошибку на экран(браузер)
@@ -401,7 +401,7 @@ class ModuleDatabase extends Module
         /**
          * Логируем
          */
-        $this->Logger_Debug($sMsg, array(), 'db_query');
+        LS::Make(ModuleLogger::class)->Debug($sMsg, array(), 'db_query');
     }
 }
 

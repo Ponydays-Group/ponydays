@@ -263,7 +263,7 @@ class Config {
 	/**
 	 * Find all keys recursivly in config array
 	 *
-	 * @return array
+	 * @return array|bool
 	 */
 	public function GetKeys() {
 		$cfg=$this->GetConfig();
@@ -315,7 +315,7 @@ class Config {
 	 * Рекурсивный вариант array_keys
 	 *
 	 * @param  array $array	Массив
-	 * @return array
+	 * @return array|bool
 	 */
 	protected function func_array_keys_recursive($array) {
 		if(!is_array($array)) {
@@ -361,4 +361,3 @@ class Config {
 		return $aRes;
 	}
 }
-?>

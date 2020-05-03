@@ -94,9 +94,10 @@ class ModuleValidate_EntityValidatorType extends ModuleValidate_EntityValidator 
 		}
 
 		if(!$bValid) {
-			return $this->getMessage($this->Lang_Get('validate_type_error',null,false),'msg',array('type'=>$this->type));
+		    /** @var \ModuleLang $lang */
+		    $lang = LS::Make(ModuleLang::class);
+			return $this->getMessage($lang->Get('validate_type_error',null,false),'msg',array('type'=>$this->type));
 		}
 		return true;
 	}
 }
-?>

@@ -57,7 +57,7 @@ class ModuleLang extends Module {
 	 *
 	 */
 	public function Init() {
-		$this->Hook_Run('lang_init_start');
+		LS::Make(ModuleHook::class)->Run('lang_init_start');
 
 		$this->sCurrentLang = Config::Get('lang.current');
 		$this->sDefaultLang = Config::Get('lang.default');
@@ -69,15 +69,17 @@ class ModuleLang extends Module {
 	 *
 	 */
 	protected function InitLang() {
+	    /** @var \ModuleCache $cache */
+	    $cache = LS::Make(ModuleCache::class);
 		/**
 		 * Если используется кеширование через memcaсhed, то сохраняем данные языкового файла в кеш
 		 */
 		if (Config::Get('sys.cache.type')=='memory') {
-			if (false === ($this->aLangMsg = $this->Cache_Get("lang_{$this->sCurrentLang}_".Config::Get('view.skin')))) {
+			if (false === ($this->aLangMsg = $cache->Get("lang_{$this->sCurrentLang}_".Config::Get('view.skin')))) {
 				$this->aLangMsg=array();
 				$this->LoadLangFiles($this->sDefaultLang);
 				if($this->sCurrentLang!=$this->sDefaultLang) $this->LoadLangFiles($this->sCurrentLang);
-				$this->Cache_Set($this->aLangMsg, "lang_{$this->sCurrentLang}_".Config::Get('view.skin'), array(), 60*60);
+                $cache->Set($this->aLangMsg, "lang_{$this->sCurrentLang}_".Config::Get('view.skin'), array(), 60*60);
 			}
 		} else {
 			$this->LoadLangFiles($this->sDefaultLang);
@@ -88,7 +90,7 @@ class ModuleLang extends Module {
 		/**
 		 * Загружаем в шаблон
 		 */
-		$this->Viewer_Assign('aLang',$this->aLangMsg);
+		LS::Make(ModuleViewer::class)->Assign('aLang',$this->aLangMsg);
 	}
 	/**
 	 * Загружает из конфига текстовки для JS
@@ -109,7 +111,7 @@ class ModuleLang extends Module {
 		foreach ($this->aLangMsgJs as $sName) {
 			$aLangMsg[$sName]=$this->Get($sName,array(),false);
 		}
-		$this->Viewer_Assign('aLangJs',$aLangMsg);
+        LS::Make(ModuleViewer::class)->Assign('aLangJs',$aLangMsg);
 	}
 	/**
 	 * Добавляет текстовку к JS
@@ -125,7 +127,7 @@ class ModuleLang extends Module {
 	/**
 	 * Загружает текстовки из языковых файлов
 	 *
-	 * @param $sLangName	Язык для загрузки
+	 * @param string $sLangName	Язык для загрузки
 	 */
 	protected function LoadLangFiles($sLangName) {
 		$sLangFilePath = $this->sLangPath.'/'.$sLangName.'.php';
@@ -281,4 +283,3 @@ class ModuleLang extends Module {
 		$this->AssignToJs();
 	}
 }
-?>

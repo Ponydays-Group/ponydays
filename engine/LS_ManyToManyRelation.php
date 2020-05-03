@@ -46,7 +46,7 @@ class LS_ManyToManyRelation extends LsObject {
 	/**
 	 * Устанавливает список объектов
 	 *
-	 * @param $aCollection	Список объектов связи
+	 * @param array $aCollection	Список объектов связи
 	 */
 	public function __construct($aCollection) {
 		$this->_aCollection = $aCollection;

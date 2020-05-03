@@ -22,6 +22,7 @@
  *	$aUsers=$this->User_GetUserItemsByAgeAndSex(18,'male');
  * </pre>
  *
+ * @deprecated Будет заменено в дальнейшем
  * @package engine.orm
  * @since 1.0
  */
@@ -46,7 +47,7 @@ abstract class ModuleORM extends Module {
 	 *
 	 */
 	protected function _LoadMapperORM() {
-		$this->oMapperORM=new MapperORM($this->oEngine->Database_GetConnect());
+		$this->oMapperORM=new MapperORM($this->oEngine->make(ModuleDatabase::class)->GetConnect());
 	}
 	/**
 	 * Добавление сущности в БД
@@ -60,11 +61,13 @@ abstract class ModuleORM extends Module {
 	 * @return EntityORM|bool
 	 */
 	protected function _AddEntity($oEntity) {
+	    /** @var \ModuleCache $cache */
+	    $cache = LS::Make(ModuleCache::class);
 		$res=$this->oMapperORM->AddEntity($oEntity);
 		// сбрасываем кеш
 		if ($res===0 or $res) {
 			$sEntity=get_class($oEntity);
-			$this->Cache_Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG,array($sEntity.'_save'));
+			$cache->Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG,array($sEntity.'_save'));
 		}
 		if ($res===0) {
 			// у таблицы нет автоинремента
@@ -77,7 +80,7 @@ abstract class ModuleORM extends Module {
 			foreach ($oEntity->_getRelations() as $sRelName => $aRelation) {
 				if ($aRelation[0] == EntityORM::RELATION_TYPE_MANY_TO_MANY && $oEntity->$sRelName->isUpdated()) {
 					// Сброс кэша по связям
-					$this->Cache_Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG,array('m2m_'.$aRelation[2].$aRelation[4].$oEntity->_getPrimaryKeyValue()));
+                    $cache->Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG,array('m2m_'.$aRelation[2].$aRelation[4].$oEntity->_getPrimaryKeyValue()));
 					$this->_updateManyToManySet($aRelation, $oEntity->$sRelName->getCollection(), $oEntity->_getDataOne($oEntity->_getPrimaryKey()));
 					$oEntity->resetRelationsData($sRelName);
 				}
@@ -93,7 +96,9 @@ abstract class ModuleORM extends Module {
 	 * @return EntityORM|bool
 	 */
 	protected function _UpdateEntity($oEntity) {
-		$res=$this->oMapperORM->UpdateEntity($oEntity);
+        /** @var \ModuleCache $cache */
+        $cache = LS::Make(ModuleCache::class);
+        $res=$this->oMapperORM->UpdateEntity($oEntity);
 		if ($res===0 or $res) { // запись не изменилась, либо изменилась
 			// Обновление связей many_to_many
 			$aRelationsData = $oEntity->_getRelationsData();
@@ -101,14 +106,14 @@ abstract class ModuleORM extends Module {
 				if ($aRelation[0] == EntityORM::RELATION_TYPE_MANY_TO_MANY && $oEntity->$sRelName->isUpdated()) {
 					// Сброс кэша по связям
 
-					$this->Cache_Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG,array('m2m_'.$aRelation[2].$aRelation[4].$oEntity->_getPrimaryKeyValue()));
+					$cache->Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG,array('m2m_'.$aRelation[2].$aRelation[4].$oEntity->_getPrimaryKeyValue()));
 					$this->_updateManyToManySet($aRelation, $oEntity->$sRelName->getCollection(), $oEntity->_getDataOne($oEntity->_getPrimaryKey()));
 					$oEntity->resetRelationsData($sRelName);
 				}
 			}
 			// сбрасываем кеш
 			$sEntity=get_class($oEntity);
-			$this->Cache_Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG,array($sEntity.'_save'));
+			$cache->Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG,array($sEntity.'_save'));
 			return $oEntity;
 		}
 		return false;
@@ -133,11 +138,13 @@ abstract class ModuleORM extends Module {
 	 * @return EntityORM|bool
 	 */
 	protected function _DeleteEntity($oEntity) {
-		$res=$this->oMapperORM->DeleteEntity($oEntity);
+        /** @var \ModuleCache $cache */
+        $cache = LS::Make(ModuleCache::class);
+        $res=$this->oMapperORM->DeleteEntity($oEntity);
 		if ($res) {
 			// сбрасываем кеш
 			$sEntity=get_class($oEntity);
-			$this->Cache_Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG,array($sEntity.'_delete'));
+			$cache->Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG,array($sEntity.'_delete'));
 
 			// Обновление связей many_to_many
 			foreach ($oEntity->_getRelations() as $sRelName => $aRelation) {
@@ -379,9 +386,11 @@ abstract class ModuleORM extends Module {
 			if (isset($aFilter['#cache'][1])) $aCacheTags=$aFilter['#cache'][1];
 			if (isset($aFilter['#cache'][2])) $iCacheTime=$aFilter['#cache'][2];
 
-			if (false === ($aEntities = $this->Cache_Get($sCacheKey))) {
+            /** @var \ModuleCache $cache */
+            $cache = LS::Make(ModuleCache::class);
+            if (false === ($aEntities = $cache->Get($sCacheKey))) {
 				$aEntities=$this->oMapperORM->GetItemsByFilter($aFilter,$sEntityFull);
-				$this->Cache_Set($aEntities,$sCacheKey, $aCacheTags, $iCacheTime);
+				$cache->Set($aEntities,$sCacheKey, $aCacheTags, $iCacheTime);
 			}
 		}
 		/**
@@ -488,9 +497,11 @@ abstract class ModuleORM extends Module {
 			if (isset($aFilter['#cache'][1])) $aCacheTags=$aFilter['#cache'][1];
 			if (isset($aFilter['#cache'][2])) $iCacheTime=$aFilter['#cache'][2];
 
-			if (false === ($iCount = $this->Cache_Get($sCacheKey))) {
+            /** @var \ModuleCache $cache */
+            $cache = LS::Make(ModuleCache::class);
+            if (false === ($iCount = $cache->Get($sCacheKey))) {
 				$iCount=$this->oMapperORM->GetCountItemsByFilter($aFilter,$sEntityFull);
-				$this->Cache_Set($iCount,$sCacheKey, $aCacheTags, $iCacheTime);
+				$cache->Set($iCount,$sCacheKey, $aCacheTags, $iCacheTime);
 			}
 		}
 		return $iCount;
@@ -539,10 +550,12 @@ abstract class ModuleORM extends Module {
 			if (isset($aJoinData['#cache'][2])) $iCacheTime=$aJoinData['#cache'][2];
 
 			// Добавление тега для обработки MANY_TO_MANY
-			$aCacheTags[] = 'm2m_'.$aJoinData['#relation_key'].$aJoinData['#by_key'].$aJoinData['#by_value'];
-			if (false === ($aEntities = $this->Cache_Get($sCacheKey))) {
+            /** @var \ModuleCache $cache */
+            $cache = LS::Make(ModuleCache::class);
+            $aCacheTags[] = 'm2m_'.$aJoinData['#relation_key'].$aJoinData['#by_key'].$aJoinData['#by_value'];
+			if (false === ($aEntities = $cache->Get($sCacheKey))) {
 				$aEntities = $this->oMapperORM->GetItemsByJoinTable($aJoinData,$sEntityFull);
-				$this->Cache_Set($aEntities,$sCacheKey, $aCacheTags, $iCacheTime);
+				$cache->Set($aEntities,$sCacheKey, $aCacheTags, $iCacheTime);
 			}
 		}
 
@@ -583,10 +596,12 @@ abstract class ModuleORM extends Module {
 			if (isset($aJoinData['#cache'][1])) $aCacheTags=$aJoinData['#cache'][1];
 			if (isset($aJoinData['#cache'][2])) $iCacheTime=$aJoinData['#cache'][2];
 
-			$aCacheTags[] = 'm2m_'.$aJoinData['#relation_key'].$aJoinData['#by_key'].$aJoinData['#by_value'];
-			if (false === ($iCount = $this->Cache_Get($sCacheKey))) {
+            /** @var \ModuleCache $cache */
+            $cache = LS::Make(ModuleCache::class);
+            $aCacheTags[] = 'm2m_'.$aJoinData['#relation_key'].$aJoinData['#by_key'].$aJoinData['#by_value'];
+			if (false === ($iCount = $cache->Get($sCacheKey))) {
 				$iCount = $this->oMapperORM->GetCountItemsByJoinTable($aJoinData,$sEntityFull);
-				$this->Cache_Set($iCount,$sCacheKey, $aCacheTags, $iCacheTime);
+				$cache->Set($iCount,$sCacheKey, $aCacheTags, $iCacheTime);
 			}
 		}
 		return $iCount;

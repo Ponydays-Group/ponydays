@@ -79,14 +79,16 @@ class ModuleValidate_EntityValidatorEmail extends ModuleValidate_EntityValidator
 	 * @return bool|string
 	 */
 	public function validate($sValue) {
+	    /** @var \ModuleLang $lang */
+	    $lang = LS::Make(ModuleLang::class);
 		if (is_array($sValue)) {
-			return $this->getMessage($this->Lang_Get('validate_email_not_valid',null,false),'msg');
+			return $this->getMessage($lang->Get('validate_email_not_valid',null,false),'msg');
 		}
 		if($this->allowEmpty && $this->isEmpty($sValue)) {
 			return true;
 		}
 		if(!$this->validateValue($sValue)) {
-			return $this->getMessage($this->Lang_Get('validate_email_not_valid',null,false),'msg');
+			return $this->getMessage($lang->Get('validate_email_not_valid',null,false),'msg');
 		}
 		return true;
 	}
@@ -111,4 +113,3 @@ class ModuleValidate_EntityValidatorEmail extends ModuleValidate_EntityValidator
 		return $bValid;
 	}
 }
-?>

@@ -32,6 +32,7 @@
  * $aUsers=$this->User_GetUserItemsByFilter(array('#where'=>array('age = ?d and sex = ?' => array(18,'male'))));
  * </pre>
  *
+ * @deprecated Будет заменено в дальнейшем
  * @package engine.orm
  * @since 1.0
  */
@@ -286,64 +287,83 @@ abstract class EntityORM extends Entity {
 		}
 		return $this->__call(__FUNCTION__,array());
 	}
-	/**
-	 * Для сущности со связью RELATION_TYPE_TREE устанавливает потомков
-	 *
-	 * @param array $aChildren	Список потомков
-	 */
+
+    /**
+     * Для сущности со связью RELATION_TYPE_TREE устанавливает потомков
+     *
+     * @param array $aChildren Список потомков
+     *
+     * @return mixed
+     */
 	public function setChildren($aChildren=array()) {
 		if(in_array(self::RELATION_TYPE_TREE,$this->aRelations)) {
 			$this->aRelationsData['children'] = $aChildren;
+			return null;
 		} else {
 			$aArgs = func_get_args();
 			return $this->__call(__FUNCTION__,$aArgs);
 		}
 	}
-	/**
-	 * Для сущности со связью RELATION_TYPE_TREE устанавливает потомков
-	 *
-	 * @param array $aDescendants	Список потомков
-	 */
+
+    /**
+     * Для сущности со связью RELATION_TYPE_TREE устанавливает потомков
+     *
+     * @param array $aDescendants Список потомков
+     *
+     * @return mixed
+     */
 	public function setDescendants($aDescendants=array()) {
 		if(in_array(self::RELATION_TYPE_TREE,$this->aRelations)) {
 			$this->aRelationsData['descendants'] = $aDescendants;
+			return null;
 		} else {
 			$aArgs = func_get_args();
 			return $this->__call(__FUNCTION__,$aArgs);
 		}
 	}
-	/**
-	 * Для сущности со связью RELATION_TYPE_TREE устанавливает предка
-	 *
-	 * @param Entity $oParent	Родитель
-	 */
+
+    /**
+     * Для сущности со связью RELATION_TYPE_TREE устанавливает предка
+     *
+     * @param Entity $oParent Родитель
+     *
+     * @return mixed
+     */
 	public function setParent($oParent=null) {
 		if(in_array(self::RELATION_TYPE_TREE,$this->aRelations)) {
 			$this->aRelationsData['parent'] = $oParent;
+			return null;
 		} else {
 			$aArgs = func_get_args();
 			return $this->__call(__FUNCTION__,$aArgs);
 		}
 	}
-	/**
-	 * Для сущности со связью RELATION_TYPE_TREE устанавливает предков
-	 *
-	 * @param array $oParent	Родитель
-	 */
+
+    /**
+     * Для сущности со связью RELATION_TYPE_TREE устанавливает предков
+     *
+     * @param array $oParent Родитель
+     *
+     * @return mixed
+     */
 	public function setAncestors($oParent=null) {
 		if(in_array(self::RELATION_TYPE_TREE,$this->aRelations)) {
 			$this->aRelationsData['ancestors'] = $oParent;
+			return null;
 		} else {
 			$aArgs = func_get_args();
 			return $this->__call(__FUNCTION__,$aArgs);
 		}
 	}
-	/**
-	 * Проксирует вызов методов в модуль сущности
-	 *
-	 * @param string $sName	Название метода
-	 * @return mixed
-	 */
+
+    /**
+     * Проксирует вызов методов в модуль сущности
+     *
+     * @param string $sName Название метода
+     *
+     * @return mixed
+     * @throws \Exception
+     */
 	protected function _Method($sName) {
 		$sModuleName=Engine::GetModuleName($this);
 		$sEntityName=Engine::GetEntityName($this);

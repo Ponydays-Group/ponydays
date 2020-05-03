@@ -1631,7 +1631,7 @@ class ActionAjax extends Action
 			$this->Nower_PostNotificationWithComment($notificationCreated, $oComment);
 		}
 
-		if ($this->oUserCurrent->getId() != $lastdeleteUser) {
+		if ($lastdeleteUser && $this->oUserCurrent->getId() != $lastdeleteUser) {
 			$notificationLink = $this->Topic_GetTopicById($oComment->getTargetId())->getUrl()."#comment".$oComment->getId();
 			$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> восстановил удаленный вами <a href='".$notificationLink."'>комментарий</a>";
 			$notificationText = "";

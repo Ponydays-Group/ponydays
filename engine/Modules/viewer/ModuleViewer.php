@@ -114,7 +114,7 @@ class ModuleViewer extends Module {
 	 *
 	 */
 	public function Init($bLocal=false) {
-		$this->Hook_Run('viewer_init_start',compact('bLocal'));
+		LS::Make(ModuleHook::class)->Run('viewer_init_start',compact('bLocal'));
 		/**
 		 * Load template config
 		 */
@@ -164,7 +164,7 @@ class ModuleViewer extends Module {
 		$oViewerLocal=new $sClass(Engine::getInstance());
 		$oViewerLocal->Init(true);
 		$oViewerLocal->VarAssign();
-		$oViewerLocal->Assign('aLang',$this->Lang_GetLangMsg());
+		$oViewerLocal->Assign('aLang',LS::Make(ModuleLang::class)->GetLangMsg());
 		return $oViewerLocal;
 	}
 	/**
@@ -219,7 +219,7 @@ class ModuleViewer extends Module {
 		$this->Assign("sHtmlKeywords",htmlspecialchars($this->sHtmlKeywords));
 		$this->Assign("sHtmlDescription",htmlspecialchars($this->sHtmlDescription));
 		$this->Assign("aHtmlRssAlternate",$this->aHtmlRssAlternate);
-		$this->Assign("sHtmlCanonical",$this->Tools_Urlspecialchars($this->sHtmlCanonical));
+		$this->Assign("sHtmlCanonical",LS::Make(ModuleTools::class)->Urlspecialchars($this->sHtmlCanonical));
 	}
 	/**
 	 * Загружаем содержимое menu-контейнеров
@@ -278,8 +278,10 @@ class ModuleViewer extends Module {
 			$bStateError = false;
 			$sMsgTitle = '';
 			$sMsg = '';
-			$aMsgError = $this->Message_GetError();
-			$aMsgNotice = $this->Message_GetNotice();
+			/** @var \ModuleMessage $message */
+			$message = LS::Make(ModuleMessage::class);
+			$aMsgError = $message->GetError();
+			$aMsgNotice = $message->GetNotice();
 			if (count($aMsgError) > 0) {
 				$bStateError = true;
 				$sMsgTitle = $aMsgError[0]['title'];
@@ -332,7 +334,7 @@ class ModuleViewer extends Module {
 	public function SetResponseAjax($sResponseAjax='json',$bResponseSpecificHeader=true, $bValidate=true) {
 		// Для возможности кросс-доменных запросов
 		if ($sResponseAjax!='jsonp' && $bValidate) {
-			$this->Security_ValidateSendForm();
+			LS::Make(ModuleSecurity::class)->ValidateSendForm();
 		}
 		$this->sResponseAjax=$sResponseAjax;
 		$this->bResponseSpecificHeader=$bResponseSpecificHeader;
@@ -763,7 +765,7 @@ class ModuleViewer extends Module {
 			'iCurrentPage' => $iCurrentPage,
 			'iNextPage' => $iNextPage,
 			'iPrevPage' => $iPrevPage,
-			'sBaseUrl' => rtrim($this->Tools_Urlspecialchars($sBaseUrl),'/'),
+			'sBaseUrl' => rtrim(LS::Make(ModuleTools::class)->Urlspecialchars($sBaseUrl),'/'),
 			'sGetParams' => $sGetParams,
 		);
 		/**

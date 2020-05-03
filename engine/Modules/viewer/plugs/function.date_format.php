@@ -39,7 +39,9 @@
 function smarty_function_date_format($aParams,&$oSmarty) {
 	require_once('./engine/Engine.php');
 	$oEngine = Engine::getInstance();
-	$oUserCurrent=$oEngine->User_GetUserCurrent();
+	$oUserCurrent=$oEngine->make(ModuleUser::class)->GetUserCurrent();
+	/** @var \ModuleLang $lang */
+	$lang = $oEngine->make(ModuleLang::class);
 
 	$sFormatDefault = "d F Y, H:i";  //  формат даты по умолчанию
 	$iDeclinationDefault  = 1;       //  индекс склонения по умолчанию
@@ -61,11 +63,11 @@ function smarty_function_date_format($aParams,&$oSmarty) {
 	/**
 	 * Если указан другой язык, подгружаем его
 	 */
-	if(isset($aParams['lang']) and $aParams['lang']!=$oEngine->Lang_GetLang()) {
-		$oEngine->Lang_SetLang($aParams['lang']);
+	if(isset($aParams['lang']) and $aParams['lang']!=$lang->GetLang()) {
+        $lang->SetLang($aParams['lang']);
 	}
 
-	$aMonth = $oEngine->Lang_Get('month_array');
+	$aMonth = $lang->Get('month_array');
 	$iDate= (preg_match("/^\d+$/",$sDate)) ?  $sDate : strtotime($sDate);
 	$iDate+=$iDiff;
 
@@ -73,7 +75,7 @@ function smarty_function_date_format($aParams,&$oSmarty) {
 	 * Если указана необходимость выполнять проверку на NOW
 	 */
 	if(isset($aParams['now'])) {
-		if($iDate+$aParams['now']>$iNow) return $oEngine->Lang_Get('date_now');
+		if($iDate+$aParams['now']>$iNow) return $lang->Get('date_now');
 	}
 
 	/**
@@ -87,10 +89,10 @@ function smarty_function_date_format($aParams,&$oSmarty) {
 			return ($iTimeDelta!=0)
 				? smarty_modifier_declension(
 					$iTimeDelta,
-					$oEngine->Lang_Get('date_minutes_back',array('minutes'=>$iTimeDelta)),
-					$oEngine->Lang_GetLang()
+                    $lang->Get('date_minutes_back',array('minutes'=>$iTimeDelta)),
+                    $lang->GetLang()
 				)
-				: $oEngine->Lang_Get('date_minutes_back_less');
+				: $lang->Get('date_minutes_back_less');
 		}
 	}
 
@@ -105,10 +107,10 @@ function smarty_function_date_format($aParams,&$oSmarty) {
 			return ($iTimeDelta!=0)
 				? smarty_modifier_declension(
 					$iTimeDelta,
-					$oEngine->Lang_Get('date_hours_back',array('hours'=>$iTimeDelta)),
-					$oEngine->Lang_GetLang()
+                    $lang->Get('date_hours_back',array('hours'=>$iTimeDelta)),
+                    $lang->GetLang()
 				)
-				: $oEngine->Lang_Get('date_hours_back_less');
+				: $lang->Get('date_hours_back_less');
 		}
 	}
 
@@ -121,19 +123,19 @@ function smarty_function_date_format($aParams,&$oSmarty) {
 			 * Если дата совпадает с сегодняшней
 			 */
 			case date('Y-m-d'):
-				$sDay=$oEngine->Lang_Get('date_today');
+				$sDay=$lang->Get('date_today');
 				break;
 			/**
 			 * Если дата совпадает со вчерашней
 			 */
 			case date('Y-m-d', mktime(0, 0, 0, date("m")  , date("d")-1, date("Y")) ):
-				$sDay=$oEngine->Lang_Get('date_yesterday');
+				$sDay=$lang->Get('date_yesterday');
 				break;
 			/**
 			 * Если дата совпадает с завтрашней
 			 */
 			case date('Y-m-d', mktime(0, 0, 0, date("m")  , date("d")+1, date("Y")) ):
-				$sDay=$oEngine->Lang_Get('date_tomorrow');
+				$sDay=$lang->Get('date_tomorrow');
 				break;
 
 			default:
@@ -167,4 +169,3 @@ function smarty_function_date_format($aParams,&$oSmarty) {
 
 	return date($sFormat,$iDate);
 }
-?>

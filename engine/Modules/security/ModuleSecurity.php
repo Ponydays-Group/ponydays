@@ -78,7 +78,7 @@ class ModuleSecurity extends Module {
 	 */
 	public function SetSessionKey() {
 		$sCode = $this->GenerateSessionKey();
-		$this->Viewer_Assign('LIVESTREET_SECURITY_KEY',$sCode);
+		LS::Make(ModuleViewer::class)->Assign('LIVESTREET_SECURITY_KEY',$sCode);
 
 		return $sCode;
 	}
@@ -88,7 +88,7 @@ class ModuleSecurity extends Module {
 	 * @return string
 	 */
 	public function GenerateSessionKey() {
-		return md5($this->Session_GetId().Config::Get('module.security.hash'));
+		return md5(LS::Make(ModuleSession::class)->GetId().Config::Get('module.security.hash'));
 	}
 	/**
 	 * Завершение модуля
@@ -97,4 +97,3 @@ class ModuleSecurity extends Module {
 		$this->SetSessionKey();
 	}
 }
-?>

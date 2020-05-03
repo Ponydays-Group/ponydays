@@ -121,7 +121,7 @@ class ModuleImage extends Module {
 	/**
 	 * Возвращает объект изображения
 	 *
-	 * @param $sFile	Путь до изображения
+	 * @param string $sFile	Путь до изображения
 	 * @return LiveImage
 	 */
 	public function CreateImageObject($sFile) {
@@ -455,4 +455,3 @@ class ModuleImage extends Module {
 		return $sText;
 	}
 }
-?>

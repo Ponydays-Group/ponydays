@@ -98,22 +98,28 @@ abstract class Action extends LsObject {
 		$this->aParams=Router::GetParams();
 	}
 
-	/**
-	 * Добавляет евент в экшен
-	 * По сути является оберткой для AddEventPreg(), оставлен для простоты и совместимости с прошлыми версиями ядра
-	 * @see AddEventPreg
-	 *
-	 * @param string $sEventName Название евента
-	 * @param string $sEventFunction Какой метод ему соответствует
-	 */
+    /**
+     * Добавляет евент в экшен
+     * По сути является оберткой для AddEventPreg(), оставлен для простоты и
+     * совместимости с прошлыми версиями ядра
+     *
+     * @see AddEventPreg
+     *
+     * @param string $sEventName     Название евента
+     * @param string $sEventFunction Какой метод ему соответствует
+     *
+     * @throws \Exception
+     */
 	protected function AddEvent($sEventName,$sEventFunction) {
 		$this->AddEventPreg("/^{$sEventName}$/i",$sEventFunction);
 	}
 
-	/**
-	 * Добавляет евент в экшен, используя регулярное выражение для евента и параметров
-	 *
-	 */
+    /**
+     * Добавляет евент в экшен, используя регулярное выражение для евента и
+     * параметров
+     *
+     * @throws \Exception
+     */
 	protected function AddEventPreg() {
 		$iCountArgs=func_num_args();
 		if ($iCountArgs<2) {
@@ -166,9 +172,12 @@ abstract class Action extends LsObject {
 					}
 				}
 				$this->sCurrentEventName=$aEvent['name'];
-				$this->Hook_Run("action_event_".strtolower($this->sCurrentAction)."_before",array('event'=>$this->sCurrentEvent,'params'=>$this->GetParams()));
+				/** @var \ModuleHook $hook */
+				$hook = LS::Make(ModuleHook::class);
+				$pars = array('event'=>$this->sCurrentEvent,'params'=>$this->GetParams());
+				$hook->Run("action_event_".strtolower($this->sCurrentAction)."_before",$pars);
 				$result=call_user_func_array(array($this,$aEvent['method']),array());
-				$this->Hook_Run("action_event_".strtolower($this->sCurrentAction)."_after",array('event'=>$this->sCurrentEvent,'params'=>$this->GetParams()));
+				$hook->Run("action_event_".strtolower($this->sCurrentAction)."_after",$pars);
 				return $result;
 			}
 		}
@@ -343,14 +352,18 @@ abstract class Action extends LsObject {
 
 	}
 
-	/**
-	 * Ставим хук на вызов неизвестного метода и считаем что хотели вызвать метод какого либо модуля
-	 * @see Engine::_CallModule
-	 *
-	 * @param string $sName Имя метода
-	 * @param array $aArgs Аргументы
-	 * @return mixed
-	 */
+    /**
+     * Ставим хук на вызов неизвестного метода и считаем что хотели вызвать
+     * метод какого либо модуля
+     *
+     * @see Engine::_CallModule
+     *
+     * @param string $sName Имя метода
+     * @param array  $aArgs Аргументы
+     *
+     * @return mixed
+     * @throws \Exception
+     */
 	public function __call($sName,$aArgs) {
 		return $this->oEngine->_CallModule($sName,$aArgs);
 	}
@@ -369,4 +382,3 @@ abstract class Action extends LsObject {
 	abstract protected function RegisterEvent();
 
 }
-?>

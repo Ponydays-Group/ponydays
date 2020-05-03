@@ -118,6 +118,7 @@ class ModuleHook extends Module {
 			return false;
 		}
 		$this->aHooks[$sName][]=array('type'=>$sType,'callback'=>$sCallBack,'params'=>$aParams,'priority'=>(int)$iPriority);
+		return true;
 	}
 	/**
 	 * Добавляет обработчик хука с типом "module"
@@ -209,7 +210,7 @@ class ModuleHook extends Module {
 	/**
 	 * Запускает обаботку хуков
 	 *
-	 * @param $sName	Имя хука
+	 * @param string $sName	Имя хука
 	 * @param array $aVars	Список параметров хука, передаются в обработчик
 	 * @return array
 	 */
@@ -298,4 +299,3 @@ class ModuleHook extends Module {
 		return $result;
 	}
 }
-?>

@@ -56,14 +56,16 @@ class ModuleMessage extends Module {
 	 *
 	 */
 	public function Init() {
+	    /** @var \ModuleSession $session */
+	    $session = LS::Make(ModuleSession::class);
 		/**
 		 * Добавляем сообщения и ошибки, которые содержались в сессии
 		 */
-		$aNoticeSession = $this->Session_Get('message_notice_session');
+		$aNoticeSession = $session->Get('message_notice_session');
 		if(is_array($aNoticeSession) and count($aNoticeSession)) {
 			$this->aMsgNotice = $aNoticeSession;
 		}
-		$aErrorSession = $this->Session_Get('message_error_session');
+		$aErrorSession = $session->Get('message_error_session');
 		if(is_array($aErrorSession) and count($aErrorSession)) {
 			$this->aMsgError = $aErrorSession;
 		}
@@ -76,11 +78,15 @@ class ModuleMessage extends Module {
 		/**
 		 * Добавляем в сессию те сообщения, которые были отмечены для сессионного использования
 		 */
-		$this->Session_Set('message_notice_session', $this->GetNoticeSession());
-		$this->Session_Set('message_error_session', $this->GetErrorSession());
+        /** @var \ModuleSession $session */
+        $session = LS::Make(ModuleSession::class);
+        $session->Set('message_notice_session', $this->GetNoticeSession());
+		$session->Set('message_error_session', $this->GetErrorSession());
 
-		$this->Viewer_Assign('aMsgError',$this->GetError());
-		$this->Viewer_Assign('aMsgNotice',$this->GetNotice());
+		/** @var \ModuleViewer $viewer */
+		$viewer = LS::Make(ModuleViewer::class);
+		$viewer->Assign('aMsgError',$this->GetError());
+		$viewer->Assign('aMsgNotice',$this->GetNotice());
 	}
 	/**
 	 * Добавляет новое сообщение об ошибке
@@ -183,4 +189,3 @@ class ModuleMessage extends Module {
 		return $this->aMsgErrorSession;
 	}
 }
-?>

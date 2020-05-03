@@ -52,8 +52,10 @@ class ModuleValidate_EntityValidatorDate extends ModuleValidate_EntityValidator 
 	 * @return bool|string
 	 */
 	public function validate($sValue) {
+	    /** @var \ModuleLang $lang */
+	    $lang = LS::Make(ModuleLang::class);
 		if (is_array($sValue)) {
-			return $this->getMessage($this->Lang_Get('validate_date_format_invalid',null,false),'msg');
+			return $this->getMessage($lang->Get('validate_date_format_invalid',null,false),'msg');
 		}
 		if($this->allowEmpty && $this->isEmpty($sValue)) {
 			return true;
@@ -72,9 +74,8 @@ class ModuleValidate_EntityValidatorDate extends ModuleValidate_EntityValidator 
 		}
 
 		if(!$bValid) {
-			return $this->getMessage($this->Lang_Get('validate_date_format_invalid',null,false),'msg');
+			return $this->getMessage($lang->Get('validate_date_format_invalid',null,false),'msg');
 		}
 		return true;
 	}
 }
-?>

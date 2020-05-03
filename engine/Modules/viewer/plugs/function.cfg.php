@@ -38,4 +38,3 @@ function smarty_function_cfg($aParams,&$oSmarty) {
 	 */
 	return Config::Get($aParams['name'],$aParams['instance']);
 }
-?>

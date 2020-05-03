@@ -63,7 +63,7 @@ class Cron extends LsObject {
 		/**
 		 * Инициализируем лог и делает пометку о старте процесса
 		 */
-		$this->oEngine->Logger_SetFileName(Config::Get('sys.logs.cron_file'));
+		$this->oEngine->make(ModuleLogger::class)->SetFileName(Config::Get('sys.logs.cron_file'));
 		$this->Log('Cron process started');
 	}
 	/**
@@ -74,7 +74,7 @@ class Cron extends LsObject {
 	public function Log($sMsg) {
 		if (Config::Get('sys.logs.cron')) {
 			$sMsg=$this->sProcessName.': '.$sMsg;
-			$this->oEngine->Logger_Notice($sMsg);
+			$this->oEngine->make(ModuleLogger::class)->Notice($sMsg);
 		}
 	}
 	/**
@@ -93,12 +93,15 @@ class Cron extends LsObject {
 	public function unsetLock() {
 		return ($this->oLockFile && @flock($this->oLockFile, LOCK_UN));
 	}
-	/**
-	 * Основной метод крон-процесса.
-	 * Реализует логику работы крон процесса с последующей передачей управления на пользовательскую функцию
-	 *
-	 * @return string
-	 */
+
+    /**
+     * Основной метод крон-процесса.
+     * Реализует логику работы крон процесса с последующей передачей управления
+     * на пользовательскую функцию
+     *
+     * @return string
+     * @throws \Exception
+     */
 	public function Exec() {
 		/**
 		 * Если выполнение процесса заблокирован, завершаемся
@@ -134,23 +137,30 @@ class Cron extends LsObject {
 	public function __destruct() {
 		$this->Shutdown();
 	}
-	/**
-	 * Клиентская функция будет переопределятся в наследниках класса
-	 * для обеспечивания выполнения основного функционала.
-	 */
+
+    /**
+     * Клиентская функция будет переопределятся в наследниках класса
+     * для обеспечивания выполнения основного функционала.
+     *
+     * @throws \Exception
+     */
 	public function Client(){
 		throw new Exception('Call undefined client function');
 	}
-	/**
-	 * Ставим хук на вызов неизвестного метода и считаем что хотели вызвать метод какого либо модуля
-	 * @see Engine::_CallModule
-	 *
-	 * @param string $sName Имя метода
-	 * @param array $aArgs Аргументы
-	 * @return mixed
-	 */
+
+    /**
+     * Ставим хук на вызов неизвестного метода и считаем что хотели вызвать
+     * метод какого либо модуля
+     *
+     * @see Engine::_CallModule
+     *
+     * @param string $sName Имя метода
+     * @param array  $aArgs Аргументы
+     *
+     * @return mixed
+     * @throws \Exception
+     */
 	public function __call($sName,$aArgs) {
 		return $this->oEngine->_CallModule($sName,$aArgs);
 	}
 }
-?>

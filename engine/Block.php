@@ -59,14 +59,19 @@ abstract class Block extends LsObject {
 			return $def;
 		}
 	}
-	/**
-	 * Ставим хук на вызов неизвестного метода и считаем что хотели вызвать метод какого либо модуля
-	 * @see Engine::_CallModule
-	 *
-	 * @param string $sName Имя метода
-	 * @param array $aArgs Аргументы
-	 * @return mixed
-	 */
+
+    /**
+     * Ставим хук на вызов неизвестного метода и считаем что хотели вызвать
+     * метод какого либо модуля
+     *
+     * @see Engine::_CallModule
+     *
+     * @param string $sName Имя метода
+     * @param array  $aArgs Аргументы
+     *
+     * @return mixed
+     * @throws \Exception
+     */
 	public function __call($sName,$aArgs) {
 		return $this->oEngine->_CallModule($sName,$aArgs);
 	}
@@ -78,4 +83,3 @@ abstract class Block extends LsObject {
 	 */
 	abstract public function Exec();
 }
-?>

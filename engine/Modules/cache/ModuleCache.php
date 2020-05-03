@@ -374,4 +374,3 @@ class ModuleCache extends Module {
 		return false;
 	}
 }
-?>

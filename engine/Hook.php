@@ -36,14 +36,14 @@ abstract class Hook extends LsObject {
 		if (is_null($sClassNameHook)) {
 			$sClassNameHook=get_class($this);
 		}
-		$this->Hook_AddExecHook($sName,$sCallBack,$iPriority,array('sClassName'=>$sClassNameHook));
+		LS::Make(ModuleHook::class)->AddExecHook($sName,$sCallBack,$iPriority,array('sClassName'=>$sClassNameHook));
 	}
 	/**
 	 * Добавляет делегирующий обработчик на хук. Актуален для хуков на выполнение методов модулей.
 	 * После него другие обработчики не выполняются, а результат метода моуля заменяется на рузультат обработчика.
 	 *
-	 * @param $sName	Название хука на который вешается обработчик
-	 * @param $sCallBack	Название метода обработчика
+	 * @param string $sName	Название хука на который вешается обработчик
+	 * @param string $sCallBack	Название метода обработчика
 	 * @param null $sClassNameHook	Название класса обработчика, по умолчанию это текущий класс хука
 	 * @param int $iPriority	Приоритет обработчика хука
 	 */
@@ -51,7 +51,7 @@ abstract class Hook extends LsObject {
 		if (is_null($sClassNameHook)) {
 			$sClassNameHook=get_class($this);
 		}
-		$this->Hook_AddDelegateHook($sName,$sCallBack,$iPriority,array('sClassName'=>$sClassNameHook));
+        LS::Make(ModuleHook::class)->AddDelegateHook($sName,$sCallBack,$iPriority,array('sClassName'=>$sClassNameHook));
 	}
 	/**
 	 * Обязательный метод в хуке - в нем происходит регистрация обработчиков хуков
@@ -71,4 +71,3 @@ abstract class Hook extends LsObject {
 		return Engine::getInstance()->_CallModule($sName,$aArgs);
 	}
 }
-?>

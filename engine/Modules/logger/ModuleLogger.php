@@ -315,4 +315,3 @@ class ModuleLogger extends Module {
 	    var_dump($a);
     }
 }
-?>

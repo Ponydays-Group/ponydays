@@ -90,42 +90,43 @@ class ModuleValidate_EntityValidatorCompare extends ModuleValidate_EntityValidat
 			$sCompareLabel=is_null($this->compareLabel) ? $sCompareField : $this->compareLabel;
 		}
 
+		/** @var \ModuleLang $lang */
+		$lang = LS::Make(ModuleLang::class);
 		switch($this->operator) {
 			case '=':
 			case '==':
 				if(($this->strict && $sValue!==$sCompareValue) || (!$this->strict && $sValue!=$sCompareValue)) {
-					return $this->getMessage($this->Lang_Get('validate_compare_must_repeated',null,false),'msg',array('compare_field'=>$sCompareLabel));
+					return $this->getMessage($lang->Get('validate_compare_must_repeated',null,false),'msg',array('compare_field'=>$sCompareLabel));
 				}
 				break;
 			case '!=':
 				if(($this->strict && $sValue===$sCompareValue) || (!$this->strict && $sValue==$sCompareValue)) {
-					return $this->getMessage($this->Lang_Get('validate_compare_must_not_equal',null,false),'msg',array('compare_field'=>$sCompareLabel,'compare_value'=>htmlspecialchars($sCompareValue)));
+					return $this->getMessage($lang->Get('validate_compare_must_not_equal',null,false),'msg',array('compare_field'=>$sCompareLabel,'compare_value'=>htmlspecialchars($sCompareValue)));
 				}
 				break;
 			case '>':
 				if($sValue<=$sCompareValue) {
-					return $this->getMessage($this->Lang_Get('validate_compare_must_greater',null,false),'msg',array('compare_field'=>$sCompareLabel,'compare_value'=>htmlspecialchars($sCompareValue)));
+					return $this->getMessage($lang->Get('validate_compare_must_greater',null,false),'msg',array('compare_field'=>$sCompareLabel,'compare_value'=>htmlspecialchars($sCompareValue)));
 				}
 				break;
 			case '>=':
 				if($sValue<$sCompareValue) {
-					return $this->getMessage($this->Lang_Get('validate_compare_must_greater_equal',null,false),'msg',array('compare_field'=>$sCompareLabel,'compare_value'=>htmlspecialchars($sCompareValue)));
+					return $this->getMessage($lang->Get('validate_compare_must_greater_equal',null,false),'msg',array('compare_field'=>$sCompareLabel,'compare_value'=>htmlspecialchars($sCompareValue)));
 				}
 				break;
 			case '<':
 				if($sValue>=$sCompareValue) {
-					return $this->getMessage($this->Lang_Get('validate_compare_must_less',null,false),'msg',array('compare_field'=>$sCompareLabel,'compare_value'=>htmlspecialchars($sCompareValue)));
+					return $this->getMessage($lang->Get('validate_compare_must_less',null,false),'msg',array('compare_field'=>$sCompareLabel,'compare_value'=>htmlspecialchars($sCompareValue)));
 				}
 				break;
 			case '<=':
 				if($sValue>$sCompareValue) {
-					return $this->getMessage($this->Lang_Get('validate_compare_must_less_equal',null,false),'msg',array('compare_field'=>$sCompareLabel,'compare_value'=>htmlspecialchars($sCompareValue)));
+					return $this->getMessage($lang->Get('validate_compare_must_less_equal',null,false),'msg',array('compare_field'=>$sCompareLabel,'compare_value'=>htmlspecialchars($sCompareValue)));
 				}
 				break;
 			default:
-				return $this->getMessage($this->Lang_Get('validate_compare_invalid_operator',null,false),'msg',array('operator'=>$this->operator));
+				return $this->getMessage($lang->Get('validate_compare_invalid_operator',null,false),'msg',array('operator'=>$this->operator));
 		}
 		return true;
 	}
 }
-?>

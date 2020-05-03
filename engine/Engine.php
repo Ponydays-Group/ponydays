@@ -240,7 +240,9 @@ class Engine extends LsObject {
 		/**
 		 * Запускаем хуки для события завершения инициализации Engine
 		 */
-		$this->Hook_Run('engine_init_complete');
+		/** @var \ModuleHook $hook */
+		$hook = $this->make(ModuleHook::class);
+		$hook->Run('engine_init_complete');
 	}
 	/**
 	 * Завершение работы движка
@@ -274,24 +276,10 @@ class Engine extends LsObject {
 	 * Инициализирует модуль
 	 *
 	 * @param Module $oModule	Объект модуля
-	 * @param bool $bHookParent	Вызывает хук на родительском модуле, от которого наследуется текущий
 	 */
-	protected function InitModule($oModule, $bHookParent = true){
-		/*$sClassName = get_class($oModule);
-		$bRunHooks = false;*/
-
-		/*if($bRunHooks || $sClassName == 'ModuleHook'){
-			$sHookPrefix = 'module_';
-			$sHookPrefix .= self::GetModuleName($sClassName).'_init_';
-		}*/
-		/*if($bRunHooks){
-			$this->Hook_Run($sHookPrefix.'before');
-		}*/
+	protected function InitModule($oModule){
 		$oModule->Init();
 		$oModule->SetInit();
-		/*if($bRunHooks || $sClassName == 'ModuleHook') {
-			$this->Hook_Run($sHookPrefix.'after');
-		}*/
 	}
 
 	/**
@@ -385,6 +373,7 @@ class Engine extends LsObject {
 				if (preg_match("/Hook([^_]+)\.php$/i",basename($sFile),$aMatch)) {
 					//require_once($sFile);
 					$sClassName='Hook'.$aMatch[1];
+					/** @var \Hook $oHook */
 					$oHook=new $sClassName;
 					$oHook->RegisterHook();
 				}
@@ -399,7 +388,7 @@ class Engine extends LsObject {
 	 * @return bool
 	 */
 	public function isFileExists($sFile,$iTime=3600) {
-		// пока так
+		//FIXME: пока так
 		return file_exists($sFile);
 
 		if(
@@ -409,9 +398,12 @@ class Engine extends LsObject {
 		){
 			return file_exists($sFile);
 		}
-		if (false === ($data = $this->Cache_Get("file_exists_{$sFile}"))) {
+
+		/** @var \ModuleCache $cache */
+		$cache = $this->make(ModuleCache::class);
+		if (false === ($data = $cache->Get("file_exists_{$sFile}"))) {
 			$data=file_exists($sFile);
-			$this->Cache_Set((int)$data, "file_exists_{$sFile}", array(), $iTime);
+			$cache->Set((int)$data, "file_exists_{$sFile}", array(), $iTime);
 		}
 		return $data;
 	}
@@ -422,14 +414,10 @@ class Engine extends LsObject {
 	 * Например <pre>Module_Method</pre>
 	 * @param array $aArgs	Список аргументов
 	 * @return mixed
+     * @throws \Exception
 	 */
 	public function _CallModule($sName,$aArgs) {
 		list($oModule,$sModuleName,$sMethod)=$this->GetModule($sName);
-
-		if (!method_exists($oModule,$sMethod)) {
-			// comment for ORM testing
-			//throw new Exception("The module has no required method: ".$sModuleName.'->'.$sMethod.'()');
-		}
 		/**
 		 * Замеряем время выполнения метода
 		 */
@@ -455,7 +443,13 @@ class Engine extends LsObject {
 		}
 
 		if (!in_array($sModuleName,array('plugin','hook'))) {
-			$this->Hook_Run('module_'.$sModuleName.'_'.strtolower($sMethod).'_after',array('result'=>&$result,'params'=>$aArgs));
+		    /** @var \ModuleHook $hook */
+		    $hook = $this->make(ModuleHook::class);
+		    $pars = array('result' => &$result, 'params' => $aArgs);
+            $hook->Run(
+                'module_'.$sModuleName.'_'.strtolower($sMethod).'_after',
+                $pars
+            );
 		}
 
 		$oProfiler->Stop($iTimeId);
@@ -468,6 +462,7 @@ class Engine extends LsObject {
 	 * @param  string $sName	Имя метода модуля в полном виде
 	 * Например <pre>Module_Method</pre>
 	 * @return array
+     * @throws \Exception
 	 */
 	public function GetModule($sName) {
 		/**
@@ -509,12 +504,15 @@ class Engine extends LsObject {
 		return array($oModule,$sModuleName,$sMethod);
 	}
 
-	/**
-	 * Возвращает объект модуля
-	 * @deprecated Не рекомендуется для использования в новом коде
-	 * @param string $sName Имя модуля
-	 */
-	public function GetModuleObject($sName) {
+    /**
+     * Возвращает объект модуля
+     *
+     * @deprecated Не рекомендуется для использования в новом коде
+     * @param string $sName Имя модуля
+     * @return \Module
+     * @throws \Exception
+     */
+	public function GetModuleObject($sName): Module {
 		if(substr_count($sName,'_')<1) {
 			$sName.='_x';
 		}
@@ -528,7 +526,15 @@ class Engine extends LsObject {
 	 * @return array
 	 */
 	public function getStats() {
-		return array('sql'=>$this->Database_GetStats(),'cache'=>$this->Cache_GetStats(),'engine'=>array('time_load_module'=>round($this->iTimeLoadModule,3)));
+	    /** @var \ModuleDatabase $db */
+	    $db = LS::Make(ModuleDatabase::class);
+	    /** @var \ModuleCache $cache */
+	    $cache = LS::Make(ModuleCache::class);
+		return array(
+		    'sql' => $db->GetStats(),
+            'cache' => $cache->GetStats(),
+            'engine' => array('time_load_module' => round($this->iTimeLoadModule,3))
+        );
 	}
 
 	/**
@@ -546,6 +552,7 @@ class Engine extends LsObject {
 	 * @param string $sName	Имя метода
 	 * @param array $aArgs	Аргументы
 	 * @return mixed
+     * @throws \Exception
 	 */
 	public function __call($sName,$aArgs) {
 		return $this->_CallModule($sName,$aArgs);
@@ -581,7 +588,9 @@ class Engine extends LsObject {
 			}
 			$sClass=$sClassName.'_Mapper'.$sName;
 			if (!$oConnect) {
-				$oConnect=Engine::getInstance()->Database_GetConnect();
+			    /** @var \ModuleDatabase $db */
+			    $db = LS::Make(ModuleDatabase::class);
+			    $oConnect=$db->GetConnect();
 			}
 			return new $sClass($oConnect);
 		}
@@ -595,6 +604,7 @@ class Engine extends LsObject {
 	 * Например <pre>ModuleUser_EntityUser</pre> эквивалентно <pre>User_User</pre> и эквивалентно <pre>User</pre> т.к. имя сущности совпадает с именем модуля
 	 * @param  array  $aParams
 	 * @return Entity
+     * @throws \Exception
 	 */
 	public static function GetEntity($sName,$aParams=array()) {
 		/**
@@ -658,7 +668,7 @@ class Engine extends LsObject {
 	 * Возвращает имя экшена
 	 * @deprecated Не рекомендуется для использования в новом коде
 	 * @static
-	 * @param $oAction	Объект экшена
+	 * @param Action $oAction	Объект экшена
 	 * @return string|null
 	 */
 	public static function GetActionName($oAction) {
@@ -867,7 +877,6 @@ spl_autoload_register(array('Engine','autoload'));
 
 /**
  * Короткий алиас для вызова основных методов движка
- * @deprecated Не рекомендуется для использования в новом коде
  * @package engine
  * @since 1.0
  */
@@ -896,9 +905,10 @@ class LS extends LsObject {
 	 * Возвращает объект сущности
 	 * @see Engine::GetEntity
 	 *
-	 * @param $sName	Название сущности
+	 * @param string $sName	Название сущности
 	 * @param array $aParams	Параметры для передачи в конструктор
 	 * @return Entity
+     * @throws \Exception
 	 */
 	static public function Ent($sName,$aParams=array()) {
 		return Engine::GetEntity($sName,$aParams);
@@ -907,7 +917,7 @@ class LS extends LsObject {
 	 * Возвращает объект маппера
 	 * @see Engine::GetMapper
 	 *
-	 * @param $sClassName Класс модуля маппера
+	 * @param string $sClassName Класс модуля маппера
 	 * @param string|null $sName	Имя маппера
 	 * @param DbSimple_Mysql|null $oConnect	Объект коннекта к БД
 	 * @return mixed
@@ -922,7 +932,7 @@ class LS extends LsObject {
 	 * @return ModuleUser_EntityUser
 	 */
 	static public function CurUsr() {
-		return self::E()->User_GetUserCurrent();
+	    return self::Make(ModuleUser::class)->GetUserCurrent();
 	}
 	/**
 	 * Возвращает true если текущий пользователь администратор
@@ -934,11 +944,16 @@ class LS extends LsObject {
 	static public function Adm() {
 		return self::CurUsr() && self::CurUsr()->isAdministrator();
 	}
+
+	static public function Make(string $class): Module {
+	    return self::E()->make($class);
+    }
+
 	/**
 	 * Вызов метода модуля
 	 * Например <pre>$LS->Module_Method()</pre>
 	 *
-	 * @param $sName	Полное название метода, например <pre>Module_Method</pre>
+	 * @param string $sName	Полное название метода, например <pre>Module_Method</pre>
 	 * @param array $aArgs Список аргуметов метода
 	 * @return mixed
 	 */
@@ -950,7 +965,7 @@ class LS extends LsObject {
 	 * Например <pre>LS::Module_Method()</pre>
 	 *
 	 * @static
-	 * @param $sName	Полное название метода, например <pre>Module_Method</pre>
+	 * @param string $sName	Полное название метода, например <pre>Module_Method</pre>
 	 * @param array $aArgs Список аргуметов метода
 	 * @return mixed
 	 */

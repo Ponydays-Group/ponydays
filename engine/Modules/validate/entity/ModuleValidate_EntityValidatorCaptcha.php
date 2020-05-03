@@ -37,17 +37,18 @@ class ModuleValidate_EntityValidatorCaptcha extends ModuleValidate_EntityValidat
 	 * @return bool|string
 	 */
 	public function validate($sValue) {
+	    /** @var \ModuleLang $lang */
+	    $lang = LS::Make(ModuleLang::class);
 		if (is_array($sValue)) {
-			return $this->getMessage($this->Lang_Get('validate_captcha_not_valid',null,false),'msg');
+			return $this->getMessage($lang->Get('validate_captcha_not_valid',null,false),'msg');
 		}
 		if($this->allowEmpty && $this->isEmpty($sValue)) {
 			return true;
 		}
 
 		if (!isset($_SESSION['captcha_keystring']) or $_SESSION['captcha_keystring']!=strtolower($sValue)) {
-			return $this->getMessage($this->Lang_Get('validate_captcha_not_valid',null,false),'msg');
+			return $this->getMessage($lang->Get('validate_captcha_not_valid',null,false),'msg');
 		}
 		return true;
 	}
 }
-?>

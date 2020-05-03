@@ -56,4 +56,3 @@ function smarty_insert_block($aParams,&$oSmarty) {
 	 */
 	return $oSmarty->fetch($sBlockTemplate);
 }
-?>

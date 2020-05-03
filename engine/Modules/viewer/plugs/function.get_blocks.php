@@ -29,8 +29,6 @@ function smarty_function_get_blocks($params, &$smarty)
         return;
     }
 
-	$smarty->assign($params['assign'], Engine::getInstance()->Viewer_GetBlocks(true));
+	$smarty->assign($params['assign'], Engine::getInstance()->make(ModuleViewer::class)->GetBlocks(true));
 	return '';
 }
-
-?>

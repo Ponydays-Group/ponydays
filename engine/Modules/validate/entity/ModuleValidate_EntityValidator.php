@@ -114,7 +114,7 @@ abstract class ModuleValidate_EntityValidator extends Entity {
 			} else {
 				$sMsgFieldCustomId=$sMsgFieldCustom.'Id';
 				if (property_exists($this,$sMsgFieldCustomId) and !is_null($this->$sMsgFieldCustomId)) {
-					$sMsgDefault=$this->Lang_Get($this->$sMsgFieldCustomId,array(),false);
+					$sMsgDefault=LS::Make(ModuleLang::class)->Get($this->$sMsgFieldCustomId,array(),false);
 				}
 			}
 		}
@@ -198,4 +198,3 @@ abstract class ModuleValidate_EntityValidator extends Entity {
 		}
 	}
 }
-?>

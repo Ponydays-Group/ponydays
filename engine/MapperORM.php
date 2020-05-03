@@ -17,7 +17,7 @@
 
 /**
  * Системный класс мапера ORM для работы с БД
- *
+ * @deprecated Будет заменено в дальнейшем
  * @package engine.orm
  * @since 1.0
  */
@@ -340,7 +340,9 @@ class MapperORM extends Mapper {
 	 * @return array
 	 */
 	public function ShowColumnsFromTable($sTableName) {
-		if (false === ($aItems = Engine::getInstance()->Cache_GetLife("columns_table_{$sTableName}"))) {
+	    /** @var \ModuleCache $cache */
+	    $cache = LS::Make(ModuleCache::class);
+		if (false === ($aItems = $cache->GetLife("columns_table_{$sTableName}"))) {
 			$sql = "SHOW COLUMNS FROM ".$sTableName;
 			$aItems = array();
 			if($aRows=$this->oDb->select($sql)) {
@@ -351,7 +353,7 @@ class MapperORM extends Mapper {
 					}
 				}
 			}
-			Engine::getInstance()->Cache_SetLife($aItems, "columns_table_{$sTableName}");
+            $cache->SetLife($aItems, "columns_table_{$sTableName}");
 		}
 		return $aItems;
 	}
@@ -372,7 +374,9 @@ class MapperORM extends Mapper {
 	 * @return array
 	 */
 	public function ShowPrimaryIndexFromTable($sTableName) {
-		if (false === ($aItems = Engine::getInstance()->Cache_GetLife("index_table_{$sTableName}"))) {
+        /** @var \ModuleCache $cache */
+        $cache = LS::Make(ModuleCache::class);
+        if (false === ($aItems = $cache->GetLife("index_table_{$sTableName}"))) {
 			$sql = "SHOW INDEX FROM ".$sTableName;
 			$aItems = array();
 			if($aRows=$this->oDb->select($sql)) {
@@ -382,7 +386,7 @@ class MapperORM extends Mapper {
 					}
 				}
 			}
-			Engine::getInstance()->Cache_SetLife($aItems, "index_table_{$sTableName}");
+            $cache->SetLife($aItems, "index_table_{$sTableName}");
 		}
 		return $aItems;
 	}

@@ -141,15 +141,19 @@ abstract class Entity extends LsObject {
 		}
 		return $aResult;
 	}
-	/**
-	 * Ставим хук на вызов неизвестного метода и считаем что хотели вызвать метод какого либо модуля
-	 * Также производит обработку методов set* и get*
-	 * @see Engine::_CallModule
-	 *
-	 * @param string $sName Имя метода
-	 * @param array $aArgs Аргументы
-	 * @return mixed
-	 */
+
+    /**
+     * Ставим хук на вызов неизвестного метода и считаем что хотели вызвать
+     * метод какого либо модуля Также производит обработку методов set* и get*
+     *
+     * @see Engine::_CallModule
+     *
+     * @param string $sName Имя метода
+     * @param array  $aArgs Аргументы
+     *
+     * @return mixed
+     * @throws \Exception
+     */
 	public function __call($sName,$aArgs) {
 		$sType=strtolower(substr($sName,0,3));
 		if (!strpos($sName,'_') and in_array($sType,array('get','set'))) {
@@ -172,6 +176,7 @@ abstract class Entity extends LsObject {
 		} else {
 			return Engine::getInstance()->_CallModule($sName,$aArgs);
 		}
+		return null;
 	}
 	/**
 	 * Получение первичного ключа сущности (ключ, а не значение!)
@@ -199,15 +204,20 @@ abstract class Entity extends LsObject {
 	public function _getPrimaryKeyValue() {
 		return $this->_getDataOne($this->_getPrimaryKey());
 	}
-	/**
-	 * Выполняет валидацию данных сущности
-	 * Если $aFields=null, то выполняется валидация по всем полям из $this->aValidateRules, иначе по пересечению
-	 *
-	 * @param null|array $aFields	Список полей для валидации, если null то по всем полям
-	 * @param bool $bClearErrors	Очищать или нет стек ошибок перед валидацией
-	 *
-	 * @return bool
-	 */
+
+    /**
+     * Выполняет валидацию данных сущности
+     * Если $aFields=null, то выполняется валидация по всем полям из
+     * $this->aValidateRules, иначе по пересечению
+     *
+     * @param null|array $aFields      Список полей для валидации, если null то
+     *                                 по всем полям
+     * @param bool       $bClearErrors Очищать или нет стек ошибок перед
+     *                                 валидацией
+     *
+     * @return bool
+     * @throws \Exception
+     */
 	public function _Validate($aFields=null, $bClearErrors=true) {
 		if($bClearErrors) {
 			$this->_clearValidateErrors();
@@ -217,13 +227,17 @@ abstract class Entity extends LsObject {
 		}
 		return !$this->_hasValidateErrors();
 	}
-	/**
-	 * Возвращает список валидаторов с учетом текущего сценария
-	 *
-	 * @param null|string $sField	Поле сущности для которого необходимо вернуть валидаторы, если нет, то возвращается для всех полей
-	 *
-	 * @return array
-	 */
+
+    /**
+     * Возвращает список валидаторов с учетом текущего сценария
+     *
+     * @param null|string $sField Поле сущности для которого необходимо вернуть
+     *                            валидаторы, если нет, то возвращается для
+     *                            всех полей
+     *
+     * @return array
+     * @throws \Exception
+     */
 	public function _getValidators($sField=null) {
 		$aValidators=$this->_createValidators();
 
@@ -252,7 +266,7 @@ abstract class Entity extends LsObject {
 		$aValidators=array();
 		foreach($this->aValidateRules as $aRule) {
 			if(isset($aRule[0],$aRule[1])) {
-				$aValidators[]=$this->Validate_CreateValidator($aRule[1],$this,$aRule[0],array_slice($aRule,2));
+				$aValidators[]=LS::Make(ModuleValidate::class)->CreateValidator($aRule[1],$this,$aRule[0],array_slice($aRule,2));
 			} else {
 				throw new Exception(get_class($this).' has an invalid validation rule');
 			}
@@ -302,6 +316,7 @@ abstract class Entity extends LsObject {
 		} else {
 			return isset($this->aValidateErrors[$sField]) ? reset($this->aValidateErrors[$sField]) : null;
 		}
+		return null;
 	}
 	/**
 	 * Добавляет для поля ошибку в список ошибок

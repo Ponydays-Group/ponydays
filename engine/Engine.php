@@ -16,22 +16,22 @@
 */
 
 set_include_path(get_include_path().PATH_SEPARATOR.dirname(__FILE__));
-require_once('Profiler.class.php');
+require_once('ProfilerSimple.php');
 
-require_once("LsObject.class.php");
-require_once("Block.class.php");
-require_once("Hook.class.php");
-require_once("Module.class.php");
-require_once("Router.class.php");
+require_once("LsObject.php");
+require_once("Block.php");
+require_once("Hook.php");
+require_once("Module.php");
+require_once("Router.php");
 
-require_once("Entity.class.php");
-require_once("Mapper.class.php");
+require_once("Entity.php");
+require_once("Mapper.php");
 
-require_once("ModuleORM.class.php");
-require_once("EntityORM.class.php");
-require_once("MapperORM.class.php");
+require_once("ModuleORM.php");
+require_once("EntityORM.php");
+require_once("MapperORM.php");
 
-require_once("ManyToManyRelation.class.php");
+require_once("LS_ManyToManyRelation.php");
 
 
 /**
@@ -378,11 +378,11 @@ class Engine extends LsObject {
 	 */
 	protected function InitHooks() {
 		$sDirHooks=Config::Get('path.root.server').'/app/Hooks/';
-		$aFiles=glob($sDirHooks.'Hook*.class.php');
+		$aFiles=glob($sDirHooks.'Hook*.php');
 
 		if($aFiles and count($aFiles)) {
 			foreach ($aFiles as $sFile) {
-				if (preg_match("/Hook([^_]+)\.class\.php$/i",basename($sFile),$aMatch)) {
+				if (preg_match("/Hook([^_]+)\.php$/i",basename($sFile),$aMatch)) {
 					//require_once($sFile);
 					$sClassName='Hook'.$aMatch[1];
 					$oHook=new $sClassName;
@@ -777,7 +777,7 @@ class Engine extends LsObject {
 		if($aInfo[self::CI_ENTITY]){
 			// Сущность
 			$sPath .= 'app/Modules/'.strtolower($aInfo[self::CI_MODULE])
-				.'/entity/'.$aInfo[self::CI_ENTITY].'.entity.class.php'
+				.'/entity/Module'.$aInfo[self::CI_MODULE].'_Entity'.$aInfo[self::CI_ENTITY].'.php'
 			;
 			if(!is_file($sPath)) {
 				$sPath = str_replace('/app/Modules/','/engine/Modules/',$sPath);
@@ -785,7 +785,7 @@ class Engine extends LsObject {
 		}elseif($aInfo[self::CI_MAPPER]){
 			// Маппер
 			$sPath .= 'app/Modules/'.strtolower($aInfo[self::CI_MODULE])
-				.'/mapper/'.$aInfo[self::CI_MAPPER].'.mapper.class.php'
+				.'/mapper/Module'.$aInfo[self::CI_MODULE].'_Mapper'.$aInfo[self::CI_MAPPER].'.php'
 			;
 			if(!is_file($sPath)) {
 				$sPath = str_replace('/app/Modules/','/engine/Modules/',$sPath);
@@ -793,25 +793,25 @@ class Engine extends LsObject {
 		}elseif($aInfo[self::CI_ACTION]) {
 			// Экшн
 			$sPath .= 'app/Actions/Action'
-				.$aInfo[self::CI_ACTION].'.class.php'
+				.$aInfo[self::CI_ACTION].'.php'
 			;
 		}elseif($aInfo[self::CI_MODULE]) {
 			// Модуль
 			$sPath .= 'app/Modules/'.strtolower($aInfo[self::CI_MODULE])
-				.'/'.$aInfo[self::CI_MODULE].'.class.php'
+				.'/Module'.$aInfo[self::CI_MODULE].'.php'
 			;
 			if(!is_file($sPath)){
 				$sPath = str_replace('/app/Modules/','/engine/Modules/',$sPath);
 			}
 		}elseif($aInfo[self::CI_HOOK]) {
 			// Хук
-			$sPath .= 'app/Hooks/Hook'.$aInfo[self::CI_HOOK].'.class.php';
+			$sPath .= 'app/Hooks/Hook'.$aInfo[self::CI_HOOK].'.php';
 		}elseif($aInfo[self::CI_BLOCK]){
 			// Блок
-			$sPath .= 'app/Blocks/Block'.$aInfo[self::CI_BLOCK].'.class.php';
+			$sPath .= 'app/Blocks/Block'.$aInfo[self::CI_BLOCK].'.php';
 		}else{
 			$sClassName = is_string($oObject) ? $oObject : get_class($oObject);
-			$sPath .= 'engine/'.$sClassName.'.class.php';
+			$sPath .= 'engine/'.$sClassName.'.php';
 		}
 		return is_file($sPath) ? $sPath : null;
 	}

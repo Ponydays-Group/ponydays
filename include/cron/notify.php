@@ -20,7 +20,7 @@ set_include_path(get_include_path().PATH_SEPARATOR.$sDirRoot);
 chdir($sDirRoot);
 
 require_once($sDirRoot."/config/loader.php");
-require_once($sDirRoot."/engine/Cron.class.php");
+require_once($sDirRoot."/engine/Cron.php");
 
 class NotifyCron extends Cron {
 	/**

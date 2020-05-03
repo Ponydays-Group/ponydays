@@ -37,7 +37,7 @@
  * @return  string
  */
 function smarty_function_date_format($aParams,&$oSmarty) {
-	require_once('./engine/Engine.class.php');
+	require_once('./engine/Engine.php');
 	$oEngine = Engine::getInstance();
 	$oUserCurrent=$oEngine->User_GetUserCurrent();
 

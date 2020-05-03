@@ -29,7 +29,7 @@ chdir(dirname(__FILE__).'/..');
 
 // Получаем объект конфигурации
 require_once(__DIR__ . "/../config/loader.php");
-require_once(__DIR__ . "/../engine/Engine.class.php");
+require_once(__DIR__ . "/../engine/Engine.php");
 require_once(__DIR__ . "/../lib/simple_html_dom.php");
 
 $oProfiler=ProfilerSimple::getInstance(Config::Get('path.root.server').'/logs/'.Config::Get('sys.logs.profiler_file'),Config::Get('sys.logs.profiler'));

@@ -15,7 +15,7 @@
 ---------------------------------------------------------
 */
 
-require_once("Action.class.php");
+require_once("Action.php");
 
 /**
  * Класс роутинга(контроллера)
@@ -244,7 +244,7 @@ class Router extends LsObject {
 		 * Если класс экешна начинается с Plugin*_, значит необходимо загрузить объект из указанного плагина
 		 */
 		if(!preg_match('/^Plugin([\w]+)_Action([\w]+)$/i',$sActionClass,$aMatches)) {
-			require_once('./app/Actions/'.$sActionClass.'.class.php');
+			require_once('./app/Actions/'.$sActionClass.'.php');
 		} else {
 			throw new \Engine\Exceptions\ImplementationDestroyedException('ExecAction for plugin');
 		}

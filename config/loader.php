@@ -20,6 +20,8 @@
  */
 define('LS_VERSION','1.0.3');
 
+require 'vendor/autoload.php';
+
 // /**
 //  * Operations with Config object
 //  */

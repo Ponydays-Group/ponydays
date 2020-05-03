@@ -15,6 +15,10 @@
 ---------------------------------------------------------
 */
 
+use Engine\Config;
+use Engine\Engine;
+use Engine\Module;
+
 /**
  * Модуль для работы с блогами
  *
@@ -984,4 +988,3 @@ class ModuleBlog extends Module {
 		return $this->GetBlogsByArrayId($aBlogId);
 	}
 }
-?>

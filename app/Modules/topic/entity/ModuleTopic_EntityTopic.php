@@ -15,6 +15,10 @@
 ---------------------------------------------------------
 */
 
+use Engine\Config;
+use Engine\Entity;
+use Engine\Router;
+
 /**
  * Объект сущности топика
  *
@@ -1019,4 +1023,3 @@ class ModuleTopic_EntityTopic extends Entity {
 		return $this->ACL_IsAllowLockTopicControl($this, $oUser);
 	}
 }
-?>

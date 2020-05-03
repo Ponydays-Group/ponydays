@@ -15,6 +15,10 @@
 ---------------------------------------------------------
 */
 
+use Engine\Action;
+use Engine\Config;
+use Engine\Router;
+
 /**
  * Экшен обработки поиска по сайту через поисковый движок Sphinx
  *
@@ -256,4 +260,3 @@ class ActionSearch extends Action {
 		return $aRes;
 	}
 }
-?>

@@ -30,7 +30,7 @@ function smarty_function_json($params, &$smarty)
 	}
 
 	if(class_exists('Entity')
-		&& $params['var'] instanceof Entity) {
+		&& $params['var'] instanceof Engine\Entity) {
 		$aMethods = null;
 		if(!empty($params['methods'])) {
 			$aMethods = is_array($params['methods'])

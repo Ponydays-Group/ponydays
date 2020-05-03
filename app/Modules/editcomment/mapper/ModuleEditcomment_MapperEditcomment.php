@@ -11,6 +11,11 @@
 *
 ---------------------------------------------------------
 */
+
+use Engine\Engine;
+use Engine\Config;
+use Engine\Mapper;
+
 class ModuleEditcomment_MapperEditcomment extends Mapper
 {
     public function HasAnswers($sId)
@@ -45,4 +50,3 @@ class ModuleEditcomment_MapperEditcomment extends Mapper
 		return null;
     }
 }
-?>

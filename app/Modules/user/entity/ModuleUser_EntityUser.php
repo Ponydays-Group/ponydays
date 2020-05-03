@@ -15,6 +15,10 @@
 ---------------------------------------------------------
 */
 
+use Engine\Config;
+use Engine\Entity;
+use Engine\Router;
+
 /**
  * Сущность пользователя
  *
@@ -794,4 +798,3 @@ class ModuleUser_EntityUser extends Entity {
         $this->_aData['ban']=$data;
 	}
 }
-?>

@@ -1,6 +1,9 @@
 <?php
 
-class HookFeedbacks extends Hook{
+use Engine\Engine;
+use Engine\Hook;
+
+class HookFeedbacks extends Hook {
 
 	//***************************************************************************************
 	public function RegisterHook(){
@@ -93,5 +96,3 @@ class HookFeedbacks extends Hook{
 	
 
 }
-
-?>

@@ -15,24 +15,16 @@
 ---------------------------------------------------------
 */
 
-set_include_path(get_include_path().PATH_SEPARATOR.dirname(__FILE__));
-require_once('ProfilerSimple.php');
+namespace Engine;
 
-require_once("LsObject.php");
-require_once("Block.php");
-require_once("Hook.php");
-require_once("Module.php");
-require_once("Router.php");
+use DbSimple_Mysql;
+use ModuleCache;
+use ModuleDatabase;
+use ModuleHook;
+use ModuleUser;
+use ModuleUser_EntityUser;
 
-require_once("Entity.php");
-require_once("Mapper.php");
-
-require_once("ModuleORM.php");
-require_once("EntityORM.php");
-require_once("MapperORM.php");
-
-require_once("LS_ManyToManyRelation.php");
-
+set_include_path(get_include_path() . PATH_SEPARATOR . dirname(__FILE__));
 
 /**
  * Основной класс движка. Ядро.
@@ -319,14 +311,14 @@ class Engine extends LsObject {
 	 * @param  string $sModuleClass	Класс модуля
 	 * @param  bool $bInit Инициализировать модуль или нет
 	 * @deprecated Будет уничтожено в дальнейшем. Используйте make(Module::class)
-	 * @throws RuntimeException если класс $sModuleClass не существует
+	 * @throws \RuntimeException если класс $sModuleClass не существует
 	 *
 	 * @return Module
 	 */
 	public function LoadModule($sModuleClass,$bInit=false) {
 		if (!class_exists($sModuleClass))
 		{
-			throw new RuntimeException(sprintf('Class "%s" not found!', $sModuleClass));
+			throw new \RuntimeException(sprintf('Class "%s" not found!', $sModuleClass));
 		}
 		/**
 		 * Создаем объект модуля
@@ -373,7 +365,7 @@ class Engine extends LsObject {
 				if (preg_match("/Hook([^_]+)\.php$/i",basename($sFile),$aMatch)) {
 					//require_once($sFile);
 					$sClassName='Hook'.$aMatch[1];
-					/** @var \Hook $oHook */
+					/** @var Hook $oHook */
 					$oHook=new $sClassName;
 					$oHook->RegisterHook();
 				}
@@ -492,7 +484,7 @@ class Engine extends LsObject {
 			$sModuleClass=$aName[0].'_Module'.$aName[1];
 			$sMethod=$aName[2];
 		} else {
-			throw new Exception("Undefined method module: ".$sName);
+			throw new \Exception("Undefined method module: ".$sName);
 		}
 
 		if (isset($this->aModules[$sModuleClass])) {
@@ -509,7 +501,7 @@ class Engine extends LsObject {
      *
      * @deprecated Не рекомендуется для использования в новом коде
      * @param string $sName Имя модуля
-     * @return \Module
+     * @return Module
      * @throws \Exception
      */
 	public function GetModuleObject($sName): Module {
@@ -633,7 +625,7 @@ class Engine extends LsObject {
 				list($sModule,$sEntity) = explode('_',$sName,2);
 				break;
 			default:
-				throw new Exception("Unknown entity '{$sName}' given.");
+				throw new \Exception("Unknown entity '{$sName}' given.");
 		}
 
 		$sClass='Module'.$sModule.'_Entity'.$sEntity;
@@ -860,7 +852,7 @@ class Engine extends LsObject {
 			return $this->aModules[$class];
 		} else {
 			if (!class_exists($class)) {
-				throw new RuntimeException(sprintf('Class "%s" not found!', $class));
+				throw new \RuntimeException(sprintf('Class "%s" not found!', $class));
 			}
 			$module=new $class($this);
 			$this->aModules[$class]=$module;
@@ -873,7 +865,7 @@ class Engine extends LsObject {
 /**
  * Регистрация автозагрузки классов
  */
-spl_autoload_register(array('Engine','autoload'));
+spl_autoload_register(array('Engine\Engine','autoload'));
 
 /**
  * Короткий алиас для вызова основных методов движка

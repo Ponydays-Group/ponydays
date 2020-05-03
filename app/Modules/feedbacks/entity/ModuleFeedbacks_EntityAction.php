@@ -1,6 +1,8 @@
 <?php
 
-class ModuleFeedbacks_EntityAction extends Entity{
+use Engine\Entity;
+
+class ModuleFeedbacks_EntityAction extends Entity {
 
 	//**************************************************************************************************
 	public function GetUserFrom(){
@@ -46,5 +48,3 @@ class ModuleFeedbacks_EntityAction extends Entity{
 	}
 
 }
-
-?>

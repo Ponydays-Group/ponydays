@@ -15,6 +15,10 @@
 ---------------------------------------------------------
 */
 
+use Engine\Engine;
+use Engine\Config;
+use Engine\Mapper;
+
 /**
  * Маппер для работы с БД
  *
@@ -129,4 +133,3 @@ class ModuleVote_MapperVote extends Mapper {
 		return false;
 	}
 }
-?>

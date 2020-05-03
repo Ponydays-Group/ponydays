@@ -1,5 +1,8 @@
 <?php
 
+use Engine\Config;
+use Engine\Mapper;
+
 class ModuleCrypto_MapperCrypto extends Mapper
 {
 	public function GetLastKeyFor(string $type)

@@ -15,6 +15,10 @@
 ---------------------------------------------------------
 */
 
+use Engine\Engine;
+use Engine\Config;
+use Engine\Mapper;
+
 /**
  * Объект маппера для работы с БД
  *
@@ -1148,4 +1152,3 @@ class ModuleTopic_MapperTopic extends Mapper {
 		return false;
 	}
 }
-?>

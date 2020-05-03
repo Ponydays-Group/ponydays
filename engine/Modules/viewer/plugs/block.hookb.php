@@ -35,7 +35,7 @@ function smarty_block_hookb($aParams,$sContent,&$oSmarty,&$bRepeat) {
 		$sHookName='template_block_'.strtolower($aParams['run']);
 		unset($aParams['run']);
 		$aParams['content']=$sContent;
-		$aResultHook=Engine::getInstance()->make(ModuleHook::class)->Run($sHookName,$aParams);
+		$aResultHook=Engine\Engine::getInstance()->make(ModuleHook::class)->Run($sHookName,$aParams);
 		if (array_key_exists('template_result',$aResultHook)) {
 			echo join('',$aResultHook['template_result']);
 			return ;

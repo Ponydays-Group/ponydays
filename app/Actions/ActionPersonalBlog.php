@@ -15,6 +15,10 @@
 ---------------------------------------------------------
 */
 
+use Engine\Action;
+use Engine\Config;
+use Engine\Router;
+
 /**
  * Экшен обработки персональных блогов, т.е. УРла вида /personal_blog/
  *
@@ -152,4 +156,3 @@ class ActionPersonalBlog extends Action {
 		$this->Viewer_Assign('iCountTopicsNew',$iCountTopicsNew);
 	}
 }
-?>

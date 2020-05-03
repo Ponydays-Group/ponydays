@@ -15,6 +15,10 @@
 ---------------------------------------------------------
 */
 
+use Engine\Action;
+use Engine\Config;
+use Engine\Router;
+
 /**
  * Экшен бработки RSS
  * Автор класса vovazol(http://livestreet.ru/profile/vovazol/)
@@ -375,4 +379,3 @@ class ActionRss extends Action {
 		return $sText;
 	}
 }
-?>

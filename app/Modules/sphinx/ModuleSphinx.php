@@ -1,4 +1,8 @@
 <?php
+
+use Engine\Config;
+use Engine\Module;
+
 require_once('./lib/Sphinx/sphinxapi.php');
 
 /**
@@ -125,4 +129,3 @@ class ModuleSphinx extends Module {
 		return $aReturn[0];
 	}
 }
-?>

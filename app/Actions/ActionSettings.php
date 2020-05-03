@@ -15,6 +15,10 @@
 ---------------------------------------------------------
 */
 
+use Engine\Action;
+use Engine\Config;
+use Engine\Router;
+
 /**
  * Экшен обрабтки настроек профиля юзера (/settings/)
  *
@@ -732,4 +736,3 @@ class ActionSettings extends Action {
 		$this->Hook_Run('action_shutdown_settings');
 	}
 }
-?>

@@ -15,6 +15,8 @@
 ---------------------------------------------------------
 */
 
+use Engine\Entity;
+
 /**
  * Объект сущности голосования в топике-опросе
  *
@@ -72,4 +74,3 @@ class ModuleTopic_EntityTopicQuestionVote extends Entity {
 		$this->_aData['answer']=$data;
 	}
 }
-?>

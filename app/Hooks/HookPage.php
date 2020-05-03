@@ -15,6 +15,8 @@
 ---------------------------------------------------------
 */
 
+use Engine\Hook;
+
 /**
  * Регистрация хука для вывода меню страниц
  *
@@ -33,4 +35,3 @@ class HookPage extends Hook {
 		return $this->Viewer_Fetch('main_menu.tpl');
 	}
 }
-?>

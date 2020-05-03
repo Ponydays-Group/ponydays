@@ -15,6 +15,12 @@
 ---------------------------------------------------------
 */
 
+namespace Engine;
+
+use ModuleCache;
+use ModuleDatabase;
+use Zend_Cache;
+
 /**
  * Абстракция модуля ORM
  * Предоставляет базовые методы для работы с EntityORM, например,
@@ -409,7 +415,7 @@ abstract class ModuleORM extends Module {
 				$sRelKey=$aRelations[$sRelationName][2];
 
 				if (!array_key_exists($sRelationName,$aRelations) or !in_array($sRelType,array(EntityORM::RELATION_TYPE_BELONGS_TO,EntityORM::RELATION_TYPE_HAS_ONE))) {
-					throw new Exception("The entity <{$sEntityFull}> not have relation <{$sRelationName}>");
+					throw new \Exception("The entity <{$sEntityFull}> not have relation <{$sRelationName}>");
 				}
 
 				/**

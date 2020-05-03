@@ -12,6 +12,8 @@
 ---------------------------------------------------------
 */
 
+use Engine\Engine;
+use Engine\ModuleORM;
 
 class ModuleEditcomment extends ModuleORM
 {
@@ -44,4 +46,3 @@ class ModuleEditcomment extends ModuleORM
     }
 
 }
-?>

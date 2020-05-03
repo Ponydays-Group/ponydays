@@ -15,6 +15,9 @@
 ---------------------------------------------------------
 */
 
+use Engine\Action;
+use Engine\Router;
+
 /**
  * Экшен обработки УРЛа вида /error/ т.е. ошибок
  *
@@ -78,4 +81,3 @@ class ActionError extends Action {
 		$this->SetTemplateAction('index');
 	}
 }
-?>

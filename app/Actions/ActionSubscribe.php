@@ -15,6 +15,9 @@
 ---------------------------------------------------------
 */
 
+use Engine\Action;
+use Engine\Router;
+
 /**
  * Экшен обработки подписок пользователей
  *
@@ -135,4 +138,3 @@ class ActionSubscribe extends Action {
 		return ;
 	}
 }
-?>

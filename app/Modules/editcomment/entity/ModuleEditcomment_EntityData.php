@@ -12,15 +12,13 @@
 ---------------------------------------------------------
 */
 
+use Engine\EntityORM;
 
 class ModuleEditcomment_EntityData extends EntityORM
 {
-
     protected $aRelations=array(
-'comment'=>array('belongs_to', 'ModuleComment_EntityComment', 'comment_id'),
-'user'=>array('belongs_to', 'ModuleUser_EntityUser', 'user_id'),
-'previous_edit'=>array('belongs_to', 'ModuleEditcomment_EntityData', 'previous_id'),
-);
-
+        'comment' => array('belongs_to', 'ModuleComment_EntityComment', 'comment_id'),
+        'user' => array('belongs_to', 'ModuleUser_EntityUser', 'user_id'),
+        'previous_edit' => array('belongs_to', 'ModuleEditcomment_EntityData', 'previous_id'),
+    );
 }
-?>

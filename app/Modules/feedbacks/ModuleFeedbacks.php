@@ -1,6 +1,9 @@
 <?php
 
-class ModuleFeedbacks extends Module{
+use Engine\Engine;
+use Engine\Module;
+
+class ModuleFeedbacks extends Module {
 
 	protected $oMapper;
 
@@ -38,4 +41,3 @@ class ModuleFeedbacks extends Module{
 	}
 
 }
-?>

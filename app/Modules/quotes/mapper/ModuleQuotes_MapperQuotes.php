@@ -1,4 +1,8 @@
 <?php
+
+use Engine\Config;
+use Engine\Mapper;
+
 /**
  * Маппер цитатника
  *

@@ -15,6 +15,10 @@
 ---------------------------------------------------------
 */
 
+use Engine\Config;
+use Engine\Entity;
+use Engine\Router;
+
 /**
  * Сущность блога
  *
@@ -375,4 +379,3 @@ class ModuleBlog_EntityBlog extends Entity {
 		$this->_aData['blog_deleted']=$data;
 	}
 }
-?>

@@ -15,6 +15,10 @@
 ---------------------------------------------------------
 */
 
+use Engine\Engine;
+use Engine\Action;
+use Engine\Router;
+
 /**
  * Экшен обработки УРЛа вида /link/ - управление своими топиками(тип: ссылка)
  *
@@ -495,4 +499,3 @@ class ActionLink extends Action {
 		$this->Viewer_Assign('sMenuSubItemSelect',$this->sMenuSubItemSelect);
 	}
 }
-?>

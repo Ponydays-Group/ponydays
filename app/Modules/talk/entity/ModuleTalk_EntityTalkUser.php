@@ -15,6 +15,8 @@
 ---------------------------------------------------------
 */
 
+use Engine\Entity;
+
 /**
  * Объект связи пользователя с разовором
  *
@@ -138,4 +140,3 @@ class ModuleTalk_EntityTalkUser extends Entity {
 		$this->_aData['user']=$data;
 	}
 }
-?>

@@ -15,6 +15,10 @@
 ---------------------------------------------------------
 */
 
+use Engine\Config;
+use Engine\Engine;
+use Engine\Module;
+
 /**
  * Модуль для работы с голосованиями
  *
@@ -239,4 +243,3 @@ class ModuleVote extends Module {
 		return $this->oMapper->DeleteVote($sTargetId,$sTargetType,$sUserId);
 	}
 }
-?>

@@ -15,6 +15,10 @@
 ---------------------------------------------------------
 */
 
+use Engine\Engine;
+use Engine\Config;
+use Engine\Mapper;
+
 /**
  * Маппер для работы с БД
  *
@@ -192,4 +196,3 @@ class ModuleWall_MapperWall extends Mapper {
 		return $aResult;
 	}
 }
-?>

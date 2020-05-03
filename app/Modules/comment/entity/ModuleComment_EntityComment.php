@@ -15,6 +15,9 @@
 ---------------------------------------------------------
 */
 
+use Engine\Config;
+use Engine\Entity;
+
 /**
  * Объект сущности комментариев
  *
@@ -400,7 +403,7 @@ class ModuleComment_EntityComment extends Entity {
 	/**
 	 * Устанавливает хеш комментария
 	 *
-	 * @param strign $data
+	 * @param string $data
 	 */
 	public function setTextHash($data) {
 		$this->_aData['comment_text_hash']=$data;
@@ -479,4 +482,3 @@ class ModuleComment_EntityComment extends Entity {
 		$this->_aData['user_rank']=$data;
 	}
 }
-?>

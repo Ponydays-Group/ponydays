@@ -15,6 +15,10 @@
 ---------------------------------------------------------
 */
 
+use Engine\Config;
+use Engine\Engine;
+use Engine\Module;
+
 /**
  * Модуль разговоров(почта)
  *
@@ -813,4 +817,3 @@ class ModuleTalk extends Module {
 		}
 	}
 }
-?>

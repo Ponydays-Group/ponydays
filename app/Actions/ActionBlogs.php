@@ -15,6 +15,10 @@
 ---------------------------------------------------------
 */
 
+use Engine\Action;
+use Engine\Config;
+use Engine\Router;
+
 /**
  * Экшен обработки УРЛа вида /comments/
  *
@@ -133,4 +137,3 @@ class ActionBlogs extends Action {
 		$this->SetTemplateAction('index');
 	}
 }
-?>

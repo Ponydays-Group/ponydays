@@ -15,6 +15,10 @@
 ---------------------------------------------------------
 */
 
+use Engine\Engine;
+use Engine\Config;
+use Engine\Mapper;
+
 class ModulePage_MapperPage extends Mapper {
 
 	public function AddPage(ModulePage_EntityPage $oPage) {
@@ -232,4 +236,3 @@ class ModulePage_MapperPage extends Mapper {
 	}
 
 }
-?>

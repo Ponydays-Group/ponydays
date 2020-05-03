@@ -1,4 +1,9 @@
 <?php
+
+use Engine\Config;
+use Engine\Engine;
+use Engine\Module;
+
 /**
  * Модуль цитатника
  *

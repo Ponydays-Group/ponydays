@@ -1,5 +1,7 @@
 <?php
 
+use Engine\Mapper;
+
 class PluginApi_ModuleApi_MapperApi extends Mapper
 {
     public function writeKey($iId, $sKey){
@@ -39,5 +41,3 @@ class PluginApi_ModuleApi_MapperApi extends Mapper
     }
 
 }
-
-?>

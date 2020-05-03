@@ -15,6 +15,9 @@
 ---------------------------------------------------------
 */
 
+use Engine\Config;
+use Engine\Module;
+
 /**
  * ACL(Access Control List)
  * Модуль для разруливания ограничений по карме/рейтингу юзера
@@ -760,4 +763,3 @@ class ModuleACL extends Module {
         return false;
     }
 }
-?>

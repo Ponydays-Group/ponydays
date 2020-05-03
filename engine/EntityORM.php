@@ -15,6 +15,8 @@
 ---------------------------------------------------------
 */
 
+namespace Engine;
+
 /**
  * Абстрактный класс сущности ORM - аналог active record
  * Позволяет без написания SQL запросов работать с базой данных.
@@ -460,7 +462,7 @@ abstract class EntityORM extends Entity {
 			$sParent = get_parent_class($sParent);
 		}
 		$aParentRelations=array();
-		if(!in_array($sParent,array('Entity','EntityORM'))) {
+		if(!in_array($sParent,array(Entity::class, EntityORM::class))) {
 			$oEntityParent=new $sParent();
 			$aParentRelations=$oEntityParent->_getRelations();
 		}

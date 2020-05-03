@@ -15,6 +15,8 @@
 ---------------------------------------------------------
 */
 
+use Engine\Module;
+
 /**
  * Модуль Tools - различные вспомогательные методы
  *
@@ -80,4 +82,3 @@ class ModuleTools extends Module {
 		return strtr($sText,$aTable);
 	}
 }
-?>

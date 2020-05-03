@@ -15,6 +15,10 @@
 ---------------------------------------------------------
 */
 
+use Engine\Engine;
+use Engine\Hook;
+use Engine\Router;
+
 /**
  * Регистрация хука для вывода статистики производительности
  *
@@ -54,4 +58,3 @@ class HookStatisticsPerformance extends Hook {
 		return $this->Viewer_Fetch('statistics_performance.tpl');
 	}
 }
-?>

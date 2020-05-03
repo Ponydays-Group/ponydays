@@ -15,6 +15,10 @@
 ---------------------------------------------------------
 */
 
+use Engine\Engine;
+use Engine\Config;
+use Engine\Mapper;
+
 /**
  * Маппер комментариев, работа с базой данных
  *
@@ -1061,4 +1065,3 @@ class ModuleComment_MapperComment extends Mapper {
         return false;
     }
 }
-?>

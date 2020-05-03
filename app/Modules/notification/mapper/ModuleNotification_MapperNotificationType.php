@@ -1,5 +1,8 @@
 <?php
 
+use Engine\Config;
+use Engine\Engine;
+use Engine\Mapper;
 
 /**
  * Маппер типов уведомлений, работа с базой данных

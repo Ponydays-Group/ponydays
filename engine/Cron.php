@@ -15,6 +15,11 @@
 ---------------------------------------------------------
 */
 
+namespace Engine;
+
+use Exception;
+use ModuleLogger;
+
 require_once("Engine.php");
 
 /**

@@ -15,6 +15,9 @@
 ---------------------------------------------------------
 */
 
+use Engine\Config;
+use Engine\Entity;
+
 /**
  * Объект сущности гео-объекта
  *
@@ -115,4 +118,3 @@ class ModuleGeo_EntityGeo extends Entity {
 		return null;
 	}
 }
-?>

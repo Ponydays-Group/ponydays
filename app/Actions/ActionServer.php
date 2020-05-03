@@ -1,4 +1,8 @@
 <?php
+
+use Engine\Action;
+use Engine\Config;
+
 /**
  * Экшен обработки ajax запросов
  * Ответ отдает в JSON фомате

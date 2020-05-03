@@ -15,6 +15,8 @@
 ---------------------------------------------------------
 */
 
+use Engine\Entity;
+
 /**
  * Сущность дружбу - связи пользователей друг с другом
  *
@@ -165,4 +167,3 @@ class ModuleUser_EntityFriend extends Entity {
 		return false;
 	}
 }
-?>

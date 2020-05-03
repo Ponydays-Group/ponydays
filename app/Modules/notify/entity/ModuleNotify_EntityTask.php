@@ -15,6 +15,8 @@
 ---------------------------------------------------------
 */
 
+use Engine\Entity;
+
 /**
  * Объект сущности задания на отправку емайла
  *
@@ -137,4 +139,3 @@ class ModuleNotify_EntityTask extends Entity {
 		$this->_aData['notify_subject']=$data;
 	}
 }
-?>

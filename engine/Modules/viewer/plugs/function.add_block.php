@@ -43,6 +43,6 @@ function smarty_function_add_block($params, &$smarty)
 		}
 	}
 
-	Engine::getInstance()->make(ModuleViewer::class)->AddBlock($params['group'],$params['name'],$aBlockParams,$iPriority);
+	Engine\Engine::getInstance()->make(ModuleViewer::class)->AddBlock($params['group'],$params['name'],$aBlockParams,$iPriority);
 	return '';
 }

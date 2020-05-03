@@ -23,6 +23,8 @@
  * @license http://www.yiiframework.com/license/
  */
 
+use Engine\LS;
+
 /**
  * Валидатор типа данных
  * Для типа дата/время используется внешний валидатор DateTimeParser

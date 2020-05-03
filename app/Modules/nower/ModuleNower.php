@@ -1,5 +1,7 @@
 <?php
 
+use Engine\Module;
+
 class ModuleNower extends Module {
     public function Init() {}
 

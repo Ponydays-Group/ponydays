@@ -15,6 +15,10 @@
 ---------------------------------------------------------
 */
 
+namespace Engine;
+
+use ModuleHook;
+
 /**
  * Абстрактный класс экшена.
  *
@@ -123,7 +127,7 @@ abstract class Action extends LsObject {
 	protected function AddEventPreg() {
 		$iCountArgs=func_num_args();
 		if ($iCountArgs<2) {
-			throw new Exception("Incorrect number of arguments when adding events");
+			throw new \Exception("Incorrect number of arguments when adding events");
 		}
 		$aEvent=array();
 		/**
@@ -138,7 +142,7 @@ abstract class Action extends LsObject {
 			$aEvent['name']=$aEvent['method'];
 		}
 		if (!method_exists($this,$aEvent['method'])) {
-			throw new Exception("Method of the event not found: ".$aEvent['method']);
+			throw new \Exception("Method of the event not found: ".$aEvent['method']);
 		}
 		$aEvent['preg']=func_get_arg(0);
 		$aEvent['params_preg']=array();

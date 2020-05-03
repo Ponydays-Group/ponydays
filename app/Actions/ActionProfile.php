@@ -15,6 +15,11 @@
 ---------------------------------------------------------
 */
 
+use Engine\Engine;
+use Engine\Action;
+use Engine\Config;
+use Engine\Router;
+
 /**
  * Экшен обработки профайла юзера, т.е. УРЛ вида /profile/login/
  *
@@ -1307,4 +1312,3 @@ class ActionProfile extends Action {
 		$this->Viewer_Assign('sTopBlock', 'actions/ActionProfile/top_block.tpl');
 	}
 }
-?>

@@ -6,6 +6,8 @@
  * Time: 1:52 AM
  */
 
+use Engine\Entity;
+
 /**
  * Объект сущности уведомлений
  *
@@ -264,4 +266,3 @@ class ModuleNotification_EntityNotification extends Entity {
 		$this->_aData['group_target_id']=$data;
 	}
 }
-?>

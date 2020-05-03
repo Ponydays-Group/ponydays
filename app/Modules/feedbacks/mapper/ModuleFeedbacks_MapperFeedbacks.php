@@ -1,6 +1,10 @@
 <?php
 
-class ModuleFeedbacks_MapperFeedbacks extends Mapper{
+use Engine\Engine;
+use Engine\Config;
+use Engine\Mapper;
+
+class ModuleFeedbacks_MapperFeedbacks extends Mapper {
 
 	//**************************************************************************************************
 	protected function TableName($sShortName){
@@ -125,5 +129,3 @@ class ModuleFeedbacks_MapperFeedbacks extends Mapper{
 
 
 }
-
-?>

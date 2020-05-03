@@ -15,6 +15,8 @@
 ---------------------------------------------------------
 */
 
+use Engine\Entity;
+
 /**
  * Сущность связи пользователя и блога
  *
@@ -147,4 +149,3 @@ class ModuleBlog_EntityBlogUser extends Entity {
 		$this->_aData['user']=$data;
 	}
 }
-?>

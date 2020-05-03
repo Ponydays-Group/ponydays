@@ -15,6 +15,8 @@
 ---------------------------------------------------------
 */
 
+use Engine\Entity;
+
 /**
  * Сущность смены емайла пользователем
  *
@@ -24,4 +26,3 @@
 class ModuleUser_EntityChangemail extends Entity {
 
 }
-?>

@@ -15,6 +15,10 @@
 ---------------------------------------------------------
 */
 
+use Engine\Config;
+use Engine\Engine;
+use Engine\Module;
+
 /**
  * Модуль для работы с избранным
  *
@@ -472,4 +476,3 @@ class ModuleFavourite extends Module {
 		return false;
 	}
 }
-?>

@@ -15,6 +15,11 @@
 ---------------------------------------------------------
 */
 
+use Engine\Engine;
+use Engine\Action;
+use Engine\Config;
+use Engine\Router;
+
 /**
  * Экшен обработки УРЛа вида /topic/ - управление своими топиками
  *
@@ -646,4 +651,4 @@ class ActionTopic extends Action {
 		$this->Viewer_Assign('sMenuSubItemSelect',$this->sMenuSubItemSelect);
 	}
 }
-?>
+?

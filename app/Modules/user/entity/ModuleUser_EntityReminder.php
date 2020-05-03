@@ -15,6 +15,8 @@
 ---------------------------------------------------------
 */
 
+use Engine\Entity;
+
 /**
  * Сущность восстановления пароля
  *
@@ -120,4 +122,3 @@ class ModuleUser_EntityReminder extends Entity {
 		$this->_aData['reminde_is_used']=$data;
 	}
 }
-?>

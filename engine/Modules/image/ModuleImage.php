@@ -25,6 +25,9 @@
  *
  **/
 
+use Engine\Config;
+use Engine\Module;
+
 /**
  * Modified by Lunavod
  *

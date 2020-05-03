@@ -15,6 +15,8 @@
 ---------------------------------------------------------
 */
 
+use Engine\Entity;
+
 class ModulePage_EntityPage extends Entity
 {
 	public function getId() {
@@ -65,8 +67,6 @@ class ModulePage_EntityPage extends Entity
 	}
 
 
-
-
 	public function setId($data) {
 		$this->_aData['page_id']=$data;
 	}
@@ -110,4 +110,3 @@ class ModulePage_EntityPage extends Entity
 		$this->_aData['page_auto_br']=$data;
 	}
 }
-?>

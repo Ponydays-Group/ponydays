@@ -1,5 +1,8 @@
 <?php
 
+use Engine\Config;
+use Engine\Module;
+
 class ModuleAuth extends Module
 {
 	public const SIGNATURE_ALGOS = array(

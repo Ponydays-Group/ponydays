@@ -15,6 +15,9 @@
 ---------------------------------------------------------
 */
 
+use Engine\Engine;
+use Engine\Module;
+
 /**
  * Модуль Subscribe - подписки пользователей
  *
@@ -280,4 +283,3 @@ class ModuleSubscribe extends Module {
 		return false;
 	}
 }
-?>

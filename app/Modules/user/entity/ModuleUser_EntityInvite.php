@@ -15,6 +15,8 @@
 ---------------------------------------------------------
 */
 
+use Engine\Entity;
+
 /**
  * Сущность инвайта(приглашения)
  *
@@ -137,4 +139,3 @@ class ModuleUser_EntityInvite extends Entity {
 		$this->_aData['invite_used']=$data;
 	}
 }
-?>

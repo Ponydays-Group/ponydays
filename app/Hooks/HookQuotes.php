@@ -1,4 +1,7 @@
 <?php
+
+use Engine\Hook;
+
 /**
  * User: silvman
  * Date: 20.08.17

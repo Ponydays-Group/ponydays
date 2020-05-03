@@ -19,6 +19,10 @@
  *
  */
 
+use Engine\Config;
+use Engine\LS;
+use Engine\Module;
+
 require_once('./lib/DbSimple3/Generic.php');
 
 /**

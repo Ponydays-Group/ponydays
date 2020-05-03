@@ -6,6 +6,10 @@
  * Time: 1:53 AM
  */
 
+use Engine\Engine;
+use Engine\Config;
+use Engine\Mapper;
+
 /**
  * Маппер уведомлений, работа с базой данных
  *
@@ -160,4 +164,3 @@ class ModuleNotification_MapperNotification extends Mapper {
 	//todo: удаление по массиву id, удаление по типу
 
 }
-?>

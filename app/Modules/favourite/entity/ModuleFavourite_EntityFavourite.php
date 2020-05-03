@@ -15,6 +15,8 @@
 ---------------------------------------------------------
 */
 
+use Engine\Entity;
+
 /**
  * Объект сущности избрнного
  *
@@ -99,4 +101,3 @@ class ModuleFavourite_EntityFavourite extends Entity {
 		$this->_aData['target_type']=$data;
 	}
 }
-?>

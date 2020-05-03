@@ -30,11 +30,11 @@ function smarty_function_cfg($aParams,&$oSmarty) {
 	}
 	require_once('./engine/Config.php');
 	if(!isset($aParams['instance'])) {
-		$aParams['instance'] = Config::DEFAULT_CONFIG_INSTANCE;
+		$aParams['instance'] = Engine\Config::DEFAULT_CONFIG_INSTANCE;
 	}
 	
 	/**
 	 * Возвращаем значение из конфигурации
 	 */
-	return Config::Get($aParams['name'],$aParams['instance']);
+	return Engine\Config::Get($aParams['name'],$aParams['instance']);
 }

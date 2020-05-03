@@ -15,6 +15,9 @@
 ---------------------------------------------------------
 */
 
+use Engine\Engine;
+use Engine\Module;
+
 /**
  * Модуль статических страниц
  *
@@ -227,4 +230,3 @@ class ModulePage extends Module {
 	}
 
 }
-?>

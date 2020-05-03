@@ -15,6 +15,8 @@
 ---------------------------------------------------------
 */
 
+use Engine\Block;
+
 /**
  * Обрабатывает блок облака тегов городов юзеров
  *
@@ -40,4 +42,3 @@ class BlockTagsCity extends Block {
 		$this->Viewer_Assign("aCityList",$aCities);
 	}
 }
-?>

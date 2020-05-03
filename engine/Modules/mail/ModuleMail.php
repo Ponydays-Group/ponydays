@@ -15,6 +15,9 @@
 ---------------------------------------------------------
 */
 
+use Engine\Config;
+use Engine\Module;
+
 require_once('./lib/phpMailer/class.phpmailer.php');
 
 /**

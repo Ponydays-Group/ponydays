@@ -15,6 +15,10 @@
 ---------------------------------------------------------
 */
 
+use Engine\Action;
+use Engine\Config;
+use Engine\Router;
+
 
 /**
  * Экшен обработки URL'ов вида /deleted/
@@ -274,5 +278,3 @@ class ActionDeleted extends Action
         $this->Viewer_Assign('BLOG_USER_ROLE_BAN', ModuleBlog::BLOG_USER_ROLE_BAN);
     }
 }
-
-?>

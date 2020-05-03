@@ -15,6 +15,10 @@
 ---------------------------------------------------------
 */
 
+use Engine\Action;
+use Engine\Config;
+use Engine\Router;
+
 /**
  * Обрабатывые авторизацию
  *
@@ -235,4 +239,3 @@ class ActionLogin extends Action {
 		}
 	}
 }
-?>

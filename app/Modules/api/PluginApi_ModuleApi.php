@@ -1,5 +1,8 @@
 <?php
 
+use Engine\Engine;
+use Engine\Module;
+
 class PluginApi_ModuleApi extends Module {
     protected $oMapper;
 
@@ -42,4 +45,3 @@ class PluginApi_ModuleApi extends Module {
         }
     }
 }
-?>

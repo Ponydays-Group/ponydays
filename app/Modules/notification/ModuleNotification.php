@@ -1,4 +1,8 @@
 <?php
+
+use Engine\Engine;
+use Engine\Module;
+
 /**
  * Created by PhpStorm.
  * User: frumscepend

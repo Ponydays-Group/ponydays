@@ -15,6 +15,8 @@
 ---------------------------------------------------------
 */
 
+use Engine\Block;
+
 /**
  * Обрабатывает блок облака тегов стран юзеров
  *
@@ -40,4 +42,3 @@ class BlockTagsCountry extends Block {
 		$this->Viewer_Assign("aCountryList",$aCountries);
 	}
 }
-?>

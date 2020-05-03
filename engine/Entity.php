@@ -15,6 +15,10 @@
 ---------------------------------------------------------
 */
 
+namespace Engine;
+
+use ModuleValidate;
+
 /**
  * Абстрактный класс сущности.
  * При запросе к базе данных удобно возвращать не просто массив данных, а данные в виде специального объекта - Entity.
@@ -260,7 +264,7 @@ abstract class Entity extends LsObject {
 	 * @see ModuleValidate::CreateValidator
 	 *
 	 * @return array
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public function _createValidators() {
 		$aValidators=array();
@@ -268,7 +272,7 @@ abstract class Entity extends LsObject {
 			if(isset($aRule[0],$aRule[1])) {
 				$aValidators[]=LS::Make(ModuleValidate::class)->CreateValidator($aRule[1],$this,$aRule[0],array_slice($aRule,2));
 			} else {
-				throw new Exception(get_class($this).' has an invalid validation rule');
+				throw new \Exception(get_class($this).' has an invalid validation rule');
 			}
 		}
 		return $aValidators;

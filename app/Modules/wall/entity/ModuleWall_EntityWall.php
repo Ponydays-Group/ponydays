@@ -15,6 +15,9 @@
 ---------------------------------------------------------
 */
 
+use Engine\Config;
+use Engine\Entity;
+
 /**
  * Сущность записи на стене
  *
@@ -119,4 +122,3 @@ class ModuleWall_EntityWall extends Entity {
 		return $this->getWallUser()->getUserWebPath().'wall/';
 	}
 }
-?>

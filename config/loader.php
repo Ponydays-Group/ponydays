@@ -22,11 +22,7 @@ define('LS_VERSION','1.0.3');
 
 require 'vendor/autoload.php';
 
-// /**
-//  * Operations with Config object
-//  */
-require_once(dirname(dirname(__FILE__))."/engine/Config.php");
-
+use Engine\Config;
 
 $sDirConf=dirname(__FILE__).'/engine_config/';
 if ($hDirConf = opendir($sDirConf)) {

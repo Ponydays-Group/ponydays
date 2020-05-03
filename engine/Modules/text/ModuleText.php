@@ -15,6 +15,10 @@
 ---------------------------------------------------------
 */
 
+use Engine\Config;
+use Engine\LS;
+use Engine\Module;
+
 require_once('./lib/Jevix/jevix.class.php');
 
 /**

@@ -15,6 +15,9 @@
 ---------------------------------------------------------
 */
 
+use Engine\Action;
+use Engine\Config;
+
 /**
  * Экшен обработки УРЛа вида /admin/
  *
@@ -397,4 +400,3 @@ class ActionAdmin extends Action {
 		$this->Viewer_Assign('sMenuHeadItemSelect',$this->sMenuHeadItemSelect);
 	}
 }
-?>

@@ -15,6 +15,8 @@
 ---------------------------------------------------------
 */
 
+use Engine\Entity;
+
 /**
  * Объект сущности сообщения
  *
@@ -295,4 +297,3 @@ class ModuleTalk_EntityTalk extends Entity {
 		$this->_aData['talk_deleted']=$data;
 	}
 }
-?>

@@ -15,6 +15,10 @@
 ---------------------------------------------------------
 */
 
+use Engine\Engine;
+use Engine\Config;
+use Engine\Mapper;
+
 /**
  * Маппер для работы с БД
  *
@@ -135,4 +139,3 @@ class ModuleNotify_MapperNotify extends Mapper {
 		return $aTasks;
 	}
 }
-?>

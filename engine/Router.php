@@ -15,7 +15,10 @@
 ---------------------------------------------------------
 */
 
-require_once("Action.php");
+namespace Engine;
+
+use ModuleHook;
+use ModuleViewer;
 
 /**
  * Класс роутинга(контроллера)

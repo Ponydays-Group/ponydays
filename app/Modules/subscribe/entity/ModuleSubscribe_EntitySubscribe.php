@@ -15,6 +15,8 @@
 ---------------------------------------------------------
 */
 
+use Engine\Entity;
+
 /**
  * Объект сущности подписки
  *
@@ -24,4 +26,3 @@
 class ModuleSubscribe_EntitySubscribe extends Entity {
 
 }
-?>

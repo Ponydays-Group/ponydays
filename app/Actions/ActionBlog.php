@@ -15,6 +15,11 @@
 ---------------------------------------------------------
 */
 
+use Engine\Engine;
+use Engine\Action;
+use Engine\Config;
+use Engine\Router;
+
 
 /**
  * Экшен обработки URL'ов вида /blog/

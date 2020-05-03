@@ -15,6 +15,8 @@
 ---------------------------------------------------------
 */
 
+use Engine\Entity;
+
 /**
  * Сущность голосования
  *
@@ -137,4 +139,3 @@ class ModuleVote_EntityVote extends Entity {
 		$this->_aData['vote_ip']=$data;
 	}
 }
-?>

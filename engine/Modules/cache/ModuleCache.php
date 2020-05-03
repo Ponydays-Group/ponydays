@@ -15,6 +15,9 @@
 ---------------------------------------------------------
 */
 
+use Engine\Config;
+use Engine\Module;
+
 require_once('./lib/DklabCache/config.php');
 require_once(LS_DKCACHE_PATH.'Zend/Cache.php');
 require_once(LS_DKCACHE_PATH.'Cache/Backend/MemcachedMultiload.php');
@@ -121,10 +124,11 @@ class ModuleCache extends Module {
 	 */
 	protected $sPrefixSmartCache='for-smart-cache-';
 
-	/**
-	 * Инициализируем нужный тип кеша
-	 *
-	 */
+    /**
+     * Инициализируем нужный тип кеша
+     *
+     * @throws \Zend_Cache_Exception
+     */
 	public function Init() {
 		$this->bUseCache=Config::Get('sys.cache.use');
 		$this->sCacheType=Config::Get('sys.cache.type');
@@ -205,7 +209,7 @@ class ModuleCache extends Module {
 	 * Получения значения из "умного" кеша для борьбы с конкурирующими запросами
 	 * Если кеш "протух", и за ним обращаются много запросов, то только первый запрос вернет FALSE, остальные будут получать чуть устаревшие данные из временного кеша, пока их не обновит первый запрос
 	 *
-	 * @param $sName	Имя ключа
+	 * @param string $sName	Имя ключа
 	 * @return bool|mixed
 	 */
 	public function SmartGet($sName) {

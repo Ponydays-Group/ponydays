@@ -1,6 +1,9 @@
 <?php
 
 
+use Engine\Config;
+use Engine\Mapper;
+
 class ModuleCast_MapperCast extends Mapper
 {
 

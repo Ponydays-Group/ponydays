@@ -15,6 +15,10 @@
 ---------------------------------------------------------
 */
 
+use Engine\Engine;
+use Engine\Action;
+use Engine\Router;
+
 /**
  * Экшен обработки УРЛа вида /question/ - управление своими топиками(тип: вопрос)
  *
@@ -523,4 +527,3 @@ class ActionQuestion extends Action {
 		$this->Viewer_Assign('sMenuSubItemSelect',$this->sMenuSubItemSelect);
 	}
 }
-?>

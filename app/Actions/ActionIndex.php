@@ -15,6 +15,10 @@
 ---------------------------------------------------------
 */
 
+use Engine\Action;
+use Engine\Config;
+use Engine\Router;
+
 /**
  * Обработка главной страницы, т.е. УРЛа вида /index/
  *
@@ -288,4 +292,4 @@ class ActionIndex extends Action {
 //		var_dump($this->User_GetBan("539"));
 	}
 }
-?>
+

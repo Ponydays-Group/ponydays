@@ -23,6 +23,8 @@
  * @license http://www.yiiframework.com/license/
  */
 
+use Engine\LS;
+
 /**
  * Валидатор даты
  * Валидатор использует внешний класс DateTimeParser

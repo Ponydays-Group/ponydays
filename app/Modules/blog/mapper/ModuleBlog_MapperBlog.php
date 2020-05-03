@@ -15,6 +15,10 @@
 ---------------------------------------------------------
 */
 
+use Engine\Engine;
+use Engine\Config;
+use Engine\Mapper;
+
 /**
  * Маппер для работы с БД по части блогов
  *
@@ -638,4 +642,3 @@ class ModuleBlog_MapperBlog extends Mapper {
 		return $aResult;
 	}
 }
-?>

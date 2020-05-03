@@ -15,6 +15,11 @@
 ---------------------------------------------------------
 */
 
+use Engine\Engine;
+use Engine\Action;
+use Engine\Config;
+use Engine\Router;
+
 /**
  * Обработка УРЛа вида /photoset/ - управление своими топиками(тип: фотосет)
  *
@@ -761,4 +766,3 @@ class ActionPhotoset extends Action {
 		$this->Viewer_Assign('sMenuSubItemSelect',$this->sMenuSubItemSelect);
 	}
 }
-?>

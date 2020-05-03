@@ -15,6 +15,9 @@
 ---------------------------------------------------------
 */
 
+use Engine\Action;
+use Engine\Router;
+
 /**
  * Экшен обработки УРЛа вида /my/
  * Оставлен только для редиректов со старых УРЛ на новые
@@ -108,4 +111,3 @@ class ActionMy extends Action {
 		Router::Location($this->oUserProfile->getUserWebPath().'created/comments/'.$sPage);
 	}
 }
-?>

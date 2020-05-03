@@ -15,6 +15,10 @@
 ---------------------------------------------------------
 */
 
+use Engine\Config;
+use Engine\Engine;
+use Engine\Module;
+
 /**
  * Модуль рассылок уведомлений пользователям
  *
@@ -503,4 +507,3 @@ class ModuleNotify extends Module {
 		return $this->oMapper->DeleteTaskByArrayId($aArrayId);
 	}
 }
-?>

@@ -15,6 +15,10 @@
 ---------------------------------------------------------
 */
 
+use Engine\Action;
+use Engine\Config;
+use Engine\Router;
+
 /**
  * Экшен обработки статистики юзеров, т.е. УРЛа вида /people/
  *
@@ -306,4 +310,3 @@ class ActionPeople extends Action {
 		$this->Viewer_Assign('sMenuItemSelect',$this->sMenuItemSelect);
 	}
 }
-?>

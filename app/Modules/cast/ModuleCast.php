@@ -1,5 +1,8 @@
 <?php
 
+use Engine\Engine;
+use Engine\Module;
+
 class ModuleCast extends Module
 {
 	protected $oMapper;
@@ -115,5 +118,3 @@ class ModuleCast extends Module
     }    
     
 }
-
-?>

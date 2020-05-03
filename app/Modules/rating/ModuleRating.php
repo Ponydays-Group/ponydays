@@ -15,6 +15,9 @@
 ---------------------------------------------------------
 */
 
+use Engine\Engine;
+use Engine\Module;
+
 /**
  * Модуль управления рейтингами и силой
  *
@@ -190,4 +193,3 @@ class ModuleRating extends Module {
 		return $iValue;
 	}
 }
-?>

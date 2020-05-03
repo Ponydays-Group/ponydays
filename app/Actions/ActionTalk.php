@@ -15,6 +15,10 @@
 ---------------------------------------------------------
 */
 
+use Engine\Action;
+use Engine\Config;
+use Engine\Router;
+
 /**
  * Экшен обработки личной почты (сообщения /talk/)
  *
@@ -1615,5 +1619,3 @@ class ActionTalk extends Action
         $this->Viewer_Assign('TALK_USER_DELETE_BY_AUTHOR', ModuleTalk::TALK_USER_DELETE_BY_AUTHOR);
     }
 }
-
-?>

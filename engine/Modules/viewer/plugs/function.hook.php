@@ -31,7 +31,7 @@ function smarty_function_hook($aParams,&$oSmarty) {
 	
 	$sHookName='template_'.strtolower($aParams['run']);
 	unset($aParams['run']);
-	$aResultHook=Engine::getInstance()->make(ModuleHook::class)->Run($sHookName,$aParams);
+	$aResultHook=Engine\Engine::getInstance()->make(ModuleHook::class)->Run($sHookName,$aParams);
 
 	$sReturn='';
 	if (array_key_exists('template_result',$aResultHook)) {

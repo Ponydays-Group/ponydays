@@ -15,7 +15,13 @@
 ---------------------------------------------------------
 */
 
-require_once(__DIR__.'/../../../lib/Smarty/libs/Smarty.class.php');
+use Engine\Engine;
+use Engine\Config;
+use Engine\LS;
+use Engine\Module;
+use Engine\Router;
+
+require_once(__DIR__ . '/../../../lib/Smarty/libs/Smarty.class.php');
 
 /**
  * Модуль обработки шаблонов используя шаблонизатор Smarty
@@ -503,7 +509,7 @@ class ModuleViewer extends Module {
 			/**
 			 * Считаем что тип не определен
 			 */
-			throw new Exception('Can not find the block`s template: '.$sName);
+			throw new \Exception('Can not find the block`s template: '.$sName);
 			return 'undefined';
 		}
 	}

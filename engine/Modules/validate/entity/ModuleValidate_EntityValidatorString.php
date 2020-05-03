@@ -23,6 +23,8 @@
  * @license http://www.yiiframework.com/license/
  */
 
+use Engine\LS;
+
 /**
  * Валидатор текстовых данных на длину
  *

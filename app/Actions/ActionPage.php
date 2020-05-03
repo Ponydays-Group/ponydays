@@ -15,6 +15,11 @@
 ---------------------------------------------------------
 */
 
+use Engine\Engine;
+use Engine\Action;
+use Engine\Config;
+use Engine\Router;
+
 class ActionPage extends Action {
 	protected $sUserLogin=null;
 	protected $aBadPageUrl=array('admin');
@@ -364,4 +369,3 @@ class ActionPage extends Action {
 		return $bOk;
 	}
 }
-?>

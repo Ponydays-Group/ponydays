@@ -1,6 +1,13 @@
 <?php
 
+namespace App\Actions;
+
+use App\Modules\Feedbacks\ModuleFeedbacks;
+use App\Modules\User\ModuleUser;
 use Engine\Action;
+use Engine\LS;
+use Engine\Modules\Message\ModuleMessage;
+use Engine\Modules\Viewer\ModuleViewer;
 use Engine\Router;
 
 class ActionFeedbacks extends Action{
@@ -10,8 +17,8 @@ class ActionFeedbacks extends Action{
 
     //***************************************************************************************
     public function Init(){
-        if($this->User_IsAuthorization()){
-            $this->oUserCurrent 		= $this->User_GetUserCurrent();
+        if(LS::Make(ModuleUser::class)->IsAuthorization()){
+            $this->oUserCurrent 		= LS::Make(ModuleUser::class)->GetUserCurrent();
             $this->iCurrentUserId		= $this->oUserCurrent->getId();
             $this->bIsCurrentUserAdmin	= $this->oUserCurrent->isAdministrator();
         }
@@ -32,8 +39,8 @@ class ActionFeedbacks extends Action{
         if(!empty($sEvent)) $sPath = $sPath.$sEvent.'/';
         if(!empty($sParam)) $sPath = $sPath.$sParam.'/';
 
-        if(!empty($sMessage))	$this->Message_AddNotice($sMessage,'',true);
-        if(!empty($sError))		$this->Message_AddErrorSingle($sError,'',true);
+        if(!empty($sMessage))	LS::Make(ModuleMessage::class)->AddNotice($sMessage,'',true);
+        if(!empty($sError))		LS::Make(ModuleMessage::class)->AddErrorSingle($sError,'',true);
 
         return Router::Location($sPath);
     }
@@ -67,12 +74,12 @@ class ActionFeedbacks extends Action{
     protected function EventMain(){
 
         $this->CheckUserLogin();
-        $this->Feedbacks_UpdateViewDatetimeByUserId($this->oUserCurrent->getId());
+        LS::Make(ModuleFeedbacks::class)->UpdateViewDatetimeByUserId($this->oUserCurrent->getId());
 
-        $aActions	= $this->Feedbacks_GetActionsByUserId($this->oUserCurrent->getId(), 20);
+        $aActions	= LS::Make(ModuleFeedbacks::class)->GetActionsByUserId($this->oUserCurrent->getId(), 20);
 
-        $this->Viewer_Assign('aActions', $aActions);
-        $this->Viewer_Assign('sMenuHeadItemSelect', 'feedbacks');
+        LS::Make(ModuleViewer::class)->Assign('aActions', $aActions);
+        LS::Make(ModuleViewer::class)->Assign('sMenuHeadItemSelect', 'feedbacks');
 
     }
 
@@ -83,15 +90,15 @@ class ActionFeedbacks extends Action{
         $this->CheckUserLogin();
 
         $iLastActionId	= getRequest('LastActionId');
-        $aActions		= $this->Feedbacks_GetActionsByUserIdLastActionId($this->oUserCurrent->getId(), $iLastActionId, 20);
+        $aActions		= LS::Make(ModuleFeedbacks::class)->GetActionsByUserIdLastActionId($this->oUserCurrent->getId(), $iLastActionId, 20);
 
-        $oViewerLocal = $this->Viewer_GetLocalViewer();
+        $oViewerLocal = LS::Make(ModuleViewer::class)->GetLocalViewer();
         $oViewerLocal->Assign('aActions', $aActions);
 
         $aResult['Text']	= $oViewerLocal->Fetch('actions.tpl');
 
-        $this->Viewer_SetResponseAjax('json');
-        $this->Viewer_AssignAjax('aResult', $aResult);
+        LS::Make(ModuleViewer::class)->SetResponseAjax('json');
+        LS::Make(ModuleViewer::class)->AssignAjax('aResult', $aResult);
 
     }
 

@@ -15,7 +15,12 @@
 ---------------------------------------------------------
 */
 
+namespace App\Hooks;
+
+use App\Modules\Page\ModulePage;
 use Engine\Hook;
+use Engine\LS;
+use Engine\Modules\Viewer\ModuleViewer;
 
 /**
  * Регистрация хука для вывода меню страниц
@@ -27,11 +32,11 @@ class HookPage extends Hook {
 	}
 
 	public function Menu() {
-		$aPages=$this->Page_GetPages(array('pid'=>null,'main'=>1,'active'=>1));
+		$aPages=LS::Make(ModulePage::class)->GetPages(array('pid'=>null,'main'=>1,'active'=>1));
 
-
-
-		$this->Viewer_Assign('aPagesMain',$aPages);
-		return $this->Viewer_Fetch('main_menu.tpl');
+        /** @var ModuleViewer $viewer */
+        $viewer = LS::Make(ModuleViewer::class);
+        $viewer->Assign('aPagesMain',$aPages);
+		return $viewer->Fetch('main_menu.tpl');
 	}
 }

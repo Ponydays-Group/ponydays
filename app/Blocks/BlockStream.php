@@ -15,8 +15,13 @@
 ---------------------------------------------------------
 */
 
+namespace App\Blocks;
+
+use App\Modules\Comment\ModuleComment;
 use Engine\Block;
 use Engine\Config;
+use Engine\LS;
+use Engine\Modules\Viewer\ModuleViewer;
 
 /**
  * Обработка блока с комментариями (прямой эфир)
@@ -29,17 +34,19 @@ class BlockStream extends Block {
 	 * Запуск обработки
 	 */
 	public function Exec() {
+        /** @var ModuleViewer $viewer */
+        $viewer = LS::Make(ModuleViewer::class);
 		/**
 		 * Получаем комментарии
 		 */
-		if ($aComments=$this->Comment_GetCommentsOnline('topic',Config::Get('block.stream.row'))) {
-			$oViewer=$this->Viewer_GetLocalViewer();
+		if ($aComments=LS::Make(ModuleComment::class)->GetCommentsOnline('topic',Config::Get('block.stream.row'))) {
+			$oViewer=$viewer->GetLocalViewer();
 			$oViewer->Assign('aComments',$aComments);
 			/**
 			 * Формируем результат в виде шаблона и возвращаем
 			 */
 			$sTextResult=$oViewer->Fetch("blocks/block.stream_comment.tpl");
-			$this->Viewer_Assign('sStreamComments',$sTextResult);
+			$viewer->Assign('sStreamComments',$sTextResult);
 		}
 	}
 }

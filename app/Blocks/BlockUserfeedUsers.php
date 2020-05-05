@@ -15,7 +15,13 @@
 ---------------------------------------------------------
 */
 
+namespace App\Blocks;
+
+use App\Modules\User\ModuleUser;
+use App\Modules\Userfeed\ModuleUserfeed;
 use Engine\Block;
+use Engine\LS;
+use Engine\Modules\Viewer\ModuleViewer;
 
 /**
  * Блок настройки списка пользователей в ленте
@@ -31,14 +37,17 @@ class BlockUserfeedUsers extends Block {
 		/**
 		 * Получаем необходимые переменные и прогружаем в шаблон
 		 */
-		if ($oUserCurrent = $this->User_getUserCurrent()) {
+		if ($oUserCurrent = LS::Make(ModuleUser::class)->getUserCurrent()) {
 			/**
 			 * Получаем необходимые переменные и прогружаем в шаблон
 			 */
-			$aUserSubscribes = $this->Userfeed_getUserSubscribes($oUserCurrent->getId());
-			$aFriends = $this->User_getUsersFriend($oUserCurrent->getId());
-			$this->Viewer_Assign('aUserfeedSubscribedUsers', $aUserSubscribes['users']);
-			$this->Viewer_Assign('aUserfeedFriends', $aFriends['collection']);
+			$aUserSubscribes = LS::Make(ModuleUserfeed::class)->getUserSubscribes($oUserCurrent->getId());
+			$aFriends = LS::Make(ModuleUser::class)->getUsersFriend($oUserCurrent->getId());
+
+            /** @var ModuleViewer $viewer */
+            $viewer = LS::Make(ModuleViewer::class);
+			$viewer->Assign('aUserfeedSubscribedUsers', $aUserSubscribes['users']);
+			$viewer->Assign('aUserfeedFriends', $aFriends['collection']);
 		}
 	}
 }

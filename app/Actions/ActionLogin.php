@@ -15,8 +15,21 @@
 ---------------------------------------------------------
 */
 
+namespace App\Actions;
+
+use App\Modules\Crypto\ModuleCrypto;
+use App\Modules\Notify\ModuleNotify;
+use App\Modules\User\Entity\ModuleUser_EntityReminder;
+use App\Modules\User\ModuleUser;
+use Engine\Engine;
 use Engine\Action;
 use Engine\Config;
+use Engine\LS;
+use Engine\Modules\Lang\ModuleLang;
+use Engine\Modules\Message\ModuleMessage;
+use Engine\Modules\Security\ModuleSecurity;
+use Engine\Modules\Session\ModuleSession;
+use Engine\Modules\Viewer\ModuleViewer;
 use Engine\Router;
 
 /**
@@ -61,25 +74,25 @@ class ActionLogin extends Action {
 		/**
 		 * Устанвливаем формат Ajax ответа
 		 */
-		$this->Viewer_SetResponseAjax('json');
+		LS::Make(ModuleViewer::class)->SetResponseAjax('json');
 		/**
 		 * Логин и пароль являются строками?
 		 */
 		if (!is_string(getRequest('login')) or !is_string(getRequest('password'))) {
-			$this->Message_AddErrorSingle($this->Lang_Get('system_error'));
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'));
 			return;
 		}
 		/**
 		 * Проверяем есть ли такой юзер по логину
 		 */
-		if ((func_check(getRequest('login'),'mail') and $oUser=$this->User_GetUserByMail(getRequest('login')))  or  $oUser=$this->User_GetUserByLogin(getRequest('login'))) {
+		if ((func_check(getRequest('login'),'mail') and $oUser=LS::Make(ModuleUser::class)->GetUserByMail(getRequest('login')))  or  $oUser=LS::Make(ModuleUser::class)->GetUserByLogin(getRequest('login'))) {
 			// проверка на бан
 
-//			if ($this->User_isBanned($oUser->getId())) {
+//			if (LS::Make(ModuleUser::class)->isBanned($oUser->getId())) {
 			if ($oUser->isBanned()) {
-                $this->Message_AddNoticeSingle($oUser->getBanComment());
-                $this->User_Logout();
-                $this->Session_DropSession();
+                LS::Make(ModuleMessage::class)->AddNoticeSingle($oUser->getBanComment());
+                LS::Make(ModuleUser::class)->Logout();
+                LS::Make(ModuleSession::class)->DropSession();
                 return Router::Action('error');
 			}
 
@@ -87,24 +100,24 @@ class ActionLogin extends Action {
 			 * Проверяем пароль и обновляем хеш, если нужно
 			 */
 			$user_password = $oUser->getPassword();
-			if($this->Crypto_PasswordVerify(getRequest('password'), $user_password)) {
-				if($this->Crypto_PasswordNeedsRehash($user_password)) {
-					$oUser->setPassword($this->Crypto_PasswordHash(getRequest('password')));
-					$this->User_Update($oUser);
+			if(LS::Make(ModuleCrypto::class)->PasswordVerify(getRequest('password'), $user_password)) {
+				if(LS::Make(ModuleCrypto::class)->PasswordNeedsRehash($user_password)) {
+					$oUser->setPassword(LS::Make(ModuleCrypto::class)->PasswordHash(getRequest('password')));
+					LS::Make(ModuleUser::class)->Update($oUser);
 				}
 
 				/**
 			 	* Проверяем активен ли юзер
 			 	*/
 				if (!$oUser->getActivate()) {
-					$this->Message_AddErrorSingle($this->Lang_Get('user_not_activated', array('reactivation_path' => Router::GetPath('login') . 'reactivation')));
+					LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('user_not_activated', array('reactivation_path' => Router::GetPath('login') . 'reactivation')));
 					return;
 				}
 				$bRemember=getRequest('remember',false) ? true : false;
 				/**
 				 * Авторизуем
 				 */
-				$this->User_Authorization($oUser,$bRemember);
+				LS::Make(ModuleUser::class)->Authorization($oUser,$bRemember);
 				/**
 				 * Определяем редирект
 				 */
@@ -112,44 +125,44 @@ class ActionLogin extends Action {
 				if (getRequestStr('return-path')) {
 					$sUrl=getRequestStr('return-path');
 				}
-                $this->Viewer_AssignAjax('sUrlRedirect',$sUrl ? $sUrl : Config::Get('path.root.web'));
-                $this->Viewer_AssignAjax('sKey',$this->User_GenerateUserKey($oUser));
+                LS::Make(ModuleViewer::class)->AssignAjax('sUrlRedirect',$sUrl ? $sUrl : Config::Get('path.root.web'));
+                LS::Make(ModuleViewer::class)->AssignAjax('sKey',LS::Make(ModuleUser::class)->GenerateUserKey($oUser));
 				return;
 			}
 		}
-		$this->Message_AddErrorSingle($this->Lang_Get('user_login_bad'));
+		LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('user_login_bad'));
 	}
 	/**
 	 * Повторный запрос активации
 	 */
 	protected function EventReactivation() {
-		if($this->User_GetUserCurrent()) {
+		if(LS::Make(ModuleUser::class)->GetUserCurrent()) {
 			Router::Location(Config::Get('path.root.web').'/');
 		}
 
-		$this->Viewer_AddHtmlTitle($this->Lang_Get('reactivation'));
+		LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('reactivation'));
 	}
 	/**
 	 *  Ajax повторной активации
 	 */
 	protected function EventAjaxReactivation() {
-		$this->Viewer_SetResponseAjax('json');
+		LS::Make(ModuleViewer::class)->SetResponseAjax('json');
 
-		if ((func_check(getRequestStr('mail'), 'mail') and $oUser = $this->User_GetUserByMail(getRequestStr('mail')))) {
+		if ((func_check(getRequestStr('mail'), 'mail') and $oUser = LS::Make(ModuleUser::class)->GetUserByMail(getRequestStr('mail')))) {
 			if ($oUser->getActivate()) {
-				$this->Message_AddErrorSingle($this->Lang_Get('registration_activate_error_reactivate'));
+				LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('registration_activate_error_reactivate'));
 				return;
 			} else {
 				$oUser->setActivateKey(md5(func_generator() . time()));
-				if ($this->User_Update($oUser)) {
-					$this->Message_AddNotice($this->Lang_Get('reactivation_send_link'));
-					$this->Notify_SendReactivationCode($oUser);
+				if (LS::Make(ModuleUser::class)->Update($oUser)) {
+					LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('reactivation_send_link'));
+					LS::Make(ModuleNotify::class)->SendReactivationCode($oUser);
 					return;
 				}
 			}
 		}
 
-		$this->Message_AddErrorSingle($this->Lang_Get('password_reminder_bad_email'));
+		LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('password_reminder_bad_email'));
 	}
 	/**
 	 * Обрабатываем процесс залогинивания
@@ -160,19 +173,19 @@ class ActionLogin extends Action {
 		/**
 		 * Если уже авторизирован
 		 */
-		if($this->User_GetUserCurrent()) {
+		if(LS::Make(ModuleUser::class)->GetUserCurrent()) {
 			Router::Location(Config::Get('path.root.web').'/');
 		}
-		$this->Viewer_AddHtmlTitle($this->Lang_Get('login'));
+		LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('login'));
 	}
 	/**
 	 * Обрабатываем процесс разлогинивания
 	 *
 	 */
 	protected function EventExit() {
-		$this->Security_ValidateSendForm();
-		$this->User_Logout();
-		$this->Viewer_Assign('bRefreshToHome',true);
+		LS::Make(ModuleSecurity::class)->ValidateSendForm();
+		LS::Make(ModuleUser::class)->Logout();
+		LS::Make(ModuleViewer::class)->Assign('bRefreshToHome',true);
 	}
 	/**
 	 * Ajax запрос на восстановление пароля
@@ -181,28 +194,28 @@ class ActionLogin extends Action {
 		/**
 		 * Устанвливаем формат Ajax ответа
 		 */
-		$this->Viewer_SetResponseAjax('json');
+		LS::Make(ModuleViewer::class)->SetResponseAjax('json');
 		/**
 		 * Пользователь с таким емайлом существует?
 		 */
-		if ((func_check(getRequestStr('mail'),'mail') and $oUser=$this->User_GetUserByMail(getRequestStr('mail')))) {
+		if ((func_check(getRequestStr('mail'),'mail') and $oUser=LS::Make(ModuleUser::class)->GetUserByMail(getRequestStr('mail')))) {
 			/**
 			 * Формируем и отправляем ссылку на смену пароля
 			 */
-			$oReminder=Engine::GetEntity('User_Reminder');
+			$oReminder = new ModuleUser_EntityReminder();
 			$oReminder->setCode(func_generator(32));
 			$oReminder->setDateAdd(date("Y-m-d H:i:s"));
 			$oReminder->setDateExpire(date("Y-m-d H:i:s",time()+60*60*24*7));
 			$oReminder->setDateUsed(null);
 			$oReminder->setIsUsed(0);
 			$oReminder->setUserId($oUser->getId());
-			if ($this->User_AddReminder($oReminder)) {
-				$this->Message_AddNotice($this->Lang_Get('password_reminder_send_link'));
-				$this->Notify_SendReminderCode($oUser,$oReminder);
+			if (LS::Make(ModuleUser::class)->AddReminder($oReminder)) {
+				LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('password_reminder_send_link'));
+				LS::Make(ModuleNotify::class)->SendReminderCode($oUser,$oReminder);
 				return;
 			}
 		}
-		$this->Message_AddError($this->Lang_Get('password_reminder_bad_email'),$this->Lang_Get('error'));
+		LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('password_reminder_bad_email'),LS::Make(ModuleLang::class)->Get('error'));
 	}
 	/**
 	 * Обработка напоминания пароля, подтверждение смены пароля
@@ -212,7 +225,7 @@ class ActionLogin extends Action {
 		/**
 		 * Устанавливаем title страницы
 		 */
-		$this->Viewer_AddHtmlTitle($this->Lang_Get('password_reminder'));
+		LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('password_reminder'));
 		/**
 		 * Проверка кода на восстановление пароля и генерация нового пароля
 		 */
@@ -220,21 +233,21 @@ class ActionLogin extends Action {
 			/**
 			 * Проверка кода подтверждения
 			 */
-			if ($oReminder=$this->User_GetReminderByCode($this->GetParam(0))) {
-				if (!$oReminder->getIsUsed() and strtotime($oReminder->getDateExpire())>time() and $oUser=$this->User_GetUserById($oReminder->getUserId())) {
+			if ($oReminder=LS::Make(ModuleUser::class)->GetReminderByCode($this->GetParam(0))) {
+				if (!$oReminder->getIsUsed() and strtotime($oReminder->getDateExpire())>time() and $oUser=LS::Make(ModuleUser::class)->GetUserById($oReminder->getUserId())) {
 					$sNewPassword=func_generator(7);
-					$oUser->setPassword($this->Crypto_PasswordHash($sNewPassword));
-					if ($this->User_Update($oUser)) {
+					$oUser->setPassword(LS::Make(ModuleCrypto::class)->PasswordHash($sNewPassword));
+					if (LS::Make(ModuleUser::class)->Update($oUser)) {
 						$oReminder->setDateUsed(date("Y-m-d H:i:s"));
 						$oReminder->setIsUsed(1);
-						$this->User_UpdateReminder($oReminder);
-						$this->Notify_SendReminderPassword($oUser,$sNewPassword);
+						LS::Make(ModuleUser::class)->UpdateReminder($oReminder);
+						LS::Make(ModuleNotify::class)->SendReminderPassword($oUser,$sNewPassword);
 						$this->SetTemplateAction('reminder_confirm');
 						return;
 					}
 				}
 			}
-			$this->Message_AddErrorSingle($this->Lang_Get('password_reminder_bad_code'),$this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('password_reminder_bad_code'),LS::Make(ModuleLang::class)->Get('error'));
 			return Router::Action('error');
 		}
 	}

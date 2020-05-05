@@ -1,6 +1,14 @@
 <?php
 
+namespace App\Actions;
+
+use App\Modules\Notification\ModuleNotification;
+use App\Modules\User\ModuleUser;
 use Engine\Action;
+use Engine\LS;
+use Engine\Modules\Lang\ModuleLang;
+use Engine\Modules\Message\ModuleMessage;
+use Engine\Modules\Viewer\ModuleViewer;
 use Engine\Router;
 
 class ActionNotifications extends Action {
@@ -10,8 +18,8 @@ class ActionNotifications extends Action {
 
     //***************************************************************************************
     public function Init(){
-        if($this->User_IsAuthorization()){
-            $this->oUserCurrent 		= $this->User_GetUserCurrent();
+        if(LS::Make(ModuleUser::class)->IsAuthorization()){
+            $this->oUserCurrent 		= LS::Make(ModuleUser::class)->GetUserCurrent();
             $this->iCurrentUserId		= $this->oUserCurrent->getId();
             $this->bIsCurrentUserAdmin	= $this->oUserCurrent->isAdministrator();
         }
@@ -32,8 +40,8 @@ class ActionNotifications extends Action {
         if(!empty($sEvent)) $sPath = $sPath.$sEvent.'/';
         if(!empty($sParam)) $sPath = $sPath.$sParam.'/';
 
-        if(!empty($sMessage))	$this->Message_AddNotice($sMessage,'',true);
-        if(!empty($sError))		$this->Message_AddErrorSingle($sError,'',true);
+        if(!empty($sMessage))	LS::Make(ModuleMessage::class)->AddNotice($sMessage,'',true);
+        if(!empty($sError))		LS::Make(ModuleMessage::class)->AddErrorSingle($sError,'',true);
 
         return Router::Location($sPath);
     }
@@ -68,16 +76,16 @@ class ActionNotifications extends Action {
 
         $this->CheckUserLogin();
 
-        $aNotifications = $this->Notification_getNotification($this->oUserCurrent->getId(), 1, 20, null);
+        $aNotifications = LS::Make(ModuleNotification::class)->getNotification($this->oUserCurrent->getId(), 1, 20, null);
         $aUsers = array();
         foreach ($aNotifications as $oNotification) {
-            array_push($aUsers, $this->User_GetUserById($oNotification->getSenderUserId()));
+            array_push($aUsers, LS::Make(ModuleUser::class)->GetUserById($oNotification->getSenderUserId()));
         }
 
-        $this->Viewer_AddHtmlTitle($this->Lang_Get('notifications.header'));
-        $this->Viewer_Assign('aNotifications', $aNotifications);
-        $this->Viewer_Assign('aUsers', $aUsers);
-        $this->Viewer_Assign('iPage', 2);
+        LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('notifications.header'));
+        LS::Make(ModuleViewer::class)->Assign('aNotifications', $aNotifications);
+        LS::Make(ModuleViewer::class)->Assign('aUsers', $aUsers);
+        LS::Make(ModuleViewer::class)->Assign('iPage', 2);
 
     }
 
@@ -88,21 +96,21 @@ class ActionNotifications extends Action {
         $this->CheckUserLogin();
 
         $iPage	= getRequest('Page');
-        $aNotifications = $this->Notification_getNotification($this->oUserCurrent->getId(), $iPage, 20, null);
+        $aNotifications = LS::Make(ModuleNotification::class)->getNotification($this->oUserCurrent->getId(), $iPage, 20, null);
         $aUsers = array();
         foreach ($aNotifications as $oNotification) {
-            array_push($aUsers, $this->User_GetUserById($oNotification->getSenderUserId()));
+            array_push($aUsers, LS::Make(ModuleUser::class)->GetUserById($oNotification->getSenderUserId()));
         }
 
-        $oViewerLocal = $this->Viewer_GetLocalViewer();
+        $oViewerLocal = LS::Make(ModuleViewer::class)->GetLocalViewer();
         $oViewerLocal->Assign('aNotifications', $aNotifications);
         $oViewerLocal->Assign('iPage', $iPage + 1);
         $oViewerLocal->Assign('aUsers', $aUsers);
 
         $aResult['Text']	= $oViewerLocal->Fetch('notifications.tpl');
 
-        $this->Viewer_SetResponseAjax('json');
-        $this->Viewer_AssignAjax('aResult', $aResult);
+        LS::Make(ModuleViewer::class)->SetResponseAjax('json');
+        LS::Make(ModuleViewer::class)->AssignAjax('aResult', $aResult);
 
     }
 

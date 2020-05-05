@@ -15,8 +15,25 @@
 ---------------------------------------------------------
 */
 
-use Engine\Engine;
+namespace App\Actions;
+
+use App\Modules\ACL\ModuleACL;
+use App\Modules\Blog\ModuleBlog;
+use App\Modules\Comment\ModuleComment;
+use App\Modules\Stream\ModuleStream;
+use App\Modules\Subscribe\ModuleSubscribe;
+use App\Modules\Topic\Entity\ModuleTopic_EntityTopic;
+use App\Modules\Topic\ModuleTopic;
+use App\Modules\User\Entity\ModuleUser_EntityUser;
+use App\Modules\User\ModuleUser;
 use Engine\Action;
+use Engine\LS;
+use Engine\Modules\Hook\ModuleHook;
+use Engine\Modules\Lang\ModuleLang;
+use Engine\Modules\Message\ModuleMessage;
+use Engine\Modules\Security\ModuleSecurity;
+use Engine\Modules\Text\ModuleText;
+use Engine\Modules\Viewer\ModuleViewer;
 use Engine\Router;
 
 /**
@@ -59,7 +76,7 @@ class ActionLink extends Action {
 		/**
 		 * Получаем текущего пользователя
 		 */
-		$this->oUserCurrent=$this->User_GetUserCurrent();
+		$this->oUserCurrent=LS::Make(ModuleUser::class)->GetUserCurrent();
 		/**
 		 * Устанавливаем дефолтный евент
 		 */
@@ -67,7 +84,7 @@ class ActionLink extends Action {
 		/**
 		 * Устанавливаем title страницы
 		 */
-		$this->Viewer_AddHtmlTitle($this->Lang_Get('topic_link_title'));
+		LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('topic_link_title'));
 	}
 	/**
 	 * Регистрируем евенты
@@ -94,7 +111,7 @@ class ActionLink extends Action {
 		 * Получаем номер топика из УРЛ и проверяем существует ли он
 		 */
 		$sTopicId=$this->GetParam(0);
-		if (!($oTopic=$this->Topic_GetTopicById($sTopicId)) or !$oTopic->getPublish()) {
+		if (!($oTopic=LS::Make(ModuleTopic::class)->GetTopicById($sTopicId)) or !$oTopic->getPublish()) {
 			return parent::EventNotFound();
 		}
 		/**
@@ -107,7 +124,7 @@ class ActionLink extends Action {
 		 * увелививаем число переходов по ссылке
 		 */
 		$oTopic->setLinkCountJump($oTopic->getLinkCountJump()+1);
-		$this->Topic_UpdateTopic($oTopic);
+		LS::Make(ModuleTopic::class)->UpdateTopic($oTopic);
 		/**
 		 * собственно сам переход по ссылке
 		 */
@@ -121,15 +138,15 @@ class ActionLink extends Action {
 		/**
 		 * Проверяем авторизован ли юзер
 		 */
-		if (!$this->User_IsAuthorization()) {
-			$this->Message_AddErrorSingle($this->Lang_Get('not_access'),$this->Lang_Get('error'));
+		if (!LS::Make(ModuleUser::class)->IsAuthorization()) {
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'),LS::Make(ModuleLang::class)->Get('error'));
 			return Router::Action('error');
 		}
 		/**
 		 * Получаем номер топика из УРЛ и проверяем существует ли он
 		 */
 		$sTopicId=$this->GetParam(0);
-		if (!($oTopic=$this->Topic_GetTopicById($sTopicId))) {
+		if (!($oTopic=LS::Make(ModuleTopic::class)->GetTopicById($sTopicId))) {
 			return parent::EventNotFound();
 		}
 		/**
@@ -141,18 +158,18 @@ class ActionLink extends Action {
 		/**
 		 * Если права на редактирование
 		 */
-		if (!$this->ACL_IsAllowEditTopic($oTopic,$this->oUserCurrent)) {
+		if (!LS::Make(ModuleACL::class)->IsAllowEditTopic($oTopic,$this->oUserCurrent)) {
 			return parent::EventNotFound();
 		}
 		/**
 		 * Вызов хуков
 		 */
-		$this->Hook_Run('topic_edit_show',array('oTopic'=>$oTopic));
+		LS::Make(ModuleHook::class)->Run('topic_edit_show',array('oTopic'=>$oTopic));
 		/**
 		 * Загружаем переменные в шаблон
 		 */
-		$this->Viewer_Assign('aBlogsAllow',$this->Blog_GetBlogsAllowByUser($this->oUserCurrent));
-		$this->Viewer_AddHtmlTitle($this->Lang_Get('topic_link_title_edit'));
+		LS::Make(ModuleViewer::class)->Assign('aBlogsAllow',LS::Make(ModuleBlog::class)->GetBlogsAllowByUser($this->oUserCurrent));
+		LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('topic_link_title_edit'));
 		/**
 		 * Устанавливаем шаблон вывода
 		 */
@@ -188,19 +205,19 @@ class ActionLink extends Action {
 		/**
 		 * Проверяем авторизован ли юзер
 		 */
-		if (!$this->User_IsAuthorization()) {
-			$this->Message_AddErrorSingle($this->Lang_Get('not_access'),$this->Lang_Get('error'));
+		if (!LS::Make(ModuleUser::class)->IsAuthorization()) {
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'),LS::Make(ModuleLang::class)->Get('error'));
 			return Router::Action('error');
 		}
 		/**
 		 * Вызов хуков
 		 */
-		$this->Hook_Run('topic_add_show');
+		LS::Make(ModuleHook::class)->Run('topic_add_show');
 		/**
 		 * Загружаем переменные в шаблон
 		 */
-		$this->Viewer_Assign('aBlogsAllow',$this->Blog_GetBlogsAllowByUser($this->oUserCurrent));
-		$this->Viewer_AddHtmlTitle($this->Lang_Get('topic_link_title_create'));
+		LS::Make(ModuleViewer::class)->Assign('aBlogsAllow',LS::Make(ModuleBlog::class)->GetBlogsAllowByUser($this->oUserCurrent));
+		LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('topic_link_title_create'));
 		/**
 		 * Обрабатываем отправку формы
 		 */
@@ -218,7 +235,7 @@ class ActionLink extends Action {
 		if (!isPost('submit_topic_publish') and !isPost('submit_topic_save')) {
 			return false;
 		}
-		$oTopic=Engine::GetEntity('Topic');
+		$oTopic = new ModuleTopic_EntityTopic();
 		$oTopic->_setValidateScenario('link');
 		/**
 		 * Заполняем поля для валидации
@@ -243,36 +260,36 @@ class ActionLink extends Action {
 		 */
 		$iBlogId=$oTopic->getBlogId();
 		if ($iBlogId==0) {
-			$oBlog=$this->Blog_GetPersonalBlogByUserId($this->oUserCurrent->getId());
+			$oBlog=LS::Make(ModuleBlog::class)->GetPersonalBlogByUserId($this->oUserCurrent->getId());
 		} else {
-			$oBlog=$this->Blog_GetBlogById($iBlogId);
+			$oBlog=LS::Make(ModuleBlog::class)->GetBlogById($iBlogId);
 		}
 		/**
 		 * Если блог не определен выдаем предупреждение
 		 */
 		if (!$oBlog) {
-			$this->Message_AddErrorSingle($this->Lang_Get('topic_create_blog_error_unknown'),$this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_create_blog_error_unknown'),LS::Make(ModuleLang::class)->Get('error'));
 			return false;
 		}
 		/**
 		 * Проверяем права на постинг в блог
 		 */
-		if (!$this->ACL_IsAllowBlog($oBlog,$this->oUserCurrent)) {
-			$this->Message_AddErrorSingle($this->Lang_Get('topic_create_blog_error_noallow'),$this->Lang_Get('error'));
+		if (!LS::Make(ModuleACL::class)->IsAllowBlog($oBlog,$this->oUserCurrent)) {
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_create_blog_error_noallow'),LS::Make(ModuleLang::class)->Get('error'));
 			return false;
 		}
 		/**
 		 * Проверяем разрешено ли постить топик по времени
 		 */
-		if (isPost('submit_topic_publish') and !$this->ACL_CanPostTopicTime($this->oUserCurrent)) {
-			$this->Message_AddErrorSingle($this->Lang_Get('topic_time_limit'),$this->Lang_Get('error'));
+		if (isPost('submit_topic_publish') and !LS::Make(ModuleACL::class)->CanPostTopicTime($this->oUserCurrent)) {
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_time_limit'),LS::Make(ModuleLang::class)->Get('error'));
 			return;
 		}
 		/**
 		 * Теперь можно смело добавлять топик к блогу
 		 */
 		$oTopic->setBlogId($oBlog->getId());
-		$oTopic->setText($this->Text_Parser($oTopic->getTextSource()));
+		$oTopic->setText(LS::Make(ModuleText::class)->Parser($oTopic->getTextSource()));
 		$oTopic->setTextShort($oTopic->getText());
 		$oTopic->setCutText(null);
 		/**
@@ -289,7 +306,7 @@ class ActionLink extends Action {
 		 * Принудительный вывод на главную
 		 */
 		$oTopic->setPublishIndex(0);
-		if ($this->ACL_IsAllowPublishIndex($this->oUserCurrent))	{
+		if (LS::Make(ModuleACL::class)->IsAllowPublishIndex($this->oUserCurrent))	{
 			if (getRequest('topic_publish_index')) {
 				$oTopic->setPublishIndex(1);
 			}
@@ -304,35 +321,35 @@ class ActionLink extends Action {
 		/**
 		 * Запускаем выполнение хуков
 		 */
-		$this->Hook_Run('topic_add_before', array('oTopic'=>$oTopic,'oBlog'=>$oBlog));
+		LS::Make(ModuleHook::class)->Run('topic_add_before', array('oTopic'=>$oTopic,'oBlog'=>$oBlog));
 		/**
 		 * Добавляем топик
 		 */
-		if ($this->Topic_AddTopic($oTopic)) {
-			$this->Hook_Run('topic_add_after', array('oTopic'=>$oTopic,'oBlog'=>$oBlog));
+		if (LS::Make(ModuleTopic::class)->AddTopic($oTopic)) {
+			LS::Make(ModuleHook::class)->Run('topic_add_after', array('oTopic'=>$oTopic,'oBlog'=>$oBlog));
 			/**
 			 * Получаем топик, чтоб подцепить связанные данные
 			 */
-			$oTopic=$this->Topic_GetTopicById($oTopic->getId());
+			$oTopic=LS::Make(ModuleTopic::class)->GetTopicById($oTopic->getId());
 			/**
 			 * Обновляем количество топиков в блоге
 			 */
-			$this->Blog_RecalculateCountTopicByBlogId($oTopic->getBlogId());
+			LS::Make(ModuleBlog::class)->RecalculateCountTopicByBlogId($oTopic->getBlogId());
 			/**
 			 * Добавляем автора топика в подписчики на новые комментарии к этому топику
 			 */
-			$this->Subscribe_AddSubscribeSimple('topic_new_comment',$oTopic->getId(),$this->oUserCurrent->getMail());
+			LS::Make(ModuleSubscribe::class)->AddSubscribeSimple('topic_new_comment',$oTopic->getId(),$this->oUserCurrent->getMail());
 			//Делаем рассылку спама всем, кто состоит в этом блоге
 			if ($oTopic->getPublish()==1 and $oBlog->getType()!='personal') {
-				$this->Topic_SendNotifyTopicNew($oBlog,$oTopic,$this->oUserCurrent);
+				LS::Make(ModuleTopic::class)->SendNotifyTopicNew($oBlog,$oTopic,$this->oUserCurrent);
 			}
 			/**
 			 * Добавляем событие в ленту
 			 */
-			$this->Stream_write($oTopic->getUserId(), 'add_topic', $oTopic->getId(),$oTopic->getPublish() && $oBlog->getType()!='close');
+			LS::Make(ModuleStream::class)->write($oTopic->getUserId(), 'add_topic', $oTopic->getId(),$oTopic->getPublish() && $oBlog->getType()!='close');
 			Router::Location($oTopic->getUrl());
 		} else {
-			$this->Message_AddErrorSingle($this->Lang_Get('system_error'));
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'));
 			return Router::Action('error');
 		}
 	}
@@ -368,36 +385,36 @@ class ActionLink extends Action {
 		 */
 		$iBlogId=$oTopic->getBlogId();
 		if ($iBlogId==0) {
-			$oBlog=$this->Blog_GetPersonalBlogByUserId($oTopic->getUserId());
+			$oBlog=LS::Make(ModuleBlog::class)->GetPersonalBlogByUserId($oTopic->getUserId());
 		} else {
-			$oBlog=$this->Blog_GetBlogById($iBlogId);
+			$oBlog=LS::Make(ModuleBlog::class)->GetBlogById($iBlogId);
 		}
 		/**
 		 * Если блог не определен выдаем предупреждение
 		 */
 		if (!$oBlog) {
-			$this->Message_AddErrorSingle($this->Lang_Get('topic_create_blog_error_unknown'),$this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_create_blog_error_unknown'),LS::Make(ModuleLang::class)->Get('error'));
 			return false;
 		}
 		/**
 		 * Проверяем права на постинг в блог
 		 */
-		if (!$this->ACL_IsAllowBlog($oBlog,$this->oUserCurrent)) {
-			$this->Message_AddErrorSingle($this->Lang_Get('topic_create_blog_error_noallow'),$this->Lang_Get('error'));
+		if (!LS::Make(ModuleACL::class)->IsAllowBlog($oBlog,$this->oUserCurrent)) {
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_create_blog_error_noallow'),LS::Make(ModuleLang::class)->Get('error'));
 			return false;
 		}
 		/**
 		 * Проверяем разрешено ли постить топик по времени
 		 */
-		if (isPost('submit_topic_publish') and !$oTopic->getPublishDraft() and !$this->ACL_CanPostTopicTime($this->oUserCurrent)) {
-			$this->Message_AddErrorSingle($this->Lang_Get('topic_time_limit'),$this->Lang_Get('error'));
+		if (isPost('submit_topic_publish') and !$oTopic->getPublishDraft() and !LS::Make(ModuleACL::class)->CanPostTopicTime($this->oUserCurrent)) {
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_time_limit'),LS::Make(ModuleLang::class)->Get('error'));
 			return;
 		}
 		/**
 		 * Теперь можно смело редактировать топик
 		 */
 		$oTopic->setBlogId($oBlog->getId());
-		$oTopic->setText($this->Text_Parser($oTopic->getTextSource()));
+		$oTopic->setText(LS::Make(ModuleText::class)->Parser($oTopic->getTextSource()));
 		$oTopic->setTextShort($oTopic->getText());
 		/**
 		 * Публикуем или сохраняем в черновиках
@@ -416,7 +433,7 @@ class ActionLink extends Action {
 		/**
 		 * Принудительный вывод на главную
 		 */
-		if ($this->ACL_IsAllowPublishIndex($this->oUserCurrent))	{
+		if (LS::Make(ModuleACL::class)->IsAllowPublishIndex($this->oUserCurrent))	{
 			if (getRequest('topic_publish_index')) {
 				$oTopic->setPublishIndex(1);
 			} else {
@@ -430,42 +447,42 @@ class ActionLink extends Action {
 		if (getRequest('topic_forbid_comment')) {
 			$oTopic->setForbidComment(1);
 		}
-		$this->Hook_Run('topic_edit_before', array('oTopic'=>$oTopic,'oBlog'=>$oBlog));
+		LS::Make(ModuleHook::class)->Run('topic_edit_before', array('oTopic'=>$oTopic,'oBlog'=>$oBlog));
 		/**
 		 * Сохраняем топик
 		 */
-		if ($this->Topic_UpdateTopic($oTopic)) {
-			$this->Hook_Run('topic_edit_after', array('oTopic'=>$oTopic,'oBlog'=>$oBlog,'bSendNotify'=>&$bSendNotify));
+		if (LS::Make(ModuleTopic::class)->UpdateTopic($oTopic)) {
+			LS::Make(ModuleHook::class)->Run('topic_edit_after', array('oTopic'=>$oTopic,'oBlog'=>$oBlog,'bSendNotify'=>&$bSendNotify));
 			/**
 			 * Обновляем данные в комментариях, если топик был перенесен в новый блог
 			 */
 			if($sBlogIdOld!=$oTopic->getBlogId()) {
-				$this->Comment_UpdateTargetParentByTargetId($oTopic->getBlogId(), 'topic', $oTopic->getId());
-				$this->Comment_UpdateTargetParentByTargetIdOnline($oTopic->getBlogId(), 'topic', $oTopic->getId());
+				LS::Make(ModuleComment::class)->UpdateTargetParentByTargetId($oTopic->getBlogId(), 'topic', $oTopic->getId());
+				LS::Make(ModuleComment::class)->UpdateTargetParentByTargetIdOnline($oTopic->getBlogId(), 'topic', $oTopic->getId());
 			}
 			/**
 			 * Обновляем количество топиков в блоге
 			 */
 			if ($sBlogIdOld!=$oTopic->getBlogId()) {
-				$this->Blog_RecalculateCountTopicByBlogId($sBlogIdOld);
+				LS::Make(ModuleBlog::class)->RecalculateCountTopicByBlogId($sBlogIdOld);
 			}
-			$this->Blog_RecalculateCountTopicByBlogId($oTopic->getBlogId());
+			LS::Make(ModuleBlog::class)->RecalculateCountTopicByBlogId($oTopic->getBlogId());
 			/**
 			 * Добавляем событие в ленту
 			 */
-			$this->Stream_write($oTopic->getUserId(), 'add_topic', $oTopic->getId(),$oTopic->getPublish() && $oBlog->getType()!='close');
+			LS::Make(ModuleStream::class)->write($oTopic->getUserId(), 'add_topic', $oTopic->getId(),$oTopic->getPublish() && $oBlog->getType()!='close');
 			/**
 			 * Рассылаем о новом топике подписчикам блога
 			 */
 			if ($bSendNotify)	 {
-				$this->Topic_SendNotifyTopicNew($oBlog,$oTopic,$this->oUserCurrent);
+				LS::Make(ModuleTopic::class)->SendNotifyTopicNew($oBlog,$oTopic,$this->oUserCurrent);
 			}
 			if (!$oTopic->getPublish() and !$this->oUserCurrent->isAdministrator() and $this->oUserCurrent->getId()!=$oTopic->getUserId()) {
 				Router::Location($oBlog->getUrlFull());
 			}
 			Router::Location($oTopic->getUrl());
 		} else {
-			$this->Message_AddErrorSingle($this->Lang_Get('system_error'));
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'));
 			return Router::Action('error');
 		}
 	}
@@ -476,17 +493,17 @@ class ActionLink extends Action {
 	 * @return bool
 	 */
 	protected function checkTopicFields($oTopic) {
-		$this->Security_ValidateSendForm();
+		LS::Make(ModuleSecurity::class)->ValidateSendForm();
 
 		$bOk=true;
 		if (!$oTopic->_Validate()) {
-			$this->Message_AddError($oTopic->_getValidateError(),$this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddError($oTopic->_getValidateError(),LS::Make(ModuleLang::class)->Get('error'));
 			$bOk=false;
 		}
 		/**
 		 * Выполнение хуков
 		 */
-		$this->Hook_Run('check_link_fields', array('bOk'=>&$bOk));
+		LS::Make(ModuleHook::class)->Run('check_link_fields', array('bOk'=>&$bOk));
 		return $bOk;
 	}
 	/**
@@ -494,8 +511,8 @@ class ActionLink extends Action {
 	 *
 	 */
 	public function EventShutdown() {
-		$this->Viewer_Assign('sMenuHeadItemSelect',$this->sMenuHeadItemSelect);
-		$this->Viewer_Assign('sMenuItemSelect',$this->sMenuItemSelect);
-		$this->Viewer_Assign('sMenuSubItemSelect',$this->sMenuSubItemSelect);
+		LS::Make(ModuleViewer::class)->Assign('sMenuHeadItemSelect',$this->sMenuHeadItemSelect);
+		LS::Make(ModuleViewer::class)->Assign('sMenuItemSelect',$this->sMenuItemSelect);
+		LS::Make(ModuleViewer::class)->Assign('sMenuSubItemSelect',$this->sMenuSubItemSelect);
 	}
 }

@@ -1,6 +1,11 @@
 <?php
 
+namespace App\Hooks;
+
+use App\Modules\Quotes\ModuleQuotes;
 use Engine\Hook;
+use Engine\LS;
+use Engine\Modules\Viewer\ModuleViewer;
 
 /**
  * User: silvman
@@ -14,10 +19,12 @@ class HookQuotes extends Hook {
 	}
 
 	public function GetQuote() {
-		$aQuote = $this->Quotes_GetRandomQuote();
+		$aQuote = LS::Make(ModuleQuotes::class)->GetRandomQuote();
 
-		$this->Viewer_Assign('sQuote', $aQuote['data']);
-		$this->Viewer_Assign('iQuoteId',$aQuote['id']);
-		return $this->Viewer_Fetch('quote_block.tpl');
+        /** @var ModuleViewer $viewer */
+        $viewer = LS::Make(ModuleViewer::class);
+        $viewer->Assign('sQuote', $aQuote['data']);
+		$viewer->Assign('iQuoteId',$aQuote['id']);
+		return $viewer->Fetch('quote_block.tpl');
 	}
 }

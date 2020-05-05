@@ -21,17 +21,17 @@ namespace Engine;
  * Абстрактный класс сущности ORM - аналог active record
  * Позволяет без написания SQL запросов работать с базой данных.
  * <pre>
- * $oUser=$this->User_GetUserById(1);
+ * $oUser=LS::Make(ModuleUser::class)->GetUserById(1);
  * $oUser->setName('Claus');
  * $oUser->Update();
  * </pre>
  * Возможно получать списки объектов по фильтру:
  * <pre>
- * $aUsers=$this->User_GetUserItemsByAgeAndSex(18,'male');
+ * $aUsers=LS::Make(ModuleUser::class)->GetUserItemsByAgeAndSex(18,'male');
  * // эквивалентно
- * $aUsers=$this->User_GetUserItemsByFilter(array('age'=>18,'sex'=>'male'));
+ * $aUsers=LS::Make(ModuleUser::class)->GetUserItemsByFilter(array('age'=>18,'sex'=>'male'));
  * // эквивалентно
- * $aUsers=$this->User_GetUserItemsByFilter(array('#where'=>array('age = ?d and sex = ?' => array(18,'male'))));
+ * $aUsers=LS::Make(ModuleUser::class)->GetUserItemsByFilter(array('#where'=>array('age = ?d and sex = ?' => array(18,'male'))));
  * </pre>
  *
  * @deprecated Будет заменено в дальнейшем
@@ -532,7 +532,7 @@ abstract class EntityORM extends Entity {
 					$sRelModuleName=Engine::GetModuleName($sEntityRel);
 					$sRelEntityName=Engine::GetEntityName($sEntityRel);
 					$sRelPrimaryKey='id';
-					if($oRelEntity=Engine::GetEntity($sEntityRel)) {
+					if($oRelEntity = Engine::GetEntity($sEntityRel)) {
 						$sRelPrimaryKey=$oRelEntity->_getPrimaryKey();
 					}
 

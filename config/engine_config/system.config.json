@@ -51,7 +51,15 @@
             "cron_file": "cron.log",
             "profiler": false,
             "profiler_file": "profiler.log"
-        }
+        },
+        "hooks": [
+            "App\\Hooks\\HookEditComment",
+            "App\\Hooks\\HookFeedbacks",
+            "App\\Hooks\\HookMain",
+            "App\\Hooks\\HookPage",
+            "App\\Hooks\\HookQuotes",
+            "App\\Hooks\\HookStatisticsPerformance"
+        ]
     },
     
     "smarty": {

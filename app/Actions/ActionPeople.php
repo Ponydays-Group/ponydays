@@ -15,8 +15,16 @@
 ---------------------------------------------------------
 */
 
+namespace App\Actions;
+
+use App\Modules\Geo\ModuleGeo;
+use App\Modules\User\ModuleUser;
 use Engine\Action;
 use Engine\Config;
+use Engine\LS;
+use Engine\Modules\Lang\ModuleLang;
+use Engine\Modules\Message\ModuleMessage;
+use Engine\Modules\Viewer\ModuleViewer;
 use Engine\Router;
 
 /**
@@ -47,7 +55,7 @@ class ActionPeople extends Action {
 		/**
 		 * Устанавливаем title страницы
 		 */
-		$this->Viewer_AddHtmlTitle($this->Lang_Get('people'));
+		LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('people'));
 	}
 	/**
 	 * Регистрируем евенты
@@ -76,7 +84,7 @@ class ActionPeople extends Action {
 		/**
 		 * Устанавливаем формат Ajax ответа
 		 */
-		$this->Viewer_SetResponseAjax('json');
+		LS::Make(ModuleViewer::class)->SetResponseAjax('json');
 		/**
 		 * Получаем из реквеста первые быквы для поиска пользователей по логину
 		 */
@@ -84,7 +92,7 @@ class ActionPeople extends Action {
 		if (is_string($sTitle) and mb_strlen($sTitle,'utf-8')) {
 			$sTitle=str_replace(array('_','%'),array('\_','\%'),$sTitle);
 		} else {
-			$this->Message_AddErrorSingle($this->Lang_Get('system_error'));
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'));
 			return;
 		}
 		/**
@@ -100,15 +108,15 @@ class ActionPeople extends Action {
 		/**
 		 * Ищем пользователей
 		 */
-		$aResult=$this->User_GetUsersByFilter(array('activate' => 1,'login'=>$sTitle),array('user_rating'=>'desc'),1,50);
+		$aResult=LS::Make(ModuleUser::class)->GetUsersByFilter(array('activate' => 1,'login'=>$sTitle),array('user_rating'=>'desc'),1,50);
 		/**
 		 * Формируем ответ
 		 */
-		$oViewer=$this->Viewer_GetLocalViewer();
+		$oViewer=LS::Make(ModuleViewer::class)->GetLocalViewer();
 		$oViewer->Assign('aUsersList',$aResult['collection']);
-		$oViewer->Assign('oUserCurrent',$this->User_GetUserCurrent());
-		$oViewer->Assign('sUserListEmpty',$this->Lang_Get('user_search_empty'));
-		$this->Viewer_AssignAjax('sText',$oViewer->Fetch("user_list.tpl"));
+		$oViewer->Assign('oUserCurrent',LS::Make(ModuleUser::class)->GetUserCurrent());
+		$oViewer->Assign('sUserListEmpty',LS::Make(ModuleLang::class)->Get('user_search_empty'));
+		LS::Make(ModuleViewer::class)->AssignAjax('sText',$oViewer->Fetch("user_list.tpl"));
 	}
 	/**
 	 * Показывает юзеров по стране
@@ -119,7 +127,7 @@ class ActionPeople extends Action {
 		/**
 		 * Страна существует?
 		 */
-		if (!($oCountry=$this->Geo_GetCountryById($this->getParam(0)))) {
+		if (!($oCountry=LS::Make(ModuleGeo::class)->GetCountryById($this->getParam(0)))) {
 			return parent::EventNotFound();
 		}
 		/**
@@ -133,24 +141,24 @@ class ActionPeople extends Action {
 		/**
 		 * Получаем список вязей пользователей со страной
 		 */
-		$aResult=$this->Geo_GetTargets(array('country_id'=>$oCountry->getId(),'target_type'=>'user'),$iPage,Config::Get('module.user.per_page'));
+		$aResult=LS::Make(ModuleGeo::class)->GetTargets(array('country_id'=>$oCountry->getId(),'target_type'=>'user'),$iPage,Config::Get('module.user.per_page'));
 		$aUsersId=array();
 		foreach($aResult['collection'] as $oTarget) {
 			$aUsersId[]=$oTarget->getTargetId();
 		}
-		$aUsersCountry=$this->User_GetUsersAdditionalData($aUsersId);
+		$aUsersCountry=LS::Make(ModuleUser::class)->GetUsersAdditionalData($aUsersId);
 		/**
 		 * Формируем постраничность
 		 */
-		$aPaging=$this->Viewer_MakePaging($aResult['count'],$iPage,Config::Get('module.user.per_page'),Config::Get('pagination.pages.count'),Router::GetPath('people').$this->sCurrentEvent.'/'.$oCountry->getId());
+		$aPaging=LS::Make(ModuleViewer::class)->MakePaging($aResult['count'],$iPage,Config::Get('module.user.per_page'),Config::Get('pagination.pages.count'),Router::GetPath('people').$this->sCurrentEvent.'/'.$oCountry->getId());
 		/**
 		 * Загружаем переменные в шаблон
 		 */
 		if ($aUsersCountry) {
-			$this->Viewer_Assign('aPaging',$aPaging);
+			LS::Make(ModuleViewer::class)->Assign('aPaging',$aPaging);
 		}
-		$this->Viewer_Assign('oCountry',$oCountry);
-		$this->Viewer_Assign('aUsersCountry',$aUsersCountry);
+		LS::Make(ModuleViewer::class)->Assign('oCountry',$oCountry);
+		LS::Make(ModuleViewer::class)->Assign('aUsersCountry',$aUsersCountry);
 	}
 	/**
 	 * Показывает юзеров по городу
@@ -161,7 +169,7 @@ class ActionPeople extends Action {
 		/**
 		 * Город существует?
 		 */
-		if (!($oCity=$this->Geo_GetCityById($this->getParam(0)))) {
+		if (!($oCity=LS::Make(ModuleGeo::class)->GetCityById($this->getParam(0)))) {
 			return parent::EventNotFound();
 		}
 		/**
@@ -175,24 +183,24 @@ class ActionPeople extends Action {
 		/**
 		 * Получаем список юзеров
 		 */
-		$aResult=$this->Geo_GetTargets(array('city_id'=>$oCity->getId(),'target_type'=>'user'),$iPage,Config::Get('module.user.per_page'));
+		$aResult=LS::Make(ModuleGeo::class)->GetTargets(array('city_id'=>$oCity->getId(),'target_type'=>'user'),$iPage,Config::Get('module.user.per_page'));
 		$aUsersId=array();
 		foreach($aResult['collection'] as $oTarget) {
 			$aUsersId[]=$oTarget->getTargetId();
 		}
-		$aUsersCity=$this->User_GetUsersAdditionalData($aUsersId);
+		$aUsersCity=LS::Make(ModuleUser::class)->GetUsersAdditionalData($aUsersId);
 		/**
 		 * Формируем постраничность
 		 */
-		$aPaging=$this->Viewer_MakePaging($aResult['count'],$iPage,Config::Get('module.user.per_page'),Config::Get('pagination.pages.count'),Router::GetPath('people').$this->sCurrentEvent.'/'.$oCity->getId());
+		$aPaging=LS::Make(ModuleViewer::class)->MakePaging($aResult['count'],$iPage,Config::Get('module.user.per_page'),Config::Get('pagination.pages.count'),Router::GetPath('people').$this->sCurrentEvent.'/'.$oCity->getId());
 		/**
 		 * Загружаем переменные в шаблон
 		 */
 		if ($aUsersCity) {
-			$this->Viewer_Assign('aPaging',$aPaging);
+			LS::Make(ModuleViewer::class)->Assign('aPaging',$aPaging);
 		}
-		$this->Viewer_Assign('oCity',$oCity);
-		$this->Viewer_Assign('aUsersCity',$aUsersCity);
+		LS::Make(ModuleViewer::class)->Assign('oCity',$oCity);
+		LS::Make(ModuleViewer::class)->Assign('aUsersCity',$aUsersCity);
 	}
 	/**
 	 * Показываем последних на сайте
@@ -203,8 +211,8 @@ class ActionPeople extends Action {
 		/**
 		 * Последние по визиту на сайт
 		 */
-		$aUsersLast=$this->User_GetUsersByDateLast(15);
-		$this->Viewer_Assign('aUsersLast',$aUsersLast);
+		$aUsersLast=LS::Make(ModuleUser::class)->GetUsersByDateLast(15);
+		LS::Make(ModuleViewer::class)->Assign('aUsersLast',$aUsersLast);
 		/**
 		 * Получаем статистику
 		 */
@@ -219,8 +227,8 @@ class ActionPeople extends Action {
 		/**
 		 * Последние по регистрации
 		 */
-		$aUsersRegister=$this->User_GetUsersByDateRegister(15);
-		$this->Viewer_Assign('aUsersRegister',$aUsersRegister);
+		$aUsersRegister=LS::Make(ModuleUser::class)->GetUsersByDateRegister(15);
+		LS::Make(ModuleViewer::class)->Assign('aUsersRegister',$aUsersRegister);
 		/**
 		 * Получаем статистику
 		 */
@@ -259,25 +267,25 @@ class ActionPeople extends Action {
 		/**
 		 * Получаем список юзеров
 		 */
-		$aResult=$this->User_GetUsersByFilter($aFilter,array($sOrder=>$sOrderWay),$iPage,Config::Get('module.user.per_page'));
+		$aResult=LS::Make(ModuleUser::class)->GetUsersByFilter($aFilter,array($sOrder=>$sOrderWay),$iPage,Config::Get('module.user.per_page'));
 		$aUsers=$aResult['collection'];
 		/**
 		 * Формируем постраничность
 		 */
-		$aPaging=$this->Viewer_MakePaging($aResult['count'],$iPage,Config::Get('module.user.per_page'),Config::Get('pagination.pages.count'),Router::GetPath('people').'index',array('order'=>$sOrder,'order_way'=>$sOrderWay));
+		$aPaging=LS::Make(ModuleViewer::class)->MakePaging($aResult['count'],$iPage,Config::Get('module.user.per_page'),Config::Get('pagination.pages.count'),Router::GetPath('people').'index',array('order'=>$sOrder,'order_way'=>$sOrderWay));
 		/**
 		 * Получаем алфавитный указатель на список пользователей
 		 */
-		$aPrefixUser=$this->User_GetGroupPrefixUser(1);
+		$aPrefixUser=LS::Make(ModuleUser::class)->GetGroupPrefixUser(1);
 		/**
 		 * Загружаем переменные в шаблон
 		 */
-		$this->Viewer_Assign('aPaging',$aPaging);
-		$this->Viewer_Assign('aUsersRating',$aUsers);
-		$this->Viewer_Assign('aPrefixUser',$aPrefixUser);
-		$this->Viewer_Assign("sUsersOrder",htmlspecialchars($sOrder));
-		$this->Viewer_Assign("sUsersOrderWay",htmlspecialchars($sOrderWay));
-		$this->Viewer_Assign("sUsersOrderWayNext",htmlspecialchars($sOrderWay=='desc' ? 'asc' : 'desc'));
+		LS::Make(ModuleViewer::class)->Assign('aPaging',$aPaging);
+		LS::Make(ModuleViewer::class)->Assign('aUsersRating',$aUsers);
+		LS::Make(ModuleViewer::class)->Assign('aPrefixUser',$aPrefixUser);
+		LS::Make(ModuleViewer::class)->Assign("sUsersOrder",htmlspecialchars($sOrder));
+		LS::Make(ModuleViewer::class)->Assign("sUsersOrderWay",htmlspecialchars($sOrderWay));
+		LS::Make(ModuleViewer::class)->Assign("sUsersOrderWayNext",htmlspecialchars($sOrderWay=='desc' ? 'asc' : 'desc'));
 		/**
 		 * Устанавливаем шаблон вывода
 		 */
@@ -291,11 +299,11 @@ class ActionPeople extends Action {
 		/**
 		 * Статистика кто, где и т.п.
 		 */
-		$aStat=$this->User_GetStatUsers();
+		$aStat=LS::Make(ModuleUser::class)->GetStatUsers();
 		/**
 		 * Загружаем переменные в шаблон
 		 */
-		$this->Viewer_Assign('aStat',$aStat);
+		LS::Make(ModuleViewer::class)->Assign('aStat',$aStat);
 	}
 
 	/**
@@ -306,7 +314,7 @@ class ActionPeople extends Action {
 		/**
 		 * Загружаем в шаблон необходимые переменные
 		 */
-		$this->Viewer_Assign('sMenuHeadItemSelect',$this->sMenuHeadItemSelect);
-		$this->Viewer_Assign('sMenuItemSelect',$this->sMenuItemSelect);
+		LS::Make(ModuleViewer::class)->Assign('sMenuHeadItemSelect',$this->sMenuHeadItemSelect);
+		LS::Make(ModuleViewer::class)->Assign('sMenuItemSelect',$this->sMenuItemSelect);
 	}
 }

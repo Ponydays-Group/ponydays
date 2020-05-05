@@ -15,8 +15,15 @@
 ---------------------------------------------------------
 */
 
+namespace App\Actions;
+
+use App\Modules\Topic\ModuleTopic;
+use App\Modules\User\ModuleUser;
 use Engine\Action;
 use Engine\Config;
+use Engine\LS;
+use Engine\Modules\Hook\ModuleHook;
+use Engine\Modules\Viewer\ModuleViewer;
 use Engine\Router;
 
 /**
@@ -71,8 +78,8 @@ class ActionIndex extends Action {
 		/**
 		 * Подсчитываем новые топики
 		 */
-		$this->iCountTopicsCollectiveNew=$this->Topic_GetCountTopicsCollectiveNew();
-		$this->iCountTopicsPersonalNew=$this->Topic_GetCountTopicsPersonalNew();
+		$this->iCountTopicsCollectiveNew=LS::Make(ModuleTopic::class)->GetCountTopicsCollectiveNew();
+		$this->iCountTopicsPersonalNew=LS::Make(ModuleTopic::class)->GetCountTopicsPersonalNew();
 		$this->iCountTopicsNew=$this->iCountTopicsCollectiveNew+$this->iCountTopicsPersonalNew;
 	}
 	/**
@@ -102,40 +109,43 @@ class ActionIndex extends Action {
 		 * Меню
 		 */
 		$this->sMenuSubItemSelect='top';
+
+		/** @var ModuleViewer $viewer */
+		$viewer = LS::Make(ModuleViewer::class);
 		/**
 		 * Передан ли номер страницы
 		 */
 		$iPage=$this->GetParamEventMatch(0,2) ? $this->GetParamEventMatch(0,2) : 1;
 		if ($iPage==1 and !getRequest('period')) {
-			$this->Viewer_SetHtmlCanonical(Router::GetPath('index').'top/');
+			$viewer->SetHtmlCanonical(Router::GetPath('index').'top/');
 		}
 		/**
 		 * Получаем список топиков
 		 */
-		$aResult=$this->Topic_GetTopicsTop($iPage,Config::Get('module.topic.per_page'),$sPeriod=='all' ? null : $sPeriod*60*60*24);
+		$aResult=LS::Make(ModuleTopic::class)->GetTopicsTop($iPage,Config::Get('module.topic.per_page'),$sPeriod=='all' ? null : $sPeriod*60*60*24);
 		/**
 		 * Если нет топиков за 1 день, то показываем за неделю (7)
 		 */
 		if (!$aResult['count'] and $iPage==1 and !getRequest('period')) {
 			$sPeriod=7;
-			$aResult=$this->Topic_GetTopicsTop($iPage,Config::Get('module.topic.per_page'),$sPeriod=='all' ? null : $sPeriod*60*60*24);
+			$aResult=LS::Make(ModuleTopic::class)->GetTopicsTop($iPage,Config::Get('module.topic.per_page'),$sPeriod=='all' ? null : $sPeriod*60*60*24);
 		}
 		$aTopics=$aResult['collection'];
 		/**
 		 * Вызов хуков
 		 */
-		$this->Hook_Run('topics_list_show',array('aTopics'=>$aTopics));
+		LS::Make(ModuleHook::class)->Run('topics_list_show',array('aTopics'=>$aTopics));
 		/**
 		 * Формируем постраничность
 		 */
-		$aPaging=$this->Viewer_MakePaging($aResult['count'],$iPage,Config::Get('module.topic.per_page'),Config::Get('pagination.pages.count'),Router::GetPath('index').'top',array('period'=>$sPeriod));
+		$aPaging=$viewer->MakePaging($aResult['count'],$iPage,Config::Get('module.topic.per_page'),Config::Get('pagination.pages.count'),Router::GetPath('index').'top',array('period'=>$sPeriod));
 		/**
 		 * Загружаем переменные в шаблон
 		 */
-		$this->Viewer_Assign('aTopics',$aTopics);
-		$this->Viewer_Assign('aPaging',$aPaging);
-		$this->Viewer_Assign('sPeriodSelectCurrent',$sPeriod);
-		$this->Viewer_Assign('sPeriodSelectRoot',Router::GetPath('index').'top/');
+        $viewer->Assign('aTopics',$aTopics);
+        $viewer->Assign('aPaging',$aPaging);
+        $viewer->Assign('sPeriodSelectCurrent',$sPeriod);
+        $viewer->Assign('sPeriodSelectRoot',Router::GetPath('index').'top/');
 		/**
 		 * Устанавливаем шаблон вывода
 		 */
@@ -153,40 +163,43 @@ class ActionIndex extends Action {
 		 * Меню
 		 */
 		$this->sMenuSubItemSelect='discussed';
-		/**
+
+        /** @var ModuleViewer $viewer */
+        $viewer = LS::Make(ModuleViewer::class);
+        /**
 		 * Передан ли номер страницы
 		 */
 		$iPage=$this->GetParamEventMatch(0,2) ? $this->GetParamEventMatch(0,2) : 1;
 		if ($iPage==1 and !getRequest('period')) {
-			$this->Viewer_SetHtmlCanonical(Router::GetPath('index').'discussed/');
+			$viewer->SetHtmlCanonical(Router::GetPath('index').'discussed/');
 		}
 		/**
 		 * Получаем список топиков
 		 */
-		$aResult=$this->Topic_GetTopicsDiscussed($iPage,Config::Get('module.topic.per_page'),$sPeriod=='all' ? null : $sPeriod*60*60*24);
+		$aResult=LS::Make(ModuleTopic::class)->GetTopicsDiscussed($iPage,Config::Get('module.topic.per_page'),$sPeriod=='all' ? null : $sPeriod*60*60*24);
 		/**
 		 * Если нет топиков за 1 день, то показываем за неделю (7)
 		 */
 		if (!$aResult['count'] and $iPage==1 and !getRequest('period')) {
 			$sPeriod=7;
-			$aResult=$this->Topic_GetTopicsDiscussed($iPage,Config::Get('module.topic.per_page'),$sPeriod=='all' ? null : $sPeriod*60*60*24);
+			$aResult=LS::Make(ModuleTopic::class)->GetTopicsDiscussed($iPage,Config::Get('module.topic.per_page'),$sPeriod=='all' ? null : $sPeriod*60*60*24);
 		}
 		$aTopics=$aResult['collection'];
 		/**
 		 * Вызов хуков
 		 */
-		$this->Hook_Run('topics_list_show',array('aTopics'=>$aTopics));
+		LS::Make(ModuleHook::class)->Run('topics_list_show',array('aTopics'=>$aTopics));
 		/**
 		 * Формируем постраничность
 		 */
-		$aPaging=$this->Viewer_MakePaging($aResult['count'],$iPage,Config::Get('module.topic.per_page'),Config::Get('pagination.pages.count'),Router::GetPath('index').'discussed',array('period'=>$sPeriod));
+		$aPaging=$viewer->MakePaging($aResult['count'],$iPage,Config::Get('module.topic.per_page'),Config::Get('pagination.pages.count'),Router::GetPath('index').'discussed',array('period'=>$sPeriod));
 		/**
 		 * Загружаем переменные в шаблон
 		 */
-		$this->Viewer_Assign('aTopics',$aTopics);
-		$this->Viewer_Assign('aPaging',$aPaging);
-		$this->Viewer_Assign('sPeriodSelectCurrent',$sPeriod);
-		$this->Viewer_Assign('sPeriodSelectRoot',Router::GetPath('index').'discussed/');
+        $viewer->Assign('aTopics',$aTopics);
+        $viewer->Assign('aPaging',$aPaging);
+        $viewer->Assign('sPeriodSelectCurrent',$sPeriod);
+        $viewer->Assign('sPeriodSelectRoot',Router::GetPath('index').'discussed/');
 		/**
 		 * Устанавливаем шаблон вывода
 		 */
@@ -196,7 +209,10 @@ class ActionIndex extends Action {
 	 * Вывод новых топиков
 	 */
 	protected function EventNew() {
-		$this->Viewer_SetHtmlRssAlternate(Router::GetPath('rss').'new/',Config::Get('view.name'));
+        /** @var ModuleViewer $viewer */
+        $viewer = LS::Make(ModuleViewer::class);
+
+        $viewer->SetHtmlRssAlternate(Router::GetPath('rss').'new/',Config::Get('view.name'));
 		/**
 		 * Меню
 		 */
@@ -208,21 +224,21 @@ class ActionIndex extends Action {
 		/**
 		 * Получаем список топиков
 		 */
-		$aResult=$this->Topic_GetTopicsNew($iPage,Config::Get('module.topic.per_page'));
+		$aResult=LS::Make(ModuleTopic::class)->GetTopicsNew($iPage,Config::Get('module.topic.per_page'));
 		$aTopics=$aResult['collection'];
 		/**
 		 * Вызов хуков
 		 */
-		$this->Hook_Run('topics_list_show',array('aTopics'=>$aTopics));
+		LS::Make(ModuleHook::class)->Run('topics_list_show',array('aTopics'=>$aTopics));
 		/**
 		 * Формируем постраничность
 		 */
-		$aPaging=$this->Viewer_MakePaging($aResult['count'],$iPage,Config::Get('module.topic.per_page'),Config::Get('pagination.pages.count'),Router::GetPath('index').'new');
+		$aPaging=$viewer->MakePaging($aResult['count'],$iPage,Config::Get('module.topic.per_page'),Config::Get('pagination.pages.count'),Router::GetPath('index').'new');
 		/**
 		 * Загружаем переменные в шаблон
 		 */
-		$this->Viewer_Assign('aTopics',$aTopics);
-		$this->Viewer_Assign('aPaging',$aPaging);
+        $viewer->Assign('aTopics',$aTopics);
+        $viewer->Assign('aPaging',$aPaging);
 		/**
 		 * Устанавливаем шаблон вывода
 		 */
@@ -232,7 +248,10 @@ class ActionIndex extends Action {
 	 * Вывод ВСЕХ новых топиков
 	 */
 	protected function EventNewAll() {
-		$this->Viewer_SetHtmlRssAlternate(Router::GetPath('rss').'new/',Config::Get('view.name'));
+        /** @var ModuleViewer $viewer */
+        $viewer = LS::Make(ModuleViewer::class);
+
+        $viewer->SetHtmlRssAlternate(Router::GetPath('rss').'new/',Config::Get('view.name'));
 		/**
 		 * Меню
 		 */
@@ -244,25 +263,25 @@ class ActionIndex extends Action {
 		/**
 		 * Получаем список топиков
 		 */
-		$aResult=$this->Topic_GetTopicsNewAll($iPage,Config::Get('module.topic.per_page'));
+		$aResult=LS::Make(ModuleTopic::class)->GetTopicsNewAll($iPage,Config::Get('module.topic.per_page'));
 		$aTopics=$aResult['collection'];
 		/**
 		 * Вызов хуков
 		 */
-		$this->Hook_Run('topics_list_show',array('aTopics'=>$aTopics));
+		LS::Make(ModuleHook::class)->Run('topics_list_show',array('aTopics'=>$aTopics));
 		/**
 		 * Формируем постраничность
 		 */
-		$aPaging=$this->Viewer_MakePaging($aResult['count'],$iPage,Config::Get('module.topic.per_page'),Config::Get('pagination.pages.count'),Router::GetPath('index').'newall');
+		$aPaging=$viewer->MakePaging($aResult['count'],$iPage,Config::Get('module.topic.per_page'),Config::Get('pagination.pages.count'),Router::GetPath('index').'newall');
 		/**
 		 * Загружаем переменные в шаблон
 		 */
-		$this->Viewer_Assign('aTopics',$aTopics);
-		$this->Viewer_Assign('aPaging',$aPaging);
+        $viewer->Assign('aTopics',$aTopics);
+        $viewer->Assign('aPaging',$aPaging);
 		/**
 		 * Устанавливаем шаблон вывода
 		 */
-		$this->Viewer_Assign('sMenuHeadItemSelect','newall');
+        $viewer->Assign('sMenuHeadItemSelect','newall');
 		$this->SetTemplateAction('index');
 	}
 	/**
@@ -270,26 +289,26 @@ class ActionIndex extends Action {
 	 *
 	 */
 	protected function EventIndex() {
-		$this->Viewer_Assign('sMenuHeadItemSelect','blog');
-		if ($this->User_getUserCurrent()){
+	    LS::Make(ModuleViewer::class)->Assign('sMenuHeadItemSelect','blog');
+		if (LS::Make(ModuleUser::class)->getUserCurrent()){
 			return Router::Action('feed');
 		} else {
 			return Router::Action('index', 'newall');
 		}
-
 	}
 	/**
 	 * При завершении экшена загружаем переменные в шаблон
 	 *
 	 */
 	public function EventShutdown() {
-		$this->Viewer_Assign('sMenuItemSelect',$this->sMenuItemSelect);
-		$this->Viewer_Assign('sMenuSubItemSelect',$this->sMenuSubItemSelect);
-		$this->Viewer_Assign('iCountTopicsNew',$this->iCountTopicsNew);
-		$this->Viewer_Assign('iCountTopicsCollectiveNew',$this->iCountTopicsCollectiveNew);
-		$this->Viewer_Assign('iCountTopicsPersonalNew',$this->iCountTopicsPersonalNew);
-//		$oUser = $this->User_GetUserCurrent();
-//		var_dump($this->User_GetBan("539"));
+        /** @var ModuleViewer $viewer */
+        $viewer = LS::Make(ModuleViewer::class);
+
+        $viewer->Assign('sMenuItemSelect',$this->sMenuItemSelect);
+        $viewer->Assign('sMenuSubItemSelect',$this->sMenuSubItemSelect);
+        $viewer->Assign('iCountTopicsNew',$this->iCountTopicsNew);
+        $viewer->Assign('iCountTopicsCollectiveNew',$this->iCountTopicsCollectiveNew);
+        $viewer->Assign('iCountTopicsPersonalNew',$this->iCountTopicsPersonalNew);
 	}
 }
 

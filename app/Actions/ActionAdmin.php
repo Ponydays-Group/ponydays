@@ -15,8 +15,22 @@
 ---------------------------------------------------------
 */
 
+namespace App\Actions;
+
+use App\Modules\Blog\ModuleBlog;
+use App\Modules\Comment\ModuleComment;
+use App\Modules\Topic\ModuleTopic;
+use App\Modules\User\Entity\ModuleUser_EntityField;
+use App\Modules\User\Entity\ModuleUser_EntityUser;
+use App\Modules\User\ModuleUser;
 use Engine\Action;
 use Engine\Config;
+use Engine\LS;
+use Engine\Modules\Cache\ModuleCache;
+use Engine\Modules\Lang\ModuleLang;
+use Engine\Modules\Message\ModuleMessage;
+use Engine\Modules\Security\ModuleSecurity;
+use Engine\Modules\Viewer\ModuleViewer;
 
 /**
  * Экшен обработки УРЛа вида /admin/
@@ -47,7 +61,9 @@ class ActionAdmin extends Action {
 		/**
 		 * Если нет прав доступа - перекидываем на 404 страницу
 		 */
-		if(!$this->User_IsAuthorization() or !$oUserCurrent=$this->User_GetUserCurrent() or !$oUserCurrent->isAdministrator()) {
+        /** @var ModuleUser $user */
+        $user = LS::Make(ModuleUser::class);
+		if(!$user->IsAuthorization() or !$oUserCurrent=$user->GetUserCurrent() or !$oUserCurrent->isAdministrator()) {
 			return parent::EventNotFound();
 		}
 		$this->SetDefaultEvent('index');
@@ -80,8 +96,10 @@ class ActionAdmin extends Action {
     }
 
     protected function EventSaveUser() {
-        $this->Viewer_SetResponseAjax('json');
-        if (!$oUser = $this->User_GetUserById(getRequest('user_id'))) {
+        LS::Make(ModuleViewer::class)->SetResponseAjax('json');
+        /** @var ModuleUser $user */
+        $user = LS::Make(ModuleUser::class);
+        if (!$oUser = $user->GetUserById(getRequest('user_id'))) {
             return false;
         }
         $sRank = getRequest('user_rank');
@@ -97,13 +115,14 @@ class ActionAdmin extends Action {
         if(getRequest('user_privileges_quotes') == 'on') {
         	$iPrivs |= ModuleUser::USER_PRIV_QUOTES;
 		}
-        $this->User_SetUserPrivileges($oUser->getId(), $iPrivs);
-        $this->User_Update($oUser);
+        $user->SetUserPrivileges($oUser->getId(), $iPrivs);
+        $user->Update($oUser);
     }
 
     protected function EventAdminConfigSave() {
-        $this->Viewer_SetResponseAjax('json');
+        LS::Make(ModuleViewer::class)->SetResponseAjax('json');
         $values = getRequest('values');
+        //TODO
         Config::LoadFromFile(dirname(__FILE__)."/../../config/local.config.json",true,'adminsave');
         foreach ($values as $key=>$val) {
             if ($val=="1") {
@@ -190,7 +209,7 @@ class ActionAdmin extends Action {
                 "description" => "Порог скрытия комментария",
             ],
         ];
-	    $this->Viewer_Assign("aConfig", $params);
+	    LS::Make(ModuleViewer::class)->Assign("aConfig", $params);
     }
 
 	/**
@@ -203,20 +222,21 @@ class ActionAdmin extends Action {
 	
 	protected function EventJsonConfigLocal() {
 		$config = array();
+		//TODO:
 		require("/var/www/ponydays-dev/config/config.local.php");
-		$this->Viewer_Assign('config',json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
+		LS::Make(ModuleViewer::class)->Assign('config',json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 	}
 	/**
 	 * Перестроение дерева комментариев, актуально при $config['module']['comment']['use_nested'] = true;
 	 *
 	 */
 	protected function EventRestoreComment() {
-		$this->Security_ValidateSendForm();
+		LS::Make(ModuleSecurity::class)->ValidateSendForm();
 		set_time_limit(0);
-		$this->Comment_RestoreTree();
-		$this->Cache_Clean();
+		LS::Make(ModuleComment::class)->RestoreTree();
+		LS::Make(ModuleCache::class)->Clean();
 
-		$this->Message_AddNotice($this->Lang_Get('admin_comment_restore_tree'),$this->Lang_Get('attention'));
+		LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('admin_comment_restore_tree'),LS::Make(ModuleLang::class)->Get('attention'));
 		$this->SetTemplateAction('index');
 	}
 	/**
@@ -224,37 +244,37 @@ class ActionAdmin extends Action {
 	 *
 	 */
 	protected function EventRecalculateFavourite() {
-		$this->Security_ValidateSendForm();
+        LS::Make(ModuleSecurity::class)->ValidateSendForm();
 		set_time_limit(0);
-		$this->Comment_RecalculateFavourite();
-		$this->Topic_RecalculateFavourite();
-		$this->Cache_Clean();
+        LS::Make(ModuleComment::class)->RecalculateFavourite();
+        LS::Make(ModuleTopic::class)->RecalculateFavourite();
+        LS::Make(ModuleCache::class)->Clean();
 
-		$this->Message_AddNotice($this->Lang_Get('admin_favourites_recalculated'),$this->Lang_Get('attention'));
+        LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('admin_favourites_recalculated'),LS::Make(ModuleLang::class)->Get('attention'));
 		$this->SetTemplateAction('index');
 	}
 	/**
 	 * Пересчет счетчика голосований
 	 */
 	protected function EventRecalculateVote() {
-		$this->Security_ValidateSendForm();
+        LS::Make(ModuleSecurity::class)->ValidateSendForm();
 		set_time_limit(0);
-		$this->Topic_RecalculateVote();
-		$this->Cache_Clean();
+        LS::Make(ModuleTopic::class)->RecalculateVote();
+        LS::Make(ModuleCache::class)->Clean();
 
-		$this->Message_AddNotice($this->Lang_Get('admin_votes_recalculated'),$this->Lang_Get('attention'));
+        LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('admin_votes_recalculated'),LS::Make(ModuleLang::class)->Get('attention'));
 		$this->SetTemplateAction('index');
 	}
 	/**
 	 * Пересчет количества топиков в блогах
 	 */
 	protected function EventRecalculateTopic() {
-		$this->Security_ValidateSendForm();
+        LS::Make(ModuleSecurity::class)->ValidateSendForm();
 		set_time_limit(0);
-		$this->Blog_RecalculateCountTopic();
-		$this->Cache_Clean();
+        LS::Make(ModuleBlog::class)->RecalculateCountTopic();
+        LS::Make(ModuleCache::class)->Clean();
 
-		$this->Message_AddNotice($this->Lang_Get('admin_topics_recalculated'),$this->Lang_Get('attention'));
+        LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('admin_topics_recalculated'),LS::Make(ModuleLang::class)->Get('attention'));
 		$this->SetTemplateAction('index');
 	}
 	/**
@@ -263,6 +283,14 @@ class ActionAdmin extends Action {
 	 */
 	protected function EventUserFields()
 	{
+        /** @var ModuleViewer $viewer */
+        $viewer = LS::Make(ModuleViewer::class);
+        /** @var ModuleUser $user */
+        $user = LS::Make(ModuleUser::class);
+        /** @var ModuleMessage $message */
+        $message = LS::Make(ModuleMessage::class);
+        /** @var ModuleLang $lang */
+        $lang = LS::Make(ModuleLang::class);
 		switch(getRequestStr('action')) {
 			/**
 			 * Создание нового поля
@@ -271,32 +299,32 @@ class ActionAdmin extends Action {
 				/**
 				 * Обрабатываем как ajax запрос (json)
 				 */
-				$this->Viewer_SetResponseAjax('json');
+				$viewer->SetResponseAjax('json');
 				if (!$this->checkUserField()) {
 					return;
 				}
-				$oField = Engine::GetEntity('User_Field');
+				$oField = new ModuleUser_EntityField();
 				$oField->setName(getRequestStr('name'));
 				$oField->setTitle(getRequestStr('title'));
 				$oField->setPattern(getRequestStr('pattern'));
-				if (in_array(getRequestStr('type'),$this->User_GetUserFieldTypes())) {
+				if (in_array(getRequestStr('type'),$user->GetUserFieldTypes())) {
 					$oField->setType(getRequestStr('type'));
 				} else {
 					$oField->setType('');
 				}
 
-				$iId = $this->User_addUserField($oField);
+				$iId = $user->addUserField($oField);
 				if(!$iId) {
-					$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
+					$message->AddError($lang->Get('system_error'),$lang->Get('error'));
 					return;
 				}
 				/**
 				 * Прогружаем переменные в ajax ответ
 				 */
-				$this->Viewer_AssignAjax('id', $iId);
-				$this->Viewer_AssignAjax('lang_delete', $this->Lang_Get('user_field_delete'));
-				$this->Viewer_AssignAjax('lang_edit', $this->Lang_Get('user_field_update'));
-				$this->Message_AddNotice($this->Lang_Get('user_field_added'),$this->Lang_Get('attention'));
+				$viewer->AssignAjax('id', $iId);
+				$viewer->AssignAjax('lang_delete', $lang->Get('user_field_delete'));
+				$viewer->AssignAjax('lang_edit', $lang->Get('user_field_update'));
+				$message->AddNotice($lang->Get('user_field_added'),$lang->Get('attention'));
 				break;
 			/**
 			 * Удаление поля
@@ -305,13 +333,13 @@ class ActionAdmin extends Action {
 				/**
 				 * Обрабатываем как ajax запрос (json)
 				 */
-				$this->Viewer_SetResponseAjax('json');
+				$viewer->SetResponseAjax('json');
 				if (!getRequestStr('id')) {
-					$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
+					$message->AddError($lang->Get('system_error'),$lang->Get('error'));
 					return;
 				}
-				$this->User_deleteUserField(getRequestStr('id'));
-				$this->Message_AddNotice($this->Lang_Get('user_field_deleted'),$this->Lang_Get('attention'));
+				$user->deleteUserField(getRequestStr('id'));
+				$message->AddNotice($lang->Get('user_field_deleted'),$lang->Get('attention'));
 				break;
 			/**
 			 * Изменение поля
@@ -320,34 +348,34 @@ class ActionAdmin extends Action {
 				/**
 				 * Обрабатываем как ajax запрос (json)
 				 */
-				$this->Viewer_SetResponseAjax('json');
+				$viewer->SetResponseAjax('json');
 				if (!getRequestStr('id')) {
-					$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
+					$message->AddError($lang->Get('system_error'),$lang->Get('error'));
 					return;
 				}
-				if (!$this->User_userFieldExistsById(getRequestStr('id'))) {
-					$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
+				if (!$user->userFieldExistsById(getRequestStr('id'))) {
+					$message->AddError($lang->Get('system_error'),$lang->Get('error'));
 					return false;
 				}
 				if (!$this->checkUserField()) {
 					return;
 				}
-				$oField = Engine::GetEntity('User_Field');
+				$oField = new ModuleUser_EntityField;
 				$oField->setId(getRequestStr('id'));
 				$oField->setName(getRequestStr('name'));
 				$oField->setTitle(getRequestStr('title'));
 				$oField->setPattern(getRequestStr('pattern'));
-				if (in_array(getRequestStr('type'),$this->User_GetUserFieldTypes())) {
+				if (in_array(getRequestStr('type'),$user->GetUserFieldTypes())) {
 					$oField->setType(getRequestStr('type'));
 				} else {
 					$oField->setType('');
 				}
 
-				if ($this->User_updateUserField($oField)) {
-					$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
+				if ($user->updateUserField($oField)) {
+					$message->AddError($lang->Get('system_error'),$lang->Get('error'));
 					return;
 				}
-				$this->Message_AddNotice($this->Lang_Get('user_field_updated'),$this->Lang_Get('attention'));
+				$message->AddNotice($lang->Get('user_field_updated'),$lang->Get('attention'));
 				break;
 			/**
 			 * Показываем страницу со списком полей
@@ -356,12 +384,12 @@ class ActionAdmin extends Action {
 				/**
 				 * Загружаем в шаблон JS текстовки
 				 */
-				$this->Lang_AddLangJs(array('user_field_delete_confirm'));
+				$lang->AddLangJs(array('user_field_delete_confirm'));
 				/**
 				 * Получаем список всех полей
 				 */
-				$this->Viewer_Assign('aUserFields',$this->User_getUserFields());
-				$this->Viewer_Assign('aUserFieldTypes',$this->User_GetUserFieldTypes());
+				$viewer->Assign('aUserFields',$user->getUserFields());
+				$viewer->Assign('aUserFieldTypes',$user->GetUserFieldTypes());
 				$this->SetTemplateAction('user_fields');
 		}
 	}
@@ -372,19 +400,23 @@ class ActionAdmin extends Action {
 	 */
 	public function checkUserField()
 	{
+        /** @var ModuleMessage $message */
+        $message = LS::Make(ModuleMessage::class);
+        /** @var ModuleLang $lang */
+        $lang = LS::Make(ModuleLang::class);
 		if (!getRequestStr('title')) {
-			$this->Message_AddError($this->Lang_Get('user_field_error_add_no_title'),$this->Lang_Get('error'));
+			$message->AddError($lang->Get('user_field_error_add_no_title'),$lang->Get('error'));
 			return false;
 		}
 		if (!getRequestStr('name')) {
-			$this->Message_AddError($this->Lang_Get('user_field_error_add_no_name'),$this->Lang_Get('error'));
+			$message->AddError($lang->Get('user_field_error_add_no_name'),$lang->Get('error'));
 			return false;
 		}
 		/**
 		 * Не допускаем дубликатов по имени
 		 */
-		if ($this->User_userFieldExistsByName(getRequestStr('name'), getRequestStr('id'))) {
-			$this->Message_AddError($this->Lang_Get('user_field_error_name_exists'),$this->Lang_Get('error'));
+		if (LS::Make(ModuleUser::class)->userFieldExistsByName(getRequestStr('name'), getRequestStr('id'))) {
+			$message->AddError($lang->Get('user_field_error_name_exists'),$lang->Get('error'));
 			return false;
 		}
 		return true;
@@ -397,6 +429,6 @@ class ActionAdmin extends Action {
 		/**
 		 * Загружаем в шаблон необходимые переменные
 		 */
-		$this->Viewer_Assign('sMenuHeadItemSelect',$this->sMenuHeadItemSelect);
+		LS::Make(ModuleViewer::class)->Assign('sMenuHeadItemSelect',$this->sMenuHeadItemSelect);
 	}
 }

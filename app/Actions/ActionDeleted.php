@@ -15,8 +15,19 @@
 ---------------------------------------------------------
 */
 
+namespace App\Actions;
+
+use App\Modules\ACL\ModuleACL;
+use App\Modules\Blog\ModuleBlog;
+use App\Modules\Topic\ModuleTopic;
+use App\Modules\User\Entity\ModuleUser_EntityUser;
+use App\Modules\User\ModuleUser;
 use Engine\Action;
 use Engine\Config;
+use Engine\LS;
+use Engine\Modules\Hook\ModuleHook;
+use Engine\Modules\Lang\ModuleLang;
+use Engine\Modules\Viewer\ModuleViewer;
 use Engine\Router;
 
 
@@ -97,7 +108,7 @@ class ActionDeleted extends Action
         /**
          * Достаём текущего пользователя
          */
-        $this->oUserCurrent = $this->User_GetUserCurrent();
+        $this->oUserCurrent = LS::Make(ModuleUser::class)->GetUserCurrent();
     }
 
     /**
@@ -134,19 +145,19 @@ class ActionDeleted extends Action
 		 */
 		$iPage = $this->GetParamEventMatch(0, 2) ? $this->GetParamEventMatch(0, 2) : 1;
 		if ($iPage == 1 and !getRequest('period')) {
-			$this->Viewer_SetHtmlCanonical(Router::GetPath('deleted') . $sShowType . '/');
+			LS::Make(ModuleViewer::class)->SetHtmlCanonical(Router::GetPath('deleted') . $sShowType . '/');
 		}
 		/**
 		 * Получаем список топиков
 		 */
-		$aResult = $this->Topic_GetDeletedTopicsCollective($iPage, Config::Get('module.topic.per_page'), $sShowType, $sPeriod == 'all' ? null : $sPeriod * 60 * 60 * 24);
+		$aResult = LS::Make(ModuleTopic::class)->GetDeletedTopicsCollective($iPage, Config::Get('module.topic.per_page'), $sShowType, $sPeriod == 'all' ? null : $sPeriod * 60 * 60 * 24);
 		$aTopics = $aResult['collection'];
 		$aTopicsC = [];
 		foreach ($aTopics as $oTopic ) {
 			/**
 			 * проверяем есть ли право на удаление топика
 			 */
-			if ($this->oUserCurrent && $this->ACL_IsAllowDeleteTopic($oTopic,$this->oUserCurrent)) {
+			if ($this->oUserCurrent && LS::Make(ModuleACL::class)->IsAllowDeleteTopic($oTopic,$this->oUserCurrent)) {
 				array_push($aTopicsC, $oTopic);
 			}
 		}
@@ -154,24 +165,24 @@ class ActionDeleted extends Action
 		/**
 		 * Вызов хуков
 		 */
-		$this->Hook_Run('topics_list_show', array('aTopics' => $aTopics));
+		LS::Make(ModuleHook::class)->Run('topics_list_show', array('aTopics' => $aTopics));
 		/**
 		 * Формируем постраничность
 		 */
-		$aPaging = $this->Viewer_MakePaging($aResult['count'], $iPage, Config::Get('module.topic.per_page'), Config::Get('pagination.pages.count'), Router::GetPath('deleted') . $sShowType, in_array($sShowType, array('discussed', 'top')) ? array('period' => $sPeriod) : array());
+		$aPaging = LS::Make(ModuleViewer::class)->MakePaging($aResult['count'], $iPage, Config::Get('module.topic.per_page'), Config::Get('pagination.pages.count'), Router::GetPath('deleted') . $sShowType, in_array($sShowType, array('discussed', 'top')) ? array('period' => $sPeriod) : array());
 		/**
 		 * Вызов хуков
 		 */
-		$this->Hook_Run('blog_show', array('sShowType' => $sShowType));
+		LS::Make(ModuleHook::class)->Run('blog_show', array('sShowType' => $sShowType));
 		/**
 		 * Загружаем переменные в шаблон
 		 */
-		$this->Viewer_Assign('aTopics', $aTopics);
-		$this->Viewer_Assign('aPaging', $aPaging);
-		$this->Viewer_Assign('bInTrash', true);
+		LS::Make(ModuleViewer::class)->Assign('aTopics', $aTopics);
+		LS::Make(ModuleViewer::class)->Assign('aPaging', $aPaging);
+		LS::Make(ModuleViewer::class)->Assign('bInTrash', true);
 		if (in_array($sShowType, array('discussed', 'top'))) {
-			$this->Viewer_Assign('sPeriodSelectCurrent', $sPeriod);
-			$this->Viewer_Assign('sPeriodSelectRoot', Router::GetPath('deleted') . $sShowType . '/');
+			LS::Make(ModuleViewer::class)->Assign('sPeriodSelectCurrent', $sPeriod);
+			LS::Make(ModuleViewer::class)->Assign('sPeriodSelectRoot', Router::GetPath('deleted') . $sShowType . '/');
 		}
 		/**
 		 * Устанавливаем шаблон вывода
@@ -217,14 +228,14 @@ class ActionDeleted extends Action
 		/**
 		 * Получаем список блогов
 		 */
-		$aResult=$this->Blog_GetBlogsByFilter($aFilter,array($sOrder=>$sOrderWay),$iPage,Config::Get('module.blog.per_page'));
+		$aResult=LS::Make(ModuleBlog::class)->GetBlogsByFilter($aFilter,array($sOrder=>$sOrderWay),$iPage,Config::Get('module.blog.per_page'));
 		$aBlogs=$aResult['collection'];
 		$aBlogsC = [];
 		foreach ($aBlogs as $aBlog ) {
 			/**
 			 * проверяем есть ли право на удаление топика
 			 */
-			if ($this->oUserCurrent && $this->ACL_IsAllowDeleteBlog($aBlog,$this->oUserCurrent)) {
+			if ($this->oUserCurrent && LS::Make(ModuleViewer::class)->IsAllowDeleteBlog($aBlog,$this->oUserCurrent)) {
 				array_push($aBlogsC, $aBlog);
 			}
 		}
@@ -232,19 +243,19 @@ class ActionDeleted extends Action
 		/**
 		 * Формируем постраничность
 		 */
-		$aPaging=$this->Viewer_MakePaging($aResult['count'],$iPage,Config::Get('module.blog.per_page'),Config::Get('pagination.pages.count'),Router::GetPath('blogs'),array('order'=>$sOrder,'order_way'=>$sOrderWay));
+		$aPaging=LS::Make(ModuleViewer::class)->MakePaging($aResult['count'],$iPage,Config::Get('module.blog.per_page'),Config::Get('pagination.pages.count'),Router::GetPath('blogs'),array('order'=>$sOrder,'order_way'=>$sOrderWay));
 		/**
 		 * Загружаем переменные в шаблон
 		 */
-		$this->Viewer_Assign('aPaging',$aPaging);
-		$this->Viewer_Assign("aBlogs",$aBlogs);
-		$this->Viewer_Assign("sBlogOrder",htmlspecialchars($sOrder));
-		$this->Viewer_Assign("sBlogOrderWay",htmlspecialchars($sOrderWay));
-		$this->Viewer_Assign("sBlogOrderWayNext",htmlspecialchars($sOrderWay=='desc' ? 'asc' : 'desc'));
+		LS::Make(ModuleViewer::class)->Assign('aPaging',$aPaging);
+		LS::Make(ModuleViewer::class)->Assign("aBlogs",$aBlogs);
+		LS::Make(ModuleViewer::class)->Assign("sBlogOrder",htmlspecialchars($sOrder));
+		LS::Make(ModuleViewer::class)->Assign("sBlogOrderWay",htmlspecialchars($sOrderWay));
+		LS::Make(ModuleViewer::class)->Assign("sBlogOrderWayNext",htmlspecialchars($sOrderWay=='desc' ? 'asc' : 'desc'));
 		/**
 		 * Устанавливаем title страницы
 		 */
-		$this->Viewer_AddHtmlTitle($this->Lang_Get('blog_menu_all_list'));
+		LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('blog_menu_all_list'));
 		/**
 		 * Устанавливаем шаблон вывода
 		 */
@@ -260,21 +271,21 @@ class ActionDeleted extends Action
         /**
          * Загружаем в шаблон необходимые переменные
          */
-        $this->Viewer_Assign('sMenuHeadItemSelect', $this->sMenuHeadItemSelect);
-        $this->Viewer_Assign('sMenuItemSelect', $this->sMenuItemSelect);
-        $this->Viewer_Assign('sMenuSubItemSelect', $this->sMenuSubItemSelect);
-        $this->Viewer_Assign('sMenuSubBlogUrl', $this->sMenuSubBlogUrl);
-        $this->Viewer_Assign('iCountTopicsCollectiveNew', $this->iCountTopicsCollectiveNew);
-        $this->Viewer_Assign('iCountTopicsPersonalNew', $this->iCountTopicsPersonalNew);
-        $this->Viewer_Assign('iCountTopicsBlogNew', $this->iCountTopicsBlogNew);
-        $this->Viewer_Assign('iCountTopicsNew', $this->iCountTopicsNew);
+        LS::Make(ModuleViewer::class)->Assign('sMenuHeadItemSelect', $this->sMenuHeadItemSelect);
+        LS::Make(ModuleViewer::class)->Assign('sMenuItemSelect', $this->sMenuItemSelect);
+        LS::Make(ModuleViewer::class)->Assign('sMenuSubItemSelect', $this->sMenuSubItemSelect);
+        LS::Make(ModuleViewer::class)->Assign('sMenuSubBlogUrl', $this->sMenuSubBlogUrl);
+        LS::Make(ModuleViewer::class)->Assign('iCountTopicsCollectiveNew', $this->iCountTopicsCollectiveNew);
+        LS::Make(ModuleViewer::class)->Assign('iCountTopicsPersonalNew', $this->iCountTopicsPersonalNew);
+        LS::Make(ModuleViewer::class)->Assign('iCountTopicsBlogNew', $this->iCountTopicsBlogNew);
+        LS::Make(ModuleViewer::class)->Assign('iCountTopicsNew', $this->iCountTopicsNew);
 
-        $this->Viewer_Assign('BLOG_USER_ROLE_GUEST', ModuleBlog::BLOG_USER_ROLE_GUEST);
-        $this->Viewer_Assign('BLOG_USER_ROLE_USER', ModuleBlog::BLOG_USER_ROLE_USER);
-        $this->Viewer_Assign('BLOG_USER_ROLE_MODERATOR', ModuleBlog::BLOG_USER_ROLE_MODERATOR);
-        $this->Viewer_Assign('BLOG_USER_ROLE_ADMINISTRATOR', ModuleBlog::BLOG_USER_ROLE_ADMINISTRATOR);
-        $this->Viewer_Assign('BLOG_USER_ROLE_INVITE', ModuleBlog::BLOG_USER_ROLE_INVITE);
-        $this->Viewer_Assign('BLOG_USER_ROLE_REJECT', ModuleBlog::BLOG_USER_ROLE_REJECT);
-        $this->Viewer_Assign('BLOG_USER_ROLE_BAN', ModuleBlog::BLOG_USER_ROLE_BAN);
+        LS::Make(ModuleViewer::class)->Assign('BLOG_USER_ROLE_GUEST', ModuleBlog::BLOG_USER_ROLE_GUEST);
+        LS::Make(ModuleViewer::class)->Assign('BLOG_USER_ROLE_USER', ModuleBlog::BLOG_USER_ROLE_USER);
+        LS::Make(ModuleViewer::class)->Assign('BLOG_USER_ROLE_MODERATOR', ModuleBlog::BLOG_USER_ROLE_MODERATOR);
+        LS::Make(ModuleViewer::class)->Assign('BLOG_USER_ROLE_ADMINISTRATOR', ModuleBlog::BLOG_USER_ROLE_ADMINISTRATOR);
+        LS::Make(ModuleViewer::class)->Assign('BLOG_USER_ROLE_INVITE', ModuleBlog::BLOG_USER_ROLE_INVITE);
+        LS::Make(ModuleViewer::class)->Assign('BLOG_USER_ROLE_REJECT', ModuleBlog::BLOG_USER_ROLE_REJECT);
+        LS::Make(ModuleViewer::class)->Assign('BLOG_USER_ROLE_BAN', ModuleBlog::BLOG_USER_ROLE_BAN);
     }
 }

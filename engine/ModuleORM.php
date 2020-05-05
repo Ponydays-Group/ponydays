@@ -17,15 +17,15 @@
 
 namespace Engine;
 
-use ModuleCache;
-use ModuleDatabase;
+use Engine\Modules\Cache\ModuleCache;
+use Engine\Modules\Database\ModuleDatabase;
 use Zend_Cache;
 
 /**
  * Абстракция модуля ORM
  * Предоставляет базовые методы для работы с EntityORM, например,
  * <pre>
- *	$aUsers=$this->User_GetUserItemsByAgeAndSex(18,'male');
+ *	$aUsers=LS::Make(ModuleUser::class)->GetUserItemsByAgeAndSex(18,'male');
  * </pre>
  *
  * @deprecated Будет заменено в дальнейшем
@@ -67,7 +67,7 @@ abstract class ModuleORM extends Module {
 	 * @return EntityORM|bool
 	 */
 	protected function _AddEntity($oEntity) {
-	    /** @var \ModuleCache $cache */
+	    /** @var ModuleCache $cache */
 	    $cache = LS::Make(ModuleCache::class);
 		$res=$this->oMapperORM->AddEntity($oEntity);
 		// сбрасываем кеш
@@ -102,7 +102,7 @@ abstract class ModuleORM extends Module {
 	 * @return EntityORM|bool
 	 */
 	protected function _UpdateEntity($oEntity) {
-        /** @var \ModuleCache $cache */
+        /** @var ModuleCache $cache */
         $cache = LS::Make(ModuleCache::class);
         $res=$this->oMapperORM->UpdateEntity($oEntity);
 		if ($res===0 or $res) { // запись не изменилась, либо изменилась
@@ -144,7 +144,7 @@ abstract class ModuleORM extends Module {
 	 * @return EntityORM|bool
 	 */
 	protected function _DeleteEntity($oEntity) {
-        /** @var \ModuleCache $cache */
+        /** @var ModuleCache $cache */
         $cache = LS::Make(ModuleCache::class);
         $res=$this->oMapperORM->DeleteEntity($oEntity);
 		if ($res) {
@@ -392,7 +392,7 @@ abstract class ModuleORM extends Module {
 			if (isset($aFilter['#cache'][1])) $aCacheTags=$aFilter['#cache'][1];
 			if (isset($aFilter['#cache'][2])) $iCacheTime=$aFilter['#cache'][2];
 
-            /** @var \ModuleCache $cache */
+            /** @var ModuleCache $cache */
             $cache = LS::Make(ModuleCache::class);
             if (false === ($aEntities = $cache->Get($sCacheKey))) {
 				$aEntities=$this->oMapperORM->GetItemsByFilter($aFilter,$sEntityFull);
@@ -503,7 +503,7 @@ abstract class ModuleORM extends Module {
 			if (isset($aFilter['#cache'][1])) $aCacheTags=$aFilter['#cache'][1];
 			if (isset($aFilter['#cache'][2])) $iCacheTime=$aFilter['#cache'][2];
 
-            /** @var \ModuleCache $cache */
+            /** @var ModuleCache $cache */
             $cache = LS::Make(ModuleCache::class);
             if (false === ($iCount = $cache->Get($sCacheKey))) {
 				$iCount=$this->oMapperORM->GetCountItemsByFilter($aFilter,$sEntityFull);
@@ -556,7 +556,7 @@ abstract class ModuleORM extends Module {
 			if (isset($aJoinData['#cache'][2])) $iCacheTime=$aJoinData['#cache'][2];
 
 			// Добавление тега для обработки MANY_TO_MANY
-            /** @var \ModuleCache $cache */
+            /** @var ModuleCache $cache */
             $cache = LS::Make(ModuleCache::class);
             $aCacheTags[] = 'm2m_'.$aJoinData['#relation_key'].$aJoinData['#by_key'].$aJoinData['#by_value'];
 			if (false === ($aEntities = $cache->Get($sCacheKey))) {
@@ -602,7 +602,7 @@ abstract class ModuleORM extends Module {
 			if (isset($aJoinData['#cache'][1])) $aCacheTags=$aJoinData['#cache'][1];
 			if (isset($aJoinData['#cache'][2])) $iCacheTime=$aJoinData['#cache'][2];
 
-            /** @var \ModuleCache $cache */
+            /** @var ModuleCache $cache */
             $cache = LS::Make(ModuleCache::class);
             $aCacheTags[] = 'm2m_'.$aJoinData['#relation_key'].$aJoinData['#by_key'].$aJoinData['#by_value'];
 			if (false === ($iCount = $cache->Get($sCacheKey))) {
@@ -621,8 +621,8 @@ abstract class ModuleORM extends Module {
 	 * </pre>
 	 * И методы модуля ORM, например
 	 * <pre>
-	 *	$this->User_getUserItemsByName('Claus');
-	 *	$this->User_getUserItemsAll();
+	 *	LS::Make(ModuleUser::class)->getUserItemsByName('Claus');
+	 *	LS::Make(ModuleUser::class)->getUserItemsAll();
 	 * </pre>
 	 * @see Engine::_CallModule
 	 *

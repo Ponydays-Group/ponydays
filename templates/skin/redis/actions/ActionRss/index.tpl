@@ -18,8 +18,7 @@
 			<dc:creator>{$oItem.author}</dc:creator>
 			<description><![CDATA[{$oItem.description}]]></description>
 			<pubDate>{date_format date=$oItem.pubDate format="r"}</pubDate>			
-			<category>{$oItem.category|replace:',':'</category>
-			<category>'}</category>
+			<category>{$oItem.category|replace:',':'</category><category>'}</category>
 		</item>
 {/foreach}
 </channel>

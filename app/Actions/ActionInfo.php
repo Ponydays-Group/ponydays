@@ -15,7 +15,21 @@
 ---------------------------------------------------------
 */
 
+namespace App\Actions;
+
+use App\Modules\ACL\ModuleACL;
+use App\Modules\Blog\ModuleBlog;
+use App\Modules\Comment\ModuleComment;
+use App\Modules\Talk\ModuleTalk;
+use App\Modules\Topic\ModuleTopic;
+use App\Modules\User\Entity\ModuleUser_EntityUser;
+use App\Modules\User\ModuleUser;
 use Engine\Action;
+use Engine\Config;
+use Engine\LS;
+use Engine\Modules\Lang\ModuleLang;
+use Engine\Modules\Message\ModuleMessage;
+use Engine\Modules\Viewer\ModuleViewer;
 use Engine\Router;
 
 /**
@@ -42,8 +56,8 @@ class ActionInfo extends Action
         /**
          * Получаем текущего юзера
          */
-        $this->oUserCurrent = $this->User_GetUserCurrent();
-        $this->Viewer_SetResponseAjax('json');
+        $this->oUserCurrent = LS::Make(ModuleUser::class)->GetUserCurrent();
+        LS::Make(ModuleViewer::class)->SetResponseAjax('json');
     }
 
     /**
@@ -58,7 +72,7 @@ class ActionInfo extends Action
 
     protected  function EventTopic() {
         $iTopicId = getRequest('iTopicId');
-        if (!($oTopic=$this->Topic_GetTopicById($iTopicId))) {
+        if (!($oTopic=LS::Make(ModuleTopic::class)->GetTopicById($iTopicId))) {
             return parent::EventNotFound();
         }
         /**
@@ -75,26 +89,26 @@ class ActionInfo extends Action
             and (!$this->oUserCurrent
                 || !in_array(
                     $oTopic->getBlog()->getId(),
-                    $this->Blog_GetAccessibleBlogsByUser($this->oUserCurrent)
+                    LS::Make(ModuleBlog::class)->GetAccessibleBlogsByUser($this->oUserCurrent)
                 )
             )
         ) {
-            $this->Message_AddErrorSingle($this->Lang_Get('blog_close_show'),$this->Lang_Get('not_access'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('blog_close_show'),LS::Make(ModuleLang::class)->Get('not_access'));
             return Router::Action('error');
         }
 
-        $oViewer = $this->Viewer_GetLocalViewer();
+        $oViewer = LS::Make(ModuleViewer::class)->GetLocalViewer();
         $oViewer->Assign('oTopic', $oTopic);
-        $this->Viewer_AssignAjax('sText', $oViewer->Fetch("actions/ActionInfo/topic.tpl"));
+        LS::Make(ModuleViewer::class)->AssignAjax('sText', $oViewer->Fetch("actions/ActionInfo/topic.tpl"));
     }
 
     protected  function EventComment() {
         $iCommentId = getRequest('iCommentId');
-        if (!($oComment=$this->Comment_GetCommentById($iCommentId))) {
+        if (!($oComment=LS::Make(ModuleComment::class)->GetCommentById($iCommentId))) {
             return parent::EventNotFound();
         }
         if ($oComment->getTargetType()=="topic") {
-            $oTarget = $this->Topic_GetTopicById($oComment->getTargetId());
+            $oTarget = LS::Make(ModuleTopic::class)->GetTopicById($oComment->getTargetId());
             /**
              * Проверяем права на просмотр топика
              */
@@ -109,11 +123,11 @@ class ActionInfo extends Action
                 and (!$this->oUserCurrent
                     || !in_array(
                         $oTarget->getBlog()->getId(),
-                        $this->Blog_GetAccessibleBlogsByUser($this->oUserCurrent)
+                        LS::Make(ModuleBlog::class)->GetAccessibleBlogsByUser($this->oUserCurrent)
                     )
                 )
             ) {
-                $this->Message_AddErrorSingle($this->Lang_Get('blog_close_show'), $this->Lang_Get('not_access'));
+                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('blog_close_show'), LS::Make(ModuleLang::class)->Get('not_access'));
                 return Router::Action('error');
             }
         } else {
@@ -121,8 +135,8 @@ class ActionInfo extends Action
                 echo "NO USER CURRENT";
                 return parent::EventNotFound();
             }
-            $oTarget = $this->Talk_GetTalkById($oComment->getTargetId());
-            if (!($oTalkUser=$this->Talk_GetTalkUser($oTarget->getId(),$this->oUserCurrent->getId()))) {
+            $oTarget = LS::Make(ModuleTalk::class)->GetTalkById($oComment->getTargetId());
+            if (!($oTalkUser=LS::Make(ModuleTalk::class)->GetTalkUser($oTarget->getId(),$this->oUserCurrent->getId()))) {
                 echo "NO TALK USER";
                 return parent::EventNotFound();
             }
@@ -135,28 +149,28 @@ class ActionInfo extends Action
             }
         }
 
-        $oViewer = $this->Viewer_GetLocalViewer();
+        $oViewer = LS::Make(ModuleViewer::class)->GetLocalViewer();
         $oViewer->Assign('oTarget', $oTarget);
         $oViewer->Assign('oComment', $oComment);
         if ($oComment->getDelete()) {
-			$oComment->setUserDelete($this->User_GetUserById($oComment->getDeleteUserId()));
+			$oComment->setUserDelete(LS::Make(ModuleUser::class)->GetUserById($oComment->getDeleteUserId()));
 		}
-        $oViewer->Assign('bEnableVoteInfo', $this->ACL_CheckSimpleAccessLevel(Config::Get('acl.vote_list.comment.ne_enable_level'), $this->oUserCurrent, $oComment, 'comment'));
-        $this->Viewer_AssignAjax('sText', $oViewer->Fetch("actions/ActionInfo/comment.tpl"));
+        $oViewer->Assign('bEnableVoteInfo', LS::Make(ModuleACL::class)->CheckSimpleAccessLevel(Config::Get('acl.vote_list.comment.ne_enable_level'), $this->oUserCurrent, $oComment, 'comment'));
+        LS::Make(ModuleViewer::class)->AssignAjax('sText', $oViewer->Fetch("actions/ActionInfo/comment.tpl"));
     }
 
     protected  function EventProfile() {
         $sLogin = getRequest('sLogin');
-        if (!($oUser=$this->User_GetUserByLogin($sLogin))) {
+        if (!($oUser=LS::Make(ModuleUser::class)->GetUserByLogin($sLogin))) {
             return parent::EventNotFound();
         }
 
-        $oViewer = $this->Viewer_GetLocalViewer();
+        $oViewer = LS::Make(ModuleViewer::class)->GetLocalViewer();
 
         $oViewer->Assign('oUserProfile', $oUser);
-        $oViewer->Assign('iCountTopicUser', $this->Topic_GetCountTopicsPersonalByUser($oUser->getId(),1));
-        $oViewer->Assign('iCountCommentUser', $this->Comment_GetCountCommentsByUserId($oUser->getId(),'topic'));
+        $oViewer->Assign('iCountTopicUser', LS::Make(ModuleTopic::class)->GetCountTopicsPersonalByUser($oUser->getId(),1));
+        $oViewer->Assign('iCountCommentUser', LS::Make(ModuleComment::class)->GetCountCommentsByUserId($oUser->getId(),'topic'));
 
-        $this->Viewer_AssignAjax('sText', $oViewer->Fetch("actions/ActionInfo/profile.tpl"));
+        LS::Make(ModuleViewer::class)->AssignAjax('sText', $oViewer->Fetch("actions/ActionInfo/profile.tpl"));
     }
 }

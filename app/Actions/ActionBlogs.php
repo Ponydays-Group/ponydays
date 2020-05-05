@@ -15,8 +15,16 @@
 ---------------------------------------------------------
 */
 
+namespace App\Actions;
+
+use App\Modules\Blog\ModuleBlog;
+use App\Modules\User\ModuleUser;
 use Engine\Action;
 use Engine\Config;
+use Engine\LS;
+use Engine\Modules\Lang\ModuleLang;
+use Engine\Modules\Message\ModuleMessage;
+use Engine\Modules\Viewer\ModuleViewer;
 use Engine\Router;
 
 /**
@@ -33,7 +41,7 @@ class ActionBlogs extends Action {
 		/**
 		 * Загружаем в шаблон JS текстовки
 		 */
-		$this->Lang_AddLangJs(array(
+		LS::Make(ModuleLang::class)->AddLangJs(array(
 								  'blog_join','blog_leave'
 							  ));
 	}
@@ -58,7 +66,7 @@ class ActionBlogs extends Action {
 		/**
 		 * Устанавливаем формат Ajax ответа
 		 */
-		$this->Viewer_SetResponseAjax('json');
+		LS::Make(ModuleViewer::class)->SetResponseAjax('json');
 		/**
 		 * Получаем из реквеста первые буквы блога
 		 */
@@ -66,21 +74,21 @@ class ActionBlogs extends Action {
 			$sTitle=str_replace('%','',$sTitle);
 		}
 		if (!$sTitle) {
-			$this->Message_AddErrorSingle($this->Lang_Get('system_error'));
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'));
 			return;
 		}
 		/**
 		 * Ищем блоги
 		 */
-		$aResult=$this->Blog_GetBlogsByFilter(array('exclude_type' => 'personal','title'=>"%{$sTitle}%"),array('blog_title'=>'asc'),1,100);
+		$aResult=LS::Make(ModuleBlog::class)->GetBlogsByFilter(array('exclude_type' => 'personal','title'=>"%{$sTitle}%"),array('blog_title'=>'asc'),1,100);
 		/**
 		 * Формируем и возвращает ответ
 		 */
-		$oViewer=$this->Viewer_GetLocalViewer();
+		$oViewer=LS::Make(ModuleViewer::class)->GetLocalViewer();
 		$oViewer->Assign('aBlogs',$aResult['collection']);
-		$oViewer->Assign('oUserCurrent',$this->User_GetUserCurrent());
-		$oViewer->Assign('sBlogsEmptyList',$this->Lang_Get('blogs_search_empty'));
-		$this->Viewer_AssignAjax('sText',$oViewer->Fetch("blog_list.tpl"));
+		$oViewer->Assign('oUserCurrent',LS::Make(ModuleUser::class)->GetUserCurrent());
+		$oViewer->Assign('sBlogsEmptyList',LS::Make(ModuleLang::class)->Get('blogs_search_empty'));
+		LS::Make(ModuleViewer::class)->AssignAjax('sText',$oViewer->Fetch("blog_list.tpl"));
 	}
 	/**
 	 * Отображение списка блогов
@@ -113,24 +121,24 @@ class ActionBlogs extends Action {
 		/**
 		 * Получаем список блогов
 		 */
-		$aResult=$this->Blog_GetBlogsByFilter($aFilter,array($sOrder=>$sOrderWay),$iPage,Config::Get('module.blog.per_page'));
+		$aResult=LS::Make(ModuleBlog::class)->GetBlogsByFilter($aFilter,array($sOrder=>$sOrderWay),$iPage,Config::Get('module.blog.per_page'));
 		$aBlogs=$aResult['collection'];
 		/**
 		 * Формируем постраничность
 		 */
-		$aPaging=$this->Viewer_MakePaging($aResult['count'],$iPage,Config::Get('module.blog.per_page'),Config::Get('pagination.pages.count'),Router::GetPath('blogs'),array('order'=>$sOrder,'order_way'=>$sOrderWay));
+		$aPaging=LS::Make(ModuleViewer::class)->MakePaging($aResult['count'],$iPage,Config::Get('module.blog.per_page'),Config::Get('pagination.pages.count'),Router::GetPath('blogs'),array('order'=>$sOrder,'order_way'=>$sOrderWay));
 		/**
 		 * Загружаем переменные в шаблон
 		 */
-		$this->Viewer_Assign('aPaging',$aPaging);
-		$this->Viewer_Assign("aBlogs",$aBlogs);
-		$this->Viewer_Assign("sBlogOrder",htmlspecialchars($sOrder));
-		$this->Viewer_Assign("sBlogOrderWay",htmlspecialchars($sOrderWay));
-		$this->Viewer_Assign("sBlogOrderWayNext",htmlspecialchars($sOrderWay=='desc' ? 'asc' : 'desc'));
+		LS::Make(ModuleViewer::class)->Assign('aPaging',$aPaging);
+		LS::Make(ModuleViewer::class)->Assign("aBlogs",$aBlogs);
+		LS::Make(ModuleViewer::class)->Assign("sBlogOrder",htmlspecialchars($sOrder));
+		LS::Make(ModuleViewer::class)->Assign("sBlogOrderWay",htmlspecialchars($sOrderWay));
+		LS::Make(ModuleViewer::class)->Assign("sBlogOrderWayNext",htmlspecialchars($sOrderWay=='desc' ? 'asc' : 'desc'));
 		/**
 		 * Устанавливаем title страницы
 		 */
-		$this->Viewer_AddHtmlTitle($this->Lang_Get('blog_menu_all_list'));
+		LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('blog_menu_all_list'));
 		/**
 		 * Устанавливаем шаблон вывода
 		 */

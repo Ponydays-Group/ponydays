@@ -15,8 +15,12 @@
 ---------------------------------------------------------
 */
 
+namespace App\Hooks;
+
+use App\Modules\User\ModuleUser;
 use Engine\Config;
 use Engine\Hook;
+use Engine\LS;
 use Engine\Router;
 
 /**
@@ -39,7 +43,7 @@ class HookMain extends Hook {
 		/**
 		 * Проверка на закрытый режим
 		 */
-		$oUserCurrent=$this->User_GetUserCurrent();
+		$oUserCurrent=LS::Make(ModuleUser::class)->GetUserCurrent();
 		if (!$oUserCurrent and Config::Get('general.close') and Router::GetAction()!='registration' and Router::GetAction()!='login') {
 			Router::Action('login');
 		}

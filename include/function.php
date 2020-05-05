@@ -22,6 +22,8 @@
  * @return unknown
  */
 
+use Engine\Entity;
+
 if (!function_exists('iconv')) {
     function iconv($a, $b, $s) {
         return $s;

@@ -15,7 +15,16 @@
 ---------------------------------------------------------
 */
 
+namespace App\Actions;
+
+use App\Modules\Subscribe\ModuleSubscribe;
+use App\Modules\User\Entity\ModuleUser_EntityUser;
+use App\Modules\User\ModuleUser;
 use Engine\Action;
+use Engine\LS;
+use Engine\Modules\Lang\ModuleLang;
+use Engine\Modules\Message\ModuleMessage;
+use Engine\Modules\Viewer\ModuleViewer;
 use Engine\Router;
 
 /**
@@ -37,7 +46,7 @@ class ActionSubscribe extends Action {
 	 *
 	 */
 	public function Init() {
-		$this->oUserCurrent=$this->User_GetUserCurrent();
+		$this->oUserCurrent=LS::Make(ModuleUser::class)->GetUserCurrent();
 	}
 	/**
 	 * Регистрация евентов
@@ -62,20 +71,20 @@ class ActionSubscribe extends Action {
 		/**
 		 * Получаем подписку по ключу
 		 */
-		if ($oSubscribe=$this->Subscribe_GetSubscribeByKey($this->getParam(0)) and $oSubscribe->getStatus()==1) {
+		if ($oSubscribe=LS::Make(ModuleSubscribe::class)->GetSubscribeByKey($this->getParam(0)) and $oSubscribe->getStatus()==1) {
 			/**
 			 * Отписываем пользователя
 			 */
 			$oSubscribe->setStatus(0);
 			$oSubscribe->setDateRemove(date("Y-m-d H:i:s"));
-			$this->Subscribe_UpdateSubscribe($oSubscribe);
+			LS::Make(ModuleSubscribe::class)->UpdateSubscribe($oSubscribe);
 
-			$this->Message_AddNotice($this->Lang_Get('subscribe_change_ok'),null,true);
+			LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('subscribe_change_ok'),null,true);
 		}
 		/**
 		 * Получаем URL для редиректа
 		 */
-		if ((!$sUrl=$this->Subscribe_GetUrlTarget($oSubscribe->getTargetType(),$oSubscribe->getTargetId()))) {
+		if ((!$sUrl=LS::Make(ModuleSubscribe::class)->GetUrlTarget($oSubscribe->getTargetType(),$oSubscribe->getTargetId()))) {
 			$sUrl=Router::GetPath('index');
 		}
 		Router::Location($sUrl);
@@ -87,7 +96,7 @@ class ActionSubscribe extends Action {
 		/**
 		 * Устанавливаем формат Ajax ответа
 		 */
-		$this->Viewer_SetResponseAjax('json');
+		LS::Make(ModuleViewer::class)->SetResponseAjax('json');
 		/**
 		 * Получаем емайл подписки и проверяем его на валидность
 		 */
@@ -96,15 +105,15 @@ class ActionSubscribe extends Action {
 			$sMail=$this->oUserCurrent->getMail();
 		}
 		if (!func_check($sMail,'mail')) {
-			$this->Message_AddError($this->Lang_Get('registration_mail_error'),$this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('registration_mail_error'),LS::Make(ModuleLang::class)->Get('error'));
 			return ;
 		}
 		/**
 		 * Получаем тип объекта подписки
 		 */
 		$sTargetType=getRequestStr('target_type');
-		if (!$this->Subscribe_IsAllowTargetType($sTargetType)) {
-			$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
+		if (!LS::Make(ModuleSubscribe::class)->IsAllowTargetType($sTargetType)) {
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'),LS::Make(ModuleLang::class)->Get('error'));
 			return ;
 		}
 		$sTargetId=getRequestStr('target_id') ? getRequestStr('target_id') : null;
@@ -114,27 +123,27 @@ class ActionSubscribe extends Action {
 		/**
 		 * Есть ли доступ к подписке гостям?
 		 */
-		if (!$this->oUserCurrent and !$this->Subscribe_IsAllowTargetForGuest($sTargetType)) {
-			$this->Message_AddError($this->Lang_Get('need_authorization'),$this->Lang_Get('error'));
+		if (!$this->oUserCurrent and !LS::Make(ModuleSubscribe::class)->IsAllowTargetForGuest($sTargetType)) {
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('need_authorization'),LS::Make(ModuleLang::class)->Get('error'));
 			return ;
 		}
 		/**
 		 * Проверка объекта подписки
 		 */
-		if (!$this->Subscribe_CheckTarget($sTargetType,$sTargetId,$iValue)) {
-			$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
+		if (!LS::Make(ModuleSubscribe::class)->CheckTarget($sTargetType,$sTargetId,$iValue)) {
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'),LS::Make(ModuleLang::class)->Get('error'));
 			return ;
 		}
 		/**
 		 * Если подписка еще не существовала, то создаем её
 		 */
-		if ($oSubscribe=$this->Subscribe_AddSubscribeSimple($sTargetType,$sTargetId,$sMail)) {
+		if ($oSubscribe=LS::Make(ModuleSubscribe::class)->AddSubscribeSimple($sTargetType,$sTargetId,$sMail)) {
 			$oSubscribe->setStatus($iValue);
-			$this->Subscribe_UpdateSubscribe($oSubscribe);
-			$this->Message_AddNotice($this->Lang_Get('subscribe_change_ok'),$this->Lang_Get('attention'));
+			LS::Make(ModuleSubscribe::class)->UpdateSubscribe($oSubscribe);
+			LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('subscribe_change_ok'),LS::Make(ModuleLang::class)->Get('attention'));
 			return ;
 		}
-		$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
+		LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'),LS::Make(ModuleLang::class)->Get('error'));
 		return ;
 	}
 }

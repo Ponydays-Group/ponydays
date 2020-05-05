@@ -15,7 +15,13 @@
 ---------------------------------------------------------
 */
 
+namespace App\Blocks;
+
+use App\Modules\Geo\ModuleGeo;
+use App\Modules\Tools\ModuleTools;
 use Engine\Block;
+use Engine\LS;
+use Engine\Modules\Viewer\ModuleViewer;
 
 /**
  * Обрабатывает блок облака тегов городов юзеров
@@ -31,14 +37,14 @@ class BlockTagsCity extends Block {
 		/**
 		 * Получаем города
 		 */
-		$aCities=$this->Geo_GetGroupCitiesByTargetType('user',20);
+		$aCities=LS::Make(ModuleGeo::class)->GetGroupCitiesByTargetType('user',20);
 		/**
 		 * Формируем облако тегов
 		 */
-		$this->Tools_MakeCloud($aCities);
+		LS::Make(ModuleTools::class)->MakeCloud($aCities);
 		/**
 		 * Выводим в шаблон
 		 */
-		$this->Viewer_Assign("aCityList",$aCities);
+        LS::Make(ModuleViewer::class)->Assign("aCityList",$aCities);
 	}
 }

@@ -47,17 +47,6 @@ abstract class Module extends LsObject {
 		$this->oEngine=$oEngine;
 	}
 	/**
-	 * Ставим хук на вызов неизвестного метода и считаем что хотели вызвать метод какого либо модуля
-	 * @see Engine::_CallModule
-	 *
-	 * @param string $sName Имя метода
-	 * @param array $aArgs Аргументы
-	 * @return mixed
-	 */
-	public function __call($sName,$aArgs) {
-		return $this->oEngine->_CallModule($sName,$aArgs);
-	}
-	/**
 	 * Блокируем копирование/клонирование объекта
 	 *
 	 */

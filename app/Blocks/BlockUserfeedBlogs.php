@@ -15,7 +15,14 @@
 ---------------------------------------------------------
 */
 
+namespace App\Blocks;
+
+use App\Modules\Blog\ModuleBlog;
+use App\Modules\User\ModuleUser;
+use App\Modules\Userfeed\ModuleUserfeed;
 use Engine\Block;
+use Engine\LS;
+use Engine\Modules\Viewer\ModuleViewer;
 
 /**
  * Блок настройки списка блогов в ленте
@@ -31,23 +38,25 @@ public function Exec() {
 		/**
 		 * Пользователь авторизован?
 		 */
-		if ($oUserCurrent = $this->User_getUserCurrent()) {
-			$aUserSubscribes = $this->Userfeed_getUserSubscribes($oUserCurrent->getId());
+		if ($oUserCurrent = LS::Make(ModuleUser::class)->getUserCurrent()) {
+			$aUserSubscribes = LS::Make(ModuleUserfeed::class)->getUserSubscribes($oUserCurrent->getId());
 			/**
 			 * Получаем список ID блогов, в которых состоит пользователь
 			 */
-			$aBlogsId = $this->Blog_GetBlogUsersByUserId($oUserCurrent->getId(), array(ModuleBlog::BLOG_USER_ROLE_USER,ModuleBlog::BLOG_USER_ROLE_MODERATOR,ModuleBlog::BLOG_USER_ROLE_ADMINISTRATOR),true);
+			$aBlogsId = LS::Make(ModuleBlog::class)->GetBlogUsersByUserId($oUserCurrent->getId(), array(ModuleBlog::BLOG_USER_ROLE_USER,ModuleBlog::BLOG_USER_ROLE_MODERATOR,ModuleBlog::BLOG_USER_ROLE_ADMINISTRATOR),true);
 			/**
 			 * Получаем список ID блогов, которые создал пользователь
 			 */
-			$aBlogsAll=$this->Blog_GetBlogs($oUserCurrent->getId(),true);
+			$aBlogsAll=LS::Make(ModuleBlog::class)->GetBlogs($oUserCurrent->getId(),true);
 			$aBlogsId=array_merge($aBlogsId,$aBlogsAll);
-			$aBlogs=$this->Blog_GetBlogsAdditionalData($aBlogsId,array('owner'=>array()),array('blog_title'=>'asc'));
+			$aBlogs=LS::Make(ModuleBlog::class)->GetBlogsAdditionalData($aBlogsId,array('owner'=>array()),array('blog_title'=>'asc'));
 			/**
 			 * Выводим в шаблон
 			 */
-			$this->Viewer_Assign('aUserfeedSubscribedBlogs', $aUserSubscribes['blogs']);
-			$this->Viewer_Assign('aUserfeedBlogs', $aBlogs);
+            /** @var ModuleViewer $viewer */
+            $viewer = LS::Make(ModuleViewer::class);
+			$viewer->Assign('aUserfeedSubscribedBlogs', $aUserSubscribes['blogs']);
+			$viewer->Assign('aUserfeedBlogs', $aBlogs);
 		}
 	}
 }

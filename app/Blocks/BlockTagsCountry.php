@@ -15,7 +15,13 @@
 ---------------------------------------------------------
 */
 
+namespace App\Blocks;
+
+use App\Modules\Geo\ModuleGeo;
+use App\Modules\Tools\ModuleTools;
 use Engine\Block;
+use Engine\LS;
+use Engine\Modules\Viewer\ModuleViewer;
 
 /**
  * Обрабатывает блок облака тегов стран юзеров
@@ -31,14 +37,14 @@ class BlockTagsCountry extends Block {
 		/**
 		 * Получаем страны
 		 */
-		$aCountries=$this->Geo_GetGroupCountriesByTargetType('user',20);
+		$aCountries=LS::Make(ModuleGeo::class)->GetGroupCountriesByTargetType('user',20);
 		/**
 		 * Формируем облако тегов
 		 */
-		$this->Tools_MakeCloud($aCountries);
+		LS::Make(ModuleTools::class)->MakeCloud($aCountries);
 		/**
 		 * Выводим в шаблон
 		 */
-		$this->Viewer_Assign("aCountryList",$aCountries);
+        LS::Make(ModuleViewer::class)->Assign("aCountryList",$aCountries);
 	}
 }

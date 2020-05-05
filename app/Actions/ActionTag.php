@@ -15,8 +15,15 @@
 ---------------------------------------------------------
 */
 
+namespace App\Actions;
+
+use App\Modules\Topic\ModuleTopic;
 use Engine\Action;
 use Engine\Config;
+use Engine\LS;
+use Engine\Modules\Hook\ModuleHook;
+use Engine\Modules\Lang\ModuleLang;
+use Engine\Modules\Viewer\ModuleViewer;
 use Engine\Router;
 
 /**
@@ -68,25 +75,25 @@ class ActionTag extends Action {
 		/**
 		 * Получаем список топиков
 		 */
-		$aResult=$this->Topic_GetTopicsByTag($sTag,$iPage,Config::Get('module.topic.per_page'));
+		$aResult=LS::Make(ModuleTopic::class)->GetTopicsByTag($sTag,$iPage,Config::Get('module.topic.per_page'));
 		$aTopics=$aResult['collection'];
 		/**
 		 * Вызов хуков
 		 */
-		$this->Hook_Run('topics_list_show',array('aTopics'=>$aTopics));
+		LS::Make(ModuleHook::class)->Run('topics_list_show',array('aTopics'=>$aTopics));
 		/**
 		 * Формируем постраничность
 		 */
-		$aPaging=$this->Viewer_MakePaging($aResult['count'],$iPage,Config::Get('module.topic.per_page'),Config::Get('pagination.pages.count'),Router::GetPath('tag').htmlspecialchars($sTag));
+		$aPaging=LS::Make(ModuleViewer::class)->MakePaging($aResult['count'],$iPage,Config::Get('module.topic.per_page'),Config::Get('pagination.pages.count'),Router::GetPath('tag').htmlspecialchars($sTag));
 		/**
 		 * Загружаем переменные в шаблон
 		 */
-		$this->Viewer_Assign('aPaging',$aPaging);
-		$this->Viewer_Assign('aTopics',$aTopics);
-		$this->Viewer_Assign('sTag',$sTag);
-		$this->Viewer_AddHtmlTitle($this->Lang_Get('tag_title'));
-		$this->Viewer_AddHtmlTitle($sTag);
-		$this->Viewer_SetHtmlRssAlternate(Router::GetPath('rss').'tag/'.$sTag.'/',$sTag);
+		LS::Make(ModuleViewer::class)->Assign('aPaging',$aPaging);
+		LS::Make(ModuleViewer::class)->Assign('aTopics',$aTopics);
+		LS::Make(ModuleViewer::class)->Assign('sTag',$sTag);
+		LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('tag_title'));
+		LS::Make(ModuleViewer::class)->AddHtmlTitle($sTag);
+		LS::Make(ModuleViewer::class)->SetHtmlRssAlternate(Router::GetPath('rss').'tag/'.$sTag.'/',$sTag);
 		/**
 		 * Устанавливаем шаблон вывода
 		 */
@@ -100,6 +107,6 @@ class ActionTag extends Action {
 		/**
 		 * Загружаем в шаблон необходимые переменные
 		 */
-		$this->Viewer_Assign('sMenuHeadItemSelect',$this->sMenuHeadItemSelect);
+		LS::Make(ModuleViewer::class)->Assign('sMenuHeadItemSelect',$this->sMenuHeadItemSelect);
 	}
 }

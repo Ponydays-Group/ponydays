@@ -15,8 +15,11 @@
 ---------------------------------------------------------
 */
 
+namespace App\Hooks;
+
 use Engine\Engine;
 use Engine\Hook;
+use Engine\Modules\Viewer\ModuleViewer;
 use Engine\Router;
 
 /**
@@ -39,22 +42,24 @@ class HookStatisticsPerformance extends Hook {
 	 */
 	public function Statistics() {
 		$oEngine=Engine::getInstance();
-		/**
+        /** @var ModuleViewer $viewer */
+        $viewer = $oEngine->make(ModuleViewer::class);
+        /**
 		 * Подсчитываем время выполнения
 		 */
 		$iTimeInit=$oEngine->GetTimeInit();
 		$iTimeFull=round(microtime(true)-$iTimeInit,3);
-		$this->Viewer_Assign('iTimeFullPerformance',$iTimeFull);
+		$viewer->Assign('iTimeFullPerformance',$iTimeFull);
 		/**
 		 * Получаем статистику по кешу и БД
 		 */
 		$aStats=$oEngine->getStats();
 		$aStats['cache']['time']=round($aStats['cache']['time'],5);
-		$this->Viewer_Assign('aStatsPerformance',$aStats);
-		$this->Viewer_Assign('bIsShowStatsPerformance',Router::GetIsShowStats());
+		$viewer->Assign('aStatsPerformance',$aStats);
+		$viewer->Assign('bIsShowStatsPerformance',Router::GetIsShowStats());
 		/**
 		 * В ответ рендерим шаблон статистики
 		 */
-		return $this->Viewer_Fetch('statistics_performance.tpl');
+		return $viewer->Fetch('statistics_performance.tpl');
 	}
 }

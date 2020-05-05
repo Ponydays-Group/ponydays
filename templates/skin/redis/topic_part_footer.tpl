@@ -2,7 +2,7 @@
 	{assign var="oUser" value=$oTopic->getUser()}
 	{assign var="oVote" value=$oTopic->getVote()}
 	{assign var="oFavourite" value=$oTopic->getFavourite()}
-	{assign var="bEnableTopicVoteInfo" value=$LS->ACL_CheckSimpleAccessLevel($oConfig->get('acl.vote_list.topic.ne_enable_level'), $oUserCurrent, $oTopic, 'topic')}
+	{assign var="bEnableTopicVoteInfo" value=$E->make(App\Modules\ACL\ModuleACL::class)->CheckSimpleAccessLevel($oConfig->get('acl.vote_list.topic.ne_enable_level'), $oUserCurrent, $oTopic, 'topic')}
 
 
 	<footer class="topic-footer {if $bEnableTopicVoteInfo}vote-info-enable{/if}">

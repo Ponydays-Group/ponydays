@@ -15,8 +15,20 @@
 ---------------------------------------------------------
 */
 
+namespace App\Actions;
+
+use App\Modules\Blog\ModuleBlog;
+use App\Modules\Topic\ModuleTopic;
+use App\Modules\User\Entity\ModuleUser_EntityUser;
+use App\Modules\User\ModuleUser;
+use App\Modules\Userfeed\ModuleUserfeed;
 use Engine\Action;
 use Engine\Config;
+use Engine\LS;
+use Engine\Modules\Hook\ModuleHook;
+use Engine\Modules\Lang\ModuleLang;
+use Engine\Modules\Message\ModuleMessage;
+use Engine\Modules\Viewer\ModuleViewer;
 
 /**
  * Обрабатывает пользовательские ленты контента
@@ -40,13 +52,13 @@ class ActionUserfeed extends Action {
 		/**
 		 * Доступ только у авторизованных пользователей
 		 */
-		$this->oUserCurrent = $this->User_getUserCurrent();
+		$this->oUserCurrent = LS::Make(ModuleUser::class)->getUserCurrent();
 		if (!$this->oUserCurrent) {
 			parent::EventNotFound();
 		}
 		$this->SetDefaultEvent('index');
 
-		$this->Viewer_Assign('sMenuItemSelect', 'feed');
+		LS::Make(ModuleViewer::class)->Assign('sMenuItemSelect', 'feed');
 	}
 	/**
 	 * Регистрация евентов
@@ -69,19 +81,23 @@ class ActionUserfeed extends Action {
 		/**
 		 * Получаем топики
 		 */
-		$aTopics = $this->Userfeed_read($this->oUserCurrent->getId());
+		$aTopics = LS::Make(ModuleUserfeed::class)->read($this->oUserCurrent->getId());
 		/**
 		 * Вызов хуков
 		 */
-		$this->Hook_Run('topics_list_show',array('aTopics'=>$aTopics));
-		$this->Viewer_Assign('aTopics', $aTopics);
+		LS::Make(ModuleHook::class)->Run('topics_list_show',array('aTopics'=>$aTopics));
+
+        /** @var ModuleViewer $viewer */
+        $viewer = LS::Make(ModuleViewer::class);
+
+        $viewer->Assign('aTopics', $aTopics);
 		if (count($aTopics)) {
-			$this->Viewer_Assign('iUserfeedLastId', end($aTopics)->getId());
+			$viewer->Assign('iUserfeedLastId', end($aTopics)->getId());
 		}
 		if (count($aTopics) < Config::Get('module.userfeed.count_default')) {
-			$this->Viewer_Assign('bDisableGetMoreButton', true);
+			$viewer->Assign('bDisableGetMoreButton', true);
 		} else {
-			$this->Viewer_Assign('bDisableGetMoreButton', false);
+			$viewer->Assign('bDisableGetMoreButton', false);
 		}
 		$this->SetTemplateAction('list');
 	}
@@ -90,36 +106,39 @@ class ActionUserfeed extends Action {
 	 *
 	 */
 	protected function EventGetMore() {
-		/**
+        /** @var ModuleViewer $viewer */
+        $viewer = LS::Make(ModuleViewer::class);
+
+        /**
 		 * Устанавливаем формат Ajax ответа
 		 */
-		$this->Viewer_SetResponseAjax('json');
+		$viewer->SetResponseAjax('json');
 		/**
 		 * Проверяем последний просмотренный ID топика
 		 */
 		$iFromId = getRequestStr('last_id');
 		if (!$iFromId)  {
-			$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'),LS::Make(ModuleLang::class)->Get('error'));
 			return;
 		}
 		/**
 		 * Получаем топики
 		 */
-		$aTopics = $this->Userfeed_read($this->oUserCurrent->getId(), null, $iFromId);
+		$aTopics = LS::Make(ModuleUserfeed::class)->read($this->oUserCurrent->getId(), null, $iFromId);
 		/**
 		 * Вызов хуков
 		 */
-		$this->Hook_Run('topics_list_show',array('aTopics'=>$aTopics));
+		LS::Make(ModuleHook::class)->Run('topics_list_show',array('aTopics'=>$aTopics));
 		/**
 		 * Загружаем данные в ajax ответ
 		 */
-		$oViewer=$this->Viewer_GetLocalViewer();
+		$oViewer=$viewer->GetLocalViewer();
 		$oViewer->Assign('aTopics',  $aTopics);
-		$this->Viewer_AssignAjax('result', $oViewer->Fetch('topic_list.tpl'));
-		$this->Viewer_AssignAjax('topics_count', count($aTopics));
+		$viewer->AssignAjax('result', $oViewer->Fetch('topic_list.tpl'));
+		$viewer->AssignAjax('topics_count', count($aTopics));
 
 		if (count($aTopics)) {
-			$this->Viewer_AssignAjax('iUserfeedLastId', end($aTopics)->getId());
+			$viewer->AssignAjax('iUserfeedLastId', end($aTopics)->getId());
 		}
 	}
 	/**
@@ -127,15 +146,18 @@ class ActionUserfeed extends Action {
 	 *
 	 */
 	protected function EventSubscribe() {
-		/**
+        /** @var ModuleViewer $viewer */
+        $viewer = LS::Make(ModuleViewer::class);
+
+        /**
 		 * Устанавливаем формат Ajax ответа
 		 */
-		$this->Viewer_SetResponseAjax('json');
+		$viewer->SetResponseAjax('json');
 		/**
 		 * Проверяем наличие ID блога или пользователя
 		 */
 		if (!getRequest('id')) {
-			$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'),LS::Make(ModuleLang::class)->Get('error'));
 		}
 		$sType = getRequestStr('type');
 		$iType = null;
@@ -145,50 +167,55 @@ class ActionUserfeed extends Action {
 		switch($sType) {
 			case 'blogs':
 				$iType = ModuleUserfeed::SUBSCRIBE_TYPE_BLOG;
-				/**
+                /** @var ModuleBlog $blog */
+                $blog = LS::Make(ModuleBlog::class);
+                /**
 				 * Проверяем существование блога
 				 */
-				if (!$this->Blog_GetBlogById(getRequestStr('id'))) {
-					$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
+				if (!$blog->GetBlogById(getRequestStr('id'))) {
+					LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'),LS::Make(ModuleLang::class)->Get('error'));
 					return;
 				}
-				if(!in_array($this->Blog_GetBlogById(getRequestStr('id'))->getId(), $this->Blog_GetAccessibleBlogsByUser($this->User_GetUserCurrent())) and in_array($this->Blog_GetBlogById(getRequestStr('id'))->getType(), array("close", "invite"))){
-					$this->Message_AddNotice("У вас нет разрешения подписываться на этот блог", "Ошибка");
+				if(!in_array($blog->GetBlogById(getRequestStr('id'))->getId(), LS::Make(ModuleBlog::class)->GetAccessibleBlogsByUser(LS::Make(ModuleUser::class)->GetUserCurrent())) and in_array(LS::Make(ModuleBlog::class)->GetBlogById(getRequestStr('id'))->getType(), array("close", "invite"))){
+					LS::Make(ModuleMessage::class)->AddNotice("У вас нет разрешения подписываться на этот блог", "Ошибка");
 					return;
 				}
 				break;
 			default:
-				$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
+				LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'),LS::Make(ModuleLang::class)->Get('error'));
 				return;
 		}
 		/**
 		 * Подписываем
 		 */
-		$this->Userfeed_subscribeUser($this->oUserCurrent->getId(), $iType, getRequestStr('id'));
-		$this->Message_AddNotice($this->Lang_Get('userfeed_subscribes_updated'), "Внимание");
+		LS::Make(ModuleUserfeed::class)->subscribeUser($this->oUserCurrent->getId(), $iType, getRequestStr('id'));
+		LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('userfeed_subscribes_updated'), "Внимание");
 	}
 	/**
 	 * Подписка на пользвователя по логину
 	 *
 	 */
 	protected function EventSubscribeByLogin() {
-		/**
+        /** @var ModuleViewer $viewer */
+        $viewer = LS::Make(ModuleViewer::class);
+
+        /**
 		 * Устанавливаем формат Ajax ответа
 		 */
-		$this->Viewer_SetResponseAjax('json');
+		$viewer->SetResponseAjax('json');
 		/**
 		 * Передан ли логин
 		 */
 		if (!getRequest('login') or !is_string(getRequest('login'))) {
-			$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'),LS::Make(ModuleLang::class)->Get('error'));
 			return;
 		}
 		/**
 		 * Проверяем существование прользователя
 		 */
-		$oUser = $this->User_getUserByLogin(getRequestStr('login'));
+		$oUser = LS::Make(ModuleUser::class)->getUserByLogin(getRequestStr('login'));
 		if (!$oUser) {
-			$this->Message_AddError($this->Lang_Get('user_not_found',array('login'=>htmlspecialchars(getRequestStr('login')))),$this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('user_not_found',array('login'=>htmlspecialchars(getRequestStr('login')))),LS::Make(ModuleLang::class)->Get('error'));
 			return;
 		}
 		/**
@@ -197,29 +224,32 @@ class ActionUserfeed extends Action {
 		/**
 		 * Подписываем
 		 */
-		$this->Userfeed_subscribeUser($this->oUserCurrent->getId(), ModuleUserfeed::SUBSCRIBE_TYPE_USER, $oUser->getId());
+		LS::Make(ModuleUserfeed::class)->subscribeUser($this->oUserCurrent->getId(), ModuleUserfeed::SUBSCRIBE_TYPE_USER, $oUser->getId());
 		/**
 		 * Загружаем данные ajax ответ
 		 */
-		$this->Viewer_AssignAjax('uid', $oUser->getId());
-		$this->Viewer_AssignAjax('user_login', $oUser->getLogin());
-		$this->Viewer_AssignAjax('user_web_path', $oUser->getUserWebPath());
-		$this->Viewer_AssignAjax('user_avatar_48', $oUser->getProfileAvatarPath(48));
-		$this->Viewer_AssignAjax('lang_error_msg', $this->Lang_Get('userfeed_subscribes_already_subscribed'));
-		$this->Viewer_AssignAjax('lang_error_title', $this->Lang_Get('error'));
-		$this->Message_AddNotice($this->Lang_Get('userfeed_subscribes_updated'), $this->Lang_Get('attention'));
+		$viewer->AssignAjax('uid', $oUser->getId());
+		$viewer->AssignAjax('user_login', $oUser->getLogin());
+		$viewer->AssignAjax('user_web_path', $oUser->getUserWebPath());
+		$viewer->AssignAjax('user_avatar_48', $oUser->getProfileAvatarPath(48));
+		$viewer->AssignAjax('lang_error_msg', LS::Make(ModuleLang::class)->Get('userfeed_subscribes_already_subscribed'));
+		$viewer->AssignAjax('lang_error_title', LS::Make(ModuleLang::class)->Get('error'));
+		LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('userfeed_subscribes_updated'), LS::Make(ModuleLang::class)->Get('attention'));
 	}
 	/**
 	 * Отписка от блога или пользователя
 	 *
 	 */
 	protected function EventUnsubscribe() {
-		/**
+        /** @var ModuleViewer $viewer */
+        $viewer = LS::Make(ModuleViewer::class);
+
+        /**
 		 * Устанавливаем формат Ajax ответа
 		 */
-		$this->Viewer_SetResponseAjax('json');
+		$viewer->SetResponseAjax('json');
 		if (!getRequest('id')) {
-			$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'),LS::Make(ModuleLang::class)->Get('error'));
 			return;
 		}
 		$sType = getRequestStr('type');
@@ -235,14 +265,14 @@ class ActionUserfeed extends Action {
 				$iType = ModuleUserfeed::SUBSCRIBE_TYPE_USER;
 				break;
 			default:
-				$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
+				LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'),LS::Make(ModuleLang::class)->Get('error'));
 				return;
 		}
 		/**
 		 * Отписываем пользователя
 		 */
-		$this->Userfeed_unsubscribeUser($this->oUserCurrent->getId(), $iType, getRequestStr('id'));
-		$this->Message_AddNotice($this->Lang_Get('userfeed_subscribes_updated'), $this->Lang_Get('attention'));
+		LS::Make(ModuleUserfeed::class)->unsubscribeUser($this->oUserCurrent->getId(), $iType, getRequestStr('id'));
+		LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('userfeed_subscribes_updated'), LS::Make(ModuleLang::class)->Get('attention'));
 	}
 	/**
 	 * При завершении экшена загружаем в шаблон необходимые переменные
@@ -252,40 +282,43 @@ class ActionUserfeed extends Action {
 		/**
 		 * Устанавливаем формат Ajax ответа
 		 */
-		$this->Viewer_SetResponseAjax('json');
-//		$aBlogs = $this->ModuleBlog_GetAccessibleBlogsByUser($this->oUserCurrent);
-		$aBlogs = $this->ModuleBlog_GetBlogs();
+		LS::Make(ModuleViewer::class)->SetResponseAjax('json');
+//		$aBlogs = LS::Make(ModuleBlog::class)->GetAccessibleBlogsByUser($this->oUserCurrent);
+		$aBlogs = LS::Make(ModuleBlog::class)->GetBlogs();
 
 		foreach ($aBlogs as $iBlogId) {
-			$this->Userfeed_subscribeUser($this->oUserCurrent->getId(), ModuleUserfeed::SUBSCRIBE_TYPE_BLOG, $iBlogId->getId());
+			LS::Make(ModuleUserfeed::class)->subscribeUser($this->oUserCurrent->getId(), ModuleUserfeed::SUBSCRIBE_TYPE_BLOG, $iBlogId->getId());
 		}
-		$this->Message_AddNotice($this->Lang_Get('userfeed_subscribes_updated'), "Внимание");
+		LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('userfeed_subscribes_updated'), "Внимание");
 	}
 
 	protected function EventUnsubscribeAll() {
 		/**
 		 * Устанавливаем формат Ajax ответа
 		 */
-		$this->Viewer_SetResponseAjax('json');
-		$aBlogs = $this->ModuleBlog_GetBlogs();
+		LS::Make(ModuleViewer::class)->SetResponseAjax('json');
+		$aBlogs = LS::Make(ModuleBlog::class)->GetBlogs();
 		foreach ($aBlogs as $iBlogId) {
-			$this->Userfeed_unsubscribeUser($this->oUserCurrent->getId(), ModuleUserfeed::SUBSCRIBE_TYPE_BLOG, $iBlogId->getId());
+			LS::Make(ModuleUserfeed::class)->unsubscribeUser($this->oUserCurrent->getId(), ModuleUserfeed::SUBSCRIBE_TYPE_BLOG, $iBlogId->getId());
 		}
-		$this->Message_AddNotice($this->Lang_Get('userfeed_subscribes_updated'), "Внимание");
+		LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('userfeed_subscribes_updated'), "Внимание");
 	}
 
 	public function EventShutdown() {
 		/**
 		 * Подсчитываем новые топики
 		 */
-		$iCountTopicsCollectiveNew=$this->Topic_GetCountTopicsCollectiveNew();
-		$iCountTopicsPersonalNew=$this->Topic_GetCountTopicsPersonalNew();
+		$iCountTopicsCollectiveNew=LS::Make(ModuleTopic::class)->GetCountTopicsCollectiveNew();
+		$iCountTopicsPersonalNew=LS::Make(ModuleTopic::class)->GetCountTopicsPersonalNew();
 		$iCountTopicsNew=$iCountTopicsCollectiveNew+$iCountTopicsPersonalNew;
 		/**
 		 * Загружаем переменные в шаблон
 		 */
-		$this->Viewer_Assign('iCountTopicsCollectiveNew',$iCountTopicsCollectiveNew);
-		$this->Viewer_Assign('iCountTopicsPersonalNew',$iCountTopicsPersonalNew);
-		$this->Viewer_Assign('iCountTopicsNew',$iCountTopicsNew);
+        /** @var ModuleViewer $viewer */
+        $viewer = LS::Make(ModuleViewer::class);
+
+        $viewer->Assign('iCountTopicsCollectiveNew',$iCountTopicsCollectiveNew);
+		$viewer->Assign('iCountTopicsPersonalNew',$iCountTopicsPersonalNew);
+		$viewer->Assign('iCountTopicsNew',$iCountTopicsNew);
 	}
 }

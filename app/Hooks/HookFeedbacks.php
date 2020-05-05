@@ -1,7 +1,13 @@
 <?php
 
-use Engine\Engine;
+namespace App\Hooks;
+
+use App\Modules\Feedbacks\Entity\ModuleFeedbacks_EntityAction;
+use App\Modules\Feedbacks\ModuleFeedbacks;
+use App\Modules\User\ModuleUser;
 use Engine\Hook;
+use Engine\LS;
+use Engine\Modules\Viewer\ModuleViewer;
 
 class HookFeedbacks extends Hook {
 
@@ -22,7 +28,7 @@ class HookFeedbacks extends Hook {
 		$oCommentParent	= $aParams['oCommentParent'];
 		$oTopic			= $aParams['oTopic'];
 
-		$oAction = Engine::GetEntity("ModuleFeedbacks_EntityAction");
+		$oAction = new ModuleFeedbacks_EntityAction();
 		$oAction->setUserIdFrom($oComment->getUserId());
 		$oAction->setId(null);
 		$oAction->setAddDatetime(time());
@@ -60,39 +66,40 @@ class HookFeedbacks extends Hook {
 			$oAction->setDestinationObjectId($oTopic->getId());
 		}
 
-		$this->Feedbacks_SaveAction($oAction);
+		LS::Make(ModuleFeedbacks::class)->SaveAction($oAction);
 		return true;
 
 	}
 
 	//***************************************************************************************
 	public function InsertUserbarItem(){
-		if($this->User_GetUserCurrent()){
-			$iUnreadActionsCount	= $this->Feedbacks_GetCurrentUserUnreadItemsCount();
+		if(LS::Make(ModuleUser::class)->GetUserCurrent()){
+			$iUnreadActionsCount	= LS::Make(ModuleFeedbacks::class)->GetCurrentUserUnreadItemsCount();
 			
 			if($iUnreadActionsCount > 0){
-				$this->Viewer_Assign('iUnreadActionsCount', $iUnreadActionsCount);
-				return $this->Viewer_Fetch('userbar_item.tpl');
+                /** @var ModuleViewer $viewer */
+                $viewer = LS::Make(ModuleViewer::class);
+                $viewer->Assign('iUnreadActionsCount', $iUnreadActionsCount);
+				return $viewer->Fetch('userbar_item.tpl');
 			}
 		}
 	}
 
 	//***************************************************************************************
 	public function InsertNavbarItem(){
-		if($this->User_GetUserCurrent()){
-			$iUnreadActionsCount	= $this->Feedbacks_GetCurrentUserUnreadItemsCount();
-
-				$this->Viewer_Assign('iUnreadActionsCount', $iUnreadActionsCount);
-				return $this->Viewer_Fetch('navbar_item.tpl');
+		if(LS::Make(ModuleUser::class)->GetUserCurrent()){
+			$iUnreadActionsCount	= LS::Make(ModuleFeedbacks::class)->GetCurrentUserUnreadItemsCount();
+            /** @var ModuleViewer $viewer */
+            $viewer = LS::Make(ModuleViewer::class);
+            $viewer->Assign('iUnreadActionsCount', $iUnreadActionsCount);
+            return $viewer->Fetch('navbar_item.tpl');
 		}
 	}
 	
 	//***************************************************************************************
 	public function InsertNavbarStream(){
-		if($this->User_GetUserCurrent()){
-				return $this->Viewer_Fetch('navbar_stream.tpl');
-			}
+		if(LS::Make(ModuleUser::class)->GetUserCurrent()){
+				return LS::Make(ModuleFeedbacks::class)->Fetch('navbar_stream.tpl');
 		}
-	
-
+	}
 }

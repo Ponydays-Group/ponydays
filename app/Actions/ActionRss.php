@@ -15,8 +15,17 @@
 ---------------------------------------------------------
 */
 
+namespace App\Actions;
+
+use App\Modules\Blog\ModuleBlog;
+use App\Modules\Comment\ModuleComment;
+use App\Modules\Topic\ModuleTopic;
+use App\Modules\User\ModuleUser;
 use Engine\Action;
 use Engine\Config;
+use Engine\LS;
+use Engine\Modules\Lang\ModuleLang;
+use Engine\Modules\Viewer\ModuleViewer;
 use Engine\Router;
 
 /**
@@ -59,7 +68,7 @@ class ActionRss extends Action {
 		/**
 		 * Получаем топики
 		 */
-		$aResult=$this->Topic_GetTopicsGood(1,Config::Get('module.topic.per_page')*2,false);
+		$aResult=LS::Make(ModuleTopic::class)->GetTopicsGood(1,Config::Get('module.topic.per_page')*2,false);
 		$aTopics=$aResult['collection'];
 		/**
 		 * Формируем данные канала RSS
@@ -88,8 +97,8 @@ class ActionRss extends Action {
 		 * Формируем ответ
 		 */
 		$this->InitRss();
-		$this->Viewer_Assign('aChannel',$aChannel);
-		$this->Viewer_Assign('aItems',$topics);
+		LS::Make(ModuleViewer::class)->Assign('aChannel',$aChannel);
+		LS::Make(ModuleViewer::class)->Assign('aItems',$topics);
 		$this->SetTemplateAction('index');
 	}
 	/**
@@ -99,7 +108,7 @@ class ActionRss extends Action {
 		/**
 		 * Получаем топики
 		 */
-		$aResult=$this->Topic_GetTopicsNew(1,Config::Get('module.topic.per_page')*2,false);
+		$aResult=LS::Make(ModuleTopic::class)->GetTopicsNew(1,Config::Get('module.topic.per_page')*2,false);
 		$aTopics=$aResult['collection'];
 		/**
 		 * Формируем данные канала RSS
@@ -128,8 +137,8 @@ class ActionRss extends Action {
 		 * Формируем ответ
 		 */
 		$this->InitRss();
-		$this->Viewer_Assign('aChannel',$aChannel);
-		$this->Viewer_Assign('aItems',$topics);
+		LS::Make(ModuleViewer::class)->Assign('aChannel',$aChannel);
+		LS::Make(ModuleViewer::class)->Assign('aItems',$topics);
 		$this->SetTemplateAction('index');
 	}
 	/**
@@ -139,11 +148,11 @@ class ActionRss extends Action {
 		/**
 		 * Получаем закрытые блоги, чтобы исключить их из выдачи
 		 */
-		$aCloseBlogs = $this->Blog_GetInaccessibleBlogsByUser();
+		$aCloseBlogs = LS::Make(ModuleBlog::class)->GetInaccessibleBlogsByUser();
 		/**
 		 * Получаем комментарии
 		 */
-		$aResult=$this->Comment_GetCommentsAll('topic',1,Config::Get('module.comment.per_page')*2,array(),$aCloseBlogs);
+		$aResult=LS::Make(ModuleComment::class)->GetCommentsAll('topic',1,Config::Get('module.comment.per_page')*2,array(),$aCloseBlogs);
 		$aComments=$aResult['collection'];
 		/**
 		 * Формируем данные канала RSS
@@ -172,8 +181,8 @@ class ActionRss extends Action {
 		 * Формируем ответ
 		 */
 		$this->InitRss();
-		$this->Viewer_Assign('aChannel',$aChannel);
-		$this->Viewer_Assign('aItems',$comments);
+		LS::Make(ModuleViewer::class)->Assign('aChannel',$aChannel);
+		LS::Make(ModuleViewer::class)->Assign('aItems',$comments);
 		$this->SetTemplateAction('index');
 	}
 	/**
@@ -184,13 +193,13 @@ class ActionRss extends Action {
 		/**
 		 * Топик существует?
 		 */
-		if (!($oTopic=$this->Topic_GetTopicById($sTopicId)) or !$oTopic->getPublish() or $oTopic->getBlog()->getType()=='close') {
+		if (!($oTopic=LS::Make(ModuleTopic::class)->GetTopicById($sTopicId)) or !$oTopic->getPublish() or $oTopic->getBlog()->getType()=='close') {
 			return parent::EventNotFound();
 		}
 		/**
 		 * Получаем комментарии
 		 */
-		$aResult=$this->Comment_GetCommentsByFilter(array('target_id'=>$oTopic->getId(),'target_type'=>'topic','delete'=>0),array('comment_id'=>'desc'),1,100);
+		$aResult=LS::Make(ModuleComment::class)->GetCommentsByFilter(array('target_id'=>$oTopic->getId(),'target_type'=>'topic','delete'=>0),array('comment_id'=>'desc'),1,100);
 		$aComments=$aResult['collection'];
 		/**
 		 * Формируем данные канала RSS
@@ -219,8 +228,8 @@ class ActionRss extends Action {
 		 * Формируем ответ
 		 */
 		$this->InitRss();
-		$this->Viewer_Assign('aChannel',$aChannel);
-		$this->Viewer_Assign('aItems',$comments);
+		LS::Make(ModuleViewer::class)->Assign('aChannel',$aChannel);
+		LS::Make(ModuleViewer::class)->Assign('aItems',$comments);
 		$this->SetTemplateAction('index');
 	}
 	/**
@@ -231,7 +240,7 @@ class ActionRss extends Action {
 		/**
 		 * Получаем топики
 		 */
-		$aResult=$this->Topic_GetTopicsByTag($sTag,1,Config::Get('module.topic.per_page')*2,false);
+		$aResult=LS::Make(ModuleTopic::class)->GetTopicsByTag($sTag,1,Config::Get('module.topic.per_page')*2,false);
 		$aTopics=$aResult['collection'];
 		/**
 		 * Формируем данные канала RSS
@@ -260,8 +269,8 @@ class ActionRss extends Action {
 		 * Формируем ответ
 		 */
 		$this->InitRss();
-		$this->Viewer_Assign('aChannel',$aChannel);
-		$this->Viewer_Assign('aItems',$topics);
+		LS::Make(ModuleViewer::class)->Assign('aChannel',$aChannel);
+		LS::Make(ModuleViewer::class)->Assign('aItems',$topics);
 		$this->SetTemplateAction('index');
 	}
 	/**
@@ -272,10 +281,10 @@ class ActionRss extends Action {
 		/**
 		 * Если блог существует, то получаем записи
 		 */
-		if (!$sBlogUrl or !($oBlog=$this->Blog_GetBlogByUrl($sBlogUrl)) or $oBlog->getType()=="close") {
+		if (!$sBlogUrl or !($oBlog=LS::Make(ModuleBlog::class)->GetBlogByUrl($sBlogUrl)) or $oBlog->getType()=="close") {
 			return parent::EventNotFound();
 		}else{
-			$aResult=$this->Topic_GetTopicsByBlog($oBlog,1,Config::Get('module.topic.per_page')*2,'good');
+			$aResult=LS::Make(ModuleTopic::class)->GetTopicsByBlog($oBlog,1,Config::Get('module.topic.per_page')*2,'good');
 		}
 		$aTopics=$aResult['collection'];
 		/**
@@ -305,8 +314,8 @@ class ActionRss extends Action {
 		 * Формируем ответ
 		 */
 		$this->InitRss();
-		$this->Viewer_Assign('aChannel',$aChannel);
-		$this->Viewer_Assign('aItems',$topics);
+		LS::Make(ModuleViewer::class)->Assign('aChannel',$aChannel);
+		LS::Make(ModuleViewer::class)->Assign('aItems',$topics);
 		$this->SetTemplateAction('index');
 	}
 	/**
@@ -318,14 +327,14 @@ class ActionRss extends Action {
 			/**
 			 * RSS-лента всех записей из персональных блогов
 			 */
-			$aResult=$this->Topic_GetTopicsPersonal(1,Config::Get('module.topic.per_page')*2);
-		}elseif(!$oUser=$this->User_GetUserByLogin($this->sUserLogin)){
+			$aResult=LS::Make(ModuleTopic::class)->GetTopicsPersonal(1,Config::Get('module.topic.per_page')*2);
+		}elseif(!$oUser=LS::Make(ModuleUser::class)->GetUserByLogin($this->sUserLogin)){
 			return parent::EventNotFound();
 		}else{
 			/**
 			 * RSS-лента записей персонального блога указанного пользователя
 			 */
-			$aResult=$this->Topic_GetTopicsPersonalByUser($oUser->getId(),1,1,Config::Get('module.topic.per_page')*2);
+			$aResult=LS::Make(ModuleTopic::class)->GetTopicsPersonalByUser($oUser->getId(),1,1,Config::Get('module.topic.per_page')*2);
 		}
 		$aTopics=$aResult['collection'];
 		/**
@@ -357,8 +366,8 @@ class ActionRss extends Action {
 		 * Формируем ответ
 		 */
 		$this->InitRss();
-		$this->Viewer_Assign('aChannel',$aChannel);
-		$this->Viewer_Assign('aItems',$topics);
+		LS::Make(ModuleViewer::class)->Assign('aChannel',$aChannel);
+		LS::Make(ModuleViewer::class)->Assign('aItems',$topics);
 		$this->SetTemplateAction('index');
 	}
 	/**
@@ -368,11 +377,11 @@ class ActionRss extends Action {
 	protected function getTopicText($oTopic) {
 		$sText=$oTopic->getTextShort();
 		if ($oTopic->getTextShort()!=$oTopic->getText()) {
-			$sText.="<br><a href=\"{$oTopic->getUrl()}#cut\" title=\"{$this->Lang_Get('topic_read_more')}\">";
+			$sText.="<br><a href=\"{$oTopic->getUrl()}#cut\" title=\"{LS::Make(ModuleLang::class)->Get('topic_read_more')}\">";
 			if ($oTopic->getCutText()) {
 				$sText.=htmlspecialchars($oTopic->getCutText());
 			} else {
-				$sText.=$this->Lang_Get('topic_read_more');
+				$sText.=LS::Make(ModuleLang::class)->Get('topic_read_more');
 			}
 			$sText.="</a>";
 		}

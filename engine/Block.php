@@ -62,21 +62,6 @@ abstract class Block extends LsObject {
 		}
 	}
 
-    /**
-     * Ставим хук на вызов неизвестного метода и считаем что хотели вызвать
-     * метод какого либо модуля
-     *
-     * @see Engine::_CallModule
-     *
-     * @param string $sName Имя метода
-     * @param array  $aArgs Аргументы
-     *
-     * @return mixed
-     * @throws \Exception
-     */
-	public function __call($sName,$aArgs) {
-		return $this->oEngine->_CallModule($sName,$aArgs);
-	}
 	/**
 	 * Метод запуска обработки блока.
 	 * Его необходимо определять в конкретном блоге.

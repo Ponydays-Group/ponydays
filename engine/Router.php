@@ -17,8 +17,8 @@
 
 namespace Engine;
 
-use ModuleHook;
-use ModuleViewer;
+use Engine\Modules\Hook\ModuleHook;
+use Engine\Modules\Viewer\ModuleViewer;
 
 /**
  * Класс роутинга(контроллера)
@@ -223,21 +223,24 @@ class Router extends LsObject {
 	 *
 	 */
 	protected function AssignVars() {
-	    /** @var \ModuleViewer $viewer */
+	    /** @var ModuleViewer $viewer */
 	    $viewer = LS::Make(ModuleViewer::class);
 		$viewer->Assign('sAction',$this->Standart(self::$sAction));
         $viewer->Assign('sEvent',self::$sActionEvent);
         $viewer->Assign('aParams',self::$aParams);
         $viewer->Assign('PATH_WEB_CURRENT',self::$sPathWebCurrent);
 	}
-	/**
-	 * Запускает на выполнение экшен
-	 * Может запускаться рекурсивно если в одном экшене стоит переадресация на другой
-	 *
-	 */
+
+    /**
+     * Запускает на выполнение экшен
+     * Может запускаться рекурсивно если в одном экшене стоит переадресация на
+     * другой
+     *
+     * @throws \Engine\Exceptions\ImplementationDestroyedException
+     */
 	public function ExecAction() {
 		$this->DefineActionClass();
-		/** @var \ModuleHook $hook */
+		/** @var ModuleHook $hook */
 		$hook = LS::Make(ModuleHook::class);
 		/**
 		 * Сначала запускаем инициализирующий евент
@@ -247,17 +250,9 @@ class Router extends LsObject {
 		$sActionClass=$this->DefineActionClass();
 
 		self::$sActionClass = $sActionClass;
-		/**
-		 * Если класс экешна начинается с Plugin*_, значит необходимо загрузить объект из указанного плагина
-		 */
-		if(!preg_match('/^Plugin([\w]+)_Action([\w]+)$/i',$sActionClass,$aMatches)) {
-			require_once('./app/Actions/'.$sActionClass.'.php');
-		} else {
-			throw new \Engine\Exceptions\ImplementationDestroyedException('ExecAction for plugin');
-		}
 
 		$sClassName=$sActionClass;
-		$this->oAction=new $sClassName($this->oEngine,self::$sAction);
+		$this->oAction = new $sClassName($this->oEngine,self::$sAction);
 		/**
 		 * Инициализируем экшен
 		 */
@@ -425,17 +420,6 @@ class Router extends LsObject {
 	 */
 	static public function GetIsAjaxRequest() {
 		return isAjaxRequest();
-	}
-	/**
-	 * Ставим хук на вызов неизвестного метода и считаем что хотели вызвать метод какого либо модуля
-	 * @see Engine::_CallModule
-	 *
-	 * @param string $sName Имя метода
-	 * @param array $aArgs Аргументы
-	 * @return mixed
-	 */
-	public function __call($sName,$aArgs) {
-		return $this->oEngine->_CallModule($sName,$aArgs);
 	}
 	/**
 	 * Блокируем копирование/клонирование объекта роутинга

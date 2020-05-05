@@ -15,7 +15,13 @@
 ---------------------------------------------------------
 */
 
+namespace App\Blocks;
+
+use App\Modules\Stream\ModuleStream;
+use App\Modules\User\ModuleUser;
 use Engine\Block;
+use Engine\LS;
+use Engine\Modules\Viewer\ModuleViewer;
 
 /**
  * Блок настройки ленты активности
@@ -31,16 +37,18 @@ class BlockStreamConfig extends Block {
 		/**
 		 * пользователь авторизован?
 		 */
-		if ($oUserCurrent = $this->User_getUserCurrent()) {
+		if ($oUserCurrent = LS::Make(ModuleUser::class)->getUserCurrent()) {
+            /** @var ModuleViewer $viewer */
+            $viewer = LS::Make(ModuleViewer::class);
 			/**
 			 * Получаем и прогружаем необходимые переменные в шаблон
 			 */
-			$aTypesList = $this->Stream_getTypesList($oUserCurrent->getId());
-			$this->Viewer_Assign('aStreamTypesList', $aTypesList);
-			$aUserSubscribes = $this->Stream_getUserSubscribes($oUserCurrent->getId());
-			$aFriends = $this->User_getUsersFriend($oUserCurrent->getId());
-			$this->Viewer_Assign('aStreamSubscribedUsers', $aUserSubscribes);
-			$this->Viewer_Assign('aStreamFriends', $aFriends['collection']);
+			$aTypesList = LS::Make(ModuleStream::class)->getTypesList($oUserCurrent->getId());
+			$viewer->Assign('aStreamTypesList', $aTypesList);
+			$aUserSubscribes = LS::Make(ModuleStream::class)->getUserSubscribes($oUserCurrent->getId());
+			$aFriends = LS::Make(ModuleUser::class)->getUsersFriend($oUserCurrent->getId());
+			$viewer->Assign('aStreamSubscribedUsers', $aUserSubscribes);
+			$viewer->Assign('aStreamFriends', $aFriends['collection']);
 		}
 	}
 }

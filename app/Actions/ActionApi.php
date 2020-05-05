@@ -15,7 +15,16 @@
 ---------------------------------------------------------
 */
 
+namespace App\Actions;
+
+use App\Modules\API\ModuleAPI;
+use App\Modules\Crypto\ModuleCrypto;
+use App\Modules\User\Entity\ModuleUser_EntityUser;
+use App\Modules\User\ModuleUser;
 use Engine\Action;
+use Engine\LS;
+use Engine\Modules\Security\ModuleSecurity;
+use Engine\Modules\Viewer\ModuleViewer;
 
 class ActionApi extends Action
 
@@ -58,9 +67,9 @@ class ActionApi extends Action
     protected function EventAjaxLogin() {
 
         //Проверяем тип запроса. Если не POST - возвращаем ошибку 400
-        $this->Viewer_SetResponseAjax('json',true,false);
+        LS::Make(ModuleViewer::class)->SetResponseAjax('json',true,false);
         if ($_SERVER['REQUEST_METHOD'] != "POST") {
-            $this->Viewer_AssignAjax('message', 'Bad request');
+            LS::Make(ModuleViewer::class)->AssignAjax('message', 'Bad request');
             return;
         }
 
@@ -69,25 +78,25 @@ class ActionApi extends Action
             //Если логин и пароль не заданы, то пробуем залогинить по device_uid
 
             if (!getRequest('login') and !getRequest('password') and getRequest('device_uid')){
-                if ($oUser=$this->User_GetUserById($this->ModuleApi_getUserByKey(getRequest('device_uid')))) {
-                    if ($this->User_Authorization($oUser,true)){
-                        $this->Viewer_AssignAjax('notice', "Authenfication complete!");
+                if ($oUser=LS::Make(ModuleUser::class)->GetUserById(LS::Make(ModuleAPI::class)->getUserByKey(getRequest('device_uid')))) {
+                    if (LS::Make(ModuleUser::class)->Authorization($oUser,true)){
+                        LS::Make(ModuleViewer::class)->AssignAjax('notice', "Authenfication complete!");
                     }
                 } else {
-                    $this->Viewer_AssignAjax('message', 'Device UID incorrect');
+                    LS::Make(ModuleViewer::class)->AssignAjax('message', 'Device UID incorrect');
                     return;
                 }
                 return;
             }
 
             if (!is_string(getRequest('login')) or !is_string(getRequest('password'))) {
-                $this->Viewer_AssignAjax('message', "Login or password isn't a string");
+                LS::Make(ModuleViewer::class)->AssignAjax('message', "Login or password isn't a string");
                 return;
             }
             /**
              * Проверяем есть ли такой юзер по логину
              */
-            if ((func_check(getRequest('login'),'mail') and $oUser=$this->User_GetUserByMail(getRequest('login')))  or  $oUser=$this->User_GetUserByLogin(getRequest('login'))) {
+            if ((func_check(getRequest('login'),'mail') and $oUser=LS::Make(ModuleUser::class)->GetUserByMail(getRequest('login')))  or  $oUser=LS::Make(ModuleUser::class)->GetUserByLogin(getRequest('login'))) {
                 /**
                  * Сверяем хеши паролей и проверяем активен ли юзер
                  */
@@ -98,45 +107,45 @@ class ActionApi extends Action
 				 * Проверяем пароль и обновляем хеш, если нужно
 				 */
 				$user_password = $oUser->getPassword();
-				if($this->Crypto_PasswordVerify(getRequest('password'), $user_password)) {
-					if($this->Crypto_PasswordNeedsRehash($user_password)) {
-						$oUser->setPassword($this->Crypto_PasswordHash(getRequest('password')));
-						$this->User_Update($oUser);
+				if(LS::Make(ModuleCrypto::class)->PasswordVerify(getRequest('password'), $user_password)) {
+					if(LS::Make(ModuleCrypto::class)->PasswordNeedsRehash($user_password)) {
+						$oUser->setPassword(LS::Make(ModuleCrypto::class)->PasswordHash(getRequest('password')));
+						LS::Make(ModuleUser::class)->Update($oUser);
 					}
 
 					/**
 					 * Проверяем активен ли юзер
 					 */
                     if (!$oUser->getActivate()) {
-                        $this->Viewer_AssignAjax('message', "Login or password isn't a string");
+                        LS::Make(ModuleViewer::class)->AssignAjax('message', "Login or password isn't a string");
                         return;
                     }
                     /**
                      * Авторизуем
                      */
-                    if ($this->User_Authorization($oUser,true)){
+                    if (LS::Make(ModuleUser::class)->Authorization($oUser,true)){
                         if (getRequest('device_uid')){
-                            if ($sKey = $this->ModuleApi_setKey($oUser->getId(), getRequest('device_uid'))){
-                                $this->Viewer_AssignAjax('newKey', $sKey);
+                            if ($sKey = LS::Make(ModuleAPI::class)->setKey($oUser->getId(), getRequest('device_uid'))){
+                                LS::Make(ModuleViewer::class)->AssignAjax('newKey', $sKey);
                             }
                         }
-                        $this->Viewer_AssignAjax('notice', "Authenfication complete!");
-                        $this->Viewer_AssignAjax('ls_key', $this->Security_GenerateSessionKey());
+                        LS::Make(ModuleViewer::class)->AssignAjax('notice', "Authenfication complete!");
+                        LS::Make(ModuleViewer::class)->AssignAjax('ls_key', LS::Make(ModuleSecurity::class)->GenerateSessionKey());
                     } else {
-                        $this->Viewer_AssignAjax('message', 'Authenfication faild');
+                        LS::Make(ModuleViewer::class)->AssignAjax('message', 'Authenfication faild');
                         return;
                     }
                 } else {
-                    $this->Viewer_AssignAjax('message', 'Wrong password!');
+                    LS::Make(ModuleViewer::class)->AssignAjax('message', 'Wrong password!');
                     return;
                 }
 
             } else {
-                $this->Viewer_AssignAjax('message', 'User not exists!');
+                LS::Make(ModuleViewer::class)->AssignAjax('message', 'User not exists!');
                 return;
             }
         } else {
-            $this->Viewer_AssignAjax('message', 'Bad request');
+            LS::Make(ModuleViewer::class)->AssignAjax('message', 'Bad request');
             return;
         }
     }

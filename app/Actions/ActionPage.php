@@ -15,9 +15,22 @@
 ---------------------------------------------------------
 */
 
+namespace App\Actions;
+
+use App\Modules\Page\Entity\ModulePage_EntityPage;
+use App\Modules\Page\ModulePage;
+use App\Modules\Topic\Entity\ModuleTopic_EntityTopic;
+use App\Modules\Topic\ModuleTopic;
+use App\Modules\User\ModuleUser;
 use Engine\Engine;
 use Engine\Action;
 use Engine\Config;
+use Engine\LS;
+use Engine\Modules\Hook\ModuleHook;
+use Engine\Modules\Lang\ModuleLang;
+use Engine\Modules\Message\ModuleMessage;
+use Engine\Modules\Security\ModuleSecurity;
+use Engine\Modules\Viewer\ModuleViewer;
 use Engine\Router;
 
 class ActionPage extends Action {
@@ -68,21 +81,21 @@ class ActionPage extends Action {
 		/**
 		 * Ищем страничку в БД
 		 */
-		if (!($oPage=$this->Page_GetPageByUrlFull($sUrlFull,1))) {
+		if (!($oPage=LS::Make(ModulePage::class)->GetPageByUrlFull($sUrlFull,1))) {
 			return $this->EventNotFound();
 		}
 		/**
 		 * Заполняем HTML теги и SEO
 		 */
-		$this->Viewer_AddHtmlTitle($oPage->getTitle());
+		LS::Make(ModuleViewer::class)->AddHtmlTitle($oPage->getTitle());
 		if ($oPage->getSeoKeywords()) {
-			$this->Viewer_SetHtmlKeywords($oPage->getSeoKeywords());
+			LS::Make(ModuleViewer::class)->SetHtmlKeywords($oPage->getSeoKeywords());
 		}
 		if ($oPage->getSeoDescription()) {
-			$this->Viewer_SetHtmlDescription($oPage->getSeoDescription());
+			LS::Make(ModuleViewer::class)->SetHtmlDescription($oPage->getSeoDescription());
 		}
 
-		$this->Viewer_Assign('oPage',$oPage);
+		LS::Make(ModuleViewer::class)->Assign('oPage',$oPage);
 		/**
 		 * Устанавливаем шаблон для вывода
 		 */
@@ -97,12 +110,12 @@ class ActionPage extends Action {
 		/**
 		 * Если пользователь не авторизован и не админ, то выкидываем его
 		 */
-		$this->oUserCurrent=$this->User_GetUserCurrent();
+		$this->oUserCurrent=LS::Make(ModuleUser::class)->GetUserCurrent();
 		if (!$this->oUserCurrent or !$this->oUserCurrent->isAdministrator()) {
 			return $this->EventNotFound();
 		}
 
-		$this->Viewer_AddHtmlTitle($this->Lang_Get('page.admin'));
+		LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('page.admin'));
 		/**
 		 * Обработка создания новой странички
 		 */
@@ -115,7 +128,7 @@ class ActionPage extends Action {
 		 * Обработка показа странички для редактирования
 		 */
 		if ($this->GetParam(0)=='edit') {
-			if ($oPageEdit=$this->Page_GetPageById($this->GetParam(1))) {
+			if ($oPageEdit=LS::Make(ModulePage::class)->GetPageById($this->GetParam(1))) {
 				if (!isPost('submit_page_save')) {
 					$_REQUEST['page_title']=$oPageEdit->getTitle();
 					$_REQUEST['page_pid']=$oPageEdit->getPid();
@@ -134,9 +147,9 @@ class ActionPage extends Action {
 					 */
 					$this->SubmitEditPage($oPageEdit);
 				}
-				$this->Viewer_Assign('oPageEdit',$oPageEdit);
+				LS::Make(ModuleViewer::class)->Assign('oPageEdit',$oPageEdit);
 			} else {
-				$this->Message_AddError($this->Lang_Get('page.edit_notfound'),$this->Lang_Get('error'));
+				LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('page.edit_notfound'),LS::Make(ModuleLang::class)->Get('error'));
 				$this->SetParam(0,null);
 			}
 		}
@@ -145,24 +158,24 @@ class ActionPage extends Action {
 		 * Замечание: если используется тип таблиц MyISAM, а InnoDB то возможно некорректное удаление вложенных страниц
 		 */
 		if ($this->GetParam(0)=='delete') {
-			$this->Security_ValidateSendForm();
-			if ($this->Page_deletePageById($this->GetParam(1))) {
-				$this->Message_AddNotice($this->Lang_Get('page.admin_action_delete_ok'));
+			LS::Make(ModuleSecurity::class)->ValidateSendForm();
+			if (LS::Make(ModulePage::class)->deletePageById($this->GetParam(1))) {
+				LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('page.admin_action_delete_ok'));
 			} else {
-				$this->Message_AddError($this->Lang_Get('page.admin_action_delete_error'),$this->Lang_Get('error'));
+				LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('page.admin_action_delete_error'),LS::Make(ModuleLang::class)->Get('error'));
 			}
 		}
 		/**
 		 * Обработка изменения сортировки страницы
 		 */
-		if ($this->GetParam(0)=='sort' and $oPage=$this->Page_GetPageById($this->GetParam(1))) {
-			$this->Security_ValidateSendForm();
+		if ($this->GetParam(0)=='sort' and $oPage=LS::Make(ModulePage::class)->GetPageById($this->GetParam(1))) {
+			LS::Make(ModuleSecurity::class)->ValidateSendForm();
 			$sWay=$this->GetParam(2)=='down' ? 'down' : 'up';
 			$iSortOld=$oPage->getSort();
-			if ($oPagePrev=$this->Page_GetNextPageBySort($iSortOld,$oPage->getPid(),$sWay)) {
+			if ($oPagePrev=LS::Make(ModulePage::class)->GetNextPageBySort($iSortOld,$oPage->getPid(),$sWay)) {
 				$iSortNew=$oPagePrev->getSort();
 				$oPagePrev->setSort($iSortOld);
-				$this->Page_UpdatePage($oPagePrev);
+				LS::Make(ModulePage::class)->UpdatePage($oPagePrev);
 			} else {
 				if ($sWay=='down') {
 					$iSortNew=$iSortOld-1;
@@ -174,17 +187,17 @@ class ActionPage extends Action {
 			 * Меняем значения сортировки местами
 			 */
 			$oPage->setSort($iSortNew);
-			$this->Page_UpdatePage($oPage);
+			LS::Make(ModulePage::class)->UpdatePage($oPage);
 		}
 		/**
 		 * Получаем и загружаем список всех страниц
 		 */
-		$aPages=$this->Page_GetPages();
-		if (count($aPages)==0 and $this->Page_GetCountPage()) {
-			$this->Page_SetPagesPidToNull();
-			$aPages=$this->Page_GetPages();
+		$aPages=LS::Make(ModulePage::class)->GetPages();
+		if (count($aPages)==0 and LS::Make(ModulePage::class)->GetCountPage()) {
+			LS::Make(ModulePage::class)->SetPagesPidToNull();
+			$aPages=LS::Make(ModulePage::class)->GetPages();
 		}
-		$this->Viewer_Assign('aPages',$aPages);
+		LS::Make(ModuleViewer::class)->Assign('aPages',$aPages);
 	}
 
 	/**
@@ -199,10 +212,10 @@ class ActionPage extends Action {
 
         $eng = Engine::getInstance();
 
-	    /** @var \ModuleTopic $topic */
+	    /** @var ModuleTopic $topic */
 	    $topic = $eng->make(ModuleTopic::class);
 
-	    /** @var \ModuleTopic_EntityTopic $last_topic */
+	    /** @var ModuleTopic_EntityTopic $last_topic */
 	    $last_topic = reset($topic->GetTopicsByFilter($aFilter, 1, 1, ['blog'])['collection']);
 
         if(!$last_topic) {
@@ -224,7 +237,7 @@ class ActionPage extends Action {
 			return ;
 		}
 		if ($oPageEdit->getId()==getRequest('page_pid')) {
-			$this->Message_AddError($this->Lang_Get('system_error'));
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'));
 			return;
 		}
 
@@ -240,7 +253,7 @@ class ActionPage extends Action {
 			$oPageEdit->setPid(null);
 		} else {
 			$oPageEdit->setPid(getRequest('page_pid'));
-			$oPageParent=$this->Page_GetPageById(getRequest('page_pid'));
+			$oPageParent=LS::Make(ModulePage::class)->GetPageById(getRequest('page_pid'));
 			$oPageEdit->setUrlFull($oPageParent->getUrlFull().'/'.getRequest('page_url'));
 		}
 		$oPageEdit->setSeoDescription(getRequest('page_seo_description'));
@@ -252,13 +265,13 @@ class ActionPage extends Action {
 		/**
 		 * Обновляем страницу
 		 */
-		if ($this->Page_UpdatePage($oPageEdit)) {
-			$this->Page_RebuildUrlFull($oPageEdit);
-			$this->Message_AddNotice($this->Lang_Get('page.edit_submit_save_ok'));
+		if (LS::Make(ModulePage::class)->UpdatePage($oPageEdit)) {
+			LS::Make(ModulePage::class)->RebuildUrlFull($oPageEdit);
+			LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('page.edit_submit_save_ok'));
 			$this->SetParam(0,null);
 			$this->SetParam(1,null);
 		} else {
-			$this->Message_AddError($this->Lang_Get('system_error'));
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'));
 		}
 	}
 	/**
@@ -275,7 +288,7 @@ class ActionPage extends Action {
 		/**
 		 * Заполняем свойства
 		 */
-		$oPage=Engine::GetEntity('Page');
+		$oPage = new ModulePage_EntityPage();
 		$oPage->setActive(getRequest('page_active') ? 1 : 0);
 		$oPage->setAutoBr(getRequest('page_auto_br') ? 1 : 0);
 		$oPage->setMain(getRequest('page_main') ? 1 : 0);
@@ -285,7 +298,7 @@ class ActionPage extends Action {
 			$oPage->setPid(null);
 		} else {
 			$oPage->setPid(getRequest('page_pid'));
-			$oPageParent=$this->Page_GetPageById(getRequest('page_pid'));
+			$oPageParent=LS::Make(ModulePage::class)->GetPageById(getRequest('page_pid'));
 			$oPage->setUrlFull($oPageParent->getUrlFull().'/'.getRequest('page_url'));
 		}
 		$oPage->setSeoDescription(getRequest('page_seo_description'));
@@ -296,16 +309,16 @@ class ActionPage extends Action {
 		if (getRequest('page_sort')) {
 			$oPage->setSort(getRequest('page_sort'));
 		} else {
-			$oPage->setSort($this->Page_GetMaxSortByPid($oPage->getPid())+1);
+			$oPage->setSort(LS::Make(ModulePage::class)->GetMaxSortByPid($oPage->getPid())+1);
 		}
 		/**
 		 * Добавляем страницу
 		 */
-		if ($this->Page_AddPage($oPage)) {
-			$this->Message_AddNotice($this->Lang_Get('page.create_submit_save_ok'));
+		if (LS::Make(ModulePage::class)->AddPage($oPage)) {
+			LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('page.create_submit_save_ok'));
 			$this->SetParam(0,null);
 		} else {
-			$this->Message_AddError($this->Lang_Get('system_error'));
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'));
 		}
 	}
 	/**
@@ -314,14 +327,14 @@ class ActionPage extends Action {
 	 * @return unknown
 	 */
 	protected function CheckPageFields() {
-		$this->Security_ValidateSendForm();
+		LS::Make(ModuleSecurity::class)->ValidateSendForm();
 
 		$bOk=true;
 		/**
 		 * Проверяем есть ли заголовок топика
 		 */
 		if (!func_check(getRequest('page_title',null,'post'),'text',2,200)) {
-			$this->Message_AddError($this->Lang_Get('page.create_title_error'),$this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('page.create_title_error'),LS::Make(ModuleLang::class)->Get('error'));
 			$bOk=false;
 		}
 		/**
@@ -330,41 +343,41 @@ class ActionPage extends Action {
 		$pageUrl=preg_replace("/\s+/",'_',(string)getRequest('page_url',null,'post'));
 		$_REQUEST['page_url']=$pageUrl;
 		if (!func_check(getRequest('page_url',null,'post'),'login',1,50)) {
-			$this->Message_AddError($this->Lang_Get('page.create_url_error'),$this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('page.create_url_error'),LS::Make(ModuleLang::class)->Get('error'));
 			$bOk=false;
 		}
 		/**
 		 * Проверяем на счет плохих УРЛов
 		 */
 		if (in_array(getRequest('page_url',null,'post'),$this->aBadPageUrl)) {
-			$this->Message_AddError($this->Lang_Get('page.create_url_error_bad').' '.join(',',$this->aBadPageUrl),$this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('page.create_url_error_bad').' '.join(',',$this->aBadPageUrl),LS::Make(ModuleLang::class)->Get('error'));
 			$bOk=false;
 		}
 		/**
 		 * Проверяем есть ли содержание страницы
 		 */
 		if (!func_check(getRequest('page_text',null,'post'),'text',1,50000)) {
-			$this->Message_AddError($this->Lang_Get('page.create_text_error'),$this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('page.create_text_error'),LS::Make(ModuleLang::class)->Get('error'));
 			$bOk=false;
 		}
 		/**
 		 * Проверяем страницу в которую хотим вложить
 		 */
-		if (getRequest('page_pid')!=0 and !($oPageParent=$this->Page_GetPageById(getRequest('page_pid')))) {
-			$this->Message_AddError($this->Lang_Get('page.create_parent_page_error'),$this->Lang_Get('error'));
+		if (getRequest('page_pid')!=0 and !($oPageParent=LS::Make(ModulePage::class)->GetPageById(getRequest('page_pid')))) {
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('page.create_parent_page_error'),LS::Make(ModuleLang::class)->Get('error'));
 			$bOk=false;
 		}
 		/**
 		 * Проверяем сортировку
 		 */
 		if (getRequest('page_sort') and !is_numeric(getRequest('page_sort'))) {
-			$this->Message_AddError($this->Lang_Get('page.create_sort_error'),$this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('page.create_sort_error'),LS::Make(ModuleLang::class)->Get('error'));
 			$bOk=false;
 		}
 		/**
 		 * Выполнение хуков
 		 */
-		$this->Hook_Run('check_page_fields', array('bOk'=>&$bOk));
+		LS::Make(ModuleHook::class)->Run('check_page_fields', array('bOk'=>&$bOk));
 
 		return $bOk;
 	}

@@ -17,7 +17,7 @@
 
 namespace Engine;
 
-use ModuleValidate;
+use Engine\Modules\Validate\ModuleValidate;
 
 /**
  * Абстрактный класс сущности.
@@ -177,8 +177,6 @@ abstract class Entity extends LsObject {
 			} elseif ($sType=='set' and array_key_exists(0,$aArgs)) {
 				$this->_aData[$sKey]=$aArgs[0];
 			}
-		} else {
-			return Engine::getInstance()->_CallModule($sName,$aArgs);
 		}
 		return null;
 	}

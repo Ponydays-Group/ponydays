@@ -15,7 +15,14 @@
 ---------------------------------------------------------
 */
 
+namespace App\Blocks;
+
+use App\Modules\Favourite\ModuleFavourite;
+use App\Modules\Tools\ModuleTools;
+use App\Modules\User\ModuleUser;
 use Engine\Block;
+use Engine\LS;
+use Engine\Modules\Viewer\ModuleViewer;
 
 /**
  * Обрабатывает блок облака тегов для избранного
@@ -31,35 +38,39 @@ class BlockTagsFavouriteTopic extends Block {
 		/**
 		 * Пользователь авторизован?
 		 */
-		if ($oUserCurrent = $this->User_getUserCurrent()) {
+		if ($oUserCurrent = LS::Make(ModuleUser::class)->getUserCurrent()) {
 			if (!($oUser=$this->getParam('user'))) {
 				$oUser=$oUserCurrent;
 			}
+            /** @var ModuleViewer $viewer */
+            $viewer = LS::Make(ModuleViewer::class);
+            /** @var ModuleFavourite $fav */
+            $fav = LS::Make(ModuleFavourite::class);
 			/**
 			 * Получаем список тегов
 			 */
-			$aTags=$this->oEngine->Favourite_GetGroupTags($oUser->getId(),'topic',null,70);
+			$aTags=$fav->GetGroupTags($oUser->getId(),'topic',null,70);
 			/**
 			 * Расчитываем логарифмическое облако тегов
 			 */
-			$this->Tools_MakeCloud($aTags);
+			LS::Make(ModuleTools::class)->MakeCloud($aTags);
 			/**
 			 * Устанавливаем шаблон вывода
 			 */
-			$this->Viewer_Assign("aFavouriteTopicTags",$aTags);
+			$viewer->Assign("aFavouriteTopicTags",$aTags);
 			/**
 			 * Получаем список тегов пользователя
 			 */
-			$aTags=$this->oEngine->Favourite_GetGroupTags($oUser->getId(),'topic',true,70);
+			$aTags=$fav->GetGroupTags($oUser->getId(),'topic',true,70);
 			/**
 			 * Расчитываем логарифмическое облако тегов
 			 */
-			$this->Tools_MakeCloud($aTags);
+			LS::Make(ModuleTools::class)->MakeCloud($aTags);
 			/**
 			 * Устанавливаем шаблон вывода
 			 */
-			$this->Viewer_Assign("aFavouriteTopicUserTags",$aTags);
-			$this->Viewer_Assign("oFavouriteUser",$oUser);
+			$viewer->Assign("aFavouriteTopicUserTags",$aTags);
+			$viewer->Assign("oFavouriteUser",$oUser);
 		}
 	}
 }

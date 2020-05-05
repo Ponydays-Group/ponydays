@@ -1,5 +1,7 @@
 <?php
 
+use Engine\Config;
+
 $config = array();
 
 $config['view']['theme'] = 'default';

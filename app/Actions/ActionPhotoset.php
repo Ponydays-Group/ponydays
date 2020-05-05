@@ -15,9 +15,27 @@
 ---------------------------------------------------------
 */
 
-use Engine\Engine;
+namespace App\Actions;
+
+use App\Modules\ACL\ModuleACL;
+use App\Modules\Blog\ModuleBlog;
+use App\Modules\Comment\ModuleComment;
+use App\Modules\Stream\ModuleStream;
+use App\Modules\Subscribe\ModuleSubscribe;
+use App\Modules\Topic\Entity\ModuleTopic_EntityTopic;
+use App\Modules\Topic\Entity\ModuleTopic_EntityTopicPhoto;
+use App\Modules\Topic\ModuleTopic;
+use App\Modules\User\Entity\ModuleUser_EntityUser;
+use App\Modules\User\ModuleUser;
 use Engine\Action;
 use Engine\Config;
+use Engine\LS;
+use Engine\Modules\Hook\ModuleHook;
+use Engine\Modules\Lang\ModuleLang;
+use Engine\Modules\Message\ModuleMessage;
+use Engine\Modules\Security\ModuleSecurity;
+use Engine\Modules\Text\ModuleText;
+use Engine\Modules\Viewer\ModuleViewer;
 use Engine\Router;
 
 /**
@@ -60,13 +78,13 @@ class ActionPhotoset extends Action {
 		/**
 		 * Проверяем авторизован ли юзер
 		 */
-		$this->oUserCurrent=$this->User_GetUserCurrent();
+		$this->oUserCurrent=LS::Make(ModuleUser::class)->GetUserCurrent();
 		$this->SetDefaultEvent('add');
-		$this->Viewer_AddHtmlTitle($this->Lang_Get('topic_photoset_title'));
+		LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('topic_photoset_title'));
 		/**
 		 * Загружаем в шаблон JS текстовки
 		 */
-		$this->Lang_AddLangJs(array(
+		LS::Make(ModuleLang::class)->AddLangJs(array(
 								  'topic_photoset_photo_delete','topic_photoset_mark_as_preview','topic_photoset_photo_delete_confirm',
 								  'topic_photoset_is_preview','topic_photoset_upload_choose'
 							  ));
@@ -97,13 +115,13 @@ class ActionPhotoset extends Action {
 		/**
 		 * Устанавливаем формат Ajax ответа
 		 */
-		$this->Viewer_SetResponseAjax('json');
+		LS::Make(ModuleViewer::class)->SetResponseAjax('json');
 		/**
 		 * Существует ли топик
 		 */
-		$oTopic = $this->Topic_getTopicById(getRequestStr('topic_id'));
+		$oTopic = LS::Make(ModuleTopic::class)->getTopicById(getRequestStr('topic_id'));
 		if (!$oTopic || !getRequest('last_id')) {
-			$this->Message_AddError($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
 			return false;
 		}
 		/**
@@ -118,9 +136,9 @@ class ActionPhotoset extends Action {
 			foreach($aPhotos as $oPhoto) {
 				$aResult[] = array('id' => $oPhoto->getId(), 'path_thumb' => $oPhoto->getWebPath('50crop'), 'path' => $oPhoto->getWebPath(), 'description' => $oPhoto->getDescription());
 			}
-			$this->Viewer_AssignAjax('photos', $aResult);
+			LS::Make(ModuleViewer::class)->AssignAjax('photos', $aResult);
 		}
-		$this->Viewer_AssignAjax('bHaveNext', count($aPhotos)==Config::Get('module.topic.photoset.per_page'));
+		LS::Make(ModuleViewer::class)->AssignAjax('bHaveNext', count($aPhotos)==Config::Get('module.topic.photoset.per_page'));
 	}
 	/**
 	 * AJAX удаление фото
@@ -130,26 +148,26 @@ class ActionPhotoset extends Action {
 		/**
 		 * Устанавливаем формат Ajax ответа
 		 */
-		$this->Viewer_SetResponseAjax('json');
+		LS::Make(ModuleViewer::class)->SetResponseAjax('json');
 		/**
 		 * Проверяем авторизован ли юзер
 		 */
-		if (!$this->User_IsAuthorization()) {
-			$this->Message_AddErrorSingle($this->Lang_Get('not_access'),$this->Lang_Get('error'));
+		if (!LS::Make(ModuleUser::class)->IsAuthorization()) {
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'),LS::Make(ModuleLang::class)->Get('error'));
 			return Router::Action('error');
 		}
 		/**
 		 * Поиск фото по id
 		 */
-		$oPhoto = $this->Topic_getTopicPhotoById(getRequestStr('id'));
+		$oPhoto = LS::Make(ModuleTopic::class)->getTopicPhotoById(getRequestStr('id'));
 		if ($oPhoto) {
 			if ($oPhoto->getTopicId()) {
 				/**
 				 * Проверяем права на топик
 				 */
-				if ($oTopic=$this->Topic_GetTopicById($oPhoto->getTopicId()) and $this->ACL_IsAllowEditTopic($oTopic,$this->oUserCurrent)) {
+				if ($oTopic=LS::Make(ModuleTopic::class)->GetTopicById($oPhoto->getTopicId()) and LS::Make(ModuleACL::class)->IsAllowEditTopic($oTopic,$this->oUserCurrent)) {
 					if ($oTopic->getPhotosetCount()>1) {
-						$this->Topic_deleteTopicPhoto($oPhoto);
+						LS::Make(ModuleTopic::class)->deleteTopicPhoto($oPhoto);
 						/**
 						 * Если удаляем главную фотку топика, то её необходимо сменить
 						 */
@@ -158,20 +176,20 @@ class ActionPhotoset extends Action {
 							$oTopic->setPhotosetMainPhotoId($aPhotos[0]->getId());
 						}
 						$oTopic->setPhotosetCount($oTopic->getPhotosetCount()-1);
-						$this->Topic_UpdateTopic($oTopic);
-						$this->Message_AddNotice($this->Lang_Get('topic_photoset_photo_deleted'), $this->Lang_Get('attention'));
+						LS::Make(ModuleTopic::class)->UpdateTopic($oTopic);
+						LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('topic_photoset_photo_deleted'), LS::Make(ModuleLang::class)->Get('attention'));
 					} else {
-						$this->Message_AddError($this->Lang_Get('topic_photoset_photo_deleted_error_last'), $this->Lang_Get('error'));
+						LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('topic_photoset_photo_deleted_error_last'), LS::Make(ModuleLang::class)->Get('error'));
 					}
 					return;
 				}
 			} else {
-				$this->Topic_deleteTopicPhoto($oPhoto);
-				$this->Message_AddNotice($this->Lang_Get('topic_photoset_photo_deleted'), $this->Lang_Get('attention'));
+				LS::Make(ModuleTopic::class)->deleteTopicPhoto($oPhoto);
+				LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('topic_photoset_photo_deleted'), LS::Make(ModuleLang::class)->Get('attention'));
 				return;
 			}
 		}
-		$this->Message_AddError($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+		LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
 	}
 	/**
 	 * AJAX установка описания фото
@@ -181,28 +199,28 @@ class ActionPhotoset extends Action {
 		/**
 		 * Устанавливаем формат Ajax ответа
 		 */
-		$this->Viewer_SetResponseAjax('json');
+		LS::Make(ModuleViewer::class)->SetResponseAjax('json');
 		/**
 		 * Проверяем авторизован ли юзер
 		 */
-		if (!$this->User_IsAuthorization()) {
-			$this->Message_AddErrorSingle($this->Lang_Get('not_access'),$this->Lang_Get('error'));
+		if (!LS::Make(ModuleUser::class)->IsAuthorization()) {
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'),LS::Make(ModuleLang::class)->Get('error'));
 			return Router::Action('error');
 		}
 		/**
 		 * Поиск фото по id
 		 */
-		$oPhoto = $this->Topic_getTopicPhotoById(getRequestStr('id'));
+		$oPhoto = LS::Make(ModuleTopic::class)->getTopicPhotoById(getRequestStr('id'));
 		if ($oPhoto) {
 			if ($oPhoto->getTopicId()) {
 				// проверяем права на топик
-				if ($oTopic=$this->Topic_GetTopicById($oPhoto->getTopicId()) and $this->ACL_IsAllowEditTopic($oTopic,$this->oUserCurrent)) {
+				if ($oTopic=LS::Make(ModuleTopic::class)->GetTopicById($oPhoto->getTopicId()) and LS::Make(ModuleACL::class)->IsAllowEditTopic($oTopic,$this->oUserCurrent)) {
 					$oPhoto->setDescription(htmlspecialchars(strip_tags(getRequestStr('text'))));
-					$this->Topic_updateTopicPhoto($oPhoto);
+					LS::Make(ModuleTopic::class)->updateTopicPhoto($oPhoto);
 				}
 			} else {
 				$oPhoto->setDescription(htmlspecialchars(strip_tags(getRequestStr('text'))));
-				$this->Topic_updateTopicPhoto($oPhoto);
+				LS::Make(ModuleTopic::class)->updateTopicPhoto($oPhoto);
 			}
 		}
 	}
@@ -217,22 +235,22 @@ class ActionPhotoset extends Action {
 		 * В зависимости от типа загрузчика устанавливается тип ответа
 		 */
 		if (getRequest('is_iframe')) {
-			$this->Viewer_SetResponseAjax('jsonIframe', false);
+			LS::Make(ModuleViewer::class)->SetResponseAjax('jsonIframe', false);
 		} else {
-			$this->Viewer_SetResponseAjax('json');
+			LS::Make(ModuleViewer::class)->SetResponseAjax('json');
 		}
 		/**
 		 * Проверяем авторизован ли юзер
 		 */
-		if (!$this->User_IsAuthorization()) {
-			$this->Message_AddErrorSingle($this->Lang_Get('not_access'),$this->Lang_Get('error'));
+		if (!LS::Make(ModuleUser::class)->IsAuthorization()) {
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'),LS::Make(ModuleLang::class)->Get('error'));
 			return Router::Action('error');
 		}
 		/**
 		 * Файл был загружен?
 		 */
 		if (!isset($_FILES['Filedata']['tmp_name'])) {
-			$this->Message_AddError($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
 			return false;
 		}
 
@@ -243,67 +261,67 @@ class ActionPhotoset extends Action {
 		if (!$iTopicId) {
 			$sTargetId = empty($_COOKIE['ls_photoset_target_tmp']) ? getRequestStr('ls_photoset_target_tmp') : $_COOKIE['ls_photoset_target_tmp'];
 			if (!$sTargetId) {
-				$this->Message_AddError($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+				LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
 				return false;
 			}
-			$iCountPhotos = $this->Topic_getCountPhotosByTargetTmp($sTargetId);
+			$iCountPhotos = LS::Make(ModuleTopic::class)->getCountPhotosByTargetTmp($sTargetId);
 		} else {
 			/**
 			 * Загрузка фото к уже существующему топику
 			 */
-			$oTopic = $this->Topic_getTopicById($iTopicId);
-			if (!$oTopic or !$this->ACL_IsAllowEditTopic($oTopic,$this->oUserCurrent)) {
-				$this->Message_AddError($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+			$oTopic = LS::Make(ModuleTopic::class)->getTopicById($iTopicId);
+			if (!$oTopic or !LS::Make(ModuleACL::class)->IsAllowEditTopic($oTopic,$this->oUserCurrent)) {
+				LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
 				return false;
 			}
-			$iCountPhotos = $this->Topic_getCountPhotosByTopicId($iTopicId);
+			$iCountPhotos = LS::Make(ModuleTopic::class)->getCountPhotosByTopicId($iTopicId);
 		}
 		/**
 		 * Максимальное количество фото в топике
 		 */
 		if ($iCountPhotos >= Config::Get('module.topic.photoset.count_photos_max')) {
-			$this->Message_AddError($this->Lang_Get('topic_photoset_error_too_much_photos', array('MAX' => Config::Get('module.topic.photoset.count_photos_max'))), $this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('topic_photoset_error_too_much_photos', array('MAX' => Config::Get('module.topic.photoset.count_photos_max'))), LS::Make(ModuleLang::class)->Get('error'));
 			return false;
 		}
 		/**
 		 * Максимальный размер фото
 		 */
 		if (filesize($_FILES['Filedata']['tmp_name']) > Config::Get('module.topic.photoset.photo_max_size')*1024) {
-			$this->Message_AddError($this->Lang_Get('topic_photoset_error_bad_filesize', array('MAX' => Config::Get('module.topic.photoset.photo_max_size'))), $this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('topic_photoset_error_bad_filesize', array('MAX' => Config::Get('module.topic.photoset.photo_max_size'))), LS::Make(ModuleLang::class)->Get('error'));
 			return false;
 		}
 		/**
 		 * Загружаем файл
 		 */
-		$sFile = $this->Topic_UploadTopicPhoto($_FILES['Filedata']);
+		$sFile = LS::Make(ModuleTopic::class)->UploadTopicPhoto($_FILES['Filedata']);
 		if ($sFile) {
 			/**
 			 * Создаем фото
 			 */
-			$oPhoto = Engine::GetEntity('Topic_TopicPhoto');
+			$oPhoto = new ModuleTopic_EntityTopicPhoto();
 			$oPhoto->setPath($sFile);
 			if ($iTopicId) {
 				$oPhoto->setTopicId($iTopicId);
 			} else {
 				$oPhoto->setTargetTmp($sTargetId);
 			}
-			if ($oPhoto = $this->Topic_addTopicPhoto($oPhoto)) {
+			if ($oPhoto = LS::Make(ModuleTopic::class)->addTopicPhoto($oPhoto)) {
 				/**
 				 * Если топик уже существует (редактирование), то обновляем число фоток в нём
 				 */
 				if (isset($oTopic)) {
 					$oTopic->setPhotosetCount($oTopic->getPhotosetCount()+1);
-					$this->Topic_UpdateTopic($oTopic);
+					LS::Make(ModuleTopic::class)->UpdateTopic($oTopic);
 				}
 
-				$this->Viewer_AssignAjax('file', $oPhoto->getWebPath('100crop'));
-				$this->Viewer_AssignAjax('id', $oPhoto->getId());
-				$this->Message_AddNotice($this->Lang_Get('topic_photoset_photo_added'), $this->Lang_Get('attention'));
+				LS::Make(ModuleViewer::class)->AssignAjax('file', $oPhoto->getWebPath('100crop'));
+				LS::Make(ModuleViewer::class)->AssignAjax('id', $oPhoto->getId());
+				LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('topic_photoset_photo_added'), LS::Make(ModuleLang::class)->Get('attention'));
 			} else {
-				$this->Message_AddError($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+				LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
 			}
 		} else {
-			$this->Message_AddError($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
 		}
 	}
 	/**
@@ -314,15 +332,15 @@ class ActionPhotoset extends Action {
 		/**
 		 * Проверяем авторизован ли юзер
 		 */
-		if (!$this->User_IsAuthorization()) {
-			$this->Message_AddErrorSingle($this->Lang_Get('not_access'),$this->Lang_Get('error'));
+		if (!LS::Make(ModuleUser::class)->IsAuthorization()) {
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'),LS::Make(ModuleLang::class)->Get('error'));
 			return Router::Action('error');
 		}
 		/**
 		 * Получаем номер топика из УРЛ и проверяем существует ли он
 		 */
 		$sTopicId=$this->GetParam(0);
-		if (!($oTopic=$this->Topic_GetTopicById($sTopicId))) {
+		if (!($oTopic=LS::Make(ModuleTopic::class)->GetTopicById($sTopicId))) {
 			return parent::EventNotFound();
 		}
 		/**
@@ -334,18 +352,18 @@ class ActionPhotoset extends Action {
 		/**
 		 * Если права на редактирование
 		 */
-		if (!$this->ACL_IsAllowEditTopic($oTopic,$this->oUserCurrent)) {
+		if (!LS::Make(ModuleACL::class)->IsAllowEditTopic($oTopic,$this->oUserCurrent)) {
 			return parent::EventNotFound();
 		}
 		/**
 		 * Вызов хуков
 		 */
-		$this->Hook_Run('topic_edit_show',array('oTopic'=>$oTopic));
+		LS::Make(ModuleHook::class)->Run('topic_edit_show',array('oTopic'=>$oTopic));
 		/**
 		 * Загружаем переменные в шаблон
 		 */
-		$this->Viewer_Assign('aBlogsAllow',$this->Blog_GetBlogsAllowByUser($this->oUserCurrent));
-		$this->Viewer_AddHtmlTitle($this->Lang_Get('topic_photoset_title_edit'));
+		LS::Make(ModuleViewer::class)->Assign('aBlogsAllow',LS::Make(ModuleBlog::class)->GetBlogsAllowByUser($this->oUserCurrent));
+		LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('topic_photoset_title_edit'));
 		/**
 		 * Устанавливаем шаблон вывода
 		 */
@@ -376,7 +394,7 @@ class ActionPhotoset extends Action {
 			$_REQUEST['topic_forbid_comment']=$oTopic->getForbidComment();
 			$_REQUEST['topic_main_photo']=$oTopic->getPhotosetMainPhotoId();
 		}
-		$this->Viewer_Assign('aPhotos', $this->Topic_getPhotosByTopicId($oTopic->getId()));
+		LS::Make(ModuleViewer::class)->Assign('aPhotos', LS::Make(ModuleTopic::class)->getPhotosByTopicId($oTopic->getId()));
 	}
 	/**
 	 * Добавление топика
@@ -386,19 +404,19 @@ class ActionPhotoset extends Action {
 		/**
 		 * Проверяем авторизован ли юзер
 		 */
-		if (!$this->User_IsAuthorization()) {
-			$this->Message_AddErrorSingle($this->Lang_Get('not_access'),$this->Lang_Get('error'));
+		if (!LS::Make(ModuleUser::class)->IsAuthorization()) {
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'),LS::Make(ModuleLang::class)->Get('error'));
 			return Router::Action('error');
 		}
 		/**
 		 * Вызов хуков
 		 */
-		$this->Hook_Run('topic_add_show');
+		LS::Make(ModuleHook::class)->Run('topic_add_show');
 		/**
 		 * Загружаем переменные в шаблон
 		 */
-		$this->Viewer_Assign('aBlogsAllow',$this->Blog_GetBlogsAllowByUser($this->oUserCurrent));
-		$this->Viewer_AddHtmlTitle($this->Lang_Get('topic_photoset_title_create'));
+		LS::Make(ModuleViewer::class)->Assign('aBlogsAllow',LS::Make(ModuleBlog::class)->GetBlogsAllowByUser($this->oUserCurrent));
+		LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('topic_photoset_title_create'));
 
 		if (!is_numeric(getRequest('topic_id'))) {
 			$_REQUEST['topic_id']='';
@@ -410,7 +428,7 @@ class ActionPhotoset extends Action {
 			setcookie('ls_photoset_target_tmp',  func_generator(), time()+24*3600,Config::Get('sys.cookie.path'),Config::Get('sys.cookie.host'));
 		} else {
 			setcookie('ls_photoset_target_tmp', $_COOKIE['ls_photoset_target_tmp'], time()+24*3600,Config::Get('sys.cookie.path'),Config::Get('sys.cookie.host'));
-			$this->Viewer_Assign('aPhotos', $this->Topic_getPhotosByTargetTmp($_COOKIE['ls_photoset_target_tmp']));
+			LS::Make(ModuleViewer::class)->Assign('aPhotos', LS::Make(ModuleTopic::class)->getPhotosByTargetTmp($_COOKIE['ls_photoset_target_tmp']));
 		}
 		/**
 		 * Обрабатываем отправку формы
@@ -429,7 +447,7 @@ class ActionPhotoset extends Action {
 		if (!isPost('submit_topic_publish') and !isPost('submit_topic_save')) {
 			return false;
 		}
-		$oTopic=Engine::GetEntity('Topic');
+		$oTopic = new ModuleTopic_EntityTopic();
 		$oTopic->_setValidateScenario('photoset');
 		/**
 		 * Заполняем поля для валидации
@@ -453,29 +471,29 @@ class ActionPhotoset extends Action {
 		 */
 		$iBlogId=$oTopic->getBlogId();
 		if ($iBlogId==0) {
-			$oBlog=$this->Blog_GetPersonalBlogByUserId($this->oUserCurrent->getId());
+			$oBlog=LS::Make(ModuleBlog::class)->GetPersonalBlogByUserId($this->oUserCurrent->getId());
 		} else {
-			$oBlog=$this->Blog_GetBlogById($iBlogId);
+			$oBlog=LS::Make(ModuleBlog::class)->GetBlogById($iBlogId);
 		}
 		/**
 		 * Если блог не определен выдаем предупреждение
 		 */
 		if (!$oBlog) {
-			$this->Message_AddErrorSingle($this->Lang_Get('topic_create_blog_error_unknown'),$this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_create_blog_error_unknown'),LS::Make(ModuleLang::class)->Get('error'));
 			return false;
 		}
 		/**
 		 * Проверяем права на постинг в блог
 		 */
-		if (!$this->ACL_IsAllowBlog($oBlog,$this->oUserCurrent)) {
-			$this->Message_AddErrorSingle($this->Lang_Get('topic_create_blog_error_noallow'),$this->Lang_Get('error'));
+		if (!LS::Make(ModuleACL::class)->IsAllowBlog($oBlog,$this->oUserCurrent)) {
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_create_blog_error_noallow'),LS::Make(ModuleLang::class)->Get('error'));
 			return false;
 		}
 		/**
 		 * Проверяем разрешено ли постить топик по времени
 		 */
-		if (isPost('submit_topic_publish') and !$this->ACL_CanPostTopicTime($this->oUserCurrent)) {
-			$this->Message_AddErrorSingle($this->Lang_Get('topic_time_limit'),$this->Lang_Get('error'));
+		if (isPost('submit_topic_publish') and !LS::Make(ModuleACL::class)->CanPostTopicTime($this->oUserCurrent)) {
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_time_limit'),LS::Make(ModuleLang::class)->Get('error'));
 			return;
 		}
 		/**
@@ -485,14 +503,14 @@ class ActionPhotoset extends Action {
 		/**
 		 * Получаемый и устанавливаем разрезанный текст по тегу <cut>
 		 */
-		list($sTextShort,$sTextNew,$sTextCut) = $this->Text_Cut($oTopic->getTextSource());
+		list($sTextShort,$sTextNew,$sTextCut) = LS::Make(ModuleText::class)->Cut($oTopic->getTextSource());
 		$oTopic->setCutText($sTextCut);
-		$oTopic->setText($this->Text_Parser($sTextNew));
-		$oTopic->setTextShort($this->Text_Parser($sTextShort));
+		$oTopic->setText(LS::Make(ModuleText::class)->Parser($sTextNew));
+		$oTopic->setTextShort(LS::Make(ModuleText::class)->Parser($sTextShort));
 
 		$sTargetTmp=$_COOKIE['ls_photoset_target_tmp'];
-		$aPhotos = $this->Topic_getPhotosByTargetTmp($sTargetTmp);
-		if (!($oPhotoMain=$this->Topic_getTopicPhotoById(getRequestStr('topic_main_photo')) and $oPhotoMain->getTargetTmp()==$sTargetTmp)) {
+		$aPhotos = LS::Make(ModuleTopic::class)->getPhotosByTargetTmp($sTargetTmp);
+		if (!($oPhotoMain=LS::Make(ModuleTopic::class)->getTopicPhotoById(getRequestStr('topic_main_photo')) and $oPhotoMain->getTargetTmp()==$sTargetTmp)) {
 			$oPhotoMain=$aPhotos[0];
 		}
 		$oTopic->setPhotosetMainPhotoId($oPhotoMain->getId());
@@ -511,7 +529,7 @@ class ActionPhotoset extends Action {
 		 * Принудительный вывод на главную
 		 */
 		$oTopic->setPublishIndex(0);
-		if ($this->ACL_IsAllowPublishIndex($this->oUserCurrent))	{
+		if (LS::Make(ModuleACL::class)->IsAllowPublishIndex($this->oUserCurrent))	{
 			if (getRequest('topic_publish_index')) {
 				$oTopic->setPublishIndex(1);
 			}
@@ -526,29 +544,29 @@ class ActionPhotoset extends Action {
 		/**
 		 * Запускаем выполнение хуков
 		 */
-		$this->Hook_Run('topic_add_before', array('oTopic'=>$oTopic,'oBlog'=>$oBlog));
+		LS::Make(ModuleHook::class)->Run('topic_add_before', array('oTopic'=>$oTopic,'oBlog'=>$oBlog));
 		/**
 		 * Добавляем топик
 		 */
-		if ($this->Topic_AddTopic($oTopic)) {
-			$this->Hook_Run('topic_add_after', array('oTopic'=>$oTopic,'oBlog'=>$oBlog));
+		if (LS::Make(ModuleTopic::class)->AddTopic($oTopic)) {
+			LS::Make(ModuleHook::class)->Run('topic_add_after', array('oTopic'=>$oTopic,'oBlog'=>$oBlog));
 			/**
 			 * Получаем топик, чтоб подцепить связанные данные
 			 */
-			$oTopic=$this->Topic_GetTopicById($oTopic->getId());
+			$oTopic=LS::Make(ModuleTopic::class)->GetTopicById($oTopic->getId());
 			/**
 			 * Обновляем количество топиков в блоге
 			 */
-			$this->Blog_RecalculateCountTopicByBlogId($oTopic->getBlogId());
+			LS::Make(ModuleBlog::class)->RecalculateCountTopicByBlogId($oTopic->getBlogId());
 			/**
 			 * Добавляем автора топика в подписчики на новые комментарии к этому топику
 			 */
-			$this->Subscribe_AddSubscribeSimple('topic_new_comment',$oTopic->getId(),$this->oUserCurrent->getMail());
+			LS::Make(ModuleSubscribe::class)->AddSubscribeSimple('topic_new_comment',$oTopic->getId(),$this->oUserCurrent->getMail());
 			/**
 			 * Делаем рассылку спама всем, кто состоит в этом блоге
 			 */
 			if ($oTopic->getPublish()==1 and $oBlog->getType()!='personal') {
-				$this->Topic_SendNotifyTopicNew($oBlog,$oTopic,$this->oUserCurrent);
+				LS::Make(ModuleTopic::class)->SendNotifyTopicNew($oBlog,$oTopic,$this->oUserCurrent);
 			}
 			/**
 			 * Привязываем фото к id топика
@@ -558,7 +576,7 @@ class ActionPhotoset extends Action {
 				foreach($aPhotos as $oPhoto) {
 					$oPhoto->setTargetTmp(null);
 					$oPhoto->setTopicId($oTopic->getId());
-					$this->Topic_updateTopicPhoto($oPhoto);
+					LS::Make(ModuleTopic::class)->updateTopicPhoto($oPhoto);
 				}
 			}
 			/**
@@ -568,10 +586,10 @@ class ActionPhotoset extends Action {
 			/**
 			 * Добавляем событие в ленту
 			 */
-			$this->Stream_write($oTopic->getUserId(), 'add_topic', $oTopic->getId(),$oTopic->getPublish() && $oBlog->getType()!='close');
+			LS::Make(ModuleStream::class)->write($oTopic->getUserId(), 'add_topic', $oTopic->getId(),$oTopic->getPublish() && $oBlog->getType()!='close');
 			Router::Location($oTopic->getUrl());
 		} else {
-			$this->Message_AddErrorSingle($this->Lang_Get('system_error'));
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'));
 			return Router::Action('error');
 		}
 	}
@@ -606,29 +624,29 @@ class ActionPhotoset extends Action {
 		 */
 		$iBlogId=$oTopic->getBlogId();
 		if ($iBlogId==0) {
-			$oBlog=$this->Blog_GetPersonalBlogByUserId($oTopic->getUserId());
+			$oBlog=LS::Make(ModuleBlog::class)->GetPersonalBlogByUserId($oTopic->getUserId());
 		} else {
-			$oBlog=$this->Blog_GetBlogById($iBlogId);
+			$oBlog=LS::Make(ModuleBlog::class)->GetBlogById($iBlogId);
 		}
 		/**
 		 * Если блог не определен выдаем предупреждение
 		 */
 		if (!$oBlog) {
-			$this->Message_AddErrorSingle($this->Lang_Get('topic_create_blog_error_unknown'),$this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_create_blog_error_unknown'),LS::Make(ModuleLang::class)->Get('error'));
 			return false;
 		}
 		/**
 		 * Проверяем права на постинг в блог
 		 */
-		if (!$this->ACL_IsAllowBlog($oBlog,$this->oUserCurrent)) {
-			$this->Message_AddErrorSingle($this->Lang_Get('topic_create_blog_error_noallow'),$this->Lang_Get('error'));
+		if (!LS::Make(ModuleACL::class)->IsAllowBlog($oBlog,$this->oUserCurrent)) {
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_create_blog_error_noallow'),LS::Make(ModuleLang::class)->Get('error'));
 			return false;
 		}
 		/**
 		 * Проверяем разрешено ли постить топик по времени
 		 */
-		if (isPost('submit_topic_publish') and !$oTopic->getPublishDraft() and !$this->ACL_CanPostTopicTime($this->oUserCurrent)) {
-			$this->Message_AddErrorSingle($this->Lang_Get('topic_time_limit'),$this->Lang_Get('error'));
+		if (isPost('submit_topic_publish') and !$oTopic->getPublishDraft() and !LS::Make(ModuleACL::class)->CanPostTopicTime($this->oUserCurrent)) {
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_time_limit'),LS::Make(ModuleLang::class)->Get('error'));
 			return;
 		}
 		/**
@@ -638,13 +656,13 @@ class ActionPhotoset extends Action {
 		/**
 		 * Получаемый и устанавливаем разрезанный текст по тегу <cut>
 		 */
-		list($sTextShort,$sTextNew,$sTextCut) = $this->Text_Cut($oTopic->getTextSource());
+		list($sTextShort,$sTextNew,$sTextCut) = LS::Make(ModuleText::class)->Cut($oTopic->getTextSource());
 		$oTopic->setCutText($sTextCut);
-		$oTopic->setText($this->Text_Parser($sTextNew));
-		$oTopic->setTextShort($this->Text_Parser($sTextShort));
+		$oTopic->setText(LS::Make(ModuleText::class)->Parser($sTextNew));
+		$oTopic->setTextShort(LS::Make(ModuleText::class)->Parser($sTextShort));
 
 		$aPhotos = $oTopic->getPhotosetPhotos();
-		if (!($oPhotoMain=$this->Topic_getTopicPhotoById(getRequestStr('topic_main_photo')) and $oPhotoMain->getTopicId()==$oTopic->getId())) {
+		if (!($oPhotoMain=LS::Make(ModuleTopic::class)->getTopicPhotoById(getRequestStr('topic_main_photo')) and $oPhotoMain->getTopicId()==$oTopic->getId())) {
 			$oPhotoMain=$aPhotos[0];
 		}
 		$oTopic->setPhotosetMainPhotoId($oPhotoMain->getId());
@@ -666,7 +684,7 @@ class ActionPhotoset extends Action {
 		/**
 		 * Принудительный вывод на главную
 		 */
-		if ($this->ACL_IsAllowPublishIndex($this->oUserCurrent))	{
+		if (LS::Make(ModuleACL::class)->IsAllowPublishIndex($this->oUserCurrent))	{
 			if (getRequest('topic_publish_index')) {
 				$oTopic->setPublishIndex(1);
 			} else {
@@ -680,42 +698,42 @@ class ActionPhotoset extends Action {
 		if (getRequest('topic_forbid_comment')) {
 			$oTopic->setForbidComment(1);
 		}
-		$this->Hook_Run('topic_edit_before', array('oTopic'=>$oTopic,'oBlog'=>$oBlog));
+		LS::Make(ModuleHook::class)->Run('topic_edit_before', array('oTopic'=>$oTopic,'oBlog'=>$oBlog));
 		/**
 		 * Сохраняем топик
 		 */
-		if ($this->Topic_UpdateTopic($oTopic)) {
-			$this->Hook_Run('topic_edit_after', array('oTopic'=>$oTopic,'oBlog'=>$oBlog,'bSendNotify'=>&$bSendNotify));
+		if (LS::Make(ModuleTopic::class)->UpdateTopic($oTopic)) {
+			LS::Make(ModuleHook::class)->Run('topic_edit_after', array('oTopic'=>$oTopic,'oBlog'=>$oBlog,'bSendNotify'=>&$bSendNotify));
 			/**
 			 * Обновляем данные в комментариях, если топик был перенесен в новый блог
 			 */
 			if($sBlogIdOld!=$oTopic->getBlogId()) {
-				$this->Comment_UpdateTargetParentByTargetId($oTopic->getBlogId(), 'topic', $oTopic->getId());
-				$this->Comment_UpdateTargetParentByTargetIdOnline($oTopic->getBlogId(), 'topic', $oTopic->getId());
+				LS::Make(ModuleComment::class)->UpdateTargetParentByTargetId($oTopic->getBlogId(), 'topic', $oTopic->getId());
+				LS::Make(ModuleComment::class)->UpdateTargetParentByTargetIdOnline($oTopic->getBlogId(), 'topic', $oTopic->getId());
 			}
 			/**
 			 * Обновляем количество топиков в блоге
 			 */
 			if ($sBlogIdOld!=$oTopic->getBlogId()) {
-				$this->Blog_RecalculateCountTopicByBlogId($sBlogIdOld);
+				LS::Make(ModuleBlog::class)->RecalculateCountTopicByBlogId($sBlogIdOld);
 			}
-			$this->Blog_RecalculateCountTopicByBlogId($oTopic->getBlogId());
+			LS::Make(ModuleBlog::class)->RecalculateCountTopicByBlogId($oTopic->getBlogId());
 			/**
 			 * Добавляем событие в ленту
 			 */
-			$this->Stream_write($oTopic->getUserId(), 'add_topic', $oTopic->getId(),$oTopic->getPublish() && $oBlog->getType()!='close');
+			LS::Make(ModuleStream::class)->write($oTopic->getUserId(), 'add_topic', $oTopic->getId(),$oTopic->getPublish() && $oBlog->getType()!='close');
 			/**
 			 * Рассылаем о новом топике подписчикам блога
 			 */
 			if ($bSendNotify)	 {
-				$this->Topic_SendNotifyTopicNew($oBlog,$oTopic,$this->oUserCurrent);
+				LS::Make(ModuleTopic::class)->SendNotifyTopicNew($oBlog,$oTopic,$this->oUserCurrent);
 			}
 			if (!$oTopic->getPublish() and !$this->oUserCurrent->isAdministrator() and $this->oUserCurrent->getId()!=$oTopic->getUserId()) {
 				Router::Location($oBlog->getUrlFull());
 			}
 			Router::Location($oTopic->getUrl());
 		} else {
-			$this->Message_AddErrorSingle($this->Lang_Get('system_error'));
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'));
 			return Router::Action('error');
 		}
 	}
@@ -725,11 +743,11 @@ class ActionPhotoset extends Action {
 	 * @return bool
 	 */
 	protected function checkTopicFields($oTopic) {
-		$this->Security_ValidateSendForm();
+		LS::Make(ModuleSecurity::class)->ValidateSendForm();
 
 		$bOk=true;
 		if (!$oTopic->_Validate()) {
-			$this->Message_AddError($oTopic->_getValidateError(),$this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddError($oTopic->_getValidateError(),LS::Make(ModuleLang::class)->Get('error'));
 			$bOk=false;
 		}
 
@@ -737,22 +755,22 @@ class ActionPhotoset extends Action {
 		$iCountPhotos = 0;
 		if (!$oTopic->getTopicId()) {
 			if (isset($_COOKIE['ls_photoset_target_tmp'])) {
-				$iCountPhotos = $this->Topic_getCountPhotosByTargetTmp($_COOKIE['ls_photoset_target_tmp']);
+				$iCountPhotos = LS::Make(ModuleTopic::class)->getCountPhotosByTargetTmp($_COOKIE['ls_photoset_target_tmp']);
 			} else {
-				$this->Message_AddError($this->Lang_Get('system_error'), $this->Lang_Get('error'));
+				LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
 				return false;
 			}
 		} else {
-			$iCountPhotos = $this->Topic_getCountPhotosByTopicId($oTopic->getId());
+			$iCountPhotos = LS::Make(ModuleTopic::class)->getCountPhotosByTopicId($oTopic->getId());
 		}
 		if ($iCountPhotos < Config::Get('module.topic.photoset.count_photos_min') || $iCountPhotos  > Config::Get('module.topic.photoset.count_photos_max')) {
-			$this->Message_AddError($this->Lang_Get('topic_photoset_error_count_photos', array('MIN' => Config::Get('module.topic.photoset.count_photos_min'), 'MAX' => Config::Get('module.topic.photoset.count_photos_max'))), $this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('topic_photoset_error_count_photos', array('MIN' => Config::Get('module.topic.photoset.count_photos_min'), 'MAX' => Config::Get('module.topic.photoset.count_photos_max'))), LS::Make(ModuleLang::class)->Get('error'));
 			return false;
 		}
 		/**
 		 * Выполнение хуков
 		 */
-		$this->Hook_Run('check_photoset_fields', array('bOk'=>&$bOk));
+		LS::Make(ModuleHook::class)->Run('check_photoset_fields', array('bOk'=>&$bOk));
 
 		return $bOk;
 	}
@@ -761,8 +779,8 @@ class ActionPhotoset extends Action {
 	 *
 	 */
 	public function EventShutdown() {
-		$this->Viewer_Assign('sMenuHeadItemSelect',$this->sMenuHeadItemSelect);
-		$this->Viewer_Assign('sMenuItemSelect',$this->sMenuItemSelect);
-		$this->Viewer_Assign('sMenuSubItemSelect',$this->sMenuSubItemSelect);
+		LS::Make(ModuleViewer::class)->Assign('sMenuHeadItemSelect',$this->sMenuHeadItemSelect);
+		LS::Make(ModuleViewer::class)->Assign('sMenuItemSelect',$this->sMenuItemSelect);
+		LS::Make(ModuleViewer::class)->Assign('sMenuSubItemSelect',$this->sMenuSubItemSelect);
 	}
 }

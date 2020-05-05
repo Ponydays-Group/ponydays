@@ -165,14 +165,14 @@
             "text_max": 250,
             "text_min": 1
         },
-        "autoLoad": [
-            "Hook",
-            "Cache",
-            "Security",
-            "Session",
-            "Lang",
-            "Message",
-            "User"
+        "autoload": [
+            "Engine\\Modules\\Hook\\ModuleHook",
+            "Engine\\Modules\\Cache\\ModuleCache",
+            "Engine\\Modules\\Lang\\ModuleLang",
+            "Engine\\Modules\\Message\\ModuleMessage",
+            "Engine\\Modules\\Security\\ModuleSecurity",
+            "Engine\\Modules\\Session\\ModuleSession",
+            "App\\Modules\\User\\ModuleUser"
         ],
         "quotes": {
             "per_page": 30

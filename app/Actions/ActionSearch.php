@@ -15,8 +15,18 @@
 ---------------------------------------------------------
 */
 
+namespace App\Actions;
+
+use App\Modules\Comment\ModuleComment;
+use App\Modules\Sphinx\ModuleSphinx;
+use App\Modules\Topic\ModuleTopic;
 use Engine\Action;
 use Engine\Config;
+use Engine\LS;
+use Engine\Modules\Lang\ModuleLang;
+use Engine\Modules\Message\ModuleMessage;
+use Engine\Modules\Text\ModuleText;
+use Engine\Modules\Viewer\ModuleViewer;
 use Engine\Router;
 
 /**
@@ -50,7 +60,7 @@ class ActionSearch extends Action {
 	 */
 	public function Init() {
 		$this->SetDefaultEvent('index');
-		$this->Viewer_AddHtmlTitle($this->Lang_Get('search'));
+		LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('search'));
 	}
 	/**
 	 * Регистрация евентов
@@ -71,7 +81,7 @@ class ActionSearch extends Action {
 	 */
 	function EventOpenSearch(){
 		Router::SetIsShowStats(false);
-		$this->Viewer_Assign('sAdminMail', Config::Get('sys.mail.from_email'));
+		LS::Make(ModuleViewer::class)->Assign('sAdminMail', Config::Get('sys.mail.from_email'));
 	}
 	/**
 	 * Поиск топиков
@@ -84,7 +94,7 @@ class ActionSearch extends Action {
 		$aReq = $this->PrepareRequest();
 		$aRes = $this->PrepareResults($aReq, Config::Get('module.topic.per_page'));
 		if(FALSE === $aRes) {
-			$this->Message_AddErrorSingle($this->Lang_Get('system_error'));
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'));
 			return Router::Action('error');
 		}
 		/**
@@ -94,11 +104,11 @@ class ActionSearch extends Action {
 			/**
 			 * Получаем топик-объекты по списку идентификаторов
 			 */
-			$aTopics = $this->Topic_GetTopicsAdditionalData(array_keys($this->aSphinxRes['matches']));
+			$aTopics = LS::Make(ModuleTopic::class)->GetTopicsAdditionalData(array_keys($this->aSphinxRes['matches']));
 			/**
 			 * Конфигурируем парсер jevix
 			 */
-			$this->Text_LoadJevixConfig('search');
+			LS::Make(ModuleText::class)->LoadJevixConfig('search');
 			/**
 			 *  Делаем сниппеты
 			 */
@@ -106,7 +116,7 @@ class ActionSearch extends Action {
 				/**
 				 * Т.к. текст в сниппетах небольшой, то можно прогнать через парсер
 				 */
-				$oTopic->setTextShort($this->Text_JevixParser($this->Sphinx_GetSnippet(
+				$oTopic->setTextShort(LS::Make(ModuleText::class)->JevixParser(LS::Make(ModuleSphinx::class)->GetSnippet(
 																  $oTopic->getText(),
 																  'topics',
 																  $aReq['q'],
@@ -117,9 +127,9 @@ class ActionSearch extends Action {
 			/**
 			 *  Отправляем данные в шаблон
 			 */
-			$this->Viewer_Assign('bIsResults', TRUE);
-			$this->Viewer_Assign('aRes', $aRes);
-			$this->Viewer_Assign('aTopics', $aTopics);
+			LS::Make(ModuleViewer::class)->Assign('bIsResults', TRUE);
+			LS::Make(ModuleViewer::class)->Assign('aRes', $aRes);
+			LS::Make(ModuleViewer::class)->Assign('aTopics', $aTopics);
 		}
 	}
 	/**
@@ -133,7 +143,7 @@ class ActionSearch extends Action {
 		$aReq = $this->PrepareRequest();
 		$aRes = $this->PrepareResults($aReq, Config::Get('module.comment.per_page'));
 		if(FALSE === $aRes) {
-			$this->Message_AddErrorSingle($this->Lang_Get('system_error'));
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'));
 			return Router::Action('error');
 		}
 		/**
@@ -143,16 +153,16 @@ class ActionSearch extends Action {
 			/**
 			 *  Получаем топик-объекты по списку идентификаторов
 			 */
-			$aComments = $this->Comment_GetCommentsAdditionalData(array_keys($this->aSphinxRes['matches']));
+			$aComments = LS::Make(ModuleComment::class)->GetCommentsAdditionalData(array_keys($this->aSphinxRes['matches']));
 			/**
 			 * Конфигурируем парсер jevix
 			 */
-			$this->Text_LoadJevixConfig('search');
+			LS::Make(ModuleText::class)->LoadJevixConfig('search');
 			/**
 			 * Делаем сниппеты
 			 */
 			foreach($aComments AS $oComment){
-				$oComment->setText($this->Text_JevixParser($this->Sphinx_GetSnippet(
+				$oComment->setText(LS::Make(ModuleText::class)->JevixParser(LS::Make(ModuleSphinx::class)->GetSnippet(
 															   htmlspecialchars($oComment->getText()),
 															   'comments',
 															   $aReq['q'],
@@ -163,8 +173,8 @@ class ActionSearch extends Action {
 			/**
 			 *  Отправляем данные в шаблон
 			 */
-			$this->Viewer_Assign('aRes', $aRes);
-			$this->Viewer_Assign('aComments', $aComments);
+			LS::Make(ModuleViewer::class)->Assign('aRes', $aRes);
+			LS::Make(ModuleViewer::class)->Assign('aComments', $aComments);
 		}
 	}
 	/**
@@ -190,7 +200,7 @@ class ActionSearch extends Action {
 		/**
 		 *  Передача данных в шаблонизатор
 		 */
-		$this->Viewer_Assign('aReq', $aReq);
+		LS::Make(ModuleViewer::class)->Assign('aReq', $aReq);
 		return $aReq;
 	}
 	/**
@@ -205,7 +215,7 @@ class ActionSearch extends Action {
 		 *  Количество результатов по типам
 		 */
 		foreach($this->sTypesEnabled as $sType => $aExtra){
-			$aRes['aCounts'][$sType] = intval($this->Sphinx_GetNumResultsByType($aReq['q'], $sType, $aExtra));
+			$aRes['aCounts'][$sType] = intval(LS::Make(ModuleSphinx::class)->GetNumResultsByType($aReq['q'], $sType, $aExtra));
 		}
 		if($aRes['aCounts'][$aReq['sType']] == 0){
 			/**
@@ -223,7 +233,7 @@ class ActionSearch extends Action {
 			/**
 			 * Ищем
 			 */
-			$this->aSphinxRes = $this->Sphinx_FindContent(
+			$this->aSphinxRes = LS::Make(ModuleSphinx::class)->FindContent(
 				$aReq['q'],
 				$aReq['sType'],
 				($aReq['iPage']-1)*$iLimit,
@@ -241,7 +251,7 @@ class ActionSearch extends Action {
 			/**
 			 * Формируем постраничный вывод
 			 */
-			$aPaging = $this->Viewer_MakePaging(
+			$aPaging = LS::Make(ModuleViewer::class)->MakePaging(
 				$aRes['aCounts'][$aReq['sType']],
 				$aReq['iPage'],
 				$iLimit,
@@ -251,12 +261,12 @@ class ActionSearch extends Action {
 					'q' => $aReq['q']
 				)
 			);
-			$this->Viewer_Assign('aPaging', $aPaging);
+			LS::Make(ModuleViewer::class)->Assign('aPaging', $aPaging);
 		}
 
 		$this->SetTemplateAction('results');
-		$this->Viewer_AddHtmlTitle($aReq['q']);
-		$this->Viewer_Assign('bIsResults', $this->bIsResults);
+		LS::Make(ModuleViewer::class)->AddHtmlTitle($aReq['q']);
+		LS::Make(ModuleViewer::class)->Assign('bIsResults', $this->bIsResults);
 		return $aRes;
 	}
 }

@@ -15,8 +15,28 @@
 ---------------------------------------------------------
 */
 
+namespace App\Actions;
+
+use App\Modules\ACL\ModuleACL;
+use App\Modules\Comment\ModuleComment;
+use App\Modules\Crypto\ModuleCrypto;
+use App\Modules\Geo\ModuleGeo;
+use App\Modules\Notify\ModuleNotify;
+use App\Modules\Topic\ModuleTopic;
+use App\Modules\User\Entity\ModuleUser_EntityUser;
+use App\Modules\User\ModuleUser;
+use App\Modules\Wall\ModuleWall;
 use Engine\Action;
 use Engine\Config;
+use Engine\LS;
+use Engine\Modules\Hook\ModuleHook;
+use Engine\Modules\Image\ModuleImage;
+use Engine\Modules\Lang\ModuleLang;
+use Engine\Modules\Message\ModuleMessage;
+use Engine\Modules\Security\ModuleSecurity;
+use Engine\Modules\Session\ModuleSession;
+use Engine\Modules\Text\ModuleText;
+use Engine\Modules\Viewer\ModuleViewer;
 use Engine\Router;
 
 /**
@@ -53,19 +73,19 @@ class ActionSettings extends Action {
 		/**
 		 * Проверяем авторизован ли юзер
 		 */
-		if (!$this->User_IsAuthorization()) {
-			$this->Message_AddErrorSingle($this->Lang_Get('not_access'),$this->Lang_Get('error'));
+		if (!LS::Make(ModuleUser::class)->IsAuthorization()) {
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'),LS::Make(ModuleLang::class)->Get('error'));
 			return Router::Action('error');
 		}
 		/**
 		 * Получаем текущего юзера
 		 */
-		$this->oUserCurrent=$this->User_GetUserCurrent();
+		$this->oUserCurrent=LS::Make(ModuleUser::class)->GetUserCurrent();
 		$this->SetDefaultEvent('profile');
 		/**
 		 * Устанавливаем title страницы
 		 */
-		$this->Viewer_AddHtmlTitle($this->Lang_Get('settings_menu'));
+		LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('settings_menu'));
 	}
 	/**
 	 * Регистрация евентов
@@ -98,7 +118,7 @@ class ActionSettings extends Action {
 		/**
 		 * Устанавливаем формат Ajax ответа
 		 */
-		$this->Viewer_SetResponseAjax('jsonIframe',false);
+		LS::Make(ModuleViewer::class)->SetResponseAjax('jsonIframe',false);
 
 		if(!isset($_FILES['foto']['tmp_name'])) {
 			return false;
@@ -115,22 +135,22 @@ class ActionSettings extends Action {
 		 * Храним две копии - мелкую для показа пользователю и крупную в качестве исходной для ресайза
 		 */
 		$sDir=Config::Get('path.uploads.images')."/tmp/fotos/{$this->oUserCurrent->getId()}";
-		if ($sFile=$this->Image_Resize($sFileTmp,$sDir,'original',Config::Get('view.img_max_width'),Config::Get('view.img_max_height'),10000,null,true)) {
-			if ($sFilePreview=$this->Image_Resize($sFileTmp,$sDir,'preview',Config::Get('view.img_max_width'),Config::Get('view.img_max_height'),400,null,true)) {
+		if ($sFile=LS::Make(ModuleImage::class)->Resize($sFileTmp,$sDir,'original',Config::Get('view.img_max_width'),Config::Get('view.img_max_height'),10000,null,true)) {
+			if ($sFilePreview=LS::Make(ModuleImage::class)->Resize($sFileTmp,$sDir,'preview',Config::Get('view.img_max_width'),Config::Get('view.img_max_height'),400,null,true)) {
 				/**
 				 * Сохраняем в сессии временный файл с изображением
 				 */
-                $oImage = $this->Image_CreateImageObject($sFile);
+                $oImage = LS::Make(ModuleImage::class)->CreateImageObject($sFile);
                 $iHSource = $oImage->get_image_params('height');
-				$this->Session_Set('sFotoFileTmp',$sFile);
-				$this->Session_Set('sFotoFilePreviewTmp',$sFilePreview);
-                $this->Viewer_AssignAjax('sTmpFile',$this->Image_GetWebPath($sFilePreview));
-                $this->Viewer_AssignAjax('iHeight',400*(200/1340));
+				LS::Make(ModuleSession::class)->Set('sFotoFileTmp',$sFile);
+				LS::Make(ModuleSession::class)->Set('sFotoFilePreviewTmp',$sFilePreview);
+                LS::Make(ModuleViewer::class)->AssignAjax('sTmpFile',LS::Make(ModuleImage::class)->GetWebPath($sFilePreview));
+                LS::Make(ModuleViewer::class)->AssignAjax('iHeight',400*(200/1340));
 				unlink($sFileTmp);
 				return;
 			}
 		}
-		$this->Message_AddError($this->Image_GetLastError(),$this->Lang_Get('error'));
+		LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleImage::class)->GetLastError(),LS::Make(ModuleLang::class)->Get('error'));
 		unlink($sFileTmp);
 	}
 	/**
@@ -140,14 +160,14 @@ class ActionSettings extends Action {
 		/**
 		 * Устанавливаем формат Ajax ответа
 		 */
-		$this->Viewer_SetResponseAjax('json');
+		LS::Make(ModuleViewer::class)->SetResponseAjax('json');
 		/**
 		 * Достаем из сессии временный файл
 		 */
-		$sFile=$this->Session_Get('sFotoFileTmp');
-		$sFilePreview=$this->Session_Get('sFotoFilePreviewTmp');
+		$sFile=LS::Make(ModuleSession::class)->Get('sFotoFileTmp');
+		$sFilePreview=LS::Make(ModuleSession::class)->Get('sFotoFilePreviewTmp');
 		if (!file_exists($sFile)) {
-			$this->Message_AddErrorSingle($this->Lang_Get('system_error'));
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'));
 			return;
 		}
 		/**
@@ -173,22 +193,22 @@ class ActionSettings extends Action {
 		/**
 		 * Вырезаем аватарку
 		 */
-		if ($sFileWeb=$this->User_UploadFoto($sFile,$this->oUserCurrent,$aSize)) {
+		if ($sFileWeb=LS::Make(ModuleUser::class)->UploadFoto($sFile,$this->oUserCurrent,$aSize)) {
 			/**
 			 * Удаляем старые аватарки
 			 */
 			$this->oUserCurrent->setProfileFoto($sFileWeb);
-			$this->User_Update($this->oUserCurrent);
-			$this->Image_RemoveFile($sFilePreview);
+			LS::Make(ModuleUser::class)->Update($this->oUserCurrent);
+			LS::Make(ModuleImage::class)->RemoveFile($sFilePreview);
 			/**
 			 * Удаляем из сессии
 			 */
-			$this->Session_Drop('sFotoFileTmp');
-			$this->Session_Drop('sFotoFilePreviewTmp');
-			$this->Viewer_AssignAjax('sFile',$this->oUserCurrent->getProfileFoto());
-			$this->Viewer_AssignAjax('sTitleUpload',$this->Lang_Get('settings_profile_photo_change'));
+			LS::Make(ModuleSession::class)->Drop('sFotoFileTmp');
+			LS::Make(ModuleSession::class)->Drop('sFotoFilePreviewTmp');
+			LS::Make(ModuleViewer::class)->AssignAjax('sFile',$this->oUserCurrent->getProfileFoto());
+			LS::Make(ModuleViewer::class)->AssignAjax('sTitleUpload',LS::Make(ModuleLang::class)->Get('settings_profile_photo_change'));
 		} else {
-			$this->Message_AddError($this->Lang_Get('settings_profile_avatar_error'),$this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('settings_profile_avatar_error'),LS::Make(ModuleLang::class)->Get('error'));
 		}
 	}
 	/**
@@ -198,18 +218,18 @@ class ActionSettings extends Action {
 		/**
 		 * Устанавливаем формат Ajax ответа
 		 */
-		$this->Viewer_SetResponseAjax('json');
+		LS::Make(ModuleViewer::class)->SetResponseAjax('json');
 		/**
 		 * Удаляем
 		 */
-		$this->User_DeleteFoto($this->oUserCurrent);
+		LS::Make(ModuleUser::class)->DeleteFoto($this->oUserCurrent);
 		$this->oUserCurrent->setProfileFoto(null);
-		$this->User_Update($this->oUserCurrent);
+		LS::Make(ModuleUser::class)->Update($this->oUserCurrent);
 		/**
 		 * Возвращает дефолтную аватарку
 		 */
-		$this->Viewer_AssignAjax('sFile',$this->oUserCurrent->getProfileFotoDefault());
-		$this->Viewer_AssignAjax('sTitleUpload',$this->Lang_Get('settings_profile_photo_upload'));
+		LS::Make(ModuleViewer::class)->AssignAjax('sFile',$this->oUserCurrent->getProfileFotoDefault());
+		LS::Make(ModuleViewer::class)->AssignAjax('sTitleUpload',LS::Make(ModuleLang::class)->Get('settings_profile_photo_upload'));
 	}
 	/**
 	 * Отмена ресайза фотки, необходимо удалить временный файл
@@ -218,20 +238,20 @@ class ActionSettings extends Action {
 		/**
 		 * Устанавливаем формат Ajax ответа
 		 */
-		$this->Viewer_SetResponseAjax('json');
+		LS::Make(ModuleViewer::class)->SetResponseAjax('json');
 		/**
 		 * Достаем из сессии файл и удаляем
 		 */
-		$sFile=$this->Session_Get('sFotoFileTmp');
-		$this->Image_RemoveFile($sFile);
+		$sFile=LS::Make(ModuleSession::class)->Get('sFotoFileTmp');
+		LS::Make(ModuleImage::class)->RemoveFile($sFile);
 
-		$sFile=$this->Session_Get('sFotoFilePreviewTmp');
-		$this->Image_RemoveFile($sFile);
+		$sFile=LS::Make(ModuleSession::class)->Get('sFotoFilePreviewTmp');
+		LS::Make(ModuleImage::class)->RemoveFile($sFile);
 		/**
 		 * Удаляем из сессии
 		 */
-		$this->Session_Drop('sFotoFileTmp');
-		$this->Session_Drop('sFotoFilePreviewTmp');
+		LS::Make(ModuleSession::class)->Drop('sFotoFileTmp');
+		LS::Make(ModuleSession::class)->Drop('sFotoFilePreviewTmp');
 	}
 	/**
 	 * Загрузка временной картинки для аватара
@@ -240,7 +260,7 @@ class ActionSettings extends Action {
 		/**
 		 * Устанавливаем формат Ajax ответа
 		 */
-		$this->Viewer_SetResponseAjax('jsonIframe',false);
+		LS::Make(ModuleViewer::class)->SetResponseAjax('jsonIframe',false);
 
 		if(!isset($_FILES['avatar']['tmp_name'])) {
 			return false;
@@ -256,14 +276,14 @@ class ActionSettings extends Action {
 		 * Ресайзим и сохраняем уменьшенную копию
 		 */
 		$sDir=Config::Get('path.uploads.images')."/tmp/avatars/{$this->oUserCurrent->getId()}";
-		if ($sFileAvatar=$this->Image_Resize($sFileTmp,$sDir,'original',Config::Get('view.img_max_width'),Config::Get('view.img_max_height'),200,null,true)) {
+		if ($sFileAvatar=LS::Make(ModuleImage::class)->Resize($sFileTmp,$sDir,'original',Config::Get('view.img_max_width'),Config::Get('view.img_max_height'),200,null,true)) {
 			/**
 			 * Зписываем в сессию
 			 */
-			$this->Session_Set('sAvatarFileTmp',$sFileAvatar);
-			$this->Viewer_AssignAjax('sTmpFile',$this->Image_GetWebPath($sFileAvatar));
+			LS::Make(ModuleSession::class)->Set('sAvatarFileTmp',$sFileAvatar);
+			LS::Make(ModuleViewer::class)->AssignAjax('sTmpFile',LS::Make(ModuleImage::class)->GetWebPath($sFileAvatar));
 		} else {
-			$this->Message_AddError($this->Image_GetLastError(),$this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleImage::class)->GetLastError(),LS::Make(ModuleLang::class)->Get('error'));
 		}
 		unlink($sFileTmp);
 	}
@@ -274,13 +294,13 @@ class ActionSettings extends Action {
 		/**
 		 * Устанавливаем формат Ajax ответа
 		 */
-		$this->Viewer_SetResponseAjax('json');
+		LS::Make(ModuleViewer::class)->SetResponseAjax('json');
 		/**
 		 * Получаем файл из сессии
 		 */
-		$sFileAvatar=$this->Session_Get('sAvatarFileTmp');
+		$sFileAvatar=LS::Make(ModuleSession::class)->Get('sAvatarFileTmp');
 		if (!file_exists($sFileAvatar)) {
-			$this->Message_AddErrorSingle($this->Lang_Get('system_error'));
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'));
 			return;
 		}
 		/**
@@ -297,21 +317,21 @@ class ActionSettings extends Action {
 		/**
 		 * Вырезаем аватарку
 		 */
-		if ($sFileWeb=$this->User_UploadAvatar($sFileAvatar,$this->oUserCurrent,$aSize)) {
+		if ($sFileWeb=LS::Make(ModuleUser::class)->UploadAvatar($sFileAvatar,$this->oUserCurrent,$aSize)) {
 			/**
 			 * Удаляем старые аватарки
 			 */
 			if ($sFileWeb!=$this->oUserCurrent->getProfileAvatar()) {
-				$this->User_DeleteAvatar($this->oUserCurrent);
+				LS::Make(ModuleUser::class)->DeleteAvatar($this->oUserCurrent);
 			}
 			$this->oUserCurrent->setProfileAvatar($sFileWeb);
 
-			$this->User_Update($this->oUserCurrent);
-			$this->Session_Drop('sAvatarFileTmp');
-			$this->Viewer_AssignAjax('sFile',$this->oUserCurrent->getProfileAvatarPath(100));
-			$this->Viewer_AssignAjax('sTitleUpload',$this->Lang_Get('settings_profile_avatar_change'));
+			LS::Make(ModuleUser::class)->Update($this->oUserCurrent);
+			LS::Make(ModuleSession::class)->Drop('sAvatarFileTmp');
+			LS::Make(ModuleViewer::class)->AssignAjax('sFile',$this->oUserCurrent->getProfileAvatarPath(100));
+			LS::Make(ModuleViewer::class)->AssignAjax('sTitleUpload',LS::Make(ModuleLang::class)->Get('settings_profile_avatar_change'));
 		} else {
-			$this->Message_AddError($this->Lang_Get('settings_profile_avatar_error'),$this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('settings_profile_avatar_error'),LS::Make(ModuleLang::class)->Get('error'));
 		}
 	}
 	/**
@@ -321,18 +341,18 @@ class ActionSettings extends Action {
 		/**
 		 * Устанавливаем формат Ajax ответа
 		 */
-		$this->Viewer_SetResponseAjax('json');
+		LS::Make(ModuleViewer::class)->SetResponseAjax('json');
 		/**
 		 * Удаляем
 		 */
-		$this->User_DeleteAvatar($this->oUserCurrent);
+		LS::Make(ModuleUser::class)->DeleteAvatar($this->oUserCurrent);
 		$this->oUserCurrent->setProfileAvatar(null);
-		$this->User_Update($this->oUserCurrent);
+		LS::Make(ModuleUser::class)->Update($this->oUserCurrent);
 		/**
 		 * Возвращает дефолтную аватарку
 		 */
-		$this->Viewer_AssignAjax('sFile',$this->oUserCurrent->getProfileAvatarPath(100));
-		$this->Viewer_AssignAjax('sTitleUpload',$this->Lang_Get('settings_profile_avatar_upload'));
+		LS::Make(ModuleViewer::class)->AssignAjax('sFile',$this->oUserCurrent->getProfileAvatarPath(100));
+		LS::Make(ModuleViewer::class)->AssignAjax('sTitleUpload',LS::Make(ModuleLang::class)->Get('settings_profile_avatar_upload'));
 	}
 	/**
 	 * Отмена ресайза аватарки, необходимо удалить временный файл
@@ -341,13 +361,13 @@ class ActionSettings extends Action {
 		/**
 		 * Устанавливаем формат Ajax ответа
 		 */
-		$this->Viewer_SetResponseAjax('json');
+		LS::Make(ModuleViewer::class)->SetResponseAjax('json');
 		/**
 		 * Достаем из сессии файл и удаляем
 		 */
-		$sFileAvatar=$this->Session_Get('sAvatarFileTmp');
-		$this->Image_RemoveFile($sFileAvatar);
-		$this->Session_Drop('sAvatarFileTmp');
+		$sFileAvatar=LS::Make(ModuleSession::class)->Get('sAvatarFileTmp');
+		LS::Make(ModuleImage::class)->RemoveFile($sFileAvatar);
+		LS::Make(ModuleSession::class)->Drop('sAvatarFileTmp');
 	}
 	/**
 	 * Дополнительные настройки сайта
@@ -356,14 +376,14 @@ class ActionSettings extends Action {
 		$this->sMenuItemSelect='settings';
 		$this->sMenuSubItemSelect='tuning';
 
-		$this->Viewer_AddHtmlTitle($this->Lang_Get('settings_menu_tuning'));
+		LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('settings_menu_tuning'));
 		$aTimezoneList=array('-12','-11','-10','-9.5','-9','-8','-7','-6','-5','-4.5','-4','-3.5','-3','-2','-1','0','1','2','3','3.5','4','4.5','5','5.5','5.75','6','6.5','7','8','8.75','9','9.5','10','10.5','11','11.5','12','12.75','13','14');
-		$this->Viewer_Assign('aTimezoneList',$aTimezoneList);
+		LS::Make(ModuleViewer::class)->Assign('aTimezoneList',$aTimezoneList);
 		/**
 		 * Если отправили форму с настройками - сохраняем
 		 */
 		if (isPost('submit_settings_tuning')) {
-			$this->Security_ValidateSendForm();
+			LS::Make(ModuleSecurity::class)->ValidateSendForm();
 
 			if (in_array(getRequestStr('settings_general_timezone'),$aTimezoneList)) {
 				$this->oUserCurrent->setSettingsTimezone(getRequestStr('settings_general_timezone'));
@@ -378,12 +398,12 @@ class ActionSettings extends Action {
 			/**
 			 * Запускаем выполнение хуков
 			 */
-			$this->Hook_Run('settings_tuning_save_before', array('oUser'=>$this->oUserCurrent));
-			if ($this->User_Update($this->oUserCurrent)) {
-				$this->Message_AddNoticeSingle($this->Lang_Get('settings_tuning_submit_ok'));
-				$this->Hook_Run('settings_tuning_save_after', array('oUser'=>$this->oUserCurrent));
+			LS::Make(ModuleHook::class)->Run('settings_tuning_save_before', array('oUser'=>$this->oUserCurrent));
+			if (LS::Make(ModuleUser::class)->Update($this->oUserCurrent)) {
+				LS::Make(ModuleMessage::class)->AddNoticeSingle(LS::Make(ModuleLang::class)->Get('settings_tuning_submit_ok'));
+				LS::Make(ModuleHook::class)->Run('settings_tuning_save_after', array('oUser'=>$this->oUserCurrent));
 			} else {
-				$this->Message_AddErrorSingle($this->Lang_Get('system_error'));
+				LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'));
 			}
 		} else {
 			if (is_null($this->oUserCurrent->getSettingsTimezone())) {
@@ -407,45 +427,45 @@ class ActionSettings extends Action {
 
 		$this->sMenuItemSelect='invite';
 		$this->sMenuSubItemSelect='';
-		$this->Viewer_AddHtmlTitle($this->Lang_Get('settings_menu_invite'));
+		LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('settings_menu_invite'));
 		/**
 		 * Если отправили форму
 		 */
 		if (isPost('submit_invite')) {
-			$this->Security_ValidateSendForm();
+			LS::Make(ModuleSecurity::class)->ValidateSendForm();
 
 			$bError=false;
 			/**
 			 * Есть права на отправку инфайтов?
 			 */
-			if (!$this->ACL_CanSendInvite($this->oUserCurrent) and !$this->oUserCurrent->isAdministrator()) {
-				$this->Message_AddError($this->Lang_Get('settings_invite_available_no'),$this->Lang_Get('error'));
+			if (!LS::Make(ModuleACL::class)->CanSendInvite($this->oUserCurrent) and !$this->oUserCurrent->isAdministrator()) {
+				LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('settings_invite_available_no'),LS::Make(ModuleLang::class)->Get('error'));
 				$bError=true;
 			}
 			/**
 			 * Емайл корректен?
 			 */
 			if (!func_check(getRequestStr('invite_mail'),'mail')) {
-				$this->Message_AddError($this->Lang_Get('settings_invite_mail_error'),$this->Lang_Get('error'));
+				LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('settings_invite_mail_error'),LS::Make(ModuleLang::class)->Get('error'));
 				$bError=true;
 			}
 			/**
 			 * Запускаем выполнение хуков
 			 */
-			$this->Hook_Run('settings_invate_send_before', array('oUser'=>$this->oUserCurrent));
+			LS::Make(ModuleHook::class)->Run('settings_invate_send_before', array('oUser'=>$this->oUserCurrent));
 			/**
 			 * Если нет ошибок, то отправляем инвайт
 			 */
 			if (!$bError) {
-				$oInvite=$this->User_GenerateInvite($this->oUserCurrent);
-				$this->Notify_SendInvite($this->oUserCurrent,getRequestStr('invite_mail'),$oInvite);
-				$this->Message_AddNoticeSingle($this->Lang_Get('settings_invite_submit_ok'));
-				$this->Hook_Run('settings_invate_send_after', array('oUser'=>$this->oUserCurrent));
+				$oInvite=LS::Make(ModuleUser::class)->GenerateInvite($this->oUserCurrent);
+				LS::Make(ModuleNotify::class)->SendInvite($this->oUserCurrent,getRequestStr('invite_mail'),$oInvite);
+				LS::Make(ModuleMessage::class)->AddNoticeSingle(LS::Make(ModuleLang::class)->Get('settings_invite_submit_ok'));
+				LS::Make(ModuleHook::class)->Run('settings_invate_send_after', array('oUser'=>$this->oUserCurrent));
 			}
 		}
 
-		$this->Viewer_Assign('iCountInviteAvailable',$this->User_GetCountInviteAvailable($this->oUserCurrent));
-		$this->Viewer_Assign('iCountInviteUsed',$this->User_GetCountInviteUsed($this->oUserCurrent->getId()));
+		LS::Make(ModuleViewer::class)->Assign('iCountInviteAvailable',LS::Make(ModuleUser::class)->GetCountInviteAvailable($this->oUserCurrent));
+		LS::Make(ModuleViewer::class)->Assign('iCountInviteUsed',LS::Make(ModuleUser::class)->GetCountInviteUsed($this->oUserCurrent->getId()));
 	}
 	/**
 	 * Форма смены пароля, емайла
@@ -454,25 +474,25 @@ class ActionSettings extends Action {
 		/**
 		 * Устанавливаем title страницы
 		 */
-		$this->Viewer_AddHtmlTitle($this->Lang_Get('settings_menu_profile'));
+		LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('settings_menu_profile'));
 		$this->sMenuSubItemSelect='account';
 		/**
 		 * Если нажали кнопку "Сохранить"
 		 */
 		if (isPost('submit_account_edit')) {
-			$this->Security_ValidateSendForm();
+			LS::Make(ModuleSecurity::class)->ValidateSendForm();
 
 			$bError=false;
 			/**
 			 * Проверка мыла
 			 */
 			if (func_check(getRequestStr('mail'),'mail')) {
-				if ($oUserMail=$this->User_GetUserByMail(getRequestStr('mail')) and $oUserMail->getId()!=$this->oUserCurrent->getId()) {
-					$this->Message_AddError($this->Lang_Get('settings_profile_mail_error_used'),$this->Lang_Get('error'));
+				if ($oUserMail=LS::Make(ModuleUser::class)->GetUserByMail(getRequestStr('mail')) and $oUserMail->getId()!=$this->oUserCurrent->getId()) {
+					LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('settings_profile_mail_error_used'),LS::Make(ModuleLang::class)->Get('error'));
 					$bError=true;
 				}
 			} else {
-				$this->Message_AddError($this->Lang_Get('settings_profile_mail_error'),$this->Lang_Get('error'));
+				LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('settings_profile_mail_error'),LS::Make(ModuleLang::class)->Get('error'));
 				$bError=true;
 			}
 			/**
@@ -481,20 +501,20 @@ class ActionSettings extends Action {
 			if (getRequestStr('password','')!='') {
 				if (func_check(getRequestStr('password'),'password',5)) {
 					if (getRequestStr('password')==getRequestStr('password_confirm')) {
-						if ($this->Crypto_PasswordVerify(getRequestStr('password_now'), $this->oUserCurrent->getPassword())) {
-							$this->oUserCurrent->setPassword($this->Crypto_PasswordHash(getRequestStr('password')));
-                            $this->ModuleUser_Authorization($this->oUserCurrent);
+						if (LS::Make(ModuleCrypto::class)->PasswordVerify(getRequestStr('password_now'), $this->oUserCurrent->getPassword())) {
+							$this->oUserCurrent->setPassword(LS::Make(ModuleCrypto::class)->PasswordHash(getRequestStr('password')));
+                            LS::Make(ModuleUser::class)->_Authorization($this->oUserCurrent);
 						} else {
 							$bError=true;
-							$this->Message_AddError($this->Lang_Get('settings_profile_password_current_error'),$this->Lang_Get('error'));
+							LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('settings_profile_password_current_error'),LS::Make(ModuleLang::class)->Get('error'));
 						}
 					} else {
 						$bError=true;
-						$this->Message_AddError($this->Lang_Get('settings_profile_password_confirm_error'),$this->Lang_Get('error'));
+						LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('settings_profile_password_confirm_error'),LS::Make(ModuleLang::class)->Get('error'));
 					}
 				} else {
 					$bError=true;
-					$this->Message_AddError($this->Lang_Get('settings_profile_password_new_error'),$this->Lang_Get('error'));
+					LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('settings_profile_password_new_error'),LS::Make(ModuleLang::class)->Get('error'));
 				}
 			}
 			/**
@@ -504,29 +524,29 @@ class ActionSettings extends Action {
 			/**
 			 * Запускаем выполнение хуков
 			 */
-			$this->Hook_Run('settings_account_save_before', array('oUser'=>$this->oUserCurrent,'bError'=>&$bError));
+			LS::Make(ModuleHook::class)->Run('settings_account_save_before', array('oUser'=>$this->oUserCurrent,'bError'=>&$bError));
 			/**
 			 * Сохраняем изменения
 			 */
 			if (!$bError) {
-				if ($this->User_Update($this->oUserCurrent)) {
-					$this->Message_AddNoticeSingle($this->Lang_Get('settings_account_submit_ok'));
+				if (LS::Make(ModuleUser::class)->Update($this->oUserCurrent)) {
+					LS::Make(ModuleMessage::class)->AddNoticeSingle(LS::Make(ModuleLang::class)->Get('settings_account_submit_ok'));
 					/**
 					 * Подтверждение смены емайла
 					 */
 					if (getRequestStr('mail') and getRequestStr('mail')!=$this->oUserCurrent->getMail()) {
-						if ($oChangemail=$this->User_MakeUserChangemail($this->oUserCurrent,getRequestStr('mail'))) {
+						if ($oChangemail=LS::Make(ModuleUser::class)->MakeUserChangemail($this->oUserCurrent,getRequestStr('mail'))) {
 							if ($oChangemail->getMailFrom()) {
-								$this->Message_AddNotice($this->Lang_Get('settings_profile_mail_change_from_notice'));
+								LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('settings_profile_mail_change_from_notice'));
 							} else {
-								$this->Message_AddNotice($this->Lang_Get('settings_profile_mail_change_to_notice'));
+								LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('settings_profile_mail_change_to_notice'));
 							}
 						}
 					}
 
-					$this->Hook_Run('settings_account_save_after', array('oUser'=>$this->oUserCurrent));
+					LS::Make(ModuleHook::class)->Run('settings_account_save_after', array('oUser'=>$this->oUserCurrent));
 				} else {
-					$this->Message_AddErrorSingle($this->Lang_Get('system_error'));
+					LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'));
 				}
 			}
 		}
@@ -539,20 +559,20 @@ class ActionSettings extends Action {
 		/**
 		 * Устанавливаем title страницы
 		 */
-		$this->Viewer_AddHtmlTitle($this->Lang_Get('settings_menu_profile'));
-		$this->Viewer_Assign('aUserFields',$this->User_getUserFields(''));
-		$this->Viewer_Assign('aUserFieldsContact',$this->User_getUserFields(array('contact','social')));
+		LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('settings_menu_profile'));
+		LS::Make(ModuleViewer::class)->Assign('aUserFields',LS::Make(ModuleUser::class)->getUserFields(''));
+		LS::Make(ModuleViewer::class)->Assign('aUserFieldsContact',LS::Make(ModuleUser::class)->getUserFields(array('contact','social')));
 		/**
 		 * Загружаем в шаблон JS текстовки
 		 */
-		$this->Lang_AddLangJs(array(
+		LS::Make(ModuleLang::class)->AddLangJs(array(
 								  'settings_profile_field_error_max'
 							  ));
 		/**
 		 * Если нажали кнопку "Сохранить"
 		 */
 		if (isPost('submit_profile_edit')) {
-			$this->Security_ValidateSendForm();
+			LS::Make(ModuleSecurity::class)->ValidateSendForm();
 
 			$bError=false;
 			/**
@@ -562,11 +582,11 @@ class ActionSettings extends Action {
 			 * Определяем гео-объект
 			 */
 			if (getRequest('geo_city')) {
-				$oGeoObject=$this->Geo_GetGeoObject('city',getRequestStr('geo_city'));
+				$oGeoObject=LS::Make(ModuleGeo::class)->GetGeoObject('city',getRequestStr('geo_city'));
 			} elseif (getRequest('geo_region')) {
-				$oGeoObject=$this->Geo_GetGeoObject('region',getRequestStr('geo_region'));
+				$oGeoObject=LS::Make(ModuleGeo::class)->GetGeoObject('region',getRequestStr('geo_region'));
 			} elseif (getRequest('geo_country')) {
-				$oGeoObject=$this->Geo_GetGeoObject('country',getRequestStr('geo_country'));
+				$oGeoObject=LS::Make(ModuleGeo::class)->GetGeoObject('country',getRequestStr('geo_country'));
 			} else {
 				$oGeoObject=null;
 			}
@@ -598,7 +618,7 @@ class ActionSettings extends Action {
 			 * Проверяем информацию о себе
 			 */
 			if (func_check(getRequestStr('profile_about'),'text',1,3000)) {
-				$this->oUserCurrent->setProfileAbout($this->Text_Parser(getRequestStr('profile_about')));
+				$this->oUserCurrent->setProfileAbout(LS::Make(ModuleText::class)->Parser(getRequestStr('profile_about')));
 			} else {
 				$this->oUserCurrent->setProfileAbout(null);
 			}
@@ -609,17 +629,17 @@ class ActionSettings extends Action {
 			/**
 			 * Запускаем выполнение хуков
 			 */
-			$this->Hook_Run('settings_profile_save_before', array('oUser'=>$this->oUserCurrent,'bError'=>&$bError));
+			LS::Make(ModuleHook::class)->Run('settings_profile_save_before', array('oUser'=>$this->oUserCurrent,'bError'=>&$bError));
 			/**
 			 * Сохраняем изменения профиля
 			 */
 			if (!$bError) {
-				if ($this->User_Update($this->oUserCurrent)) {
+				if (LS::Make(ModuleUser::class)->Update($this->oUserCurrent)) {
 					/**
 					 * Создаем связь с гео-объектом
 					 */
 					if ($oGeoObject) {
-						$this->Geo_CreateTarget($oGeoObject,'user',$this->oUserCurrent->getId());
+						LS::Make(ModuleGeo::class)->CreateTarget($oGeoObject,'user',$this->oUserCurrent->getId());
 						if ($oCountry=$oGeoObject->getCountry()) {
 							$this->oUserCurrent->setProfileCountry($oCountry->getName());
 						} else {
@@ -636,75 +656,75 @@ class ActionSettings extends Action {
 							$this->oUserCurrent->setProfileCity(null);
 						}
 					} else {
-						$this->Geo_DeleteTargetsByTarget('user',$this->oUserCurrent->getId());
+						LS::Make(ModuleGeo::class)->DeleteTargetsByTarget('user',$this->oUserCurrent->getId());
 						$this->oUserCurrent->setProfileCountry(null);
 						$this->oUserCurrent->setProfileRegion(null);
 						$this->oUserCurrent->setProfileCity(null);
 					}
-					$this->User_Update($this->oUserCurrent);
+					LS::Make(ModuleUser::class)->Update($this->oUserCurrent);
 
 					/**
 					 * Обрабатываем дополнительные поля, type = ''
 					 */
-					$aFields = $this->User_getUserFields('');
+					$aFields = LS::Make(ModuleUser::class)->getUserFields('');
 					$aData = array();
 					foreach ($aFields as $iId => $aField) {
 						if (isset($_REQUEST['profile_user_field_'.$iId])) {
 							$aData[$iId] = getRequestStr('profile_user_field_'.$iId);
 						}
 					}
-					$this->User_setUserFieldsValues($this->oUserCurrent->getId(), $aData);
+					LS::Make(ModuleUser::class)->setUserFieldsValues($this->oUserCurrent->getId(), $aData);
 					/**
 					 * Динамические поля контактов, type = array('contact','social')
 					 */
 					$aType=array('contact','social');
-					$aFields = $this->User_getUserFields($aType);
+					$aFields = LS::Make(ModuleUser::class)->getUserFields($aType);
 					/**
 					 * Удаляем все поля с этим типом
 					 */
-					$this->User_DeleteUserFieldValues($this->oUserCurrent->getId(),$aType);
+					LS::Make(ModuleUser::class)->DeleteUserFieldValues($this->oUserCurrent->getId(),$aType);
 					$aFieldsContactType=getRequest('profile_user_field_type');
 					$aFieldsContactValue=getRequest('profile_user_field_value');
 					if (is_array($aFieldsContactType)) {
 						foreach($aFieldsContactType as $k=>$v) {
 							$v=(string)$v;
 							if (isset($aFields[$v]) and isset($aFieldsContactValue[$k]) and is_string($aFieldsContactValue[$k])) {
-								$this->User_setUserFieldsValues($this->oUserCurrent->getId(), array($v=>$aFieldsContactValue[$k]), Config::Get('module.user.userfield_max_identical'));
+								LS::Make(ModuleUser::class)->setUserFieldsValues($this->oUserCurrent->getId(), array($v=>$aFieldsContactValue[$k]), Config::Get('module.user.userfield_max_identical'));
 							}
 						}
 					}
-					$this->Message_AddNoticeSingle($this->Lang_Get('settings_profile_submit_ok'));
-					$this->Hook_Run('settings_profile_save_after', array('oUser'=>$this->oUserCurrent));
+					LS::Make(ModuleMessage::class)->AddNoticeSingle(LS::Make(ModuleLang::class)->Get('settings_profile_submit_ok'));
+					LS::Make(ModuleHook::class)->Run('settings_profile_save_after', array('oUser'=>$this->oUserCurrent));
 				} else {
-					$this->Message_AddErrorSingle($this->Lang_Get('system_error'));
+					LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'));
 				}
 			}
 		}
 		/**
 		 * Загружаем гео-объект привязки
 		 */
-		$oGeoTarget=$this->Geo_GetTargetByTarget('user',$this->oUserCurrent->getId());
-		$this->Viewer_Assign('oGeoTarget',$oGeoTarget);
+		$oGeoTarget=LS::Make(ModuleGeo::class)->GetTargetByTarget('user',$this->oUserCurrent->getId());
+		LS::Make(ModuleViewer::class)->Assign('oGeoTarget',$oGeoTarget);
 		/**
 		 * Загружаем в шаблон список стран, регионов, городов
 		 */
-		$aCountries=$this->Geo_GetCountries(array(),array('sort'=>'asc'),1,300);
-		$this->Viewer_Assign('aGeoCountries',$aCountries['collection']);
+		$aCountries=LS::Make(ModuleGeo::class)->GetCountries(array(),array('sort'=>'asc'),1,300);
+		LS::Make(ModuleViewer::class)->Assign('aGeoCountries',$aCountries['collection']);
 		if ($oGeoTarget) {
 			if ($oGeoTarget->getCountryId()) {
-				$aRegions=$this->Geo_GetRegions(array('country_id'=>$oGeoTarget->getCountryId()),array('sort'=>'asc'),1,500);
-				$this->Viewer_Assign('aGeoRegions',$aRegions['collection']);
+				$aRegions=LS::Make(ModuleGeo::class)->GetRegions(array('country_id'=>$oGeoTarget->getCountryId()),array('sort'=>'asc'),1,500);
+				LS::Make(ModuleViewer::class)->Assign('aGeoRegions',$aRegions['collection']);
 			}
 			if ($oGeoTarget->getRegionId()) {
-				$aCities=$this->Geo_GetCities(array('region_id'=>$oGeoTarget->getRegionId()),array('sort'=>'asc'),1,500);
-				$this->Viewer_Assign('aGeoCities',$aCities['collection']);
+				$aCities=LS::Make(ModuleGeo::class)->GetCities(array('region_id'=>$oGeoTarget->getRegionId()),array('sort'=>'asc'),1,500);
+				LS::Make(ModuleViewer::class)->Assign('aGeoCities',$aCities['collection']);
 			}
 		}
 
 	}
 	
 	protected function EventBehavior() {
-		$this->Viewer_AddHtmlTitle($this->Lang_Get('settings_menu_behavior'));
+		LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('settings_menu_behavior'));
 		$this->sMenuSubItemSelect='behavior';
 	}
 	/**
@@ -712,27 +732,27 @@ class ActionSettings extends Action {
 	 *
 	 */
 	public function EventShutdown() {
-		$iCountTopicFavourite=$this->Topic_GetCountTopicsFavouriteByUserId($this->oUserCurrent->getId());
-		$iCountTopicUser=$this->Topic_GetCountTopicsPersonalByUser($this->oUserCurrent->getId(),1);
-		$iCountCommentUser=$this->Comment_GetCountCommentsByUserId($this->oUserCurrent->getId(),'topic');
-		$iCountCommentFavourite=$this->Comment_GetCountCommentsFavouriteByUserId($this->oUserCurrent->getId());
-		$iCountNoteUser=$this->User_GetCountUserNotesByUserId($this->oUserCurrent->getId());
+		$iCountTopicFavourite=LS::Make(ModuleTopic::class)->GetCountTopicsFavouriteByUserId($this->oUserCurrent->getId());
+		$iCountTopicUser=LS::Make(ModuleTopic::class)->GetCountTopicsPersonalByUser($this->oUserCurrent->getId(),1);
+		$iCountCommentUser=LS::Make(ModuleComment::class)->GetCountCommentsByUserId($this->oUserCurrent->getId(),'topic');
+		$iCountCommentFavourite=LS::Make(ModuleComment::class)->GetCountCommentsFavouriteByUserId($this->oUserCurrent->getId());
+		$iCountNoteUser=LS::Make(ModuleUser::class)->GetCountUserNotesByUserId($this->oUserCurrent->getId());
 
-		$this->Viewer_Assign('oUserProfile',$this->oUserCurrent);
-		$this->Viewer_Assign('iCountWallUser',$this->Wall_GetCountWall(array('wall_user_id'=>$this->oUserCurrent->getId(),'pid'=>null)));
+		LS::Make(ModuleViewer::class)->Assign('oUserProfile',$this->oUserCurrent);
+		LS::Make(ModuleViewer::class)->Assign('iCountWallUser',LS::Make(ModuleWall::class)->GetCountWall(array('wall_user_id'=>$this->oUserCurrent->getId(),'pid'=>null)));
 		/**
 		 * Общее число публикация и избранного
 		 */
-		$this->Viewer_Assign('iCountCreated',$iCountNoteUser+$iCountTopicUser+$iCountCommentUser);
-		$this->Viewer_Assign('iCountFavourite',$iCountCommentFavourite+$iCountTopicFavourite);
-		$this->Viewer_Assign('iCountFriendsUser',$this->User_GetCountUsersFriend($this->oUserCurrent->getId()));
+		LS::Make(ModuleViewer::class)->Assign('iCountCreated',$iCountNoteUser+$iCountTopicUser+$iCountCommentUser);
+		LS::Make(ModuleViewer::class)->Assign('iCountFavourite',$iCountCommentFavourite+$iCountTopicFavourite);
+		LS::Make(ModuleViewer::class)->Assign('iCountFriendsUser',LS::Make(ModuleUser::class)->GetCountUsersFriend($this->oUserCurrent->getId()));
 
 		/**
 		 * Загружаем в шаблон необходимые переменные
 		 */
-		$this->Viewer_Assign('sMenuItemSelect',$this->sMenuItemSelect);
-		$this->Viewer_Assign('sMenuSubItemSelect',$this->sMenuSubItemSelect);
+		LS::Make(ModuleViewer::class)->Assign('sMenuItemSelect',$this->sMenuItemSelect);
+		LS::Make(ModuleViewer::class)->Assign('sMenuSubItemSelect',$this->sMenuSubItemSelect);
 
-		$this->Hook_Run('action_shutdown_settings');
+		LS::Make(ModuleHook::class)->Run('action_shutdown_settings');
 	}
 }

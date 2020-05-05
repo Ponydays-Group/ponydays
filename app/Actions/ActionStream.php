@@ -15,7 +15,17 @@
 ---------------------------------------------------------
 */
 
+namespace App\Actions;
+
+use App\Modules\Stream\ModuleStream;
+use App\Modules\User\Entity\ModuleUser_EntityUser;
+use App\Modules\User\ModuleUser;
 use Engine\Action;
+use Engine\Config;
+use Engine\LS;
+use Engine\Modules\Lang\ModuleLang;
+use Engine\Modules\Message\ModuleMessage;
+use Engine\Modules\Viewer\ModuleViewer;
 
 /**
  * Экшен обработки ленты активности
@@ -45,19 +55,19 @@ class ActionStream extends Action {
 		/**
 		 * Личная лента доступна только для авторизованных, для гостей показываем общую ленту
 		 */
-		$this->oUserCurrent = $this->User_getUserCurrent();
+		$this->oUserCurrent = LS::Make(ModuleUser::class)->getUserCurrent();
 		if ($this->oUserCurrent) {
 			$this->SetDefaultEvent('user');
 		} else {
 			$this->SetDefaultEvent('all');
 		}
-		$this->Viewer_Assign('aStreamEventTypes', $this->Stream_getEventTypes());
+		LS::Make(ModuleViewer::class)->Assign('aStreamEventTypes', LS::Make(ModuleStream::class)->getEventTypes());
 
-		$this->Viewer_Assign('sMenuHeadItemSelect', 'stream');
+		LS::Make(ModuleViewer::class)->Assign('sMenuHeadItemSelect', 'stream');
 		/**
 		 * Загружаем в шаблон JS текстовки
 		 */
-		$this->Lang_AddLangJs(array(
+		LS::Make(ModuleLang::class)->AddLangJs(array(
 								  'stream_subscribes_already_subscribed','error'
 							  ));
 	}
@@ -88,16 +98,16 @@ class ActionStream extends Action {
 		if (!$this->oUserCurrent) {
 			parent::EventNotFound();
 		}
-		$this->Viewer_AddBlock('right','streamConfig');
+		LS::Make(ModuleViewer::class)->AddBlock('right','streamConfig');
 		/**
 		 * Читаем события
 		 */
-		$aEvents = $this->Stream_Read();
-		$this->Viewer_Assign('bDisableGetMoreButton', $this->Stream_GetCountByReaderId($this->oUserCurrent->getId()) < Config::Get('module.stream.count_default'));
-		$this->Viewer_Assign('aStreamEvents', $aEvents);
+		$aEvents = LS::Make(ModuleStream::class)->Read();
+		LS::Make(ModuleViewer::class)->Assign('bDisableGetMoreButton', LS::Make(ModuleStream::class)->GetCountByReaderId($this->oUserCurrent->getId()) < Config::Get('module.stream.count_default'));
+		LS::Make(ModuleViewer::class)->Assign('aStreamEvents', $aEvents);
 		if (count($aEvents)) {
 			$oEvenLast=end($aEvents);
-			$this->Viewer_Assign('iStreamLastId', $oEvenLast->getId());
+			LS::Make(ModuleViewer::class)->Assign('iStreamLastId', $oEvenLast->getId());
 		}
 	}
 	/**
@@ -109,12 +119,12 @@ class ActionStream extends Action {
 		/**
 		 * Читаем события
 		 */
-		$aEvents = $this->Stream_ReadAll();
-		$this->Viewer_Assign('bDisableGetMoreButton', $this->Stream_GetCountAll() < Config::Get('module.stream.count_default'));
-		$this->Viewer_Assign('aStreamEvents', $aEvents);
+		$aEvents = LS::Make(ModuleStream::class)->ReadAll();
+		LS::Make(ModuleViewer::class)->Assign('bDisableGetMoreButton', LS::Make(ModuleStream::class)->GetCountAll() < Config::Get('module.stream.count_default'));
+		LS::Make(ModuleViewer::class)->Assign('aStreamEvents', $aEvents);
 		if (count($aEvents)) {
 			$oEvenLast=end($aEvents);
-			$this->Viewer_Assign('iStreamLastId', $oEvenLast->getId());
+			LS::Make(ModuleViewer::class)->Assign('iStreamLastId', $oEvenLast->getId());
 		}
 	}
 	/**
@@ -125,7 +135,7 @@ class ActionStream extends Action {
 		/**
 		 * Устанавливаем формат Ajax ответа
 		 */
-		$this->Viewer_SetResponseAjax('json');
+		LS::Make(ModuleViewer::class)->SetResponseAjax('json');
 		/**
 		 * Пользователь авторизован?
 		 */
@@ -133,13 +143,13 @@ class ActionStream extends Action {
 			parent::EventNotFound();
 		}
 		if (!getRequest('type')) {
-			$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'),LS::Make(ModuleLang::class)->Get('error'));
 		}
 		/**
 		 * Активируем/деактивируем тип
 		 */
-		$this->Stream_switchUserEventType($this->oUserCurrent->getId(), getRequestStr('type'));
-		$this->Message_AddNotice($this->Lang_Get('stream_subscribes_updated'), $this->Lang_Get('attention'));
+		LS::Make(ModuleStream::class)->switchUserEventType($this->oUserCurrent->getId(), getRequestStr('type'));
+		LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('stream_subscribes_updated'), LS::Make(ModuleLang::class)->Get('attention'));
 	}
 	/**
 	 * Погрузка событий (замена постраничности)
@@ -149,7 +159,7 @@ class ActionStream extends Action {
 		/**
 		 * Устанавливаем формат Ajax ответа
 		 */
-		$this->Viewer_SetResponseAjax('json');
+		LS::Make(ModuleViewer::class)->SetResponseAjax('json');
 		/**
 		 * Пользователь авторизован?
 		 */
@@ -161,26 +171,26 @@ class ActionStream extends Action {
 		 */
 		$iFromId = getRequestStr('last_id');
 		if (!$iFromId)  {
-			$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'),LS::Make(ModuleLang::class)->Get('error'));
 			return;
 		}
 		/**
 		 * Получаем события
 		 */
-		$aEvents = $this->Stream_Read(null, $iFromId);
+		$aEvents = LS::Make(ModuleStream::class)->Read(null, $iFromId);
 
-		$oViewer=$this->Viewer_GetLocalViewer();
+		$oViewer=LS::Make(ModuleViewer::class)->GetLocalViewer();
 		$oViewer->Assign('aStreamEvents', $aEvents);
 		$oViewer->Assign('sDateLast', getRequestStr('date_last'));
 		if (count($aEvents)) {
 			$oEvenLast=end($aEvents);
-			$this->Viewer_AssignAjax('iStreamLastId', $oEvenLast->getId());
+			LS::Make(ModuleViewer::class)->AssignAjax('iStreamLastId', $oEvenLast->getId());
 		}
 		/**
 		 * Возвращаем данные в ajax ответе
 		 */
-		$this->Viewer_AssignAjax('result', $oViewer->Fetch('actions/ActionStream/events.tpl'));
-		$this->Viewer_AssignAjax('events_count', count($aEvents));
+		LS::Make(ModuleViewer::class)->AssignAjax('result', $oViewer->Fetch('actions/ActionStream/events.tpl'));
+		LS::Make(ModuleViewer::class)->AssignAjax('events_count', count($aEvents));
 	}
 	/**
 	 * Погрузка событий для всего сайта
@@ -190,7 +200,7 @@ class ActionStream extends Action {
 		/**
 		 * Устанавливаем формат Ajax ответа
 		 */
-		$this->Viewer_SetResponseAjax('json');
+		LS::Make(ModuleViewer::class)->SetResponseAjax('json');
 		/**
 		 * Пользователь авторизован?
 		 */
@@ -202,26 +212,26 @@ class ActionStream extends Action {
 		 */
 		$iFromId = getRequestStr('last_id');
 		if (!$iFromId)  {
-			$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'),LS::Make(ModuleLang::class)->Get('error'));
 			return;
 		}
 		/**
 		 * Получаем события
 		 */
-		$aEvents = $this->Stream_ReadAll(null, $iFromId);
+		$aEvents = LS::Make(ModuleStream::class)->ReadAll(null, $iFromId);
 
-		$oViewer=$this->Viewer_GetLocalViewer();
+		$oViewer=LS::Make(ModuleViewer::class)->GetLocalViewer();
 		$oViewer->Assign('aStreamEvents', $aEvents);
 		$oViewer->Assign('sDateLast', getRequestStr('date_last'));
 		if (count($aEvents)) {
 			$oEvenLast=end($aEvents);
-			$this->Viewer_AssignAjax('iStreamLastId', $oEvenLast->getId());
+			LS::Make(ModuleViewer::class)->AssignAjax('iStreamLastId', $oEvenLast->getId());
 		}
 		/**
 		 * Возвращаем данные в ajax ответе
 		 */
-		$this->Viewer_AssignAjax('result', $oViewer->Fetch('actions/ActionStream/events.tpl'));
-		$this->Viewer_AssignAjax('events_count', count($aEvents));
+		LS::Make(ModuleViewer::class)->AssignAjax('result', $oViewer->Fetch('actions/ActionStream/events.tpl'));
+		LS::Make(ModuleViewer::class)->AssignAjax('events_count', count($aEvents));
 	}
 	/**
 	 * Подгрузка событий для пользователя
@@ -231,7 +241,7 @@ class ActionStream extends Action {
 		/**
 		 * Устанавливаем формат Ajax ответа
 		 */
-		$this->Viewer_SetResponseAjax('json');
+		LS::Make(ModuleViewer::class)->SetResponseAjax('json');
 		/**
 		 * Пользователь авторизован?
 		 */
@@ -243,30 +253,30 @@ class ActionStream extends Action {
 		 */
 		$iFromId = getRequestStr('last_id');
 		if (!$iFromId)  {
-			$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'),LS::Make(ModuleLang::class)->Get('error'));
 			return;
 		}
-		if (!($oUser=$this->User_GetUserById(getRequestStr('user_id')))) {
-			$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
+		if (!($oUser=LS::Make(ModuleUser::class)->GetUserById(getRequestStr('user_id')))) {
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'),LS::Make(ModuleLang::class)->Get('error'));
 			return;
 		}
 		/**
 		 * Получаем события
 		 */
-		$aEvents = $this->Stream_ReadByUserId($oUser->getId(), null, $iFromId);
+		$aEvents = LS::Make(ModuleStream::class)->ReadByUserId($oUser->getId(), null, $iFromId);
 
-		$oViewer=$this->Viewer_GetLocalViewer();
+		$oViewer=LS::Make(ModuleViewer::class)->GetLocalViewer();
 		$oViewer->Assign('aStreamEvents', $aEvents);
 		$oViewer->Assign('sDateLast', getRequestStr('date_last'));
 		if (count($aEvents)) {
 			$oEvenLast=end($aEvents);
-			$this->Viewer_AssignAjax('iStreamLastId', $oEvenLast->getId());
+			LS::Make(ModuleViewer::class)->AssignAjax('iStreamLastId', $oEvenLast->getId());
 		}
 		/**
 		 * Возвращаем данные в ajax ответе
 		 */
-		$this->Viewer_AssignAjax('result', $oViewer->Fetch('actions/ActionStream/events.tpl'));
-		$this->Viewer_AssignAjax('events_count', count($aEvents));
+		LS::Make(ModuleViewer::class)->AssignAjax('result', $oViewer->Fetch('actions/ActionStream/events.tpl'));
+		LS::Make(ModuleViewer::class)->AssignAjax('events_count', count($aEvents));
 	}
 	/**
 	 * Подписка на пользователя по ID
@@ -276,7 +286,7 @@ class ActionStream extends Action {
 		/**
 		 * Устанавливаем формат Ajax ответа
 		 */
-		$this->Viewer_SetResponseAjax('json');
+		LS::Make(ModuleViewer::class)->SetResponseAjax('json');
 		/**
 		 * Пользователь авторизован?
 		 */
@@ -286,18 +296,18 @@ class ActionStream extends Action {
 		/**
 		 * Проверяем существование пользователя
 		 */
-		if (!$this->User_getUserById(getRequestStr('id'))) {
-			$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
+		if (!LS::Make(ModuleUser::class)->getUserById(getRequestStr('id'))) {
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'),LS::Make(ModuleLang::class)->Get('error'));
 		}
 		if ($this->oUserCurrent->getId() == getRequestStr('id')) {
-			$this->Message_AddError($this->Lang_Get('stream_error_subscribe_to_yourself'),$this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('stream_error_subscribe_to_yourself'),LS::Make(ModuleLang::class)->Get('error'));
 			return;
 		}
 		/**
 		 * Подписываем на пользователя
 		 */
-		$this->Stream_subscribeUser($this->oUserCurrent->getId(), getRequestStr('id'));
-		$this->Message_AddNotice($this->Lang_Get('stream_subscribes_updated'), $this->Lang_Get('attention'));
+		LS::Make(ModuleStream::class)->subscribeUser($this->oUserCurrent->getId(), getRequestStr('id'));
+		LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('stream_subscribes_updated'), LS::Make(ModuleLang::class)->Get('attention'));
 	}
 	/**
 	 * Подписка на пользователя по логину
@@ -307,7 +317,7 @@ class ActionStream extends Action {
 		/**
 		 * Устанавливаем формат Ajax ответа
 		 */
-		$this->Viewer_SetResponseAjax('json');
+		LS::Make(ModuleViewer::class)->SetResponseAjax('json');
 		/**
 		 * Пользователь авторизован?
 		 */
@@ -315,30 +325,30 @@ class ActionStream extends Action {
 			parent::EventNotFound();
 		}
 		if (!getRequest('login') or !is_string(getRequest('login'))) {
-			$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'),LS::Make(ModuleLang::class)->Get('error'));
 			return;
 		}
 		/**
 		 * Проверяем существование пользователя
 		 */
-		$oUser = $this->User_getUserByLogin(getRequestStr('login'));
+		$oUser = LS::Make(ModuleUser::class)->getUserByLogin(getRequestStr('login'));
 		if (!$oUser) {
-			$this->Message_AddError($this->Lang_Get('user_not_found',array('login'=>htmlspecialchars(getRequestStr('login')))),$this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('user_not_found',array('login'=>htmlspecialchars(getRequestStr('login')))),LS::Make(ModuleLang::class)->Get('error'));
 			return;
 		}
 		if ($this->oUserCurrent->getId() == $oUser->getId()) {
-			$this->Message_AddError($this->Lang_Get('stream_error_subscribe_to_yourself'),$this->Lang_Get('error'));
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('stream_error_subscribe_to_yourself'),LS::Make(ModuleLang::class)->Get('error'));
 			return;
 		}
 		/**
 		 * Подписываем на пользователя
 		 */
-		$this->Stream_subscribeUser($this->oUserCurrent->getId(),  $oUser->getId());
-		$this->Viewer_AssignAjax('uid', $oUser->getId());
-		$this->Viewer_AssignAjax('user_login', $oUser->getLogin());
-		$this->Viewer_AssignAjax('user_web_path', $oUser->getUserWebPath());
-		$this->Viewer_AssignAjax('user_avatar_48', $oUser->getProfileAvatarPath(48));
-		$this->Message_AddNotice($this->Lang_Get('userfeed_subscribes_updated'), $this->Lang_Get('attention'));
+		LS::Make(ModuleStream::class)->subscribeUser($this->oUserCurrent->getId(),  $oUser->getId());
+		LS::Make(ModuleViewer::class)->AssignAjax('uid', $oUser->getId());
+		LS::Make(ModuleViewer::class)->AssignAjax('user_login', $oUser->getLogin());
+		LS::Make(ModuleViewer::class)->AssignAjax('user_web_path', $oUser->getUserWebPath());
+		LS::Make(ModuleViewer::class)->AssignAjax('user_avatar_48', $oUser->getProfileAvatarPath(48));
+		LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('userfeed_subscribes_updated'), LS::Make(ModuleLang::class)->Get('attention'));
 	}
 	/**
 	 * Отписка от пользователя
@@ -348,7 +358,7 @@ class ActionStream extends Action {
 		/**
 		 * Устанавливаем формат Ajax ответа
 		 */
-		$this->Viewer_SetResponseAjax('json');
+		LS::Make(ModuleViewer::class)->SetResponseAjax('json');
 		/**
 		 * Пользователь авторизован?
 		 */
@@ -358,14 +368,14 @@ class ActionStream extends Action {
 		/**
 		 * Пользователь с таким ID существует?
 		 */
-		if (!$this->User_getUserById(getRequestStr('id'))) {
-			$this->Message_AddError($this->Lang_Get('system_error'),$this->Lang_Get('error'));
+		if (!LS::Make(ModuleUser::class)->getUserById(getRequestStr('id'))) {
+			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'),LS::Make(ModuleLang::class)->Get('error'));
 		}
 		/**
 		 * Отписываем
 		 */
-		$this->Stream_unsubscribeUser($this->oUserCurrent->getId(), getRequestStr('id'));
-		$this->Message_AddNotice($this->Lang_Get('stream_subscribes_updated'), $this->Lang_Get('attention'));
+		LS::Make(ModuleStream::class)->unsubscribeUser($this->oUserCurrent->getId(), getRequestStr('id'));
+		LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('stream_subscribes_updated'), LS::Make(ModuleLang::class)->Get('attention'));
 	}
 	/**
 	 * Выполняется при завершении работы экшена
@@ -375,6 +385,6 @@ class ActionStream extends Action {
 		/**
 		 * Загружаем в шаблон необходимые переменные
 		 */
-		$this->Viewer_Assign('sMenuItemSelect',$this->sMenuItemSelect);
+		LS::Make(ModuleViewer::class)->Assign('sMenuItemSelect',$this->sMenuItemSelect);
 	}
 }

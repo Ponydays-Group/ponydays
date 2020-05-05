@@ -17,7 +17,7 @@
 
 namespace Engine;
 
-use ModuleHook;
+use Engine\Modules\Hook\ModuleHook;
 
 /**
  * Абстракция хука, от которой наследуются все хуки
@@ -63,15 +63,4 @@ abstract class Hook extends LsObject {
 	 * @abstract
 	 */
 	abstract public function RegisterHook();
-	/**
-	 * Ставим хук на вызов неизвестного метода и считаем что хотели вызвать метод какого либо модуля
-	 * @see Engine::_CallModule
-	 *
-	 * @param string $sName Имя метода
-	 * @param array $aArgs Аргументы
-	 * @return mixed
-	 */
-	public function __call($sName,$aArgs) {
-		return Engine::getInstance()->_CallModule($sName,$aArgs);
-	}
 }

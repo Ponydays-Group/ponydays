@@ -15,7 +15,12 @@
 ---------------------------------------------------------
 */
 
+namespace App\Actions;
+
+use App\Modules\User\Entity\ModuleUser_EntityUser;
+use App\Modules\User\ModuleUser;
 use Engine\Action;
+use Engine\LS;
 use Engine\Router;
 
 /**
@@ -66,7 +71,7 @@ class ActionMy extends Action {
 		/**
 		 * Проверяем есть ли такой юзер
 		 */
-		if (!($this->oUserProfile=$this->User_GetUserByLogin($sUserLogin))) {
+		if (!($this->oUserProfile=LS::Make(ModuleUser::class)->GetUserByLogin($sUserLogin))) {
 			return parent::EventNotFound();
 		}
 		/**
@@ -97,7 +102,7 @@ class ActionMy extends Action {
 		/**
 		 * Проверяем есть ли такой юзер
 		 */
-		if (!($this->oUserProfile=$this->User_GetUserByLogin($sUserLogin))) {
+		if (!($this->oUserProfile=LS::Make(ModuleUser::class)->GetUserByLogin($sUserLogin))) {
 			return parent::EventNotFound();
 		}
 		/**

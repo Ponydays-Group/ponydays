@@ -17,12 +17,12 @@
 
 namespace Engine;
 
+use App\Modules\User\Entity\ModuleUser_EntityUser;
+use App\Modules\User\ModuleUser;
 use DbSimple_Mysql;
-use ModuleCache;
-use ModuleDatabase;
-use ModuleHook;
-use ModuleUser;
-use ModuleUser_EntityUser;
+use Engine\Modules\Cache\ModuleCache;
+use Engine\Modules\Database\ModuleDatabase;
+use Engine\Modules\Hook\ModuleHook;
 
 set_include_path(get_include_path() . PATH_SEPARATOR . dirname(__FILE__));
 
@@ -226,13 +226,9 @@ class Engine extends LsObject {
 		 */
 		$this->LoadModules();
 		/**
-		 * Инициализируем загруженные модули
-		 */
-		$this->InitModules();
-		/**
 		 * Запускаем хуки для события завершения инициализации Engine
 		 */
-		/** @var \ModuleHook $hook */
+		/** @var ModuleHook $hook */
 		$hook = $this->make(ModuleHook::class);
 		$hook->Run('engine_init_complete');
 	}
@@ -243,25 +239,6 @@ class Engine extends LsObject {
 	 */
 	public function Shutdown() {
 		$this->ShutdownModules();
-	}
-	/**
-	 * Производит инициализацию всех модулей
-	 *
-	 */
-	protected function InitModules() {
-		foreach ($this->aModules as $oModule) {
-			if(!$oModule->isInit()) {
-				/**
-				 * Замеряем время инициализации модуля
-				 */
-				$oProfiler=ProfilerSimple::getInstance();
-				$iTimeId=$oProfiler->Start('InitModule',get_class($oModule));
-
-				$this->InitModule($oModule);
-
-				$oProfiler->Stop($iTimeId);
-			}
-		}
 	}
 
 	/**
@@ -336,15 +313,10 @@ class Engine extends LsObject {
 	 *
 	 */
 	protected function LoadModules() {
-		$this->LoadConfig();
-		foreach ($this->aConfigModule['autoLoad'] as $sModuleName) {
-			$sModuleClass='Module'.$sModuleName;
-
-			if (!isset($this->aModules[$sModuleClass])) {
-				$this->LoadModule($sModuleClass);
-			}
+		foreach (Config::Get('module.autoload') as $sModuleClass) {
+		    $this->make($sModuleClass);
 		}
-	}
+    }
 	/**
 	 * Выполняет загрузку конфигов
 	 *
@@ -357,20 +329,13 @@ class Engine extends LsObject {
 	 *
 	 */
 	protected function InitHooks() {
-		$sDirHooks=Config::Get('path.root.server').'/app/Hooks/';
-		$aFiles=glob($sDirHooks.'Hook*.php');
+		$hookList = Config::Get('sys.hooks');
 
-		if($aFiles and count($aFiles)) {
-			foreach ($aFiles as $sFile) {
-				if (preg_match("/Hook([^_]+)\.php$/i",basename($sFile),$aMatch)) {
-					//require_once($sFile);
-					$sClassName='Hook'.$aMatch[1];
-					/** @var Hook $oHook */
-					$oHook=new $sClassName;
-					$oHook->RegisterHook();
-				}
-			}
-		}
+		foreach ($hookList as $hook) {
+		    /** @var Hook $oHook */
+		    $oHook = new $hook();
+		    $oHook->RegisterHook();
+        }
 	}
 	/**
 	 * Проверяет файл на существование, если используется кеширование memcache то кеширует результат работы
@@ -391,7 +356,7 @@ class Engine extends LsObject {
 			return file_exists($sFile);
 		}
 
-		/** @var \ModuleCache $cache */
+		/** @var ModuleCache $cache */
 		$cache = $this->make(ModuleCache::class);
 		if (false === ($data = $cache->Get("file_exists_{$sFile}"))) {
 			$data=file_exists($sFile);
@@ -435,7 +400,7 @@ class Engine extends LsObject {
 		}
 
 		if (!in_array($sModuleName,array('plugin','hook'))) {
-		    /** @var \ModuleHook $hook */
+		    /** @var ModuleHook $hook */
 		    $hook = $this->make(ModuleHook::class);
 		    $pars = array('result' => &$result, 'params' => $aArgs);
             $hook->Run(
@@ -518,9 +483,9 @@ class Engine extends LsObject {
 	 * @return array
 	 */
 	public function getStats() {
-	    /** @var \ModuleDatabase $db */
+	    /** @var ModuleDatabase $db */
 	    $db = LS::Make(ModuleDatabase::class);
-	    /** @var \ModuleCache $cache */
+	    /** @var ModuleCache $cache */
 	    $cache = LS::Make(ModuleCache::class);
 		return array(
 		    'sql' => $db->GetStats(),
@@ -536,18 +501,6 @@ class Engine extends LsObject {
 	 */
 	public function GetTimeInit() {
 		return $this->iTimeInit;
-	}
-
-	/**
-	 * Ставим хук на вызов неизвестного метода и считаем что хотели вызвать метод какого либо модуля
-	 * @deprecated Будет уничтожено в дальнейшем. Используйте make(Module::class)
-	 * @param string $sName	Имя метода
-	 * @param array $aArgs	Аргументы
-	 * @return mixed
-     * @throws \Exception
-	 */
-	public function __call($sName,$aArgs) {
-		return $this->_CallModule($sName,$aArgs);
 	}
 
 	/**
@@ -580,7 +533,7 @@ class Engine extends LsObject {
 			}
 			$sClass=$sClassName.'_Mapper'.$sName;
 			if (!$oConnect) {
-			    /** @var \ModuleDatabase $db */
+			    /** @var ModuleDatabase $db */
 			    $db = LS::Make(ModuleDatabase::class);
 			    $oConnect=$db->GetConnect();
 			}
@@ -588,6 +541,18 @@ class Engine extends LsObject {
 		}
 		return null;
 	}
+
+	public static function MakeMapper($class, $connect=null) {
+        if (!class_exists($class)) {
+            throw new \RuntimeException(sprintf('Class "%s" not found!', $class));
+        }
+        if(!$connect) {
+            /** @var ModuleDatabase $db */
+            $db = LS::Make(ModuleDatabase::class);
+            $connect = $db->GetConnect();
+        }
+        return new $class($connect);
+    }
 
 	/**
 	 * Создает объект сущности, контролируя варианты кастомизации
@@ -778,16 +743,16 @@ class Engine extends LsObject {
 		$sPath = Config::get('path.root.server').'/';
 		if($aInfo[self::CI_ENTITY]){
 			// Сущность
-			$sPath .= 'app/Modules/'.strtolower($aInfo[self::CI_MODULE])
-				.'/entity/Module'.$aInfo[self::CI_MODULE].'_Entity'.$aInfo[self::CI_ENTITY].'.php'
+			$sPath .= 'app/Modules/'.$aInfo[self::CI_MODULE]
+				.'/Entity/Module'.$aInfo[self::CI_MODULE].'_Entity'.$aInfo[self::CI_ENTITY].'.php'
 			;
 			if(!is_file($sPath)) {
 				$sPath = str_replace('/app/Modules/','/engine/Modules/',$sPath);
 			}
 		}elseif($aInfo[self::CI_MAPPER]){
 			// Маппер
-			$sPath .= 'app/Modules/'.strtolower($aInfo[self::CI_MODULE])
-				.'/mapper/Module'.$aInfo[self::CI_MODULE].'_Mapper'.$aInfo[self::CI_MAPPER].'.php'
+			$sPath .= 'app/Modules/'.$aInfo[self::CI_MODULE]
+				.'/Mapper/Module'.$aInfo[self::CI_MODULE].'_Mapper'.$aInfo[self::CI_MAPPER].'.php'
 			;
 			if(!is_file($sPath)) {
 				$sPath = str_replace('/app/Modules/','/engine/Modules/',$sPath);
@@ -799,7 +764,7 @@ class Engine extends LsObject {
 			;
 		}elseif($aInfo[self::CI_MODULE]) {
 			// Модуль
-			$sPath .= 'app/Modules/'.strtolower($aInfo[self::CI_MODULE])
+			$sPath .= 'app/Modules/'.$aInfo[self::CI_MODULE]
 				.'/Module'.$aInfo[self::CI_MODULE].'.php'
 			;
 			if(!is_file($sPath)){
@@ -854,8 +819,8 @@ class Engine extends LsObject {
 			if (!class_exists($class)) {
 				throw new \RuntimeException(sprintf('Class "%s" not found!', $class));
 			}
-			$module=new $class($this);
-			$this->aModules[$class]=$module;
+			$module = new $class($this);
+			$this->aModules[$class] = $module;
 			$this->InitModule($module);
 			return $module;
 		}
@@ -873,17 +838,6 @@ spl_autoload_register(array('Engine\Engine','autoload'));
  * @since 1.0
  */
 class LS extends LsObject {
-
-	static protected $oInstance=null;
-
-	static public function getInstance() {
-		if (isset(self::$oInstance) and (self::$oInstance instanceof self)) {
-			return self::$oInstance;
-		} else {
-			self::$oInstance = new self();
-			return self::$oInstance;
-		}
-	}
 	/**
 	 * Возвращает ядро
 	 * @see Engine::GetInstance
@@ -894,28 +848,15 @@ class LS extends LsObject {
 		return Engine::GetInstance();
 	}
 	/**
-	 * Возвращает объект сущности
-	 * @see Engine::GetEntity
-	 *
-	 * @param string $sName	Название сущности
-	 * @param array $aParams	Параметры для передачи в конструктор
-	 * @return Entity
-     * @throws \Exception
-	 */
-	static public function Ent($sName,$aParams=array()) {
-		return Engine::GetEntity($sName,$aParams);
-	}
-	/**
 	 * Возвращает объект маппера
-	 * @see Engine::GetMapper
+	 * @see Engine::MakeMapper
 	 *
 	 * @param string $sClassName Класс модуля маппера
-	 * @param string|null $sName	Имя маппера
 	 * @param DbSimple_Mysql|null $oConnect	Объект коннекта к БД
 	 * @return mixed
 	 */
-	static public function Mpr($sClassName,$sName=null,$oConnect=null) {
-		return Engine::GetMapper($sClassName,$sName,$oConnect);
+	static public function Mpr($sClassName,$oConnect=null) {
+		return Engine::MakeMapper($sClassName,$oConnect);
 	}
 	/**
 	 * Возвращает текущего авторизованного пользователя
@@ -940,28 +881,4 @@ class LS extends LsObject {
 	static public function Make(string $class): Module {
 	    return self::E()->make($class);
     }
-
-	/**
-	 * Вызов метода модуля
-	 * Например <pre>$LS->Module_Method()</pre>
-	 *
-	 * @param string $sName	Полное название метода, например <pre>Module_Method</pre>
-	 * @param array $aArgs Список аргуметов метода
-	 * @return mixed
-	 */
-	public function __call($sName,$aArgs=array()) {
-		return call_user_func_array(array(self::E(),$sName),$aArgs);
-	}
-	/**
-	 * Статический вызов метода модуля для PHP >= 5.3
-	 * Например <pre>LS::Module_Method()</pre>
-	 *
-	 * @static
-	 * @param string $sName	Полное название метода, например <pre>Module_Method</pre>
-	 * @param array $aArgs Список аргуметов метода
-	 * @return mixed
-	 */
-	public static function __callStatic($sName,$aArgs=array()) {
-		return call_user_func_array(array(self::E(),$sName),$aArgs);
-	}
 }

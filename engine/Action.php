@@ -17,7 +17,7 @@
 
 namespace Engine;
 
-use ModuleHook;
+use Engine\Modules\Hook\ModuleHook;
 
 /**
  * Абстрактный класс экшена.
@@ -176,7 +176,7 @@ abstract class Action extends LsObject {
 					}
 				}
 				$this->sCurrentEventName=$aEvent['name'];
-				/** @var \ModuleHook $hook */
+				/** @var ModuleHook $hook */
 				$hook = LS::Make(ModuleHook::class);
 				$pars = array('event'=>$this->sCurrentEvent,'params'=>$this->GetParams());
 				$hook->Run("action_event_".strtolower($this->sCurrentAction)."_before",$pars);
@@ -325,7 +325,8 @@ abstract class Action extends LsObject {
 	 * @return string
 	 */
 	public function GetActionClass() {
-		return Router::GetActionClass();
+		$arr = explode('\\', Router::GetActionClass());
+		return array_pop($arr);
 	}
 
 	/**
@@ -354,22 +355,6 @@ abstract class Action extends LsObject {
 	 */
 	public function EventShutdown() {
 
-	}
-
-    /**
-     * Ставим хук на вызов неизвестного метода и считаем что хотели вызвать
-     * метод какого либо модуля
-     *
-     * @see Engine::_CallModule
-     *
-     * @param string $sName Имя метода
-     * @param array  $aArgs Аргументы
-     *
-     * @return mixed
-     * @throws \Exception
-     */
-	public function __call($sName,$aArgs) {
-		return $this->oEngine->_CallModule($sName,$aArgs);
 	}
 
 	/**

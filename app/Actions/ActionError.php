@@ -15,7 +15,13 @@
 ---------------------------------------------------------
 */
 
+namespace App\Actions;
+
 use Engine\Action;
+use Engine\LS;
+use Engine\Modules\Lang\ModuleLang;
+use Engine\Modules\Message\ModuleMessage;
+use Engine\Modules\Viewer\ModuleViewer;
 use Engine\Router;
 
 /**
@@ -67,7 +73,7 @@ class ActionError extends Action {
 		 * Например, для 404 в хидере будет послан браузеру заголовок HTTP/1.1 404 Not Found
 		 */
 		if (array_key_exists($this->sCurrentEvent,$this->aHttpErrors)) {
-			$this->Message_AddErrorSingle($this->Lang_Get('system_error_'.$this->sCurrentEvent),$this->sCurrentEvent);
+			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error_'.$this->sCurrentEvent),$this->sCurrentEvent);
 			$aHttpError=$this->aHttpErrors[$this->sCurrentEvent];
 			if (isset($aHttpError['header'])) {
 				$sProtocol=isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1';
@@ -77,7 +83,7 @@ class ActionError extends Action {
 		/**
 		 * Устанавливаем title страницы
 		 */
-		$this->Viewer_AddHtmlTitle($this->Lang_Get('error'));
+		LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('error'));
 		$this->SetTemplateAction('index');
 	}
 }

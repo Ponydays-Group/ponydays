@@ -1,6 +1,6 @@
 {assign var="oUser" value=$oComment->getUser()}
-{assign var="bCanEdit" value=$LS->ACL_UserCanEditComment($oUserCurrent, $oComment,1)}
-{assign var="bCanDelete" value=$LS->ACL_UserCanDeleteComment($oUserCurrent, $oComment,1)}
+{assign var="bCanEdit" value=$E->make(App\Modules\ACL\ModuleACL::class)->UserCanEditComment($oUserCurrent, $oComment,1)}
+{assign var="bCanDelete" value=$E->make(App\Modules\ACL\ModuleACL::class)->UserCanDeleteComment($oUserCurrent, $oComment,1)}
 {if $oComment->isBad()}
 <section
 		id="comment_id_{$oComment->getId()}"

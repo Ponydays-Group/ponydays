@@ -15,7 +15,11 @@
 ---------------------------------------------------------
 */
 
+namespace App\Actions;
+
 use Engine\Action;
+use Engine\LS;
+use Engine\Modules\Viewer\ModuleViewer;
 
 /**
  * Экшен обработки ajax запросов
@@ -42,6 +46,6 @@ class ActionVoice extends Action
     }
 
     function EventVoice() {
-        $this->Viewer_Assign('noSidebar', true);
+        LS::Make(ModuleViewer::class)->Assign('noSidebar', true);
     }
 }

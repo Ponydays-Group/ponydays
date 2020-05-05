@@ -15,8 +15,15 @@
 ---------------------------------------------------------
 */
 
+namespace App\Blocks;
+
+use App\Modules\Tools\ModuleTools;
+use App\Modules\Topic\ModuleTopic;
+use App\Modules\User\ModuleUser;
 use Engine\Block;
 use Engine\Config;
+use Engine\LS;
+use Engine\Modules\Viewer\ModuleViewer;
 
 /**
  * Обрабатывает блок облака тегов
@@ -29,34 +36,36 @@ class BlockTags extends Block {
 	 * Запуск обработки
 	 */
 	public function Exec() {
+        /** @var ModuleTopic $topic */
+        $topic = LS::Make(ModuleTopic::class);
 		/**
 		 * Получаем список тегов
 		 */
-		$aTags=$this->oEngine->Topic_GetOpenTopicTags(Config::Get('block.tags.tags_count'));
+		$aTags=$topic->GetOpenTopicTags(Config::Get('block.tags.tags_count'));
 		/**
 		 * Расчитываем логарифмическое облако тегов
 		 */
 		if ($aTags) {
-			$this->Tools_MakeCloud($aTags);
+			LS::Make(ModuleTools::class)->MakeCloud($aTags);
 			/**
 			 * Устанавливаем шаблон вывода
 			 */
-			$this->Viewer_Assign("aTags",$aTags);
+			LS::Make(ModuleViewer::class)->Assign("aTags",$aTags);
 		}
 		/**
 		 * Теги пользователя
 		 */
-		if ($oUserCurrent=$this->User_getUserCurrent()) {
-			$aTags=$this->oEngine->Topic_GetOpenTopicTags(Config::Get('block.tags.personal_tags_count'), $oUserCurrent->getId());
+		if ($oUserCurrent=LS::Make(ModuleUser::class)->getUserCurrent()) {
+			$aTags=$topic->GetOpenTopicTags(Config::Get('block.tags.personal_tags_count'), $oUserCurrent->getId());
 			/**
 			 * Расчитываем логарифмическое облако тегов
 			 */
 			if ($aTags) {
-				$this->Tools_MakeCloud($aTags);
+				LS::Make(ModuleTools::class)->MakeCloud($aTags);
 				/**
 				 * Устанавливаем шаблон вывода
 				 */
-				$this->Viewer_Assign("aTagsUser",$aTags);
+                LS::Make(ModuleViewer::class)->Assign("aTagsUser",$aTags);
 			}
 		}
 	}

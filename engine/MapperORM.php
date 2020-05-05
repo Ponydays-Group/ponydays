@@ -17,7 +17,7 @@
 
 namespace Engine;
 
-use ModuleCache;
+use Engine\Modules\Cache\ModuleCache;
 
 /**
  * Системный класс мапера ORM для работы с БД
@@ -345,7 +345,7 @@ class MapperORM extends Mapper {
 	 * @return array
 	 */
 	public function ShowColumnsFromTable($sTableName) {
-	    /** @var \ModuleCache $cache */
+	    /** @var ModuleCache $cache */
 	    $cache = LS::Make(ModuleCache::class);
 		if (false === ($aItems = $cache->GetLife("columns_table_{$sTableName}"))) {
 			$sql = "SHOW COLUMNS FROM ".$sTableName;
@@ -379,7 +379,7 @@ class MapperORM extends Mapper {
 	 * @return array
 	 */
 	public function ShowPrimaryIndexFromTable($sTableName) {
-        /** @var \ModuleCache $cache */
+        /** @var ModuleCache $cache */
         $cache = LS::Make(ModuleCache::class);
         if (false === ($aItems = $cache->GetLife("index_table_{$sTableName}"))) {
 			$sql = "SHOW INDEX FROM ".$sTableName;

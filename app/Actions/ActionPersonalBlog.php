@@ -15,8 +15,14 @@
 ---------------------------------------------------------
 */
 
+namespace App\Actions;
+
+use App\Modules\Topic\ModuleTopic;
 use Engine\Action;
 use Engine\Config;
+use Engine\LS;
+use Engine\Modules\Hook\ModuleHook;
+use Engine\Modules\Viewer\ModuleViewer;
 use Engine\Router;
 
 /**
@@ -94,40 +100,40 @@ class ActionPersonalBlog extends Action {
 		 */
 		$iPage=$this->GetParamEventMatch(0,2) ? $this->GetParamEventMatch(0,2) : 1;
 		if ($iPage==1 and !getRequest('period')) {
-			$this->Viewer_SetHtmlCanonical(Router::GetPath('personal_blog').$sShowType.'/');
+			LS::Make(ModuleViewer::class)->SetHtmlCanonical(Router::GetPath('personal_blog').$sShowType.'/');
 		}
 		/**
 		 * Получаем список топиков
 		 */
-		$aResult=$this->Topic_GetTopicsPersonal($iPage,Config::Get('module.topic.per_page'),$sShowType,$sPeriod=='all' ? null : $sPeriod*60*60*24);
+		$aResult=LS::Make(ModuleTopic::class)->GetTopicsPersonal($iPage,Config::Get('module.topic.per_page'),$sShowType,$sPeriod=='all' ? null : $sPeriod*60*60*24);
 		/**
 		 * Если нет топиков за 1 день, то показываем за неделю (7)
 		 */
 		if (in_array($sShowType,array('discussed','top')) and !$aResult['count'] and $iPage==1 and !getRequest('period')) {
 			$sPeriod=7;
-			$aResult=$this->Topic_GetTopicsPersonal($iPage,Config::Get('module.topic.per_page'),$sShowType,$sPeriod=='all' ? null : $sPeriod*60*60*24);
+			$aResult=LS::Make(ModuleTopic::class)->GetTopicsPersonal($iPage,Config::Get('module.topic.per_page'),$sShowType,$sPeriod=='all' ? null : $sPeriod*60*60*24);
 		}
 		$aTopics=$aResult['collection'];
 		/**
 		 * Вызов хуков
 		 */
-		$this->Hook_Run('topics_list_show',array('aTopics'=>$aTopics));
+		LS::Make(ModuleHook::class)->Run('topics_list_show',array('aTopics'=>$aTopics));
 		/**
 		 * Формируем постраничность
 		 */
-		$aPaging=$this->Viewer_MakePaging($aResult['count'],$iPage,Config::Get('module.topic.per_page'),Config::Get('pagination.pages.count'),Router::GetPath('personal_blog').$sShowType,in_array($sShowType,array('discussed','top')) ? array('period'=>$sPeriod) : array());
+		$aPaging=LS::Make(ModuleViewer::class)->MakePaging($aResult['count'],$iPage,Config::Get('module.topic.per_page'),Config::Get('pagination.pages.count'),Router::GetPath('personal_blog').$sShowType,in_array($sShowType,array('discussed','top')) ? array('period'=>$sPeriod) : array());
 		/**
 		 * Вызов хуков
 		 */
-		$this->Hook_Run('personal_show',array('sShowType'=>$sShowType));
+		LS::Make(ModuleHook::class)->Run('personal_show',array('sShowType'=>$sShowType));
 		/**
 		 * Загружаем переменные в шаблон
 		 */
-		$this->Viewer_Assign('aTopics',$aTopics);
-		$this->Viewer_Assign('aPaging',$aPaging);
+		LS::Make(ModuleViewer::class)->Assign('aTopics',$aTopics);
+		LS::Make(ModuleViewer::class)->Assign('aPaging',$aPaging);
 		if (in_array($sShowType,array('discussed','top'))) {
-			$this->Viewer_Assign('sPeriodSelectCurrent',$sPeriod);
-			$this->Viewer_Assign('sPeriodSelectRoot',Router::GetPath('personal_blog').$sShowType.'/');
+			LS::Make(ModuleViewer::class)->Assign('sPeriodSelectCurrent',$sPeriod);
+			LS::Make(ModuleViewer::class)->Assign('sPeriodSelectRoot',Router::GetPath('personal_blog').$sShowType.'/');
 		}
 		/**
 		 * Устанавливаем шаблон вывода
@@ -142,17 +148,17 @@ class ActionPersonalBlog extends Action {
 		/**
 		 * Подсчитываем новые топики
 		 */
-		$iCountTopicsCollectiveNew=$this->Topic_GetCountTopicsCollectiveNew();
-		$iCountTopicsPersonalNew=$this->Topic_GetCountTopicsPersonalNew();
+		$iCountTopicsCollectiveNew=LS::Make(ModuleTopic::class)->GetCountTopicsCollectiveNew();
+		$iCountTopicsPersonalNew=LS::Make(ModuleTopic::class)->GetCountTopicsPersonalNew();
 		$iCountTopicsNew=$iCountTopicsCollectiveNew+$iCountTopicsPersonalNew;
 		/**
 		 * Загружаем переменные в шаблон
 		 */
-		$this->Viewer_Assign('sMenuHeadItemSelect',$this->sMenuHeadItemSelect);
-		$this->Viewer_Assign('sMenuItemSelect',$this->sMenuItemSelect);
-		$this->Viewer_Assign('sMenuSubItemSelect',$this->sMenuSubItemSelect);
-		$this->Viewer_Assign('iCountTopicsCollectiveNew',$iCountTopicsCollectiveNew);
-		$this->Viewer_Assign('iCountTopicsPersonalNew',$iCountTopicsPersonalNew);
-		$this->Viewer_Assign('iCountTopicsNew',$iCountTopicsNew);
+		LS::Make(ModuleViewer::class)->Assign('sMenuHeadItemSelect',$this->sMenuHeadItemSelect);
+		LS::Make(ModuleViewer::class)->Assign('sMenuItemSelect',$this->sMenuItemSelect);
+		LS::Make(ModuleViewer::class)->Assign('sMenuSubItemSelect',$this->sMenuSubItemSelect);
+		LS::Make(ModuleViewer::class)->Assign('iCountTopicsCollectiveNew',$iCountTopicsCollectiveNew);
+		LS::Make(ModuleViewer::class)->Assign('iCountTopicsPersonalNew',$iCountTopicsPersonalNew);
+		LS::Make(ModuleViewer::class)->Assign('iCountTopicsNew',$iCountTopicsNew);
 	}
 }

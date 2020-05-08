@@ -97,6 +97,16 @@ class Router extends LsObject {
 	 */
 	static protected $oInstance=null;
 
+    /**
+     * Определяет, требуется ли перейти к исполнению следующего экшена
+     * после завершения текущего
+     *
+     * @see ExecAction
+     *
+     * @var bool
+     */
+	protected $doNext = false;
+
 	/**
 	 * Делает возможным только один экземпляр этого класса
 	 *
@@ -235,10 +245,9 @@ class Router extends LsObject {
      * Запускает на выполнение экшен
      * Может запускаться рекурсивно если в одном экшене стоит переадресация на
      * другой
-     *
-     * @throws \Engine\Exceptions\ImplementationDestroyedException
      */
 	public function ExecAction() {
+	    $this->doNext = false;
 		$this->DefineActionClass();
 		/** @var ModuleHook $hook */
 		$hook = LS::Make(ModuleHook::class);
@@ -257,10 +266,10 @@ class Router extends LsObject {
 		 * Инициализируем экшен
 		 */
         $hook->Run("action_init_".strtolower($sActionClass)."_before");
-		$sInitResult = $this->oAction->Init();
+		$this->oAction->Init();
         $hook->Run("action_init_".strtolower($sActionClass)."_after");
 
-		if ($sInitResult==='next') {
+		if ($this->doNext) {
 			$this->ExecAction();
 		} else {
 			/**
@@ -269,7 +278,7 @@ class Router extends LsObject {
 			$oProfiler=ProfilerSimple::getInstance();
 			$iTimeId=$oProfiler->Start('ExecAction',self::$sAction);
 
-			$res=$this->oAction->ExecEvent();
+			$this->oAction->ExecEvent();
 			self::$sActionEventName=$this->oAction->GetCurrentEventName();
 
             $hook->Run("action_shutdown_".strtolower($sActionClass)."_before");
@@ -278,7 +287,7 @@ class Router extends LsObject {
 
 			$oProfiler->Stop($iTimeId);
 
-			if ($res==='next') {
+			if ($this->doNext) {
 				$this->ExecAction();
 			}
 		}
@@ -309,7 +318,6 @@ class Router extends LsObject {
 	 * @param string $sAction	Экшен
 	 * @param string $sEvent	Евент
 	 * @param array $aParams	Список параметров
-	 * @return 'next'
 	 */
 	static public function Action($sAction,$sEvent=null,$aParams=null) {
 		self::$sAction=self::getInstance()->Rewrite($sAction);
@@ -317,7 +325,7 @@ class Router extends LsObject {
 		if (is_array($aParams)) {
 			self::$aParams=$aParams;
 		}
-		return 'next';
+		self::getInstance()->doNext = true;
 	}
 	/**
 	 * Возвращает текущий ЧПУ url

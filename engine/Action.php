@@ -342,11 +342,9 @@ abstract class Action extends LsObject {
 	 * Вызывается в том случаи если не найден евент который запросили через URL
 	 * По дефолту происходит перекидывание на страницу ошибки, это можно переопределить в наследнике
 	 * @see Router::Action
-	 *
-	 * @return string
 	 */
 	protected function EventNotFound() {
-		return Router::Action('error','404');
+		Router::Action('error','404');
 	}
 
 	/**

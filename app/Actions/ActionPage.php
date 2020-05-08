@@ -59,8 +59,6 @@ class ActionPage extends Action {
 
 	/**
 	 * Отображение страницы
-	 *
-	 * @return unknown
 	 */
 	protected function EventShowPage() {
 		if (!$this->sCurrentEvent) {
@@ -82,7 +80,8 @@ class ActionPage extends Action {
 		 * Ищем страничку в БД
 		 */
 		if (!($oPage=LS::Make(ModulePage::class)->GetPageByUrlFull($sUrlFull,1))) {
-			return $this->EventNotFound();
+			$this->EventNotFound();
+			return;
 		}
 		/**
 		 * Заполняем HTML теги и SEO
@@ -112,7 +111,7 @@ class ActionPage extends Action {
 		 */
 		$this->oUserCurrent=LS::Make(ModuleUser::class)->GetUserCurrent();
 		if (!$this->oUserCurrent or !$this->oUserCurrent->isAdministrator()) {
-			return $this->EventNotFound();
+			$this->EventNotFound(); return;
 		}
 
 		LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('page.admin'));
@@ -206,7 +205,7 @@ class ActionPage extends Action {
 	protected function EventFilter() {
 	    $filter_id = $this->GetParam(0);
 	    if(gettype($filter_id) != 'string' || !isset(Config::Get('page.filters')[$filter_id])) {
-	        return parent::EventNotFound();
+	        parent::EventNotFound(); return;
         }
         $aFilter = Config::Get('page.filters')[$filter_id];
 
@@ -219,10 +218,11 @@ class ActionPage extends Action {
 	    $last_topic = reset($topic->GetTopicsByFilter($aFilter, 1, 1, ['blog'])['collection']);
 
         if(!$last_topic) {
-            return parent::EventNotFound();
+            parent::EventNotFound(); return;
         }
 
-        return Router::Location($last_topic->getUrl());
+        Router::Location($last_topic->getUrl());
+        return;
     }
 	/**
 	 * Обработка отправки формы при редактировании страницы

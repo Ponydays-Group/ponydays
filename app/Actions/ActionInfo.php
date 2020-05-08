@@ -73,13 +73,15 @@ class ActionInfo extends Action
     protected  function EventTopic() {
         $iTopicId = getRequest('iTopicId');
         if (!($oTopic=LS::Make(ModuleTopic::class)->GetTopicById($iTopicId))) {
-            return parent::EventNotFound();
+            parent::EventNotFound();
+            return;
         }
         /**
          * Проверяем права на просмотр топика
          */
         if (!$oTopic->getPublish() and (!$this->oUserCurrent or ($this->oUserCurrent->getId()!=$oTopic->getUserId() and !$this->oUserCurrent->isAdministrator()))) {
-            return parent::EventNotFound();
+            parent::EventNotFound();
+            return;
         }
 
         /**
@@ -94,7 +96,8 @@ class ActionInfo extends Action
             )
         ) {
             LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('blog_close_show'),LS::Make(ModuleLang::class)->Get('not_access'));
-            return Router::Action('error');
+            Router::Action('error');
+            return;
         }
 
         $oViewer = LS::Make(ModuleViewer::class)->GetLocalViewer();
@@ -105,7 +108,7 @@ class ActionInfo extends Action
     protected  function EventComment() {
         $iCommentId = getRequest('iCommentId');
         if (!($oComment=LS::Make(ModuleComment::class)->GetCommentById($iCommentId))) {
-            return parent::EventNotFound();
+            parent::EventNotFound(); return;
         }
         if ($oComment->getTargetType()=="topic") {
             $oTarget = LS::Make(ModuleTopic::class)->GetTopicById($oComment->getTargetId());
@@ -113,7 +116,7 @@ class ActionInfo extends Action
              * Проверяем права на просмотр топика
              */
             if (!$oTarget->getPublish() and (!$this->oUserCurrent or ($this->oUserCurrent->getId() != $oTarget->getUserId() and !$this->oUserCurrent->isAdministrator()))) {
-                return parent::EventNotFound();
+                parent::EventNotFound(); return;
             }
 
             /**
@@ -128,24 +131,24 @@ class ActionInfo extends Action
                 )
             ) {
                 LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('blog_close_show'), LS::Make(ModuleLang::class)->Get('not_access'));
-                return Router::Action('error');
+                Router::Action('error'); return;
             }
         } else {
             if ($this->oUserCurrent == null) {
                 echo "NO USER CURRENT";
-                return parent::EventNotFound();
+                parent::EventNotFound(); return;
             }
             $oTarget = LS::Make(ModuleTalk::class)->GetTalkById($oComment->getTargetId());
             if (!($oTalkUser=LS::Make(ModuleTalk::class)->GetTalkUser($oTarget->getId(),$this->oUserCurrent->getId()))) {
                 echo "NO TALK USER";
-                return parent::EventNotFound();
+                parent::EventNotFound(); return;
             }
             /**
              * Пользователь активен в переписке?
              */
             if($oTalkUser->getUserActive()!=ModuleTalk::TALK_USER_ACTIVE){
                 echo "NO USER ACTIVE";
-                return parent::EventNotFound();
+                parent::EventNotFound(); return;
             }
         }
 
@@ -162,7 +165,7 @@ class ActionInfo extends Action
     protected  function EventProfile() {
         $sLogin = getRequest('sLogin');
         if (!($oUser=LS::Make(ModuleUser::class)->GetUserByLogin($sLogin))) {
-            return parent::EventNotFound();
+            parent::EventNotFound(); return;
         }
 
         $oViewer = LS::Make(ModuleViewer::class)->GetLocalViewer();

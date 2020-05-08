@@ -128,7 +128,8 @@ class ActionPeople extends Action {
 		 * Страна существует?
 		 */
 		if (!($oCountry=LS::Make(ModuleGeo::class)->GetCountryById($this->getParam(0)))) {
-			return parent::EventNotFound();
+			parent::EventNotFound();
+			return;
 		}
 		/**
 		 * Получаем статистику
@@ -170,7 +171,7 @@ class ActionPeople extends Action {
 		 * Город существует?
 		 */
 		if (!($oCity=LS::Make(ModuleGeo::class)->GetCityById($this->getParam(0)))) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		/**
 		 * Получаем статистику

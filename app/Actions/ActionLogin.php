@@ -93,7 +93,8 @@ class ActionLogin extends Action {
                 LS::Make(ModuleMessage::class)->AddNoticeSingle($oUser->getBanComment());
                 LS::Make(ModuleUser::class)->Logout();
                 LS::Make(ModuleSession::class)->DropSession();
-                return Router::Action('error');
+                Router::Action('error');
+                return;
 			}
 
 			/**
@@ -248,7 +249,7 @@ class ActionLogin extends Action {
 				}
 			}
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('password_reminder_bad_code'),LS::Make(ModuleLang::class)->Get('error'));
-			return Router::Action('error');
+			Router::Action('error'); return;
 		}
 	}
 }

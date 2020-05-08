@@ -235,7 +235,6 @@ class ModuleImage extends Module {
 		} else{
 			return $this->SaveFile($sFileSrc,$sDirDest,$sFileDest,0666,false);
 		}
-		return false;
 	}
 	/**
 	 * Вырезает максимально возможный квадрат

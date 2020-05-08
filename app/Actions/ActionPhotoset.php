@@ -122,7 +122,7 @@ class ActionPhotoset extends Action {
 		$oTopic = LS::Make(ModuleTopic::class)->getTopicById(getRequestStr('topic_id'));
 		if (!$oTopic || !getRequest('last_id')) {
 			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
-			return false;
+			return;
 		}
 		/**
 		 * Получаем список фото
@@ -154,7 +154,8 @@ class ActionPhotoset extends Action {
 		 */
 		if (!LS::Make(ModuleUser::class)->IsAuthorization()) {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'),LS::Make(ModuleLang::class)->Get('error'));
-			return Router::Action('error');
+			Router::Action('error');
+			return;
 		}
 		/**
 		 * Поиск фото по id
@@ -205,7 +206,7 @@ class ActionPhotoset extends Action {
 		 */
 		if (!LS::Make(ModuleUser::class)->IsAuthorization()) {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'),LS::Make(ModuleLang::class)->Get('error'));
-			return Router::Action('error');
+			Router::Action('error'); return;
 		}
 		/**
 		 * Поиск фото по id
@@ -226,8 +227,6 @@ class ActionPhotoset extends Action {
 	}
 	/**
 	 * AJAX загрузка фоток
-	 *
-	 * @return unknown
 	 */
 	protected function EventUpload() {
 		/**
@@ -244,14 +243,14 @@ class ActionPhotoset extends Action {
 		 */
 		if (!LS::Make(ModuleUser::class)->IsAuthorization()) {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'),LS::Make(ModuleLang::class)->Get('error'));
-			return Router::Action('error');
+			Router::Action('error'); return;
 		}
 		/**
 		 * Файл был загружен?
 		 */
 		if (!isset($_FILES['Filedata']['tmp_name'])) {
 			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
-			return false;
+			return;
 		}
 
 		$iTopicId = getRequestStr('topic_id');
@@ -262,7 +261,7 @@ class ActionPhotoset extends Action {
 			$sTargetId = empty($_COOKIE['ls_photoset_target_tmp']) ? getRequestStr('ls_photoset_target_tmp') : $_COOKIE['ls_photoset_target_tmp'];
 			if (!$sTargetId) {
 				LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
-				return false;
+				return;
 			}
 			$iCountPhotos = LS::Make(ModuleTopic::class)->getCountPhotosByTargetTmp($sTargetId);
 		} else {
@@ -272,7 +271,7 @@ class ActionPhotoset extends Action {
 			$oTopic = LS::Make(ModuleTopic::class)->getTopicById($iTopicId);
 			if (!$oTopic or !LS::Make(ModuleACL::class)->IsAllowEditTopic($oTopic,$this->oUserCurrent)) {
 				LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
-				return false;
+				return;
 			}
 			$iCountPhotos = LS::Make(ModuleTopic::class)->getCountPhotosByTopicId($iTopicId);
 		}
@@ -281,14 +280,14 @@ class ActionPhotoset extends Action {
 		 */
 		if ($iCountPhotos >= Config::Get('module.topic.photoset.count_photos_max')) {
 			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('topic_photoset_error_too_much_photos', array('MAX' => Config::Get('module.topic.photoset.count_photos_max'))), LS::Make(ModuleLang::class)->Get('error'));
-			return false;
+			return;
 		}
 		/**
 		 * Максимальный размер фото
 		 */
 		if (filesize($_FILES['Filedata']['tmp_name']) > Config::Get('module.topic.photoset.photo_max_size')*1024) {
 			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('topic_photoset_error_bad_filesize', array('MAX' => Config::Get('module.topic.photoset.photo_max_size'))), LS::Make(ModuleLang::class)->Get('error'));
-			return false;
+			return;
 		}
 		/**
 		 * Загружаем файл
@@ -334,26 +333,26 @@ class ActionPhotoset extends Action {
 		 */
 		if (!LS::Make(ModuleUser::class)->IsAuthorization()) {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'),LS::Make(ModuleLang::class)->Get('error'));
-			return Router::Action('error');
+			Router::Action('error'); return;
 		}
 		/**
 		 * Получаем номер топика из УРЛ и проверяем существует ли он
 		 */
 		$sTopicId=$this->GetParam(0);
 		if (!($oTopic=LS::Make(ModuleTopic::class)->GetTopicById($sTopicId))) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		/**
 		 * Проверяем тип топика
 		 */
 		if ($oTopic->getType()!='photoset') {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		/**
 		 * Если права на редактирование
 		 */
 		if (!LS::Make(ModuleACL::class)->IsAllowEditTopic($oTopic,$this->oUserCurrent)) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		/**
 		 * Вызов хуков
@@ -379,7 +378,7 @@ class ActionPhotoset extends Action {
 			/**
 			 * Обрабатываем отправку формы
 			 */
-			return $this->SubmitEdit($oTopic);
+			$this->SubmitEdit($oTopic); return;
 		} else {
 			/**
 			 * Заполняем поля формы для редактирования
@@ -406,7 +405,7 @@ class ActionPhotoset extends Action {
 		 */
 		if (!LS::Make(ModuleUser::class)->IsAuthorization()) {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'),LS::Make(ModuleLang::class)->Get('error'));
-			return Router::Action('error');
+			Router::Action('error'); return;
 		}
 		/**
 		 * Вызов хуков
@@ -433,7 +432,7 @@ class ActionPhotoset extends Action {
 		/**
 		 * Обрабатываем отправку формы
 		 */
-		return $this->SubmitAdd();
+		$this->SubmitAdd(); return;
 	}
 	/**
 	 * Обработка добавлени топика
@@ -445,7 +444,7 @@ class ActionPhotoset extends Action {
 		 * Проверяем отправлена ли форма с данными(хотяб одна кнопка)
 		 */
 		if (!isPost('submit_topic_publish') and !isPost('submit_topic_save')) {
-			return false;
+			return;
 		}
 		$oTopic = new ModuleTopic_EntityTopic();
 		$oTopic->_setValidateScenario('photoset');
@@ -464,7 +463,7 @@ class ActionPhotoset extends Action {
 		 * Проверка корректности полей формы
 		 */
 		if (!$this->checkTopicFields($oTopic)) {
-			return false;
+			return;
 		}
 		/**
 		 * Определяем в какой блог делаем запись
@@ -480,14 +479,14 @@ class ActionPhotoset extends Action {
 		 */
 		if (!$oBlog) {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_create_blog_error_unknown'),LS::Make(ModuleLang::class)->Get('error'));
-			return false;
+			return;
 		}
 		/**
 		 * Проверяем права на постинг в блог
 		 */
 		if (!LS::Make(ModuleACL::class)->IsAllowBlog($oBlog,$this->oUserCurrent)) {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_create_blog_error_noallow'),LS::Make(ModuleLang::class)->Get('error'));
-			return false;
+			return;
 		}
 		/**
 		 * Проверяем разрешено ли постить топик по времени
@@ -590,7 +589,7 @@ class ActionPhotoset extends Action {
 			Router::Location($oTopic->getUrl());
 		} else {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'));
-			return Router::Action('error');
+			Router::Action('error'); return;
 		}
 	}
 	/**
@@ -617,7 +616,7 @@ class ActionPhotoset extends Action {
 		 * Проверка корректности полей формы
 		 */
 		if (!$this->checkTopicFields($oTopic)) {
-			return false;
+			return;
 		}
 		/**
 		 * Определяем в какой блог делаем запись
@@ -633,14 +632,14 @@ class ActionPhotoset extends Action {
 		 */
 		if (!$oBlog) {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_create_blog_error_unknown'),LS::Make(ModuleLang::class)->Get('error'));
-			return false;
+			return;
 		}
 		/**
 		 * Проверяем права на постинг в блог
 		 */
 		if (!LS::Make(ModuleACL::class)->IsAllowBlog($oBlog,$this->oUserCurrent)) {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_create_blog_error_noallow'),LS::Make(ModuleLang::class)->Get('error'));
-			return false;
+			return;
 		}
 		/**
 		 * Проверяем разрешено ли постить топик по времени
@@ -734,7 +733,8 @@ class ActionPhotoset extends Action {
 			Router::Location($oTopic->getUrl());
 		} else {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'));
-			return Router::Action('error');
+			Router::Action('error');
+			return;
 		}
 	}
 	/**

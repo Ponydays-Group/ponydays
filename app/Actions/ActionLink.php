@@ -112,13 +112,15 @@ class ActionLink extends Action {
 		 */
 		$sTopicId=$this->GetParam(0);
 		if (!($oTopic=LS::Make(ModuleTopic::class)->GetTopicById($sTopicId)) or !$oTopic->getPublish()) {
-			return parent::EventNotFound();
+			parent::EventNotFound();
+			return;
 		}
 		/**
 		 * проверяем является ли топик ссылкой
 		 */
 		if ($oTopic->getType()!='link') {
-			return parent::EventNotFound();
+			parent::EventNotFound();
+			return;
 		}
 		/**
 		 * увелививаем число переходов по ссылке
@@ -140,26 +142,26 @@ class ActionLink extends Action {
 		 */
 		if (!LS::Make(ModuleUser::class)->IsAuthorization()) {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'),LS::Make(ModuleLang::class)->Get('error'));
-			return Router::Action('error');
+			Router::Action('error'); return;
 		}
 		/**
 		 * Получаем номер топика из УРЛ и проверяем существует ли он
 		 */
 		$sTopicId=$this->GetParam(0);
 		if (!($oTopic=LS::Make(ModuleTopic::class)->GetTopicById($sTopicId))) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		/**
 		 * Проверяем тип топика
 		 */
 		if ($oTopic->getType()!='link') {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		/**
 		 * Если права на редактирование
 		 */
 		if (!LS::Make(ModuleACL::class)->IsAllowEditTopic($oTopic,$this->oUserCurrent)) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		/**
 		 * Вызов хуков
@@ -181,7 +183,8 @@ class ActionLink extends Action {
 			/**
 			 * Обрабатываем отправку формы
 			 */
-			return $this->SubmitEdit($oTopic);
+			$this->SubmitEdit($oTopic);
+			return;
 		} else {
 			/**
 			 * Заполняем поля формы для редактирования
@@ -207,7 +210,7 @@ class ActionLink extends Action {
 		 */
 		if (!LS::Make(ModuleUser::class)->IsAuthorization()) {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'),LS::Make(ModuleLang::class)->Get('error'));
-			return Router::Action('error');
+			Router::Action('error'); return;
 		}
 		/**
 		 * Вызов хуков
@@ -221,19 +224,18 @@ class ActionLink extends Action {
 		/**
 		 * Обрабатываем отправку формы
 		 */
-		return $this->SubmitAdd();
+		$this->SubmitAdd();
+		return;
 	}
 	/**
 	 * Обработка добавлени топика
-	 *
-	 * @return mixed
-	 */
+     */
 	protected function SubmitAdd() {
 		/**
 		 * Проверяем отправлена ли форма с данными(хотяб одна кнопка)
 		 */
 		if (!isPost('submit_topic_publish') and !isPost('submit_topic_save')) {
-			return false;
+			return;
 		}
 		$oTopic = new ModuleTopic_EntityTopic();
 		$oTopic->_setValidateScenario('link');
@@ -253,7 +255,7 @@ class ActionLink extends Action {
 		 * Проверка корректности полей формы
 		 */
 		if (!$this->checkTopicFields($oTopic)) {
-			return false;
+			return;
 		}
 		/**
 		 * Определяем в какой блог делаем запись
@@ -269,14 +271,14 @@ class ActionLink extends Action {
 		 */
 		if (!$oBlog) {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_create_blog_error_unknown'),LS::Make(ModuleLang::class)->Get('error'));
-			return false;
+			return;
 		}
 		/**
 		 * Проверяем права на постинг в блог
 		 */
 		if (!LS::Make(ModuleACL::class)->IsAllowBlog($oBlog,$this->oUserCurrent)) {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_create_blog_error_noallow'),LS::Make(ModuleLang::class)->Get('error'));
-			return false;
+			return;
 		}
 		/**
 		 * Проверяем разрешено ли постить топик по времени
@@ -350,7 +352,7 @@ class ActionLink extends Action {
 			Router::Location($oTopic->getUrl());
 		} else {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'));
-			return Router::Action('error');
+			Router::Action('error'); return;
 		}
 	}
 	/**
@@ -483,7 +485,7 @@ class ActionLink extends Action {
 			Router::Location($oTopic->getUrl());
 		} else {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'));
-			return Router::Action('error');
+			Router::Action('error'); return;
 		}
 	}
 	/**

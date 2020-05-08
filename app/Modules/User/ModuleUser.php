@@ -124,7 +124,7 @@ class ModuleUser extends Module
             LS::Make(ModuleMessage::class)->AddNoticeSingle($oUser->getBanComment());
             $this->Logout();
             LS::Make(ModuleSession::class)->DropSession();
-            return Router::Action('error');
+            Router::Action('error'); return;
         }
 
         /**

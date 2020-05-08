@@ -49,13 +49,17 @@ class ActionNotifications extends Action {
     //***************************************************************************************
     protected function CheckAdmin(){
         if($this->oUserCurrent){
-            if(!$this->oUserCurrent->isAdministrator()) return Router::Location(Router::GetPath('error'));
-        }else return Router::Location(Router::GetPath('error'));
+            if(!$this->oUserCurrent->isAdministrator())
+                Router::Location(Router::GetPath('error'));
+        } else {
+            Router::Location(Router::GetPath('error'));
+        }
     }
 
     //***************************************************************************************
     protected function CheckUserLogin(){
-        if(!$this->oUserCurrent) return Router::Location(Router::GetPath('error'));
+        if(!$this->oUserCurrent)
+            Router::Location(Router::GetPath('error'));
     }
 
     //***************************************************************************************

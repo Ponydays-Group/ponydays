@@ -138,7 +138,8 @@ class ActionProfile extends Action {
 	 */
 	protected function EventStream() {
 		if (!$this->CheckUserProfile()) {
-			return parent::EventNotFound();
+			parent::EventNotFound();
+			return;
 		}
 		/**
 		 * Читаем события
@@ -157,7 +158,7 @@ class ActionProfile extends Action {
 	 */
 	protected function EventFriends() {
 		if (!$this->CheckUserProfile()) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		/**
 		 * Передан ли номер страницы
@@ -187,7 +188,7 @@ class ActionProfile extends Action {
 	 */
 	protected function EventCreatedTopics() {
 		if (!$this->CheckUserProfile()) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		$this->sMenuSubItemSelect='topics';
 		/**
@@ -233,7 +234,7 @@ class ActionProfile extends Action {
 	 */
 	protected function EventCreatedComments() {
 		if (!$this->CheckUserProfile()) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		$this->sMenuSubItemSelect='comments';
 		/**
@@ -269,7 +270,7 @@ class ActionProfile extends Action {
 	 */
 	protected function EventFavourite() {
 		if (!$this->CheckUserProfile()) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		$this->sMenuSubItemSelect='topics';
 		/**
@@ -311,13 +312,13 @@ class ActionProfile extends Action {
 	 */
 	protected function EventFavouriteTopicsTag() {
 		if (!$this->CheckUserProfile()) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		/**
 		 * Пользователь авторизован и просматривает свой профиль?
 		 */
 		if (!$this->oUserCurrent or $this->oUserProfile->getId()!=$this->oUserCurrent->getId()) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		$this->sMenuSubItemSelect='topics';
 		$sTag=$this->GetParamEventMatch(3,0);
@@ -358,7 +359,7 @@ class ActionProfile extends Action {
 	 */
 	protected function EventFavouriteComments() {
 		if (!$this->CheckUserProfile()) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		$this->sMenuSubItemSelect='comments';
 		/**
@@ -394,7 +395,7 @@ class ActionProfile extends Action {
 	 */
 	protected function EventWhois() {
 		if (!$this->CheckUserProfile()) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		Router::Location("/profile/".$this->oUserProfile->getLogin()."/created/topics");
 	}
@@ -403,7 +404,7 @@ class ActionProfile extends Action {
 	 */
 	public function EventWall() {
 		if (!$this->CheckUserProfile()) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		/**
 		 * Получаем записи стены
@@ -429,10 +430,10 @@ class ActionProfile extends Action {
 		 * Пользователь авторизован?
 		 */
 		if (!$this->oUserCurrent) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		if (!$this->CheckUserProfile()) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		/**
 		 * Создаем запись
@@ -485,16 +486,16 @@ class ActionProfile extends Action {
 		 * Пользователь авторизован?
 		 */
 		if (!$this->oUserCurrent) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		if (!$this->CheckUserProfile()) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		/**
 		 * Получаем запись
 		 */
 		if (!($oWall=LS::Make(ModuleWall::class)->GetWallById(getRequestStr('iId')))) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		/**
 		 * Если разрешено удаление - удаляем
@@ -503,7 +504,7 @@ class ActionProfile extends Action {
 			LS::Make(ModuleWall::class)->DeleteWall($oWall);
 			return;
 		}
-		return parent::EventNotFound();
+		parent::EventNotFound(); return;
 	}
 	/**
 	 * Ajax подгрузка сообщений стены
@@ -514,7 +515,7 @@ class ActionProfile extends Action {
 		 */
 		LS::Make(ModuleViewer::class)->SetResponseAjax('json');
 		if (!$this->CheckUserProfile()) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		/**
 		 * Формируем фильтр для запроса к БД
@@ -550,10 +551,10 @@ class ActionProfile extends Action {
 		 */
 		LS::Make(ModuleViewer::class)->SetResponseAjax('json');
 		if (!$this->CheckUserProfile()) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		if (!($oWall=LS::Make(ModuleWall::class)->GetWallById(getRequestStr('iPid'))) or $oWall->getPid()) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		/**
 		 * Формируем фильтр для запроса к БД
@@ -592,7 +593,7 @@ class ActionProfile extends Action {
 		 * Пользователь авторизован?
 		 */
 		if (!$this->oUserCurrent) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		/**
 		 * Создаем заметку и проводим валидацию
@@ -625,14 +626,14 @@ class ActionProfile extends Action {
 		 */
 		LS::Make(ModuleViewer::class)->SetResponseAjax('json');
 		if (!$this->oUserCurrent) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 
 		if (!($oUserTarget=LS::Make(ModuleUser::class)->GetUserById(getRequestStr('iUserId')))) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		if (!($oNote=LS::Make(ModuleUser::class)->GetUserNote($oUserTarget->getId(),$this->oUserCurrent->getId()))) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		LS::Make(ModuleUser::class)->DeleteUserNoteById($oNote->getId());
 	}
@@ -641,14 +642,16 @@ class ActionProfile extends Action {
 	 */
 	public function EventCreatedNotes() {
 		if (!$this->CheckUserProfile()) {
-			return parent::EventNotFound();
+			parent::EventNotFound();
+			return;
 		}
 		$this->sMenuSubItemSelect='notes';
 		/**
 		 * Заметки может читать только сам пользователь
 		 */
 		if (!$this->oUserCurrent or $this->oUserCurrent->getId()!=$this->oUserProfile->getId()) {
-			return parent::EventNotFound();
+			parent::EventNotFound();
+			return;
 		}
 		/**
 		 * Передан ли номер страницы
@@ -685,7 +688,8 @@ class ActionProfile extends Action {
 		 */
 		$sUserId=xxtea_decrypt(base64_decode(rawurldecode(getRequestStr('code'))), Config::Get('module.talk.encrypt'));
 		if (!$sUserId) {
-			return $this->EventNotFound();
+			$this->EventNotFound();
+			return;
 		}
 		list($sUserId,)=explode('_',$sUserId,2);
 
@@ -694,7 +698,8 @@ class ActionProfile extends Action {
 		 * Получаем текущего пользователя
 		 */
 		if(!LS::Make(ModuleUser::class)->IsAuthorization()) {
-			return $this->EventNotFound();
+			$this->EventNotFound();
+			return;
 		}
 		$this->oUserCurrent = LS::Make(ModuleUser::class)->GetUserCurrent();
 		/**
@@ -706,7 +711,7 @@ class ActionProfile extends Action {
 		if(!$oUser=LS::Make(ModuleUser::class)->GetUserById($sUserId)) {
 			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('user_not_found'),LS::Make(ModuleLang::class)->Get('error'),true);
 			Router::Location(Router::GetPath('talk'));
-			return ;
+			return;
 		}
 		/**
 		 * Получаем связь дружбы из базы данных.
@@ -728,7 +733,7 @@ class ActionProfile extends Action {
 			LS::Make(ModuleMessage::class)->AddError($sMessage,LS::Make(ModuleLang::class)->Get('error'),true);
 
 			Router::Location(Router::GetPath('talk'));
-			return ;
+			return;
 		}
 		/**
 		 * Устанавливаем новый статус связи
@@ -856,13 +861,13 @@ class ActionProfile extends Action {
 		 * Проверяем допустимость действия
 		 */
 		if(!in_array($sAction,array('accept','reject'))) {
-			return false;
+			return;
 		}
 		/**
 		 * Проверяем настройки (нужно ли отправлять уведомление)
 		 */
 		if(!Config::Get("module.user.friend_notice.{$sAction}")) {
-			return false;
+			return;
 		}
 
 		$sTitle=LS::Make(ModuleLang::class)->Get("user_friend_{$sAction}_notice_title");
@@ -1022,7 +1027,6 @@ class ActionProfile extends Action {
 	 * @param $oUser
 	 * @param $sUserText
 	 * @param null $oFriend
-	 * @return bool
 	 */
 	protected function SubmitAddFriend($oUser,$sUserText,$oFriend=null) {
 		/**
@@ -1030,7 +1034,7 @@ class ActionProfile extends Action {
 		 */
 		if (!LS::Make(ModuleACL::class)->CanSendTalkTime($this->oUserCurrent)) {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('user_friend_add_time_limit'),LS::Make(ModuleLang::class)->Get('error'));
-			return false;
+			return;
 		}
 		/**
 		 * Обрабатываем текст заявки
@@ -1192,11 +1196,11 @@ class ActionProfile extends Action {
 	 */
 	public function EventChangemailConfirmFrom() {
 		if (!($oChangemail=LS::Make(ModuleUser::class)->GetUserChangemailByCodeFrom($this->GetParamEventMatch(1,0)))) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 
 		if ($oChangemail->getConfirmFrom() or strtotime($oChangemail->getDateExpired())<time()) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 
 		$oChangemail->setConfirmFrom(1);
@@ -1223,11 +1227,11 @@ class ActionProfile extends Action {
 	 */
 	public function EventChangemailConfirmTo() {
 		if (!($oChangemail=LS::Make(ModuleUser::class)->GetUserChangemailByCodeTo($this->GetParamEventMatch(1,0)))) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 
 		if (!$oChangemail->getConfirmFrom() or $oChangemail->getConfirmTo() or strtotime($oChangemail->getDateExpired())<time()) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 
 		$oChangemail->setConfirmTo(1);

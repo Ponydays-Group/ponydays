@@ -64,7 +64,7 @@
 	sDateReadLast=$oTalkUser->getDateLast()
 	sNoticeCommentAdd=$aLang.topic_comment_add
 	bNoCommentFavourites=true
-	bEnableCommentsVoteInfo=$E->make(App\Modules\ACL\ModulesACL::class)->ACL_CheckSimpleAccessLevel(Engine\Config::Get('acl.vote_list.comment.ne_enable_level'), $oUserCurrent, $oTalk, 'talk')
+	bEnableCommentsVoteInfo=$E->make(App\Modules\ACL\ModuleACL::class)->CheckSimpleAccessLevel(Engine\Config::Get('acl.vote_list.comment.ne_enable_level'), $oUserCurrent, $oTalk, 'talk')
 	}
 {/if}
 			

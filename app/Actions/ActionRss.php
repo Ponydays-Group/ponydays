@@ -194,7 +194,7 @@ class ActionRss extends Action {
 		 * Топик существует?
 		 */
 		if (!($oTopic=LS::Make(ModuleTopic::class)->GetTopicById($sTopicId)) or !$oTopic->getPublish() or $oTopic->getBlog()->getType()=='close') {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		/**
 		 * Получаем комментарии
@@ -282,7 +282,7 @@ class ActionRss extends Action {
 		 * Если блог существует, то получаем записи
 		 */
 		if (!$sBlogUrl or !($oBlog=LS::Make(ModuleBlog::class)->GetBlogByUrl($sBlogUrl)) or $oBlog->getType()=="close") {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}else{
 			$aResult=LS::Make(ModuleTopic::class)->GetTopicsByBlog($oBlog,1,Config::Get('module.topic.per_page')*2,'good');
 		}
@@ -329,7 +329,7 @@ class ActionRss extends Action {
 			 */
 			$aResult=LS::Make(ModuleTopic::class)->GetTopicsPersonal(1,Config::Get('module.topic.per_page')*2);
 		}elseif(!$oUser=LS::Make(ModuleUser::class)->GetUserByLogin($this->sUserLogin)){
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}else{
 			/**
 			 * RSS-лента записей персонального блога указанного пользователя

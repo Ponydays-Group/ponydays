@@ -79,7 +79,7 @@ class ActionTopic extends Action {
 		 * Проверяем авторизован ли юзер
 		 */
 		if (!LS::Make(ModuleUser::class)->IsAuthorization()) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		$this->oUserCurrent=LS::Make(ModuleUser::class)->GetUserCurrent();
 		/**
@@ -120,23 +120,23 @@ class ActionTopic extends Action {
 		 */
 		$sTopicId=$this->GetParam(0);
 		if (!($oTopic=LS::Make(ModuleTopic::class)->GetTopicById($sTopicId))) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
                 if ($oTopic->getId() == 200 and LS::Make(ModuleUser::class)->GetUserCurrent()->getId() != 1) {
-                        return parent::EventNotFound();
+                        parent::EventNotFound(); return;
                 }
 
 		/**
 		 * Проверяем тип топика
 		 */
 		if ($oTopic->getType()!='topic') {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		/**
 		 * Если права на редактирование
 		 */
 		if (!LS::Make(ModuleACL::class)->IsAllowEditTopic($oTopic,$this->oUserCurrent)) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		/**
 		 * Вызов хуков
@@ -158,7 +158,7 @@ class ActionTopic extends Action {
 			/**
 			 * Обрабатываем отправку формы
 			 */
-			return $this->SubmitEdit($oTopic);
+			$this->SubmitEdit($oTopic); return;
 		} else {
 			/**
 			 * Заполняем поля формы для редактирования
@@ -184,13 +184,13 @@ class ActionTopic extends Action {
 		 */
 		$sTopicId=$this->GetParam(0);
 		if (!($oTopic=LS::Make(ModuleTopic::class)->GetTopicById($sTopicId))) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		/**
 		 * проверяем есть ли право на удаление топика
 		 */
 		if (!LS::Make(ModuleACL::class)->IsAllowDeleteTopic($oTopic,$this->oUserCurrent)) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		/**
 		 * Удаляем топик
@@ -215,13 +215,13 @@ class ActionTopic extends Action {
 		 */
 		$sTopicId=$this->GetParam(0);
 		if (!($oTopic=LS::Make(ModuleTopic::class)->GetTopicById($sTopicId))) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		/**
 		 * проверяем есть ли право на удаление топика
 		 */
 		if (!LS::Make(ModuleACL::class)->IsAllowDeleteTopic($oTopic,$this->oUserCurrent)) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		/**
 		 * Удаляем топик
@@ -230,7 +230,7 @@ class ActionTopic extends Action {
 		$oTopic->setDeleted(true);
 		if (LS::Make(ModuleTopic::class)->UpdateTopic($oTopic)){
 		} else{
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		LS::Make(ModuleHook::class)->Run('topic_delete_after', array('oTopic'=>$oTopic));
 		/**
@@ -252,13 +252,13 @@ class ActionTopic extends Action {
 		 */
 		$sTopicId=$this->GetParam(0);
 		if (!($oTopic=LS::Make(ModuleTopic::class)->GetDeletedTopicById($sTopicId))) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		/**
 		 * проверяем есть ли право на удаление топика
 		 */
 		if (!LS::Make(ModuleACL::class)->IsAllowDeleteTopic($oTopic,$this->oUserCurrent)) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		/**
 		 * Восстанавливаем топик
@@ -266,7 +266,7 @@ class ActionTopic extends Action {
 		$oTopic->setDeleted(false);
 		if (LS::Make(ModuleTopic::class)->UpdateTopic($oTopic)){
 		} else{
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		/**
 		 * Перенаправляем на страницу со списком топиков из блога этого топика
@@ -298,7 +298,7 @@ class ActionTopic extends Action {
 		/**
 		 * Обрабатываем отправку формы
 		 */
-		return $this->SubmitAdd();
+		$this->SubmitAdd();
 	}
 	/**
 	 * Выводит список топиков
@@ -331,14 +331,13 @@ class ActionTopic extends Action {
 	}
 	/**
 	 * Обработка добавления топика
-	 *
 	 */
 	protected function SubmitAdd() {
 		/**
 		 * Проверяем отправлена ли форма с данными(хотяб одна кнопка)
 		 */
 		if (!isPost('submit_topic_publish') and !isPost('submit_topic_save')) {
-			return false;
+			return;
 		}
 		$oTopic = new ModuleTopic_EntityTopic();
 		$oTopic->_setValidateScenario('topic');
@@ -357,7 +356,7 @@ class ActionTopic extends Action {
 		 * Проверка корректности полей формы
 		 */
 		if (!$this->checkTopicFields($oTopic)) {
-			return false;
+			return;
 		}
 		/**
 		 * Определяем в какой блог делаем запись
@@ -373,19 +372,19 @@ class ActionTopic extends Action {
 		 */
 		if (!$oBlog) {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_create_blog_error_unknown'),LS::Make(ModuleLang::class)->Get('error'));
-			return false;
+			return;
 		}
 		/**
 		 * Проверяем права на постинг в блог
 		 */
 		if (!LS::Make(ModuleACL::class)->IsAllowBlog($oBlog,$this->oUserCurrent)) {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_create_blog_error_noallow'),LS::Make(ModuleLang::class)->Get('error'));
-			return false;
+			return;
 		}
 		if($oBlogUser=LS::Make(ModuleBlog::class)->GetBlogUserByBlogIdAndUserId($oBlog->getId(), $this->oUserCurrent->getId())){
 			if ($oBlogUser->getUserRole()==ModuleBlog::BLOG_USER_ROLE_RO) {
 				LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_create_blog_error_noallow'),LS::Make(ModuleLang::class)->Get('error'));
-        	                return false;
+        	                return;
 			}
 		}
 		/**
@@ -470,7 +469,7 @@ class ActionTopic extends Action {
 			Router::Location($oTopic->getUrl());
 		} else {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'));
-			return Router::Action('error');
+			Router::Action('error');
 		}
 	}
 	/**
@@ -498,7 +497,7 @@ class ActionTopic extends Action {
 		 * Проверка корректности полей формы
 		 */
 		if (!$this->checkTopicFields($oTopic)) {
-			return false;
+			return;
 		}
 		/**
 		 * Определяем в какой блог делаем запись
@@ -507,7 +506,7 @@ class ActionTopic extends Action {
 		if ($iBlogId != $sBlogIdOld) {
 			if(!$isAllowControlTopic) {
 				LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'),LS::Make(ModuleLang::class)->Get('not_access'));
-				return Router::Action('error');
+				Router::Action('error'); return;
 			}
 			if($oTopic->isControlLocked()) {
 				$oTopic->setLockControl(false);
@@ -527,14 +526,14 @@ class ActionTopic extends Action {
 		 */
 		if (!$oBlog) {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_create_blog_error_unknown'),LS::Make(ModuleLang::class)->Get('error'));
-			return false;
+			return;
 		}
 		/**
 		 * Проверяем права на постинг в блог
 		 */
 		if (!LS::Make(ModuleACL::class)->IsAllowBlog($oBlog,$this->oUserCurrent)) {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_create_blog_error_noallow'),LS::Make(ModuleLang::class)->Get('error'));
-			return false;
+			return;
 		}
 		/**
 		 * Проверяем разрешено ли постить топик по времени
@@ -567,7 +566,7 @@ class ActionTopic extends Action {
 			// ! [текущая реализация] Если пост находится в черновиках — его можно опубликовать даже в случае установки topic_lock_control.
 			if (!$isAllowControlTopic) {
 				LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'),LS::Make(ModuleLang::class)->Get('not_access'));
-				return Router::Action('error');
+				Router::Action('error'); return;
 			}
 			$oTopic->setPublish(0);
 		}
@@ -589,7 +588,7 @@ class ActionTopic extends Action {
 			// ! [текущая реализация] Если комменты закрыты — их можно открыть даже в случае установки topic_lock_control.
 			if (!$isAllowControlTopic) {
 				LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'),LS::Make(ModuleLang::class)->Get('not_access'));
-				return Router::Action('error');
+				Router::Action('error'); return;
 			}
 			$oTopic->setForbidComment(1);
 		}
@@ -633,7 +632,7 @@ class ActionTopic extends Action {
 			Router::Location($oTopic->getUrl());
 		} else {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'));
-			return Router::Action('error');
+			Router::Action('error'); return;
 		}
 	}
 	/**

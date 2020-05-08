@@ -35,16 +35,13 @@ class ActionQuotes extends Action {
 
 	/**
 	 * Инициализация
-	 *
-	 * @return string
 	 */
-	public function Init () {
+	public function Init() {
 		$this->oUserCurrent = LS::Make(ModuleUser::class)->GetUserCurrent();
 
 		if (LS::Make(ModuleUser::class)->IsAuthorization() && $this->oUserCurrent) {
 			$this->SetDefaultEvent('view');
 			LS::Make(ModuleViewer::class)->Assign('sMenuHeadItemSelect', $this->sMenuHeadItemSelect);
-			return "";
 		}
 	}
 
@@ -126,7 +123,7 @@ class ActionQuotes extends Action {
 		if (!$this->IsAdmin()) {
 			$this->SetTemplateAction('blank');
 			echo "Permission denied.";
-			return Router::Action('error');
+			Router::Action('error'); return;
 		}
 
 		switch (getRequestStr('action')) {
@@ -139,11 +136,11 @@ class ActionQuotes extends Action {
 					// Подгрузка ID в AJAX-ответ
 					LS::Make(ModuleViewer::class)->AssignAjax('id', $iId);
 					LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('quotes_added'), LS::Make(ModuleLang::class)->Get('attention'));
-					return true;
+					return;
 				}
 
 				LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('quotes_error'), LS::Make(ModuleLang::class)->Get('error'));
-				return false;
+				return;
 
 			// Удаление цитаты
 			case 'delete':
@@ -151,11 +148,11 @@ class ActionQuotes extends Action {
 
 				if (LS::Make(ModuleQuotes::class)->deleteQuote(getRequestStr('id'))) {
 					LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('quotes_deleted'), LS::Make(ModuleLang::class)->Get('attention'));
-					return true;
+					return;
 				}
 
 				LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
-				return false;
+				return;
 
 			// Изменение цитаты
 			case 'update':
@@ -163,11 +160,11 @@ class ActionQuotes extends Action {
 
 				if (LS::Make(ModuleQuotes::class)->updateQuote(getRequestStr('id'), getRequestStr('data'))) {
 					LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('quotes_updated'), LS::Make(ModuleLang::class)->Get('attention'));
-					return true;
+					return;
 				}
 
 				LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('quotes_error'), LS::Make(ModuleLang::class)->Get('error'));
-				return false;
+				return;
 
 			// восстановление удалённой цитаты
 			case 'restore':
@@ -175,11 +172,11 @@ class ActionQuotes extends Action {
 
 				if (LS::Make(ModuleQuotes::class)->restoreQuote(getRequestStr('id'))) {
 					LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('quotes_added'), LS::Make(ModuleLang::class)->Get('attention'));
-					return true;
+					return;
 				}
 
 				LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
-				return false;
+				return;
 
 
 			// Дефолтная страница со списком цитат
@@ -195,7 +192,7 @@ class ActionQuotes extends Action {
 				LS::Make(ModuleViewer::class)->Assign('bIsAdmin', $this->IsAdmin());
 				LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('quotes_header'));
 				$this->SetTemplateAction('index');
-				return true;
+				return;
 		}
 	}
 
@@ -207,7 +204,7 @@ class ActionQuotes extends Action {
 	protected function EventTrash () {
 		if (!$this->IsAdmin()) {
 			$this->SetTemplateAction('blank');
-			return Router::Action('error');
+			Router::Action('error'); return;
 		}
 
 		$iCountQuotes = LS::Make(ModuleQuotes::class)->GetCount(true);
@@ -223,12 +220,12 @@ class ActionQuotes extends Action {
 		LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('quotes_trash'));
 		$this->SetTemplateAction('trash');
 
-		return true;
+		return;
 	}
 
 	/**
 	 * Проверка, является ли пользователь администратором цитатника
-	 *
+	 * TODO: Move to ACL
 	 * @return bool
 	 */
 	protected function IsAdmin (): bool {
@@ -246,7 +243,7 @@ class ActionQuotes extends Action {
 	 *
 	 * @return bool
 	 */
-	protected function EventFindQuote (): bool {
+	protected function EventFindQuote(): bool {
 		$iQuote = (int)$this->GetEventMatch(1);
 		$iPage = LS::Make(ModuleQuotes::class)->getPageById($iQuote);
 		$this->SetTemplateAction('blank');

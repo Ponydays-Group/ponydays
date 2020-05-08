@@ -119,10 +119,10 @@ class ActionComments extends Action {
 		 * Проверяем к чему относится комментарий
 		 */
 		if (!($oComment=LS::Make(ModuleComment::class)->GetCommentById($iCommentId))) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		if ($oComment->getTargetType()!='topic' or !($oTopic=$oComment->getTarget())) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		/**
 		 * Определяем необходимую страницу для отображения комментария

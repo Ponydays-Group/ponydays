@@ -75,7 +75,7 @@ class ActionSettings extends Action {
 		 */
 		if (!LS::Make(ModuleUser::class)->IsAuthorization()) {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'),LS::Make(ModuleLang::class)->Get('error'));
-			return Router::Action('error');
+			Router::Action('error'); return;
 		}
 		/**
 		 * Получаем текущего юзера
@@ -121,14 +121,14 @@ class ActionSettings extends Action {
 		LS::Make(ModuleViewer::class)->SetResponseAjax('jsonIframe',false);
 
 		if(!isset($_FILES['foto']['tmp_name'])) {
-			return false;
+			return;
 		}
 		/**
 		 * Копируем загруженный файл
 		 */
 		$sFileTmp=Config::Get('sys.cache.dir').func_generator();
 		if (!move_uploaded_file($_FILES['foto']['tmp_name'],$sFileTmp)) {
-			return false;
+			return;
 		}
 		/**
 		 * Ресайзим и сохраняем именьшенную копию
@@ -263,14 +263,14 @@ class ActionSettings extends Action {
 		LS::Make(ModuleViewer::class)->SetResponseAjax('jsonIframe',false);
 
 		if(!isset($_FILES['avatar']['tmp_name'])) {
-			return false;
+			return;
 		}
 		/**
 		 * Копируем загруженный файл
 		 */
 		$sFileTmp=Config::Get('sys.cache.dir').func_generator();
 		if (!move_uploaded_file($_FILES['avatar']['tmp_name'],$sFileTmp)) {
-			return false;
+			return;
 		}
 		/**
 		 * Ресайзим и сохраняем уменьшенную копию
@@ -422,7 +422,7 @@ class ActionSettings extends Action {
 		 * Только при активном режиме инвайтов
 		 */
 		if (!Config::Get('general.reg.invite')) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 
 		$this->sMenuItemSelect='invite';

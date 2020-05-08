@@ -81,7 +81,7 @@ class ActionTalk extends Action
          */
         if (!LS::Make(ModuleUser::class)->IsAuthorization()) {
             LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'));
-            return Router::Action('error');
+            Router::Action('error'); return;
         }
         /**
          * Получаем текущего юзера
@@ -158,13 +158,13 @@ class ActionTalk extends Action
          */
         $sTalkId = $this->GetParam(0);
         if (!($oTalk = LS::Make(ModuleTalk::class)->GetTalkById($sTalkId))) {
-            return parent::EventNotFound();
+            parent::EventNotFound(); return;
         }
         /**
          * Пользователь входит в переписку?
          */
         if (!($oTalkUser = LS::Make(ModuleTalk::class)->GetTalkUser($oTalk->getId(), $this->oUserCurrent->getId()))) {
-            return parent::EventNotFound();
+            parent::EventNotFound(); return;
         }
         /**
          * Обработка удаления сообщения
@@ -425,20 +425,20 @@ class ActionTalk extends Action
          * Проверяем отправлена ли форма с данными
          */
         if (!isPost('submit_talk_add')) {
-            return false;
+            return;
         }
         /**
          * Проверка корректности полей формы
          */
         if (!$this->checkTalkFields()) {
-            return false;
+            return;
         }
         /**
          * Проверяем разрешено ли отправлять инбокс по времени
          */
         if (!LS::Make(ModuleACL::class)->CanSendTalkTime($this->oUserCurrent)) {
             LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('talk_time_limit'), LS::Make(ModuleLang::class)->Get('error'));
-            return false;
+            return;
         }
         /**
          * Отправляем письмо
@@ -478,7 +478,7 @@ class ActionTalk extends Action
 			Router::Location(Router::GetPath('talk') . 'read/' . $oTalk->getId() . '/');
         } else {
             LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'));
-            return Router::Action('error');
+            Router::Action('error'); return;
         }
     }
 
@@ -493,19 +493,19 @@ class ActionTalk extends Action
          */
         $sTalkId = $this->GetParam(0);
         if (!($oTalk = LS::Make(ModuleTalk::class)->GetTalkById($sTalkId))) {
-            return parent::EventNotFound();
+            parent::EventNotFound(); return;
         }
         /**
          * Пользователь есть в переписке?
          */
         if (!($oTalkUser = LS::Make(ModuleTalk::class)->GetTalkUser($oTalk->getId(), $this->oUserCurrent->getId()))) {
-            return parent::EventNotFound();
+            parent::EventNotFound(); return;
         }
         /**
          * Пользователь активен в переписке?
          */
         if ($oTalkUser->getUserActive() != ModuleTalk::TALK_USER_ACTIVE) {
-            return parent::EventNotFound();
+            parent::EventNotFound(); return;
         }
         /**
          * Обрабатываем добавление коммента
@@ -562,19 +562,19 @@ class ActionTalk extends Action
          */
         $sTalkId = $this->GetParam(0);
         if (!($oTalk = LS::Make(ModuleTalk::class)->GetTalkById($sTalkId))) {
-            return parent::EventNotFound();
+            parent::EventNotFound(); return;
         }
         /**
          * Пользователь есть в переписке?
          */
         if (!($oTalkUser = LS::Make(ModuleTalk::class)->GetTalkUser($oTalk->getId(), $this->oUserCurrent->getId()))) {
-            return parent::EventNotFound();
+            parent::EventNotFound(); return;
         }
         /**
          * Пользователь активен в переписке?
          */
         if ($oTalkUser->getUserActive() != ModuleTalk::TALK_USER_ACTIVE) {
-            return parent::EventNotFound();
+            parent::EventNotFound(); return;
         }
 
         /**
@@ -804,7 +804,7 @@ class ActionTalk extends Action
          */
         if (!LS::Make(ModuleACL::class)->CanPostTalkCommentTime($this->oUserCurrent)) {
             LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('talk_time_limit'), LS::Make(ModuleLang::class)->Get('error'));
-            return false;
+            return;
         }
         /**
          * Проверяем текст комментария

@@ -102,7 +102,7 @@ class ModuleVote extends Module {
 							else
 								$oAction->setActionType('VoteDownUser');
 						}
-                        return true;
+                        return true; //FIXME: Unreachable statement
 						LS::Make(ModuleFeedbacks::class)->SaveAction($oAction);
 				}
 

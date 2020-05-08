@@ -524,7 +524,6 @@ class ModuleViewer extends Module {
 			 * Считаем что тип не определен
 			 */
 			throw new \Exception('Can not find the block`s template: '.$sName);
-			return 'undefined';
 		}
 	}
 	/**

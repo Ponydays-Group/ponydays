@@ -313,7 +313,7 @@ class Router extends LsObject {
 	/**
 	 * Функция переадресации на другой экшен
 	 * Если ею завершить евент в экшене то запуститься новый экшен
-	 * Пример: <pre>return Router::Action('error');</pre>
+	 * Пример: <pre>Router::Action('error');</pre>
 	 *
 	 * @param string $sAction	Экшен
 	 * @param string $sEvent	Евент

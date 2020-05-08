@@ -144,7 +144,7 @@ class ModuleCache extends Module {
 		$this->sCacheType=Config::Get('sys.cache.type');
 
 		if (!$this->bUseCache) {
-			return false;
+			return;
 		}
 		/**
 		 * Файловый кеш

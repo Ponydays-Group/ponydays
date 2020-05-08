@@ -95,7 +95,7 @@ class ActionSearch extends Action {
 		$aRes = $this->PrepareResults($aReq, Config::Get('module.topic.per_page'));
 		if(FALSE === $aRes) {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'));
-			return Router::Action('error');
+			Router::Action('error'); return;
 		}
 		/**
 		 * Если поиск дал результаты
@@ -144,7 +144,7 @@ class ActionSearch extends Action {
 		$aRes = $this->PrepareResults($aReq, Config::Get('module.comment.per_page'));
 		if(FALSE === $aRes) {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'));
-			return Router::Action('error');
+			Router::Action('error'); return;
 		}
 		/**
 		 * Если поиск дал результаты

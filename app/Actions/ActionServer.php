@@ -74,7 +74,7 @@ class ActionServer extends Action
     function EventGetUserByKey() {
         LS::Make(ModuleViewer::class)->SetResponseAjax('json', true, false);
         if (!hash_equals(getRequest('token'), Config::Get('deploy_token'))) {
-            return false;
+            return;
         }
 
         $oUser = LS::Make(ModuleUser::class)->GetUserBySessionKey(getRequest("key"));

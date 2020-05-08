@@ -142,13 +142,15 @@ class ActionAjax extends Action
     function EventBan()
     {
         if (!$this->oUserCurrent || !($this->oUserCurrent->isAdministrator() || $this->oUserCurrent->isGlobalModerator())) {
-            return Router::Action('error');
+            Router::Action('error');
+            return;
         }
 
         $iUserId = (int)getRequest('iUserId');
 
         if ((int)$this->oUserCurrent->getId()==$iUserId) {
-            return Router::Action('error');
+            Router::Action('error');
+            return;
         }
 
         if ((int)getRequest('iUnban')) {
@@ -616,6 +618,7 @@ class ActionAjax extends Action
 
         /**
          * Как именно голосует пользователь
+         * FIXME: Unreachable statement
          */
         $iValue = getRequestStr('value', null, 'post');
         if (in_array($iValue, array(
@@ -1333,7 +1336,7 @@ class ActionAjax extends Action
         ) , false);
         if ($oTopic->_hasValidateErrors()) {
             LS::Make(ModuleMessage::class)->AddErrorSingle($oTopic->_getValidateError());
-            return false;
+            return;
         }
 
         /**
@@ -1358,7 +1361,7 @@ class ActionAjax extends Action
          * Передаем результат в ajax ответ
          */
         $this->viewer->AssignAjax('sText', $sTextResult);
-        return true;
+        return;
     }
 
     /**
@@ -2000,7 +2003,8 @@ class ActionAjax extends Action
              */
             if ((!$this->oUserCurrent || ($oComment->getDelete() && !(LS::Make(ModuleACL::class)->UserCanDeleteComment($this->oUserCurrent, $oComment, 1) || $this->oUserCurrent->getId() == $oComment->getUserId())))) {
                 LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'), LS::Make(ModuleLang::class)->Get('not_access'));
-                return Router::Action('error');
+                Router::Action('error');
+                return;
             }
             /**
              * Проверяет коммент на доступность из закрытых блогов.
@@ -2014,7 +2018,8 @@ class ActionAjax extends Action
                 )
             ) {
                 LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('blog_close_show'), LS::Make(ModuleLang::class)->Get('not_access'));
-                return Router::Action('error');
+                Router::Action('error');
+                return;
             }
         }
         
@@ -2291,7 +2296,7 @@ class ActionAjax extends Action
 		*/
         if ((!$this->oUserCurrent || ($oComment->getDelete() && !(LS::Make(ModuleACL::class)->UserCanDeleteComment($this->oUserCurrent, $oComment,1) || $this->oUserCurrent->getId()==$oComment->getUserId())))) {
             $this->Message_AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'),LS::Make(ModuleLang::class)->Get('not_access'));
-            return Router::Action('error');
+            Router::Action('error'); return;
         }
 		if(in_array($oTopic->getBlog()->getType(), array('close', 'invite'))
 			and (!$this->oUserCurrent
@@ -2302,7 +2307,7 @@ class ActionAjax extends Action
 			)
 		) {
 			$this->Message_AddErrorSingle(LS::Make(ModuleLang::class)->Get('blog_close_show'),LS::Make(ModuleLang::class)->Get('not_access'));
-			return Router::Action('error');
+			Router::Action('error'); return;
 		}
 		$bIgnoreDelete=false;
 		if ($this->oUserCurrent) {

@@ -180,12 +180,12 @@ abstract class Action extends LsObject {
 				$hook = LS::Make(ModuleHook::class);
 				$pars = array('event'=>$this->sCurrentEvent,'params'=>$this->GetParams());
 				$hook->Run("action_event_".strtolower($this->sCurrentAction)."_before",$pars);
-				$result=call_user_func_array(array($this,$aEvent['method']),array());
+				call_user_func_array(array($this,$aEvent['method']),array());
 				$hook->Run("action_event_".strtolower($this->sCurrentAction)."_after",$pars);
-				return $result;
+				return;
 			}
 		}
-		return $this->EventNotFound();
+		$this->EventNotFound(); return;
 	}
 
 	/**

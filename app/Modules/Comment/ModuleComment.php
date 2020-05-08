@@ -656,7 +656,7 @@ class ModuleComment extends Module {
 	 */
 	public function SetCommentsPublish($sTargetId,$sTargetType,$iPublish) {
 		if(!$aComments = $this->GetCommentsByTargetId($sTargetId,$sTargetType)) {
-			return false;
+			return;
 		}
 		if(!isset($aComments['comments']) or count($aComments)==0) {
 			return;
@@ -672,9 +672,9 @@ class ModuleComment extends Module {
 		if($this->oMapper->SetCommentsPublish($sTargetId,$sTargetType,$iPublish)){
 			LS::Make(ModuleFavourite::class)->SetFavouriteTargetPublish(array_keys($aComments['comments']),'comment',$iPublish);
 			if($iPublish!=1) $this->DeleteCommentOnlineByTargetId($sTargetId,$sTargetType);
-			return true;
+			return;
 		}
-		return false;
+		return;
 	}
 	/**
 	 * Удаляет коммент из прямого эфира

@@ -49,19 +49,19 @@ class ActionRegistration extends Action {
 		 */
         if (LS::Make(ModuleUser::class)->isRegistrationClosed()) {
             LS::Make(ModuleMessage::class)->AddNoticeSingle("Регистрация временно закрыта.");
-            return Router::Action('error');
+            Router::Action('error'); return;
         }
 
 
 		if (LS::Make(ModuleUser::class)->IsAuthorization()) {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('registration_is_authorization'),LS::Make(ModuleLang::class)->Get('attention'));
-			return Router::Action('error');
+			Router::Action('error'); return;
 		}
 		/**
 		 * Если включены инвайты то перенаправляем на страницу регистрации по инвайтам
 		 */
 		if (!LS::Make(ModuleUser::class)->IsAuthorization() and Config::Get('general.reg.invite') and !in_array(Router::GetActionEvent(),array('invite','activate','confirm')) and !$this->CheckInviteRegister()) {
-			return Router::Action('registration','invite');
+			Router::Action('registration','invite'); return;
 		}
 		$this->SetDefaultEvent('index');
 		/**
@@ -302,14 +302,14 @@ class ActionRegistration extends Action {
 		 */
 		if ($oUser and $oUser->getActivate()) {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('registration_activate_error_reactivate'),LS::Make(ModuleLang::class)->Get('error'));
-			return Router::Action('error');
+			Router::Action('error'); return;
 		}
 		/**
 		 * Если что то не то
 		 */
 		if ($bError) {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('registration_activate_error_code'),LS::Make(ModuleLang::class)->Get('error'));
-			return Router::Action('error');
+			Router::Action('error'); return;
 		}
 		/**
 		 * Активируем
@@ -326,7 +326,7 @@ class ActionRegistration extends Action {
 			return;
 		} else {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'));
-			return Router::Action('error');
+			Router::Action('error'); return;
 		}
 	}
 	/**
@@ -335,7 +335,7 @@ class ActionRegistration extends Action {
 	 */
 	protected function EventInvite() {
 		if (!Config::Get('general.reg.invite')) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		/**
 		 * Обработка отправки формы с кодом приглашения
@@ -354,7 +354,7 @@ class ActionRegistration extends Action {
 				if (!$this->CheckInviteRegister()) {
 					LS::Make(ModuleSession::class)->Set('invite_code',$oInvate->getCode());
 				}
-				return Router::Action('registration');
+				Router::Action('registration'); return;
 			} else {
 				LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('registration_invite_code_error'),LS::Make(ModuleLang::class)->Get('error'));
 			}

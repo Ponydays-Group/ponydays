@@ -72,7 +72,8 @@ class ActionMy extends Action {
 		 * Проверяем есть ли такой юзер
 		 */
 		if (!($this->oUserProfile=LS::Make(ModuleUser::class)->GetUserByLogin($sUserLogin))) {
-			return parent::EventNotFound();
+			parent::EventNotFound();
+			return;
 		}
 		/**
 		 * Передан ли номер страницы
@@ -103,7 +104,7 @@ class ActionMy extends Action {
 		 * Проверяем есть ли такой юзер
 		 */
 		if (!($this->oUserProfile=LS::Make(ModuleUser::class)->GetUserByLogin($sUserLogin))) {
-			return parent::EventNotFound();
+			parent::EventNotFound(); return;
 		}
 		/**
 		 * Передан ли номер страницы

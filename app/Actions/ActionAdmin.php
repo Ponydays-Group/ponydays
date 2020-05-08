@@ -54,8 +54,6 @@ class ActionAdmin extends Action {
 
 	/**
 	 * Инициализация
-	 *
-	 * @return string
 	 */
 	public function Init() {
 		/**
@@ -64,11 +62,12 @@ class ActionAdmin extends Action {
         /** @var ModuleUser $user */
         $user = LS::Make(ModuleUser::class);
 		if(!$user->IsAuthorization() or !$oUserCurrent=$user->GetUserCurrent() or !$oUserCurrent->isAdministrator()) {
-			return parent::EventNotFound();
-		}
-		$this->SetDefaultEvent('index');
+			parent::EventNotFound();
+		} else {
+            $this->SetDefaultEvent('index');
 
-		$this->oUserCurrent=$oUserCurrent;
+            $this->oUserCurrent = $oUserCurrent;
+        }
 	}
 	/**
 	 * Регистрация евентов
@@ -100,7 +99,7 @@ class ActionAdmin extends Action {
         /** @var ModuleUser $user */
         $user = LS::Make(ModuleUser::class);
         if (!$oUser = $user->GetUserById(getRequest('user_id'))) {
-            return false;
+            return;
         }
         $sRank = getRequest('user_rank');
         $sMail = getRequest('user_mail');
@@ -355,7 +354,7 @@ class ActionAdmin extends Action {
 				}
 				if (!$user->userFieldExistsById(getRequestStr('id'))) {
 					$message->AddError($lang->Get('system_error'),$lang->Get('error'));
-					return false;
+					return;
 				}
 				if (!$this->checkUserField()) {
 					return;

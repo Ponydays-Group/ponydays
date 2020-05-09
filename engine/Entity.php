@@ -146,6 +146,11 @@ abstract class Entity extends LsObject {
 		return $aResult;
 	}
 
+    public function GetEntityClass() {
+        $arr = explode('\\', get_class($this));
+        return array_pop($arr);
+    }
+
     /**
      * Ставим хук на вызов неизвестного метода и считаем что хотели вызвать
      * метод какого либо модуля Также производит обработку методов set* и get*
@@ -166,7 +171,7 @@ abstract class Entity extends LsObject {
 				if (isset($this->_aData[$sKey])) {
 					return $this->_aData[$sKey];
 				} else {
-					if (preg_match('/Entity([^_]+)/',get_class($this),$sModulePrefix)) {
+					if (preg_match('/Entity([^_]+)/',$this->GetEntityClass(),$sModulePrefix)) {
 						$sModulePrefix=func_underscore($sModulePrefix[1]).'_';
 						if (isset($this->_aData[$sModulePrefix.$sKey])) {
 							return $this->_aData[$sModulePrefix.$sKey];

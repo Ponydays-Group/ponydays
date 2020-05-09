@@ -14,13 +14,45 @@
 
 namespace App\Modules\EditComment\Entity;
 
-use Engine\EntityORM;
+use App\Modules\EditComment\ModuleEditComment;
+use Engine\Entity;
+use Engine\LS;
 
-class ModuleEditComment_EntityData extends EntityORM
+class ModuleEditComment_EntityData extends Entity
 {
-    protected $aRelations=array(
-        'comment' => array('belongs_to', 'ModuleComment_EntityComment', 'comment_id'),
-        'user' => array('belongs_to', 'ModuleUser_EntityUser', 'user_id'),
-        'previous_edit' => array('belongs_to', 'ModuleEditcomment_EntityData', 'previous_id'),
-    );
+    public function getCommentTextSource() {
+        return $this->_getDataOne('comment_text_source');
+    }
+
+    public function getCommentId() {
+        return $this->_getDataOne('comment_id');
+    }
+
+    public function getUserId() {
+        return $this->_getDataOne('user_id');
+    }
+
+    public function getDateAdd() {
+        return $this->_getDataOne('date_add');
+    }
+
+    public function setCommentTextSource($getRequest) {
+        $this->_aData['comment_text_source'] = $getRequest;
+    }
+
+    public function setCommentId($getId) {
+        $this->_aData['comment_id'] = $getId;
+    }
+
+    public function setUserId(int $getId) {
+        $this->_aData['user_id'] = $getId;
+    }
+
+    public function setDateAdd($sDE) {
+        $this->_aData['date_add'] = $sDE;
+    }
+
+    public function save() {
+        return LS::Make(ModuleEditComment::class)->SaveData($this);
+    }
 }

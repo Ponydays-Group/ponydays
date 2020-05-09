@@ -14,14 +14,14 @@
 
 namespace App\Modules\EditComment;
 
+use App\Modules\EditComment\Entity\ModuleEditComment_EntityData;
 use App\Modules\EditComment\Mapper\ModuleEditComment_MapperEditComment;
 use Engine\Engine;
-use Engine\LS;
-use Engine\ModuleORM;
+use Engine\Module;
 
-class ModuleEditComment extends ModuleORM
+class ModuleEditComment extends Module
 {
-
+    /** @var ModuleEditComment_MapperEditComment */
     protected $oMapper;
 
     /**
@@ -29,15 +29,29 @@ class ModuleEditComment extends ModuleORM
      */
     public function Init()
     {
-        parent::Init();
         $this->oMapper=Engine::MakeMapper(ModuleEditComment_MapperEditComment::class);
     }
-    
+
+    /**
+     * @param $iCommentId
+     *
+     * @return ModuleEditComment_EntityData
+     */
     public function GetLastEditData($iCommentId)
     {
-        $arr=LS::Make(ModuleEditComment::class)->GetDataItemsByFilter(array('comment_id'=>$iCommentId, '#order'=>array('date_add'=>'desc'), '#limit'=>array(0, 1)));
-        return array_pop($arr);
-    }    
+        $data = $this->oMapper->GetLastEditData($iCommentId);
+        return $data;
+    }
+    /**
+     * @param $iCommentId
+     *
+     * @return array ModuleEditComment_EntityData
+     */
+    public function GetDataItemsByCommentId($iCommentId)
+    {
+        $iCount = 0;
+        return $this->oMapper->GetDataItemsByCommentId($iCommentId, $iCount);
+    }
     
     public function HasAnswers($sId)
     {
@@ -49,4 +63,12 @@ class ModuleEditComment extends ModuleORM
         return $this->oMapper->GetFirstAnswer($sId);
     }
 
+    /**
+     * @param $data ModuleEditComment_EntityData
+     *
+     * @return bool
+     */
+    public function SaveData($data) {
+        return $this->oMapper->SaveData($data);
+    }
 }

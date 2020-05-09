@@ -2023,7 +2023,7 @@ class ActionAjax extends Action
             }
         }
         
-        $aData=LS::Make(ModuleEditComment::class)->GetDataItemsByCommentId($oComment->getId(), array('#order'=>array('date_add'=>'desc')));
+        $aData=LS::Make(ModuleEditComment::class)->GetDataItemsByCommentId($oComment->getId());
 
         foreach ($aData as $oData) {
 			$oUser = $this->user->GetUserById($oData->getUserId());
@@ -2194,16 +2194,7 @@ class ActionAjax extends Action
                     LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('error'));
                     return;
                 }
-                elseif (Config::Get('max_history_depth') > 0)
-                {
-                    $aTemp=LS::Make(ModuleEditComment::class)->GetDataItemsByFilter(array('comment_id'=>$oComment->getId(), '#page'=>array(1, 0)));
-                    if ($aTemp['count'] > Config::Get('max_history_depth'))
-                    {
-                        $aOldData=LS::Make(ModuleEditComment::class)->GetDataItemsByFilter(array('comment_id'=>$oComment->getId(), '#order'=>array('date_add'=>'asc'), '#limit'=>array(0, $aTemp['count'] - Config::Get('max_history_depth'))));
-                        foreach ($aOldData as $oOldData)
-                            $oOldData->delete();
-                    }
-                }
+
 				$bEdited = true;
                 $this->viewer->AssignAjax('bEdited', $bEdited);
                 $this->viewer->AssignAjax('bCanEditMore', LS::Make(ModuleACL::class)->UserCanEditComment($this->oUserCurrent, $oComment, PHP_INT_MAX) === true);

@@ -288,11 +288,11 @@ class ActionTopic extends Action {
 		 * Загружаем переменные в шаблон
 		 */
 		$aBlogs = LS::Make(ModuleBlog::class)->GetBlogsAllowByUser($this->oUserCurrent);
-		function myCmp($a, $b) {
+		$myCmp = function($a, $b) {
 			if (strcasecmp($a->getTitle(), $b->getTitle()) == 0) return 0;
 			return strcasecmp($a->getTitle(), $b->getTitle()) > 0 ? 1 : -1;
-		}
-		usort($aBlogs, "myCmp");
+		};
+		usort($aBlogs, $myCmp);
 		LS::Make(ModuleViewer::class)->Assign('aBlogsAllow',$aBlogs);
 		LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('topic_topic_create'));
 		/**

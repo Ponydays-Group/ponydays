@@ -10,7 +10,7 @@ use Engine\Module;
 class ModuleNower extends Module {
     public function Init() {}
 
-    public function PostNotificationWithComment(array $aData, ModuleComment_EntityComment $oComment) {
+    public function PostNotificationWithComment($aData, ModuleComment_EntityComment $oComment) {
     	$aData = $aData->getArrayData();
     	if ($oUserDelete = LS::Make(ModuleUser::class)->GetUserById($oComment->getDeleteUserId())) {
 			$deleteUserLogin = $oUserDelete->getLogin();

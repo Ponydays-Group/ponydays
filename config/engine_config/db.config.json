@@ -63,7 +63,8 @@
             "quotes": "___db.table.prefix___quotes",
             "notification": "___db.table.prefix___notification",
             "notification_type": "___db.table.prefix___notification_type",
-            "keyring": "security_keyring"
+            "keyring": "security_keyring",
+            "editcomment": "___db.table.prefix___editcomment_data"
         },
         "tables": {
             "engine": "InnoDB"

@@ -19,7 +19,19 @@ namespace Engine\Modules\Validate;
 
 use Engine\LsObject;
 use Engine\Module;
+use Engine\Modules\Validate\Entity\ModuleValidate_EntityValidatorBoolean;
+use Engine\Modules\Validate\Entity\ModuleValidate_EntityValidatorCaptcha;
+use Engine\Modules\Validate\Entity\ModuleValidate_EntityValidatorCompare;
+use Engine\Modules\Validate\Entity\ModuleValidate_EntityValidatorDate;
+use Engine\Modules\Validate\Entity\ModuleValidate_EntityValidatorEmail;
 use Engine\Modules\Validate\Entity\ModuleValidate_EntityValidatorInline;
+use Engine\Modules\Validate\Entity\ModuleValidate_EntityValidatorNumber;
+use Engine\Modules\Validate\Entity\ModuleValidate_EntityValidatorRegexp;
+use Engine\Modules\Validate\Entity\ModuleValidate_EntityValidatorRequired;
+use Engine\Modules\Validate\Entity\ModuleValidate_EntityValidatorString;
+use Engine\Modules\Validate\Entity\ModuleValidate_EntityValidatorTags;
+use Engine\Modules\Validate\Entity\ModuleValidate_EntityValidatorType;
+use Engine\Modules\Validate\Entity\ModuleValidate_EntityValidatorUrl;
 
 /**
  * Модуль Validate
@@ -69,6 +81,21 @@ class ModuleValidate extends Module {
 	 */
 	protected $aErrors=array();
 
+	protected static $validatorClasses = [
+	    'boolean' => ModuleValidate_EntityValidatorBoolean::class,
+	    'captcha' => ModuleValidate_EntityValidatorCaptcha::class,
+	    'compare' => ModuleValidate_EntityValidatorCompare::class,
+	    'date'    => ModuleValidate_EntityValidatorDate::class,
+	    'email'   => ModuleValidate_EntityValidatorEmail::class,
+	    'inline'  => ModuleValidate_EntityValidatorInline::class,
+	    'number'  => ModuleValidate_EntityValidatorNumber::class,
+	    'regexp'  => ModuleValidate_EntityValidatorRegexp::class,
+	    'required'=> ModuleValidate_EntityValidatorRequired::class,
+	    'string'  => ModuleValidate_EntityValidatorString::class,
+	    'tags'    => ModuleValidate_EntityValidatorTags::class,
+	    'type'    => ModuleValidate_EntityValidatorType::class,
+	    'url'     => ModuleValidate_EntityValidatorUrl::class
+    ];
 	/**
 	 * Инициализируем модуль
 	 *
@@ -148,8 +175,7 @@ class ModuleValidate extends Module {
 			if (!is_null($aFields)) {
 				$aParams['fields']=$aFields;
 			}
-			$sValidateName='Validator'.func_camelize($sName);
-			$sValidatorName='Engine\\Modules\\Validate\\Entity\\ModuleValidate_Entity'.$sValidateName;
+			$sValidatorName=self::$validatorClasses[$sName];
 			$oValidator = new $sValidatorName();
 			foreach($aParams as $sNameParam=>$sValue) {
 				$oValidator->$sNameParam=$sValue;

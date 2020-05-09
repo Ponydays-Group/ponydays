@@ -24,54 +24,33 @@ require 'vendor/autoload.php';
 
 use Engine\Config;
 
-$sDirConf=dirname(__FILE__).'/engine_config/';
-if ($hDirConf = opendir($sDirConf)) {
-	while (false !== ($sFileInclude = readdir($hDirConf))) {
-		$sFileIncludePathFull=$sDirConf.$sFileInclude;
-		if ($sFileInclude !='.' and $sFileInclude !='..' and is_file($sFileIncludePathFull)) {
-			$aPathInfo=pathinfo($sFileIncludePathFull);
-			if (isset($aPathInfo['extension']) and strtolower($aPathInfo['extension'])=='json') {
-				Config::LoadFromFile($sDirConf.$sFileInclude, false);
-			}
-		}
-	}
-	closedir($hDirConf);
+function walk_directory(string $dir_name, callable $func) {
+    if ($dir = opendir($dir_name)) {
+        while (false !== ($sFileInclude = readdir($dir))) {
+            $sFileIncludePathFull=$dir_name.$sFileInclude;
+            if ($sFileInclude !='.' and $sFileInclude !='..' and is_file($sFileIncludePathFull)) {
+                $aPathInfo=pathinfo($sFileIncludePathFull);
+                $func($aPathInfo, $dir_name, $sFileInclude);
+            }
+        }
+        closedir($dir);
+    }
 }
+
+walk_directory(dirname(__FILE__).'/engine_config/', function($aPathInfo, $sDirConf, $sFileInclude) {
+    if (isset($aPathInfo['extension']) and strtolower($aPathInfo['extension'])=='json') {
+        Config::LoadFromFile($sDirConf.$sFileInclude, false);
+    }
+});
 
 /**
  * Инклудим все *.php файлы из каталога {path.root.engine}/include/ - это файлы ядра
  */
-$sDirInclude='./include/';
-if ($hDirInclude = opendir($sDirInclude)) {
-	while (false !== ($sFileInclude = readdir($hDirInclude))) {
-		$sFileIncludePathFull=$sDirInclude.$sFileInclude;
-		if ($sFileInclude !='.' and $sFileInclude !='..' and is_file($sFileIncludePathFull)) {
-			$aPathInfo=pathinfo($sFileIncludePathFull);
-			if (isset($aPathInfo['extension']) and strtolower($aPathInfo['extension'])=='php') {
-				require_once($sDirInclude.$sFileInclude);
-			}
-		}
-	}
-	closedir($hDirInclude);
-}
-
-/**
- * Инклудим все *.php файлы из каталога {path.root.server}/include/ - пользовательские файлы
- */
-$sDirInclude=Config::get('path.root.server').'/include/';
-if ($hDirInclude = opendir($sDirInclude)) {
-	while (false !== ($sFileInclude = readdir($hDirInclude))) {
-		$sFileIncludePathFull=$sDirInclude.$sFileInclude;
-		if ($sFileInclude !='.' and $sFileInclude !='..' and is_file($sFileIncludePathFull)) {
-			$aPathInfo=pathinfo($sFileIncludePathFull);
-			if (isset($aPathInfo['extension']) and strtolower($aPathInfo['extension'])=='php') {
-				require_once($sDirInclude.$sFileInclude);
-			}
-		}
-	}
-	closedir($hDirInclude);
-}
-
+walk_directory('./include/', function($aPathInfo, $sDirInclude, $sFileInclude) {
+    if (isset($aPathInfo['extension']) and strtolower($aPathInfo['extension'])=='php') {
+        require_once($sDirInclude.$sFileInclude);
+    }
+});
 
 /**
  * Подгружаем файлы локального и продакшн-конфига

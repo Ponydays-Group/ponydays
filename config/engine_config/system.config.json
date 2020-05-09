@@ -14,8 +14,8 @@
             "standart": true,
             "name": "PHPSESSID",
             "timeout": null,
-            "host": "___sys.cookie.host___",
-            "path": "___sys.cookie.path___"
+            "host": "{sys.cookie.host}",
+            "path": "{sys.cookie.path}"
         },
         "mail": {
             "type": "mail",
@@ -36,7 +36,7 @@
         "cache": {
             "use": false,
             "type": "file",
-            "dir": "___path.root.server___/tmp/",
+            "dir": "{path.root.server}/tmp/",
             "prefix": "livestreet_cache",
             "directory_level": 1,
             "solid": true
@@ -68,7 +68,7 @@
     
     "general": {
         "close": false,
-        "rss_editor_mail": "___sys.mail.from_email___",
+        "rss_editor_mail": "{sys.mail.from_email}",
         "reg": {
             "invite": false,
             "activation": false
@@ -77,7 +77,7 @@
     "lang": {
         "current": "russian",
         "default": "russian",
-        "path": "___path.root.server___/templates/language",
+        "path": "{path.root.server}/templates/language",
         "load_to_js": []
     },
     "sitemap": {

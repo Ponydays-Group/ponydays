@@ -635,13 +635,13 @@ class ModuleComment extends Module {
 			/**
 			 * Чистим зависимые кеши
 			 */
-            /** @var ModuleCache $cache */
-            $cache = LS::Make(ModuleCache::class);
-			if(Config::Get('sys.cache.solid')){
-				$cache->Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG,array("comment_update"));
-			}
-			$cache->Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG,array("comment_update_status_{$oComment->getTargetType()}"));
-			$cache->Delete("comment_{$oComment->getId()}");
+			LS::Order(function(ModuleCache $cache) use ($oComment) {
+                if(Config::Get('sys.cache.solid')){
+                    $cache->Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG,array("comment_update"));
+                }
+                $cache->Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG,array("comment_update_status_{$oComment->getTargetType()}"));
+                $cache->Delete("comment_{$oComment->getId()}");
+            });
 			return true;
 		}
 		return false;

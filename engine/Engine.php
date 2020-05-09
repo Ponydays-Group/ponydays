@@ -23,6 +23,7 @@ use DbSimple_Mysql;
 use Engine\Modules\Cache\ModuleCache;
 use Engine\Modules\Database\ModuleDatabase;
 use Engine\Modules\Hook\ModuleHook;
+use ReflectionFunction;
 
 set_include_path(get_include_path() . PATH_SEPARATOR . dirname(__FILE__));
 
@@ -422,6 +423,23 @@ class Engine extends LsObject {
 			return $module;
 		}
 	}
+
+    /**
+     * @param callable $func
+     */
+    public function order(callable $func) {
+        try {
+            $refl = new ReflectionFunction($func);
+            $args = array();
+            foreach ($refl->getParameters() as $par) {
+                $class = $par->getClass();
+                $args[] = $this->make($class->getName());
+            }
+            $refl->invokeArgs($args);
+        } catch (\ReflectionException $e) {
+            throw new \RuntimeException('Invalid order call');
+        }
+    }
 }
 
 /**
@@ -429,48 +447,68 @@ class Engine extends LsObject {
  * @package engine
  * @since 1.0
  */
-class LS extends LsObject {
-	/**
-	 * Возвращает ядро
-	 * @see Engine::GetInstance
-	 *
-	 * @return Engine
-	 */
-	static public function E() {
-		return Engine::GetInstance();
-	}
-	/**
-	 * Возвращает объект маппера
-	 * @see Engine::MakeMapper
-	 *
-	 * @param string $sClassName Класс модуля маппера
-	 * @param DbSimple_Mysql|null $oConnect	Объект коннекта к БД
-	 * @return mixed
-	 */
-	static public function Mpr($sClassName,$oConnect=null) {
-		return Engine::MakeMapper($sClassName,$oConnect);
-	}
-	/**
-	 * Возвращает текущего авторизованного пользователя
-	 * @see ModuleUser::GetUserCurrent
-	 *
-	 * @return ModuleUser_EntityUser
-	 */
-	static public function CurUsr() {
-	    return self::Make(ModuleUser::class)->GetUserCurrent();
-	}
-	/**
-	 * Возвращает true если текущий пользователь администратор
-	 * @see ModuleUser::GetUserCurrent
-	 * @see ModuleUser_EntityUser::isAdministrator
-	 *
-	 * @return bool
-	 */
-	static public function Adm() {
-		return self::CurUsr() && self::CurUsr()->isAdministrator();
-	}
+class LS extends LsObject
+{
 
-	static public function Make(string $class): Module {
-	    return self::E()->make($class);
+    /**
+     * Возвращает ядро
+     *
+     * @see Engine::GetInstance
+     *
+     * @return Engine
+     */
+    static public function E()
+    {
+        return Engine::GetInstance();
+    }
+
+    /**
+     * Возвращает объект маппера
+     *
+     * @see Engine::MakeMapper
+     *
+     * @param string              $sClassName Класс модуля маппера
+     * @param DbSimple_Mysql|null $oConnect   Объект коннекта к БД
+     *
+     * @return mixed
+     */
+    static public function Mpr($sClassName, $oConnect = null)
+    {
+        return Engine::MakeMapper($sClassName, $oConnect);
+    }
+
+    /**
+     * Возвращает текущего авторизованного пользователя
+     *
+     * @see ModuleUser::GetUserCurrent
+     *
+     * @return ModuleUser_EntityUser
+     */
+    static public function CurUsr()
+    {
+        return self::Make(ModuleUser::class)->GetUserCurrent();
+    }
+
+    /**
+     * Возвращает true если текущий пользователь администратор
+     *
+     * @see ModuleUser::GetUserCurrent
+     * @see ModuleUser_EntityUser::isAdministrator
+     *
+     * @return bool
+     */
+    static public function Adm()
+    {
+        return self::CurUsr() && self::CurUsr()->isAdministrator();
+    }
+
+    static public function Make(string $class): Module
+    {
+        return self::E()->make($class);
+    }
+
+    static public function Order(callable $func)
+    {
+        self::E()->order($func);
     }
 }

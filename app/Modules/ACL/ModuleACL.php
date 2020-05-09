@@ -694,7 +694,7 @@ class ModuleACL extends Module {
         if ($oUser->isAdministrator())
             return true;
 
-        $aUsers=Config::Get('comment_editors');
+        $aUsers=Config::Get('module.editcomment.comment_editors');
         if (is_array($aUsers) && in_array($oUser->getId(),$aUsers))
             return true;
         if ($oComment->getTargetType() != 'talk') {
@@ -726,22 +726,22 @@ class ModuleACL extends Module {
                 return false;
         }
 
-        if ($iCheckMask & ModuleACL::ACL_EC_CHECK_MAX_EDIT_PERIOD != 0 && Config::Get('max_edit_period'))
+        if ($iCheckMask & ModuleACL::ACL_EC_CHECK_MAX_EDIT_PERIOD != 0 && Config::Get('module.editcomment.max_edit_period'))
         {
-            if (strtotime('+' . Config::Get('max_edit_period') . ' second', strtotime($oComment->getEditDate())) < time())
+            if (strtotime('+' . Config::Get('module.editcomment.max_edit_period') . ' second', strtotime($oComment->getEditDate())) < time())
                 return false;
         }
 
-        if ($iCheckMask & ModuleACL::ACL_EC_CHECK_DENY_WITH_ANSWERS != 0 && Config::Get('deny_with_answers'))
+        if ($iCheckMask & ModuleACL::ACL_EC_CHECK_DENY_WITH_ANSWERS != 0 && Config::Get('module.editcomment.deny_with_answers'))
         {
         	$oCommentAnswer = LS::Make(ModuleEditComment::class)->GetFirstAnswer($oComment->getId());
-            if ($oCommentAnswer && (time() - strtotime($oCommentAnswer->getDate()))> Config::Get('max_edit_period_from_first_answer'))
+            if ($oCommentAnswer && (time() - strtotime($oCommentAnswer->getDate()))> Config::Get('module.editcomment.max_edit_period_from_first_answer'))
                 return false;
         }
 
         if ($iCheckMask & ModuleACL::ACL_EC_CHECK_USER_RATING != 0)
         {
-            if ($oUser->getRating() < Config::Get('min_user_rating'))
+            if ($oUser->getRating() < Config::Get('module.editcomment.min_user_rating'))
                 return false;
         }
 

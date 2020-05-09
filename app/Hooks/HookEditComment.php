@@ -40,8 +40,8 @@ class HookEditComment extends Hook
     {
         $this->oUserCurrent = LS::Make(ModuleUser::class)->GetUserCurrent();
         
-        if (Config::Get('template_check_edit_rights'))
-            if (LS::Make(ModuleACL::class)->UserCanEditComment($this->oUserCurrent, $aParam['comment'],Config::Get('template_check_edit_rights'))!==true)
+        if (Config::Get('module.editcomment.template_check_edit_rights'))
+            if (LS::Make(ModuleACL::class)->UserCanEditComment($this->oUserCurrent, $aParam['comment'],Config::Get('module.editcomment.template_check_edit_rights'))!==true)
                 return;
         /** @var ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);

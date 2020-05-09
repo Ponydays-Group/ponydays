@@ -155,10 +155,6 @@
             "count_default": 20,
             "disable_vote_events": false
         },
-        "ls": {
-            "send_general": false,
-            "use_counter": false
-        },
         "wall": {
             "count_last_reply": 3,
             "per_page": 10,
@@ -176,6 +172,19 @@
         ],
         "quotes": {
             "per_page": 30
+        },
+        "editcomment": {
+            "template_check_edit_rights": 1,
+            "show_history_button": 1,
+            "show_cancel_button": true,
+            "comment_editors": [],
+            "min_user_rating": 0,
+            "max_edit_count": 5,
+            "max_edit_period": 1200,
+            "deny_with_answers": true,
+            "max_edit_period_from_first_answer": 0,
+            "add_edit_date": true,
+            "change_online": true
         }
     }
 }

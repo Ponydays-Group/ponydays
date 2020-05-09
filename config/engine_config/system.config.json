@@ -1,8 +1,5 @@
 {
     "sys": {
-        "plugins": {
-            "activation_file": "plugins.dat"
-        },
         "cookie": {
             "host": null,
             "path": "/",
@@ -80,12 +77,7 @@
         "path": "{path.root.server}/templates/language",
         "load_to_js": []
     },
-    "sitemap": {
-        "cache_lifetime": 86400,
-        "sitemap_priority": "0.8",
-        "sitemap_changefreq": "monthly"
-    },
-    
+
     "memcache": {
         "servers": [
             {

@@ -924,7 +924,6 @@ class ModuleBlog extends Module {
 					$topic->DeleteTopic($iTopicId);
 				}
 			}
-
 		}
 		/**
 		 * Удаляем связи пользователей блога.

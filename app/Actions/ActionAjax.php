@@ -2152,7 +2152,7 @@ class ActionAjax extends Action
         }
         else
         {
-            if (Config::Get('change_online'))
+            if (Config::Get('module.editcomment.change_online'))
                 $oComment->setDate($sDE);
             $oComment->setEditCount($oComment->getEditCount() + 1);
             $oComment->setEditDate($sDE);
@@ -2160,7 +2160,7 @@ class ActionAjax extends Action
             $oViewerLocal->Assign('oComment', $oComment);
             $oViewerLocal->Assign('oUserCurrent', $this->oUserCurrent);
             
-            if (Config::Get('add_edit_date'))
+            if (Config::Get('module.editcomment.add_edit_date'))
                 $oComment->setText($sText . $oViewerLocal->Fetch('inject_comment_edited.tpl'));
             else
                 $oComment->setText($sText);
@@ -2169,7 +2169,7 @@ class ActionAjax extends Action
             
             if (LS::Make(ModuleComment::class)->UpdateComment($oComment))
             {
-                if (Config::Get('change_online'))
+                if (Config::Get('module.editcomment.change_online'))
                 {
                     $oCommentOnline=new ModuleComment_EntityCommentOnline();
                     $oCommentOnline->setTargetId($oComment->getTargetId());

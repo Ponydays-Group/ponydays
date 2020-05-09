@@ -92,7 +92,7 @@ class ModuleSecurity extends Module {
 	}
 	/**
 	 * Генерирует текущий security-ключ
-	 *
+	 * TODO: hmac it
 	 * @return string
 	 */
 	public function GenerateSessionKey() {

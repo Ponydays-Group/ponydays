@@ -17,7 +17,7 @@
             "template": "___path.root.server___/templates/skin/___view.skin___",
             "compiled": "___path.root.server___/templates/compiled",
             "cache": "___path.root.server___/templates/cache",
-            "plug": "___path.root.server___/engine/Modules/Viewer/plugs"
+            "plug": "___path.root.server___/include/plugs"
         }
     },
     "static_web": "//static.lunavod.ru/",

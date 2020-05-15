@@ -17,37 +17,37 @@
 
 namespace App\Actions;
 
-use App\Modules\ACL\ModuleACL;
-use App\Modules\Blog\Entity\ModuleBlog_EntityBlog;
-use App\Modules\Blog\Entity\ModuleBlog_EntityBlogUser;
-use App\Modules\Blog\ModuleBlog;
-use App\Modules\Cast\ModuleCast;
-use App\Modules\Comment\Entity\ModuleComment_EntityComment;
-use App\Modules\Comment\Entity\ModuleComment_EntityCommentOnline;
-use App\Modules\Comment\ModuleComment;
-use App\Modules\Notification\Entity\ModuleNotification_EntityNotification;
-use App\Modules\Notification\ModuleNotification;
-use App\Modules\Notify\ModuleNotify;
-use App\Modules\Nower\ModuleNower;
-use App\Modules\Stream\ModuleStream;
-use App\Modules\Subscribe\ModuleSubscribe;
-use App\Modules\Talk\ModuleTalk;
-use App\Modules\Topic\Entity\ModuleTopic_EntityTopicRead;
-use App\Modules\Topic\ModuleTopic;
-use App\Modules\User\Entity\ModuleUser_EntityUser;
-use App\Modules\User\ModuleUser;
-use App\Modules\Userfeed\ModuleUserfeed;
+use App\Modules\ModuleACL;
+use App\Entities\EntityBlog;
+use App\Entities\EntityBlogUser;
+use App\Modules\ModuleBlog;
+use App\Modules\ModuleCast;
+use App\Entities\EntityComment;
+use App\Entities\EntityCommentOnline;
+use App\Modules\ModuleComment;
+use App\Entities\EntityNotification;
+use App\Modules\ModuleNotification;
+use App\Modules\ModuleNotify;
+use App\Modules\ModuleNower;
+use App\Modules\ModuleStream;
+use App\Modules\ModuleSubscribe;
+use App\Modules\ModuleTalk;
+use App\Entities\EntityTopicRead;
+use App\Modules\ModuleTopic;
+use App\Entities\EntityUser;
+use App\Modules\ModuleUser;
+use App\Modules\ModuleUserfeed;
 use Engine\Action;
 use Engine\Config;
 use Engine\LS;
-use Engine\Modules\Cache\ModuleCache;
-use Engine\Modules\Hook\ModuleHook;
-use Engine\Modules\Lang\ModuleLang;
-use Engine\Modules\Logger\ModuleLogger;
-use Engine\Modules\Message\ModuleMessage;
-use Engine\Modules\Security\ModuleSecurity;
-use Engine\Modules\Text\ModuleText;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleCache;
+use Engine\Modules\ModuleHook;
+use Engine\Modules\ModuleLang;
+use Engine\Modules\ModuleLogger;
+use Engine\Modules\ModuleMessage;
+use Engine\Modules\ModuleSecurity;
+use Engine\Modules\ModuleText;
+use Engine\Modules\ModuleViewer;
 use Engine\Router;
 use Zend_Cache;
 
@@ -87,7 +87,7 @@ class ActionBlog extends Action
     /**
      * Текущий пользователь
      *
-     * @var ModuleUser_EntityUser|null
+     * @var \App\Modules\User\EntityUser|null
      */
     protected $oUserCurrent = null;
     /**
@@ -244,7 +244,7 @@ class ActionBlog extends Action
         /**
          * Если всё ок то пытаемся создать блог
          */
-        $oBlog = new ModuleBlog_EntityBlog();
+        $oBlog = new EntityBlog();
         $oBlog->setOwnerId($this->oUserCurrent->getId());
         $oBlog->setTitle(strip_tags(getRequestStr('blog_title')));
         /**
@@ -611,7 +611,8 @@ class ActionBlog extends Action
     /**
      * Проверка полей блога
      *
-     * @param ModuleBlog_EntityBlog|null $oBlog
+     * @param \App\Entities\EntityBlog|null $oBlog
+     *
      * @return bool
      */
     protected function checkBlogFields($oBlog = null)
@@ -769,7 +770,7 @@ class ActionBlog extends Action
      */
     protected function EventShowTopic()
     {
-        /** @var ModuleViewer $viewer */
+        /** @var \Engine\Modules\ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);
         $sBlogUrl = '';
         if ($this->GetParamEventMatch(0, 1)) {
@@ -878,7 +879,7 @@ class ActionBlog extends Action
         $viewer->Assign('iMaxIdComment', $iMaxIdComment);
 
         if ($this->oUserCurrent) {
-            $oTopicRead = new ModuleTopic_EntityTopicRead();
+            $oTopicRead = new EntityTopicRead();
             $oTopicRead->setTopicId($oTopic->getId());
             $oTopicRead->setUserId($this->oUserCurrent->getId());
             $oTopicRead->setCommentCountLast($oTopic->getCountComment());
@@ -955,7 +956,7 @@ class ActionBlog extends Action
             $aResult[$aComment['id']] = $aComment;
         }
         if ($this->oUserCurrent) {
-            $oTopicRead= new ModuleTopic_EntityTopicRead();
+            $oTopicRead= new EntityTopicRead();
             $oTopicRead->setTopicId($oTopic->getId());
             $oTopicRead->setUserId($this->oUserCurrent->getId());
             $oTopicRead->setCommentCountLast($oTopic->getCountComment());
@@ -963,7 +964,7 @@ class ActionBlog extends Action
             $oTopicRead->setDateRead(date("Y-m-d H:i:s"));
             LS::Make(ModuleTopic::class)->SetTopicRead($oTopicRead);
         }
-        /** @var ModuleViewer $viewer */
+        /** @var \Engine\Modules\ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);
         $viewer->AssignAjax("aComments", $aResult);
         $viewer->AssignAjax("sReadlast", $sReadlast);
@@ -998,7 +999,7 @@ class ActionBlog extends Action
         /**
          * Формируем постраничность
          */
-        /** @var ModuleViewer $viewer */
+        /** @var \Engine\Modules\ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);
         $aPaging = $viewer->MakePaging($aBlogUsersResult['count'], $iPage, Config::Get('module.blog.users_per_page'), Config::Get('pagination.pages.count'), $oBlog->getUrlFull() . 'users');
         $viewer->Assign('aPaging', $aPaging);
@@ -1058,7 +1059,7 @@ class ActionBlog extends Action
         } else {
             $bCloseBlog = false;
         }
-        /** @var ModuleViewer $viewer */
+        /** @var \Engine\Modules\ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);
         $viewer->Assign('iCountBlogTopics', $oBlog->getCountTopic());
         /**
@@ -1179,7 +1180,7 @@ class ActionBlog extends Action
         } else {
             $bCloseBlog = false;
         }
-        /** @var ModuleViewer $viewer */
+        /** @var \Engine\Modules\ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);
         $viewer->Assign('iCountBlogTopics', $oBlog->getCountTopic());
         /**
@@ -1279,7 +1280,7 @@ class ActionBlog extends Action
         /**
          * Устанавливаем формат Ajax ответа
          */
-        /** @var ModuleViewer $viewer */
+        /** @var \Engine\Modules\ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);
         $viewer->SetResponseAjax('json');
         $this->SubmitComment();
@@ -1398,7 +1399,7 @@ class ActionBlog extends Action
         /**
          * Создаём коммент
          */
-        $oCommentNew = new ModuleComment_EntityComment();
+        $oCommentNew = new EntityComment();
         $oCommentNew->setTargetId($oTopic->getId());
         $oCommentNew->setTargetType('topic');
         $oCommentNew->setTargetParentId($oTopic->getBlog()->getId());
@@ -1426,7 +1427,7 @@ class ActionBlog extends Action
 			$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> <a href='".$notificationLink."'>ответил</a> вам в посте <a href='".$postLink."'>".$oTopic->getTitle()."</a>";
 			$notificationText = "";
 			if ($oCommentParent && $this->oUserCurrent->getId() != $oCommentParent->getUserId()) {
-				$notification = new ModuleNotification_EntityNotification(
+				$notification = new EntityNotification(
 					array(
 						'user_id' => $oCommentParent->getUserId(),
 						'text' => $notificationText,
@@ -1450,7 +1451,7 @@ class ActionBlog extends Action
 				$notificationLink = $postLink . "#comment" . $oCommentNew->getId();
 				$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> оставил <a href='".$notificationLink."'>комментарий</a> в вашем посте <a href='".$postLink."'>".$oTopic->getTitle()."</a>";
 				$notificationText = "";
-				$notification = new ModuleNotification_EntityNotification(
+				$notification = new EntityNotification(
 					array(
 						'user_id' => $oTopic->getUserId(),
 						'text' => $notificationText,
@@ -1475,14 +1476,14 @@ class ActionBlog extends Action
             LS::Make(ModuleHook::class)->Run('comment_add_after', array('oCommentNew' => $oCommentNew, 'oCommentParent' => $oCommentParent, 'oTopic' => $oTopic));
             LS::Make(ModuleCast::class)->sendCastNotify('comment', $oCommentNew, $oTopic, $oCommentNew->getText());
 
-            /** @var ModuleViewer $viewer */
+            /** @var \Engine\Modules\ModuleViewer $viewer */
             $viewer = LS::Make(ModuleViewer::class);
             $viewer->AssignAjax('sCommentId', $oCommentNew->getId());
             if ($oTopic->getPublish()) {
                 /**
                  * Добавляем коммент в прямой эфир если топик не в черновиках
                  */
-                $oCommentOnline = new ModuleComment_EntityCommentOnline();
+                $oCommentOnline = new EntityCommentOnline();
                 $oCommentOnline->setTargetId($oCommentNew->getTargetId());
                 $oCommentOnline->setTargetType($oCommentNew->getTargetType());
                 $oCommentOnline->setTargetParentId($oCommentNew->getTargetParentId());
@@ -1535,7 +1536,7 @@ class ActionBlog extends Action
         /**
          * Устанавливаем формат Ajax ответа
          */
-        /** @var ModuleViewer $viewer */
+        /** @var \Engine\Modules\ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);
         $viewer->SetResponseAjax('json');
         /**
@@ -1601,7 +1602,7 @@ class ActionBlog extends Action
 //        }
 
         if ($this->oUserCurrent) {
-            $oTopicRead = new ModuleTopic_EntityTopicRead();
+            $oTopicRead = new EntityTopicRead();
             $oTopicRead->setTopicId($oTopic->getId());
             $oTopicRead->setUserId($this->oUserCurrent->getId());
             $oTopicRead->setCommentCountLast($oTopic->getCountComment());
@@ -1649,7 +1650,7 @@ class ActionBlog extends Action
         /**
          * Устанавливаем формат Ajax ответа
          */
-        /** @var ModuleViewer $viewer */
+        /** @var \Engine\Modules\ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);
         $viewer->SetResponseAjax('json');
         $sUsers = getRequest('users', null, 'post');
@@ -1735,7 +1736,7 @@ class ActionBlog extends Action
                 /**
                  * Создаем нового блог-пользователя со статусом INVITED
                  */
-                $oBlogUserNew = new ModuleBlog_EntityBlogUser();
+                $oBlogUserNew = new EntityBlogUser();
                 $oBlogUserNew->setBlogId($oBlog->getId());
                 $oBlogUserNew->setUserId($oUser->getId());
                 $oBlogUserNew->setUserRole(ModuleBlog::BLOG_USER_ROLE_INVITE);
@@ -1800,7 +1801,7 @@ class ActionBlog extends Action
         /**
          * Устанавливаем формат Ajax ответа
          */
-        /** @var ModuleViewer $viewer */
+        /** @var \Engine\Modules\ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);
         $viewer->SetResponseAjax('json');
         $sUserId = getRequestStr('idUser', null, 'post');
@@ -1854,7 +1855,7 @@ class ActionBlog extends Action
         /**
          * Устанавливаем формат Ajax ответа
          */
-        /** @var ModuleViewer $viewer */
+        /** @var \Engine\Modules\ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);
         $viewer->SetResponseAjax('json');
         $sUserId = getRequestStr('idUser', null, 'post');
@@ -1907,8 +1908,8 @@ class ActionBlog extends Action
      * Выполняет отправку приглашения в блог
      * (по внутренней почте и на email)
      *
-     * @param ModuleBlog_EntityBlog $oBlog
-     * @param ModuleUser_EntityUser $oUser
+     * @param \App\Entities\EntityBlog $oBlog
+     * @param \App\Entities\EntityUser $oUser
      */
     protected function SendBlogInvite($oBlog, $oUser)
     {
@@ -1943,7 +1944,7 @@ class ActionBlog extends Action
             )
         );
 
-		$notification = new ModuleNotification_EntityNotification(array(
+		$notification = new EntityNotification(array(
 				'user_id' => $oUser->getUserId(),
 				'text' => $sText,
 				'title' => $sTitle,
@@ -2065,7 +2066,7 @@ class ActionBlog extends Action
         /**
          * Проверям авторизован ли пользователь
          */
-        /** @var ModuleLang $lang */
+        /** @var \Engine\Modules\ModuleLang $lang */
         $lang = LS::Make(ModuleLang::class);
         if (!LS::Make(ModuleUser::class)->IsAuthorization()) {
             LS::Make(ModuleMessage::class)->AddErrorSingle($lang->Get('not_access'), $lang->Get('error'));
@@ -2146,7 +2147,7 @@ class ActionBlog extends Action
         /**
          * Проверям авторизован ли пользователь
          */
-        /** @var ModuleLang $lang */
+        /** @var \Engine\Modules\ModuleLang $lang */
         $lang = LS::Make(ModuleLang::class);
         if (!LS::Make(ModuleUser::class)->IsAuthorization()) {
             LS::Make(ModuleMessage::class)->AddErrorSingle($lang->Get('not_access'), $lang->Get('error'));
@@ -2187,14 +2188,14 @@ class ActionBlog extends Action
      */
     protected function EventRestoreBlog()
     {
-        /** @var ModuleViewer $viewer */
+        /** @var \Engine\Modules\ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);
 		$viewer->SetResponseAjax('json');
         LS::Make(ModuleSecurity::class)->ValidateSendForm();
         /**
          * Проверяем передан ли в УРЛе номер блога
          */
-        /** @var ModuleLang $lang */
+        /** @var \Engine\Modules\ModuleLang $lang */
         $lang = LS::Make(ModuleLang::class);
         $sBlogId = $this->GetParam(0);
         if (!$oBlog = LS::Make(ModuleBlog::class)->GetBlogById($sBlogId)) {
@@ -2247,7 +2248,7 @@ class ActionBlog extends Action
         /**
          * Устанавливаем формат Ajax ответа
          */
-        /** @var ModuleViewer $viewer */
+        /** @var \Engine\Modules\ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);
         $viewer->SetResponseAjax('json');
         $sBlogId = getRequestStr('idBlog', null, 'post');
@@ -2276,9 +2277,9 @@ class ActionBlog extends Action
      */
     protected function AjaxBlogJoin()
     {
-        /** @var ModuleViewer $viewer */
+        /** @var \Engine\Modules\ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);
-        /** @var ModuleLang $lang */
+        /** @var \Engine\Modules\ModuleLang $lang */
         $lang = LS::Make(ModuleLang::class);
         /**
          * Устанавливаем формат Ajax ответа
@@ -2322,7 +2323,7 @@ class ActionBlog extends Action
                     $bResult = LS::Make(ModuleBlog::class)->UpdateRelationBlogUser($oBlogUser);
                     //} elseif($oBlog->getType()=='open' or $oBlog->getType()=='invite') {
                 } elseif ($oBlog->getType() != 'close') {
-                    $oBlogUserNew = new ModuleBlog_EntityBlogUser();
+                    $oBlogUserNew = new EntityBlogUser();
                     $oBlogUserNew->setBlogId($oBlog->getId());
                     $oBlogUserNew->setUserId($this->oUserCurrent->getId());
                     $oBlogUserNew->setUserRole(ModuleBlog::BLOG_USER_ROLE_USER);
@@ -2391,7 +2392,7 @@ class ActionBlog extends Action
      */
     public function EventShutdown()
     {
-        /** @var ModuleViewer $viewer */
+        /** @var \Engine\Modules\ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);
         /**
          * Загружаем в шаблон необходимые переменные

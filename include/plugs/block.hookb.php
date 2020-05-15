@@ -16,7 +16,7 @@
 */
 
 use Engine\LS;
-use Engine\Modules\Hook\ModuleHook;
+use Engine\Modules\ModuleHook;
 
 /**
  * Плагин для смарти

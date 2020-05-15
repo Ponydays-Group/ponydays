@@ -17,11 +17,11 @@
 
 namespace App\Blocks;
 
-use App\Modules\Stream\ModuleStream;
-use App\Modules\User\ModuleUser;
+use App\Modules\ModuleStream;
+use App\Modules\ModuleUser;
 use Engine\Block;
 use Engine\LS;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleViewer;
 
 /**
  * Блок настройки ленты активности

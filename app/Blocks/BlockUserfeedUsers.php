@@ -17,11 +17,11 @@
 
 namespace App\Blocks;
 
-use App\Modules\User\ModuleUser;
-use App\Modules\Userfeed\ModuleUserfeed;
+use App\Modules\ModuleUser;
+use App\Modules\ModuleUserfeed;
 use Engine\Block;
 use Engine\LS;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleViewer;
 
 /**
  * Блок настройки списка пользователей в ленте
@@ -44,7 +44,7 @@ class BlockUserfeedUsers extends Block {
 			$aUserSubscribes = LS::Make(ModuleUserfeed::class)->getUserSubscribes($oUserCurrent->getId());
 			$aFriends = LS::Make(ModuleUser::class)->getUsersFriend($oUserCurrent->getId());
 
-            /** @var ModuleViewer $viewer */
+            /** @var \Engine\Modules\ModuleViewer $viewer */
             $viewer = LS::Make(ModuleViewer::class);
 			$viewer->Assign('aUserfeedSubscribedUsers', $aUserSubscribes['users']);
 			$viewer->Assign('aUserfeedFriends', $aFriends['collection']);

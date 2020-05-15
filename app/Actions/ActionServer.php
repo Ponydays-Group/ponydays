@@ -2,15 +2,14 @@
 
 namespace App\Actions;
 
-use App\Modules\Blog\ModuleBlog;
-use App\Modules\Talk\ModuleTalk;
-use App\Modules\Topic\ModuleTopic;
-use App\Modules\User\Entity\ModuleUser_EntityUser;
-use App\Modules\User\ModuleUser;
+use App\Modules\ModuleBlog;
+use App\Modules\ModuleTalk;
+use App\Modules\ModuleTopic;
+use App\Modules\ModuleUser;
 use Engine\Action;
 use Engine\Config;
 use Engine\LS;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleViewer;
 
 /**
  * Экшен обработки ajax запросов
@@ -24,7 +23,7 @@ class ActionServer extends Action
     /**
      * Текущий пользователь
      *
-     * @var ModuleUser_EntityUser|null
+     * @var \App\Entities\EntityUser|null
      */
     protected $oUserCurrent = null;
 

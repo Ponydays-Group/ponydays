@@ -17,7 +17,7 @@
 
 namespace App\Hooks;
 
-use App\Modules\User\ModuleUser;
+use App\Modules\ModuleUser;
 use Engine\Config;
 use Engine\Hook;
 use Engine\LS;

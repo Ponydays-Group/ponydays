@@ -19,7 +19,7 @@ namespace App\Hooks;
 
 use Engine\Engine;
 use Engine\Hook;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleViewer;
 use Engine\Router;
 
 /**
@@ -42,7 +42,7 @@ class HookStatisticsPerformance extends Hook {
 	 */
 	public function Statistics() {
 		$oEngine=Engine::getInstance();
-        /** @var ModuleViewer $viewer */
+        /** @var \Engine\Modules\ModuleViewer $viewer */
         $viewer = $oEngine->make(ModuleViewer::class);
         /**
 		 * Подсчитываем время выполнения

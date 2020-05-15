@@ -16,7 +16,7 @@
 */
 
 use Engine\LS;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleViewer;
 
 /**
  * Добавляет блок(в сайдбар, тулбар и т.п.)

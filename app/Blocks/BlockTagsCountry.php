@@ -17,11 +17,11 @@
 
 namespace App\Blocks;
 
-use App\Modules\Geo\ModuleGeo;
-use App\Modules\Tools\ModuleTools;
+use App\Modules\ModuleGeo;
+use App\Modules\ModuleTools;
 use Engine\Block;
 use Engine\LS;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleViewer;
 
 /**
  * Обрабатывает блок облака тегов стран юзеров

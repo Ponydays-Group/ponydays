@@ -17,23 +17,23 @@
 
 namespace App\Actions;
 
-use App\Modules\ACL\ModuleACL;
-use App\Modules\Blog\ModuleBlog;
-use App\Modules\Comment\ModuleComment;
-use App\Modules\Stream\ModuleStream;
-use App\Modules\Subscribe\ModuleSubscribe;
-use App\Modules\Topic\Entity\ModuleTopic_EntityTopic;
-use App\Modules\Topic\ModuleTopic;
-use App\Modules\User\Entity\ModuleUser_EntityUser;
-use App\Modules\User\ModuleUser;
+use App\Modules\ModuleACL;
+use App\Modules\ModuleBlog;
+use App\Modules\ModuleComment;
+use App\Modules\ModuleStream;
+use App\Modules\ModuleSubscribe;
+use App\Entities\EntityTopic;
+use App\Modules\ModuleTopic;
+use App\Entities\EntityUser;
+use App\Modules\ModuleUser;
 use Engine\Action;
 use Engine\LS;
-use Engine\Modules\Hook\ModuleHook;
-use Engine\Modules\Lang\ModuleLang;
-use Engine\Modules\Message\ModuleMessage;
-use Engine\Modules\Security\ModuleSecurity;
-use Engine\Modules\Text\ModuleText;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleHook;
+use Engine\Modules\ModuleLang;
+use Engine\Modules\ModuleMessage;
+use Engine\Modules\ModuleSecurity;
+use Engine\Modules\ModuleText;
+use Engine\Modules\ModuleViewer;
 use Engine\Router;
 
 /**
@@ -64,7 +64,7 @@ class ActionLink extends Action {
 	/**
 	 * Текущий юзер
 	 *
-	 * @var ModuleUser_EntityUser|null
+	 * @var \App\Entities\EntityUser|null
 	 */
 	protected $oUserCurrent=null;
 
@@ -237,7 +237,7 @@ class ActionLink extends Action {
 		if (!isPost('submit_topic_publish') and !isPost('submit_topic_save')) {
 			return;
 		}
-		$oTopic = new ModuleTopic_EntityTopic();
+		$oTopic = new EntityTopic();
 		$oTopic->_setValidateScenario('link');
 		/**
 		 * Заполняем поля для валидации
@@ -358,7 +358,8 @@ class ActionLink extends Action {
 	/**
 	 * Обработка редактирования топика
 	 *
-	 * @param ModuleTopic_EntityTopic $oTopic
+	 * @param EntityTopic $oTopic
+	 *
 	 * @return mixed
 	 */
 	protected function SubmitEdit($oTopic) {
@@ -491,7 +492,8 @@ class ActionLink extends Action {
 	/**
 	 * Проверка полей формы
 	 *
-	 * @param ModuleTopic_EntityTopic $oTopic
+	 * @param EntityTopic $oTopic
+	 *
 	 * @return bool
 	 */
 	protected function checkTopicFields($oTopic) {

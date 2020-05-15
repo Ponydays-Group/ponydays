@@ -17,19 +17,19 @@
 
 namespace App\Actions;
 
-use App\Modules\ACL\ModuleACL;
-use App\Modules\Blog\ModuleBlog;
-use App\Modules\Comment\ModuleComment;
-use App\Modules\Talk\ModuleTalk;
-use App\Modules\Topic\ModuleTopic;
-use App\Modules\User\Entity\ModuleUser_EntityUser;
-use App\Modules\User\ModuleUser;
+use App\Modules\ModuleACL;
+use App\Modules\ModuleBlog;
+use App\Modules\ModuleComment;
+use App\Modules\ModuleTalk;
+use App\Modules\ModuleTopic;
+use App\Entities\EntityUser;
+use App\Modules\ModuleUser;
 use Engine\Action;
 use Engine\Config;
 use Engine\LS;
-use Engine\Modules\Lang\ModuleLang;
-use Engine\Modules\Message\ModuleMessage;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleLang;
+use Engine\Modules\ModuleMessage;
+use Engine\Modules\ModuleViewer;
 use Engine\Router;
 
 /**
@@ -43,7 +43,7 @@ class ActionInfo extends Action
     /**
      * Текущий юзер
      *
-     * @var ModuleUser_EntityUser|null
+     * @var \App\Entities\EntityUser|null
      */
     protected $oUserCurrent = null;
 

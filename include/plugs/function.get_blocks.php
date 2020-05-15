@@ -16,7 +16,7 @@
 */
 
 use Engine\LS;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleViewer;
 
 /**
  * Загружает в переменную список блоков

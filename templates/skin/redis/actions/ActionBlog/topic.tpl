@@ -15,7 +15,7 @@
 	bAllowSubscribe=true
 	oSubscribeComment=$oTopic->getSubscribeNewComment()
 	aPagingCmt=$aPagingCmt
-	bEnableCommentsVoteInfo=$E->make(App\Modules\ACL\ModuleACL::class)->CheckSimpleAccessLevel($oConfig->Get('acl.vote_list.comment.ne_enable_level'), $oUserCurrent, $oTopic, 'topic')
+	bEnableCommentsVoteInfo=$E->make(App\Modules\ModuleACL::class)->CheckSimpleAccessLevel($oConfig->Get('acl.vote_list.comment.ne_enable_level'), $oUserCurrent, $oTopic, 'topic')
 	}
 
 {include file='footer.tpl'}

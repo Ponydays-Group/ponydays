@@ -2,12 +2,12 @@
 
 namespace App\Actions;
 
-use App\Modules\Feedbacks\ModuleFeedbacks;
-use App\Modules\User\ModuleUser;
+use App\Modules\ModuleFeedbacks;
+use App\Modules\ModuleUser;
 use Engine\Action;
 use Engine\LS;
-use Engine\Modules\Message\ModuleMessage;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleMessage;
+use Engine\Modules\ModuleViewer;
 use Engine\Router;
 
 class ActionFeedbacks extends Action{

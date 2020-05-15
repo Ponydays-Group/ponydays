@@ -2,10 +2,10 @@
 
 namespace App\Hooks;
 
-use App\Modules\Quotes\ModuleQuotes;
+use App\Modules\ModuleQuotes;
 use Engine\Hook;
 use Engine\LS;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleViewer;
 
 /**
  * User: silvman
@@ -21,7 +21,7 @@ class HookQuotes extends Hook {
 	public function GetQuote() {
 		$aQuote = LS::Make(ModuleQuotes::class)->GetRandomQuote();
 
-        /** @var ModuleViewer $viewer */
+        /** @var \Engine\Modules\ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);
         $viewer->Assign('sQuote', $aQuote['data']);
 		$viewer->Assign('iQuoteId',$aQuote['id']);

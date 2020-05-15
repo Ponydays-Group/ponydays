@@ -17,30 +17,28 @@
 
 namespace App\Actions;
 
-use App\Modules\ACL\ModuleACL;
-use App\Modules\Comment\Entity\ModuleComment_EntityComment;
-use App\Modules\Comment\ModuleComment;
-use App\Modules\Favourite\ModuleFavourite;
-use App\Modules\Notification\Entity\ModuleNotification_EntityNotification;
-use App\Modules\Notification\ModuleNotification;
-use App\Modules\Notify\ModuleNotify;
-use App\Modules\Nower\ModuleNower;
-use App\Modules\Talk\Entity\ModuleTalk_EntityTalkUser;
-use App\Modules\Talk\ModuleTalk;
-use App\Modules\Topic\ModuleTopic;
-use App\Modules\User\Entity\ModuleUser_EntityUser;
-use App\Modules\User\ModuleUser;
-use App\Modules\Wall\ModuleWall;
+use App\Modules\ModuleACL;
+use App\Entities\EntityComment;
+use App\Modules\ModuleComment;
+use App\Modules\ModuleFavourite;
+use App\Entities\EntityNotification;
+use App\Modules\ModuleNotification;
+use App\Modules\ModuleNotify;
+use App\Modules\ModuleNower;
+use App\Entities\EntityTalkUser;
+use App\Modules\ModuleTalk;
+use App\Modules\ModuleTopic;
+use App\Modules\ModuleUser;
+use App\Modules\ModuleWall;
 use Engine\Action;
 use Engine\Config;
-use Engine\Engine;
 use Engine\LS;
-use Engine\Modules\Hook\ModuleHook;
-use Engine\Modules\Lang\ModuleLang;
-use Engine\Modules\Message\ModuleMessage;
-use Engine\Modules\Security\ModuleSecurity;
-use Engine\Modules\Text\ModuleText;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleHook;
+use Engine\Modules\ModuleLang;
+use Engine\Modules\ModuleMessage;
+use Engine\Modules\ModuleSecurity;
+use Engine\Modules\ModuleText;
+use Engine\Modules\ModuleViewer;
 use Engine\Router;
 
 /**
@@ -54,7 +52,7 @@ class ActionTalk extends Action
     /**
      * Текущий юзер
      *
-     * @var ModuleUser_EntityUser|null
+     * @var \App\Entities\EntityUser|null
      */
     protected $oUserCurrent = null;
     /**
@@ -454,7 +452,7 @@ class ActionTalk extends Action
 					$notificationLink = "/talk/read/" . $oTalk->getId();
 					$notificationTitle = "Пользователь " . $this->oUserCurrent->getLogin() . " отправил вам <a href='".$notificationLink."'>личное письмо</a>";
 					$notificationText = $oTalk->getTitle();
-					$notification = new ModuleNotification_EntityNotification(
+					$notification = new EntityNotification(
 						array(
 							'user_id' => $oUserTalk->getUserId(),
 							'text' => $notificationText,
@@ -858,7 +856,7 @@ class ActionTalk extends Action
         /**
          * Создаём коммент
          */
-        $oCommentNew = new ModuleComment_EntityComment();
+        $oCommentNew = new EntityComment();
         $oCommentNew->setTargetId($oTalk->getId());
         $oCommentNew->setTargetType('talk');
         $oCommentNew->setUserId($this->oUserCurrent->getId());
@@ -899,7 +897,7 @@ class ActionTalk extends Action
 					$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() .
 						"</a> ответил вам в личке <a href='".$notificationLink."'>".$oTalk->getTitle()."</a>";
 					$notificationText = "";
-					$notification = new ModuleNotification_EntityNotification(
+					$notification = new EntityNotification(
 						array(
 							'user_id' => $oUserTalk->getId(),
 							'text' => $notificationText,
@@ -1269,7 +1267,7 @@ class ActionTalk extends Action
 			"</a> приглашает вас вернуться в переписку <a href='".$notificationLink."'>".$oTalk->getTitle()."</a>";
 		$notificationText = "<div id=\"accept_invite_talk_back\"><a href=\"#\" idTalk=\"" . $idTalk . "\" id=\"speaker_accept_restore_item_" . $idTarget .
 			"\" class=\"delete\" onclick=\"ls.talk.acceptInviteBackToTalk(this)\">Вернуться в переписку</a></div>";
-		$notification = new ModuleNotification_EntityNotification(
+		$notification = new EntityNotification(
 			array(
 				'user_id' => $oUserTarget->getUserId(),
 				'text' => $notificationText,
@@ -1470,7 +1468,7 @@ class ActionTalk extends Action
                             case ModuleTalk::TALK_USER_DELETE_BY_AUTHOR:
                                 if (
                                 LS::Make(ModuleTalk::class)->AddTalkUser(
-                                    new ModuleTalk_EntityTalkUser(
+                                    new EntityTalkUser(
                                         array(
                                             'talk_id' => $idTalk,
                                             'user_id' => $oUser->getId(),
@@ -1530,7 +1528,7 @@ class ActionTalk extends Action
                         }
                     } elseif (
                     LS::Make(ModuleTalk::class)->AddTalkUser(
-                        new ModuleTalk_EntityTalkUser(
+                        new EntityTalkUser(
                             array(
                                 'talk_id' => $idTalk,
                                 'user_id' => $oUser->getId(),

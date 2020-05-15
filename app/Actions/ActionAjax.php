@@ -17,39 +17,39 @@
 
 namespace App\Actions;
 
-use App\Modules\ACL\ModuleACL;
-use App\Modules\Blog\ModuleBlog;
-use App\Modules\Cast\ModuleCast;
-use App\Modules\Comment\Entity\ModuleComment_EntityCommentOnline;
-use App\Modules\Comment\ModuleComment;
-use App\Modules\EditComment\Entity\ModuleEditComment_EntityData;
-use App\Modules\EditComment\ModuleEditComment;
-use App\Modules\Favourite\Entity\ModuleFavourite_EntityFavourite;
-use App\Modules\Favourite\ModuleFavourite;
-use App\Modules\Geo\ModuleGeo;
-use App\Modules\Notification\Entity\ModuleNotification_EntityNotification;
-use App\Modules\Notification\ModuleNotification;
-use App\Modules\Nower\ModuleNower;
-use App\Modules\Rating\ModuleRating;
-use App\Modules\Stream\ModuleStream;
-use App\Modules\Talk\ModuleTalk;
-use App\Modules\Topic\Entity\ModuleTopic_EntityTopic;
-use App\Modules\Topic\Entity\ModuleTopic_EntityTopicQuestionVote;
-use App\Modules\Topic\ModuleTopic;
-use App\Modules\User\Entity\ModuleUser_EntityUser;
-use App\Modules\User\ModuleUser;
-use App\Modules\Vote\Entity\ModuleVote_EntityVote;
-use App\Modules\Vote\ModuleVote;
+use App\Modules\ModuleACL;
+use App\Modules\ModuleBlog;
+use App\Modules\ModuleCast;
+use App\Entities\EntityCommentOnline;
+use App\Modules\ModuleComment;
+use App\Entities\EntityEditCommentData;
+use App\Modules\ModuleEditComment;
+use App\Entities\EntityFavourite;
+use App\Modules\ModuleFavourite;
+use App\Modules\ModuleGeo;
+use App\Entities\EntityNotification;
+use App\Modules\ModuleNotification;
+use App\Modules\ModuleNower;
+use App\Modules\ModuleRating;
+use App\Modules\ModuleStream;
+use App\Modules\ModuleTalk;
+use App\Entities\EntityTopic;
+use App\Entities\EntityTopicQuestionVote;
+use App\Modules\ModuleTopic;
+use App\Entities\EntityUser;
+use App\Modules\ModuleUser;
+use App\Entities\EntityVote;
+use App\Modules\ModuleVote;
 use Engine\Config;
 use Engine\Action;
 use Engine\LS;
-use Engine\Modules\Hook\ModuleHook;
-use Engine\Modules\Image\ModuleImage;
-use Engine\Modules\Lang\ModuleLang;
-use Engine\Modules\Logger\ModuleLogger;
-use Engine\Modules\Message\ModuleMessage;
-use Engine\Modules\Text\ModuleText;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleHook;
+use Engine\Modules\ModuleImage;
+use Engine\Modules\ModuleLang;
+use Engine\Modules\ModuleLogger;
+use Engine\Modules\ModuleMessage;
+use Engine\Modules\ModuleText;
+use Engine\Modules\ModuleViewer;
 use Engine\Router;
 
 /**
@@ -64,7 +64,7 @@ class ActionAjax extends Action
     /**
      * Текущий пользователь
      *
-     * @var ModuleUser_EntityUser|null
+     * @var EntityUser|null
      */
     protected $oUserCurrent = null;
     /**
@@ -72,7 +72,7 @@ class ActionAjax extends Action
      */
     protected $viewer = null;
     /**
-     * @var ModuleUser
+     * @var \App\Modules\ModuleUser
      */
     protected $user = null;
     /**
@@ -159,7 +159,7 @@ class ActionAjax extends Action
 			LS::Make(ModuleLogger::class)->Notice($sLogText);
 
 			$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> разбанил вас на сайте";
-			$notification = new ModuleNotification_EntityNotification(
+			$notification = new EntityNotification(
 				array(
 					'user_id' => $iUserId,
 					'text' => "",
@@ -194,7 +194,7 @@ class ActionAjax extends Action
         LS::Make(ModuleLogger::class)->Notice($sLogText);
 
 		$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> забанил вас на сайте";
-		$notification = new ModuleNotification_EntityNotification(
+		$notification = new EntityNotification(
 			array(
 				'user_id' => $iUserId,
 				'text' => "",
@@ -419,7 +419,7 @@ class ActionAjax extends Action
             LS::Make(ModuleVote::class)->DeleteVote($oComment->getId(), 'comment', $this->oUserCurrent->getId());
         }
 
-        $oTopicCommentVote = new ModuleVote_EntityVote();
+        $oTopicCommentVote = new EntityVote();
         $oTopicCommentVote->setTargetId($oComment->getId());
         $oTopicCommentVote->setTargetType('comment');
         $oTopicCommentVote->setVoterId($this->oUserCurrent->getId());
@@ -526,7 +526,7 @@ class ActionAjax extends Action
             LS::Make(ModuleVote::class)->DeleteVote($oTopic->getId(), 'topic', $this->oUserCurrent->getId());
         }
 
-        $oTopicVote = new ModuleVote_EntityVote();
+        $oTopicVote = new EntityVote();
         $oTopicVote->setTargetId($oTopic->getId());
         $oTopicVote->setTargetType('topic');
         $oTopicVote->setVoterId($this->oUserCurrent->getId());
@@ -644,7 +644,7 @@ class ActionAjax extends Action
             }
             LS::Make(ModuleVote::class)->DeleteVote($oBlog->getId(), 'comment', $this->oUserCurrent->getId());
         }
-        $oBlogVote = new ModuleVote_EntityVote();
+        $oBlogVote = new EntityVote();
         $oBlogVote->setTargetId($oBlog->getId());
         $oBlogVote->setTargetType('blog');
         $oBlogVote->setVoterId($this->oUserCurrent->getId());
@@ -732,7 +732,7 @@ class ActionAjax extends Action
         /**
          * Голосуем
          */
-        $oUserVote = new ModuleVote_EntityVote();
+        $oUserVote = new EntityVote();
         $oUserVote->setTargetId($oUser->getId());
         $oUserVote->setTargetType('user');
         $oUserVote->setVoterId($this->oUserCurrent->getId());
@@ -830,7 +830,7 @@ class ActionAjax extends Action
         /**
          * Голосуем(отвечаем на опрос)
          */
-        $oTopicQuestionVote = new ModuleTopic_EntityTopicQuestionVote();
+        $oTopicQuestionVote = new EntityTopicQuestionVote();
         $oTopicQuestionVote->setTopicId($oTopic->getId());
         $oTopicQuestionVote->setVoterId($this->oUserCurrent->getId());
         $oTopicQuestionVote->setAnswer($idAnswer);
@@ -948,7 +948,7 @@ class ActionAjax extends Action
          */
         $oFavouriteTopic = LS::Make(ModuleTopic::class)->GetFavouriteTopic($oTopic->getId() , $this->oUserCurrent->getId());
         if (!$oFavouriteTopic and $iType) {
-            $oFavouriteTopicNew = new ModuleFavourite_EntityFavourite(array(
+            $oFavouriteTopicNew = new EntityFavourite(array(
                 'target_id' => $oTopic->getId() ,
                 'user_id' => $this->oUserCurrent->getId() ,
                 'target_type' => 'topic',
@@ -1038,7 +1038,7 @@ class ActionAjax extends Action
          */
         $oFavouriteComment = LS::Make(ModuleComment::class)->GetFavouriteComment($oComment->getId() , $this->oUserCurrent->getId());
         if (!$oFavouriteComment and $iType) {
-            $oFavouriteCommentNew = new ModuleFavourite_EntityFavourite(
+            $oFavouriteCommentNew = new EntityFavourite(
                 array(
                     'target_id' => $oComment->getId() ,
                     'target_type' => 'comment',
@@ -1122,7 +1122,7 @@ class ActionAjax extends Action
          */
         $oFavouriteTalk = LS::Make(ModuleTalk::class)->GetFavouriteTalk($oTalk->getId() , $this->oUserCurrent->getId());
         if (!$oFavouriteTalk and $iType) {
-            $oFavouriteTalkNew = new ModuleFavourite_EntityFavourite(array(
+            $oFavouriteTalkNew = new EntityFavourite(array(
                 'target_id' => $oTalk->getId() ,
                 'target_type' => 'talk',
                 'user_id' => $this->oUserCurrent->getId() ,
@@ -1317,7 +1317,7 @@ class ActionAjax extends Action
         /**
          * Создаем объект топика для валидации данных
          */
-        $oTopic = new ModuleTopic_EntityTopic();
+        $oTopic = new EntityTopic();
         $oTopic->_setValidateScenario($sType); // зависит от типа топика
         $oTopic->setTitle(strip_tags(getRequestStr('topic_title')));
         $oTopic->setTextSource(getRequestStr('topic_text'));
@@ -1662,7 +1662,7 @@ class ActionAjax extends Action
 			$notificationType = 8;
 		}
 		$notificationText = "";
-		$notification = new ModuleNotification_EntityNotification(
+		$notification = new EntityNotification(
 			array(
 				'user_id' => $oComment->getUserId(),
 				'text' => $notificationText,
@@ -1685,7 +1685,7 @@ class ActionAjax extends Action
 			$notificationLink = LS::Make(ModuleTopic::class)->GetTopicById($oComment->getTargetId())->getUrl()."#comment".$oComment->getId();
 			$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> восстановил удаленный вами <a href='".$notificationLink."'>комментарий</a>";
 			$notificationText = "";
-			$notification = new ModuleNotification_EntityNotification(
+			$notification = new EntityNotification(
 				array(
 					'user_id' => $lastdeleteUser,
 					'text' => $notificationText,
@@ -2171,7 +2171,7 @@ class ActionAjax extends Action
             {
                 if (Config::Get('module.editcomment.change_online'))
                 {
-                    $oCommentOnline=new ModuleComment_EntityCommentOnline();
+                    $oCommentOnline=new EntityCommentOnline();
                     $oCommentOnline->setTargetId($oComment->getTargetId());
                     $oCommentOnline->setTargetType($oComment->getTargetType());
                     $oCommentOnline->setTargetParentId($oComment->getTargetParentId());
@@ -2183,7 +2183,7 @@ class ActionAjax extends Action
                 $this->oUserCurrent->setDateCommentLast($sDE);
                 $this->user->Update($this->oUserCurrent);
                 
-                $oData= new ModuleEditcomment_EntityData();
+                $oData= new EntityEditCommentData();
                 $oData->setCommentTextSource(getRequest('comment_text'));
                 $oData->setCommentId($oComment->getId());
                 $oData->setUserId($this->oUserCurrent->getId());
@@ -2212,7 +2212,7 @@ class ActionAjax extends Action
 				$notificationLink = LS::Make(ModuleTopic::class)->GetTopicById($oComment->getTargetId())->getUrl(). "#comment" . $oComment->getId();
 				$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a>" . " отредактировал ваш <a href='".$notificationLink."'>комментарий</a> в посте <a href='/blog/undefined/" . $oComment->getTargetId()."'>".$oComment->getTarget()->getTitle()."</a>";
 				$notificationText = "";
-				$notification = new ModuleNotification_EntityNotification(
+				$notification = new EntityNotification(
 				    array(
 						'user_id' => $oComment->getUserId(),
 						'text' => $notificationText,
@@ -2242,7 +2242,7 @@ class ActionAjax extends Action
 				$notificationLink = "/talk/" . $oComment->getTargetId() . "#comment" . $oComment->getId();
 				$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a>" . " отредактировал ваш <a href='".$notificationLink."'>комментарий</a> в личке " . $oTalk->getTitle();
 				$notificationText = "";
-				$notification = new ModuleNotification_EntityNotification(
+				$notification = new EntityNotification(
 					array(
 						'user_id' => $oComment->getUserId(),
 						'text' => $notificationText,

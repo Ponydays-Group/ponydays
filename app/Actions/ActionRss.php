@@ -17,15 +17,15 @@
 
 namespace App\Actions;
 
-use App\Modules\Blog\ModuleBlog;
-use App\Modules\Comment\ModuleComment;
-use App\Modules\Topic\ModuleTopic;
-use App\Modules\User\ModuleUser;
+use App\Modules\ModuleBlog;
+use App\Modules\ModuleComment;
+use App\Modules\ModuleTopic;
+use App\Modules\ModuleUser;
 use Engine\Action;
 use Engine\Config;
 use Engine\LS;
-use Engine\Modules\Lang\ModuleLang;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleLang;
+use Engine\Modules\ModuleViewer;
 use Engine\Router;
 
 /**

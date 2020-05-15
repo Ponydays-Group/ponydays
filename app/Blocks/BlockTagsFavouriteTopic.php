@@ -17,12 +17,12 @@
 
 namespace App\Blocks;
 
-use App\Modules\Favourite\ModuleFavourite;
-use App\Modules\Tools\ModuleTools;
-use App\Modules\User\ModuleUser;
+use App\Modules\ModuleFavourite;
+use App\Modules\ModuleTools;
+use App\Modules\ModuleUser;
 use Engine\Block;
 use Engine\LS;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleViewer;
 
 /**
  * Обрабатывает блок облака тегов для избранного
@@ -42,9 +42,9 @@ class BlockTagsFavouriteTopic extends Block {
 			if (!($oUser=$this->getParam('user'))) {
 				$oUser=$oUserCurrent;
 			}
-            /** @var ModuleViewer $viewer */
+            /** @var \Engine\Modules\ModuleViewer $viewer */
             $viewer = LS::Make(ModuleViewer::class);
-            /** @var ModuleFavourite $fav */
+            /** @var \App\Modules\ModuleFavourite $fav */
             $fav = LS::Make(ModuleFavourite::class);
 			/**
 			 * Получаем список тегов

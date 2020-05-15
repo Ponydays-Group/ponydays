@@ -17,13 +17,13 @@
 
 namespace App\Actions;
 
-use App\Modules\Topic\ModuleTopic;
-use App\Modules\User\ModuleUser;
+use App\Modules\ModuleTopic;
+use App\Modules\ModuleUser;
 use Engine\Action;
 use Engine\Config;
 use Engine\LS;
-use Engine\Modules\Hook\ModuleHook;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleHook;
+use Engine\Modules\ModuleViewer;
 use Engine\Router;
 
 /**
@@ -110,7 +110,7 @@ class ActionIndex extends Action {
 		 */
 		$this->sMenuSubItemSelect='top';
 
-		/** @var ModuleViewer $viewer */
+		/** @var \Engine\Modules\ModuleViewer $viewer */
 		$viewer = LS::Make(ModuleViewer::class);
 		/**
 		 * Передан ли номер страницы

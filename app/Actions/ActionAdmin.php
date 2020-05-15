@@ -17,20 +17,20 @@
 
 namespace App\Actions;
 
-use App\Modules\Blog\ModuleBlog;
-use App\Modules\Comment\ModuleComment;
-use App\Modules\Topic\ModuleTopic;
-use App\Modules\User\Entity\ModuleUser_EntityField;
-use App\Modules\User\Entity\ModuleUser_EntityUser;
-use App\Modules\User\ModuleUser;
+use App\Modules\ModuleBlog;
+use App\Modules\ModuleComment;
+use App\Modules\ModuleTopic;
+use App\Entities\EntityUserField;
+use App\Entities\EntityUser;
+use App\Modules\ModuleUser;
 use Engine\Action;
 use Engine\Config;
 use Engine\LS;
-use Engine\Modules\Cache\ModuleCache;
-use Engine\Modules\Lang\ModuleLang;
-use Engine\Modules\Message\ModuleMessage;
-use Engine\Modules\Security\ModuleSecurity;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleCache;
+use Engine\Modules\ModuleLang;
+use Engine\Modules\ModuleMessage;
+use Engine\Modules\ModuleSecurity;
+use Engine\Modules\ModuleViewer;
 
 /**
  * Экшен обработки УРЛа вида /admin/
@@ -42,7 +42,7 @@ class ActionAdmin extends Action {
 	/**
 	 * Текущий пользователь
 	 *
-	 * @var ModuleUser_EntityUser|null
+	 * @var \App\Entities\EntityUser|null
 	 */
 	protected $oUserCurrent=null;
 	/**
@@ -288,7 +288,7 @@ class ActionAdmin extends Action {
         $user = LS::Make(ModuleUser::class);
         /** @var ModuleMessage $message */
         $message = LS::Make(ModuleMessage::class);
-        /** @var ModuleLang $lang */
+        /** @var \Engine\Modules\ModuleLang $lang */
         $lang = LS::Make(ModuleLang::class);
 		switch(getRequestStr('action')) {
 			/**
@@ -302,7 +302,7 @@ class ActionAdmin extends Action {
 				if (!$this->checkUserField()) {
 					return;
 				}
-				$oField = new ModuleUser_EntityField();
+				$oField = new EntityUserField();
 				$oField->setName(getRequestStr('name'));
 				$oField->setTitle(getRequestStr('title'));
 				$oField->setPattern(getRequestStr('pattern'));
@@ -359,7 +359,7 @@ class ActionAdmin extends Action {
 				if (!$this->checkUserField()) {
 					return;
 				}
-				$oField = new ModuleUser_EntityField;
+				$oField = new EntityUserField;
 				$oField->setId(getRequestStr('id'));
 				$oField->setName(getRequestStr('name'));
 				$oField->setTitle(getRequestStr('title'));
@@ -401,7 +401,7 @@ class ActionAdmin extends Action {
 	{
         /** @var ModuleMessage $message */
         $message = LS::Make(ModuleMessage::class);
-        /** @var ModuleLang $lang */
+        /** @var \Engine\Modules\ModuleLang $lang */
         $lang = LS::Make(ModuleLang::class);
 		if (!getRequestStr('title')) {
 			$message->AddError($lang->Get('user_field_error_add_no_title'),$lang->Get('error'));

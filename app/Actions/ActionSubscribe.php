@@ -17,14 +17,13 @@
 
 namespace App\Actions;
 
-use App\Modules\Subscribe\ModuleSubscribe;
-use App\Modules\User\Entity\ModuleUser_EntityUser;
-use App\Modules\User\ModuleUser;
+use App\Modules\ModuleSubscribe;
+use App\Modules\ModuleUser;
 use Engine\Action;
 use Engine\LS;
-use Engine\Modules\Lang\ModuleLang;
-use Engine\Modules\Message\ModuleMessage;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleLang;
+use Engine\Modules\ModuleMessage;
+use Engine\Modules\ModuleViewer;
 use Engine\Router;
 
 /**
@@ -37,7 +36,7 @@ class ActionSubscribe extends Action {
 	/**
 	 * Текущий пользователь
 	 *
-	 * @var ModuleUser_EntityUser|null
+	 * @var \App\Entities\EntityUser|null
 	 */
 	protected $oUserCurrent=null;
 

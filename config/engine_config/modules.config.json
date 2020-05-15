@@ -162,13 +162,13 @@
             "text_min": 1
         },
         "autoload": [
-            "Engine\\Modules\\Hook\\ModuleHook",
-            "Engine\\Modules\\Cache\\ModuleCache",
-            "Engine\\Modules\\Lang\\ModuleLang",
-            "Engine\\Modules\\Message\\ModuleMessage",
-            "Engine\\Modules\\Security\\ModuleSecurity",
-            "Engine\\Modules\\Session\\ModuleSession",
-            "App\\Modules\\User\\ModuleUser"
+            "Engine\\Modules\\ModuleHook",
+            "Engine\\Modules\\ModuleCache",
+            "Engine\\Modules\\ModuleLang",
+            "Engine\\Modules\\ModuleMessage",
+            "Engine\\Modules\\ModuleSecurity",
+            "Engine\\Modules\\ModuleSession",
+            "App\\Modules\\ModuleUser"
         ],
         "quotes": {
             "per_page": 30

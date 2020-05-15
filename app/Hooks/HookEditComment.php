@@ -14,12 +14,12 @@
 
 namespace App\Hooks;
 
-use App\Modules\ACL\ModuleACL;
-use App\Modules\User\ModuleUser;
+use App\Modules\ModuleACL;
+use App\Modules\ModuleUser;
 use Engine\Config;
 use Engine\Hook;
 use Engine\LS;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleViewer;
 
 class HookEditComment extends Hook
 {
@@ -51,7 +51,7 @@ class HookEditComment extends Hook
     
     public function InjectEditButtonCode($aParam)
     {
-        /** @var ModuleViewer $viewer */
+        /** @var \Engine\Modules\ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);
         $viewer->Assign('iTargetId', $aParam['iTargetId']);
         $viewer->Assign('sTargetType', $aParam['sTargetType']);

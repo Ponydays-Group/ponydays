@@ -17,12 +17,12 @@
 
 namespace App\Actions;
 
-use App\Modules\Topic\ModuleTopic;
+use App\Modules\ModuleTopic;
 use Engine\Action;
 use Engine\Config;
 use Engine\LS;
-use Engine\Modules\Hook\ModuleHook;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleHook;
+use Engine\Modules\ModuleViewer;
 use Engine\Router;
 
 /**

@@ -20,8 +20,8 @@ namespace App\Blocks;
 use Engine\Block;
 use Engine\Config;
 use Engine\LS;
-use App\Modules\Blog\ModuleBlog;
-use Engine\Modules\Viewer\ModuleViewer;
+use App\Modules\ModuleBlog;
+use Engine\Modules\ModuleViewer;
 
 /**
  * Обработка блока с рейтингом блогов

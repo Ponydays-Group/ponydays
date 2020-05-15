@@ -17,29 +17,28 @@
 
 namespace App\Actions;
 
-use App\Modules\ACL\ModuleACL;
-use App\Modules\Blog\ModuleBlog;
-use App\Modules\Comment\ModuleComment;
-use App\Modules\Favourite\ModuleFavourite;
-use App\Modules\Notify\ModuleNotify;
-use App\Modules\Stream\ModuleStream;
-use App\Modules\Talk\ModuleTalk;
-use App\Modules\Topic\ModuleTopic;
-use App\Modules\User\Entity\ModuleUser_EntityFriend;
-use App\Modules\User\Entity\ModuleUser_EntityNote;
-use App\Modules\User\Entity\ModuleUser_EntityUser;
-use App\Modules\User\ModuleUser;
-use App\Modules\Wall\Entity\ModuleWall_EntityWall;
-use App\Modules\Wall\ModuleWall;
-use Engine\Engine;
+use App\Modules\ModuleACL;
+use App\Modules\ModuleBlog;
+use App\Modules\ModuleComment;
+use App\Modules\ModuleFavourite;
+use App\Modules\ModuleNotify;
+use App\Modules\ModuleStream;
+use App\Modules\ModuleTalk;
+use App\Modules\ModuleTopic;
+use App\Entities\EntityUserFriend;
+use App\Entities\EntityUserNote;
+use App\Entities\EntityUser;
+use App\Modules\ModuleUser;
+use App\Entities\EntityWall;
+use App\Modules\ModuleWall;
 use Engine\Action;
 use Engine\Config;
 use Engine\LS;
-use Engine\Modules\Hook\ModuleHook;
-use Engine\Modules\Lang\ModuleLang;
-use Engine\Modules\Message\ModuleMessage;
-use Engine\Modules\Text\ModuleText;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleHook;
+use Engine\Modules\ModuleLang;
+use Engine\Modules\ModuleMessage;
+use Engine\Modules\ModuleText;
+use Engine\Modules\ModuleViewer;
 use Engine\Router;
 
 /**
@@ -52,7 +51,7 @@ class ActionProfile extends Action {
 	/**
 	 * Объект юзера чей профиль мы смотрим
 	 *
-	 * @var ModuleUser_EntityUser|null
+	 * @var \App\Entities\EntityUser|null
 	 */
 	protected $oUserProfile;
 	/**
@@ -70,7 +69,7 @@ class ActionProfile extends Action {
 	/**
 	 * Текущий пользователь
 	 *
-	 * @var ModuleUser_EntityUser|null
+	 * @var \App\Entities\EntityUser|null
 	 */
 	protected $oUserCurrent;
 
@@ -438,7 +437,7 @@ class ActionProfile extends Action {
 		/**
 		 * Создаем запись
 		 */
-		$oWall = new ModuleWall_EntityWall();
+		$oWall = new EntityWall();
 		$oWall->_setValidateScenario('add');
 		$oWall->setWallUserId($this->oUserProfile->getId());
 		$oWall->setUserId($this->oUserCurrent->getId());
@@ -598,7 +597,7 @@ class ActionProfile extends Action {
 		/**
 		 * Создаем заметку и проводим валидацию
 		 */
-		$oNote= new ModuleUser_EntityNote();
+		$oNote= new EntityUserNote();
 		$oNote->setTargetUserId(getRequestStr('iUserId'));
 		$oNote->setUserId($this->oUserCurrent->getId());
 		$oNote->setText(getRequestStr('text'));
@@ -853,8 +852,8 @@ class ActionProfile extends Action {
 	/**
 	 * Отправляет пользователю Talk уведомление о принятии или отклонении его заявки
 	 *
-	 * @param ModuleUser_EntityUser $oUser
-	 * @param string $sAction
+	 * @param EntityUser $oUser
+	 * @param string     $sAction
 	 */
 	protected function NoticeFriendOffer($oUser,$sAction) {
 		/**
@@ -1043,7 +1042,7 @@ class ActionProfile extends Action {
 		/**
 		 * Создаем связь с другом
 		 */
-		$oFriendNew = new ModuleUser_EntityFriend();
+		$oFriendNew = new EntityUserFriend();
 		$oFriendNew->setUserTo($oUser->getId());
 		$oFriendNew->setUserFrom($this->oUserCurrent->getId());
 		// Добавляем заявку в друзья

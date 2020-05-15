@@ -17,8 +17,8 @@
 
 namespace Engine;
 
-use Engine\Modules\Hook\ModuleHook;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleHook;
+use Engine\Modules\ModuleViewer;
 
 /**
  * Класс роутинга(контроллера)
@@ -249,7 +249,7 @@ class Router extends LsObject {
 	public function ExecAction() {
 	    $this->doNext = false;
 		$this->DefineActionClass();
-		/** @var ModuleHook $hook */
+		/** @var \Engine\Modules\ModuleHook $hook */
 		$hook = LS::Make(ModuleHook::class);
 		/**
 		 * Сначала запускаем инициализирующий евент

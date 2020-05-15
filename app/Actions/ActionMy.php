@@ -17,8 +17,7 @@
 
 namespace App\Actions;
 
-use App\Modules\User\Entity\ModuleUser_EntityUser;
-use App\Modules\User\ModuleUser;
+use App\Modules\ModuleUser;
 use Engine\Action;
 use Engine\LS;
 use Engine\Router;
@@ -34,7 +33,7 @@ class ActionMy extends Action {
 	/**
 	 * Объект юзера чей профиль мы смотрим
 	 *
-	 * @var ModuleUser_EntityUser|null
+	 * @var \App\Entities\EntityUser|null
 	 */
 	protected $oUserProfile=null;
 

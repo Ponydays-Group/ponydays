@@ -17,7 +17,7 @@
 
 namespace Engine;
 
-use Engine\Modules\Validate\ModuleValidate;
+use Engine\Modules\ModuleValidate;
 
 /**
  * Абстрактный класс сущности.
@@ -264,7 +264,8 @@ abstract class Entity extends LsObject {
 	}
 	/**
 	 * Создает и возвращает список валидаторов для сущности
-	 * @see ModuleValidate::CreateValidator
+	 *
+	 * @see \Engine\Modules\ModuleValidate::CreateValidator
 	 *
 	 * @return array
 	 * @throws \Exception

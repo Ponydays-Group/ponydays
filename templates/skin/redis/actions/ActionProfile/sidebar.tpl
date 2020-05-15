@@ -21,13 +21,13 @@
             <label>User privileges:</label>
             <div class="checkbox">
                 <span>
-                    <input type="checkbox" class="input-checkbox" id="user_privileges_moderator" name="user_privileges_moderator" value="on" {if $oUserProfile->hasPrivileges(App\Modules\User\ModuleUser::USER_PRIV_MODERATOR)}checked{/if}>
+                    <input type="checkbox" class="input-checkbox" id="user_privileges_moderator" name="user_privileges_moderator" value="on" {if $oUserProfile->hasPrivileges(App\Modules\ModuleUser::USER_PRIV_MODERATOR)}checked{/if}>
                     <label for="user_privileges_moderator">Глобальный модератор</label>
                 </span>
             </div>
             <div class="checkbox">
                 <span>
-                    <input type="checkbox" class="input-checkbox" id="user_privileges_quotes" name="user_privileges_quotes" value="on" {if $oUserProfile->hasPrivileges(App\Modules\User\ModuleUser::USER_PRIV_QUOTES)}checked{/if}>
+                    <input type="checkbox" class="input-checkbox" id="user_privileges_quotes" name="user_privileges_quotes" value="on" {if $oUserProfile->hasPrivileges(App\Modules\ModuleUser::USER_PRIV_QUOTES)}checked{/if}>
                     <label for="user_privileges_quotes">Администратор цитатника</label>
                 </span>
             </div>

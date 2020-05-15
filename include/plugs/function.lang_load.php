@@ -16,7 +16,7 @@
 */
 
 use Engine\LS;
-use Engine\Modules\Lang\ModuleLang;
+use Engine\Modules\ModuleLang;
 
 /**
  * Загружает список языковых текстовок в шаблон

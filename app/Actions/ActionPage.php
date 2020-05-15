@@ -17,20 +17,20 @@
 
 namespace App\Actions;
 
-use App\Modules\Page\Entity\ModulePage_EntityPage;
-use App\Modules\Page\ModulePage;
-use App\Modules\Topic\Entity\ModuleTopic_EntityTopic;
-use App\Modules\Topic\ModuleTopic;
-use App\Modules\User\ModuleUser;
+use App\Entities\EntityStaticPage;
+use App\Modules\ModuleStaticPage;
+use App\Entities\EntityTopic;
+use App\Modules\ModuleTopic;
+use App\Modules\ModuleUser;
 use Engine\Engine;
 use Engine\Action;
 use Engine\Config;
 use Engine\LS;
-use Engine\Modules\Hook\ModuleHook;
-use Engine\Modules\Lang\ModuleLang;
-use Engine\Modules\Message\ModuleMessage;
-use Engine\Modules\Security\ModuleSecurity;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleHook;
+use Engine\Modules\ModuleLang;
+use Engine\Modules\ModuleMessage;
+use Engine\Modules\ModuleSecurity;
+use Engine\Modules\ModuleViewer;
 use Engine\Router;
 
 class ActionPage extends Action {
@@ -79,7 +79,7 @@ class ActionPage extends Action {
 		/**
 		 * Ищем страничку в БД
 		 */
-		if (!($oPage=LS::Make(ModulePage::class)->GetPageByUrlFull($sUrlFull,1))) {
+		if (!($oPage=LS::Make(ModuleStaticPage::class)->GetPageByUrlFull($sUrlFull,1))) {
 			$this->EventNotFound();
 			return;
 		}
@@ -127,7 +127,7 @@ class ActionPage extends Action {
 		 * Обработка показа странички для редактирования
 		 */
 		if ($this->GetParam(0)=='edit') {
-			if ($oPageEdit=LS::Make(ModulePage::class)->GetPageById($this->GetParam(1))) {
+			if ($oPageEdit=LS::Make(ModuleStaticPage::class)->GetPageById($this->GetParam(1))) {
 				if (!isPost('submit_page_save')) {
 					$_REQUEST['page_title']=$oPageEdit->getTitle();
 					$_REQUEST['page_pid']=$oPageEdit->getPid();
@@ -158,7 +158,7 @@ class ActionPage extends Action {
 		 */
 		if ($this->GetParam(0)=='delete') {
 			LS::Make(ModuleSecurity::class)->ValidateSendForm();
-			if (LS::Make(ModulePage::class)->deletePageById($this->GetParam(1))) {
+			if (LS::Make(ModuleStaticPage::class)->deletePageById($this->GetParam(1))) {
 				LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('page.admin_action_delete_ok'));
 			} else {
 				LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('page.admin_action_delete_error'),LS::Make(ModuleLang::class)->Get('error'));
@@ -167,14 +167,14 @@ class ActionPage extends Action {
 		/**
 		 * Обработка изменения сортировки страницы
 		 */
-		if ($this->GetParam(0)=='sort' and $oPage=LS::Make(ModulePage::class)->GetPageById($this->GetParam(1))) {
+		if ($this->GetParam(0)=='sort' and $oPage=LS::Make(ModuleStaticPage::class)->GetPageById($this->GetParam(1))) {
 			LS::Make(ModuleSecurity::class)->ValidateSendForm();
 			$sWay=$this->GetParam(2)=='down' ? 'down' : 'up';
 			$iSortOld=$oPage->getSort();
-			if ($oPagePrev=LS::Make(ModulePage::class)->GetNextPageBySort($iSortOld,$oPage->getPid(),$sWay)) {
+			if ($oPagePrev=LS::Make(ModuleStaticPage::class)->GetNextPageBySort($iSortOld,$oPage->getPid(),$sWay)) {
 				$iSortNew=$oPagePrev->getSort();
 				$oPagePrev->setSort($iSortOld);
-				LS::Make(ModulePage::class)->UpdatePage($oPagePrev);
+				LS::Make(ModuleStaticPage::class)->UpdatePage($oPagePrev);
 			} else {
 				if ($sWay=='down') {
 					$iSortNew=$iSortOld-1;
@@ -186,15 +186,15 @@ class ActionPage extends Action {
 			 * Меняем значения сортировки местами
 			 */
 			$oPage->setSort($iSortNew);
-			LS::Make(ModulePage::class)->UpdatePage($oPage);
+			LS::Make(ModuleStaticPage::class)->UpdatePage($oPage);
 		}
 		/**
 		 * Получаем и загружаем список всех страниц
 		 */
-		$aPages=LS::Make(ModulePage::class)->GetPages();
-		if (count($aPages)==0 and LS::Make(ModulePage::class)->GetCountPage()) {
-			LS::Make(ModulePage::class)->SetPagesPidToNull();
-			$aPages=LS::Make(ModulePage::class)->GetPages();
+		$aPages=LS::Make(ModuleStaticPage::class)->GetPages();
+		if (count($aPages)==0 and LS::Make(ModuleStaticPage::class)->GetCountPage()) {
+			LS::Make(ModuleStaticPage::class)->SetPagesPidToNull();
+			$aPages=LS::Make(ModuleStaticPage::class)->GetPages();
 		}
 		LS::Make(ModuleViewer::class)->Assign('aPages',$aPages);
 	}
@@ -214,7 +214,7 @@ class ActionPage extends Action {
 	    /** @var ModuleTopic $topic */
 	    $topic = $eng->make(ModuleTopic::class);
 
-	    /** @var ModuleTopic_EntityTopic $last_topic */
+	    /** @var EntityTopic $last_topic */
 	    $last_topic = reset($topic->GetTopicsByFilter($aFilter, 1, 1, ['blog'])['collection']);
 
         if(!$last_topic) {
@@ -253,7 +253,7 @@ class ActionPage extends Action {
 			$oPageEdit->setPid(null);
 		} else {
 			$oPageEdit->setPid(getRequest('page_pid'));
-			$oPageParent=LS::Make(ModulePage::class)->GetPageById(getRequest('page_pid'));
+			$oPageParent=LS::Make(ModuleStaticPage::class)->GetPageById(getRequest('page_pid'));
 			$oPageEdit->setUrlFull($oPageParent->getUrlFull().'/'.getRequest('page_url'));
 		}
 		$oPageEdit->setSeoDescription(getRequest('page_seo_description'));
@@ -265,8 +265,8 @@ class ActionPage extends Action {
 		/**
 		 * Обновляем страницу
 		 */
-		if (LS::Make(ModulePage::class)->UpdatePage($oPageEdit)) {
-			LS::Make(ModulePage::class)->RebuildUrlFull($oPageEdit);
+		if (LS::Make(ModuleStaticPage::class)->UpdatePage($oPageEdit)) {
+			LS::Make(ModuleStaticPage::class)->RebuildUrlFull($oPageEdit);
 			LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('page.edit_submit_save_ok'));
 			$this->SetParam(0,null);
 			$this->SetParam(1,null);
@@ -288,7 +288,7 @@ class ActionPage extends Action {
 		/**
 		 * Заполняем свойства
 		 */
-		$oPage = new ModulePage_EntityPage();
+		$oPage = new EntityStaticPage();
 		$oPage->setActive(getRequest('page_active') ? 1 : 0);
 		$oPage->setAutoBr(getRequest('page_auto_br') ? 1 : 0);
 		$oPage->setMain(getRequest('page_main') ? 1 : 0);
@@ -298,7 +298,7 @@ class ActionPage extends Action {
 			$oPage->setPid(null);
 		} else {
 			$oPage->setPid(getRequest('page_pid'));
-			$oPageParent=LS::Make(ModulePage::class)->GetPageById(getRequest('page_pid'));
+			$oPageParent=LS::Make(ModuleStaticPage::class)->GetPageById(getRequest('page_pid'));
 			$oPage->setUrlFull($oPageParent->getUrlFull().'/'.getRequest('page_url'));
 		}
 		$oPage->setSeoDescription(getRequest('page_seo_description'));
@@ -309,12 +309,12 @@ class ActionPage extends Action {
 		if (getRequest('page_sort')) {
 			$oPage->setSort(getRequest('page_sort'));
 		} else {
-			$oPage->setSort(LS::Make(ModulePage::class)->GetMaxSortByPid($oPage->getPid())+1);
+			$oPage->setSort(LS::Make(ModuleStaticPage::class)->GetMaxSortByPid($oPage->getPid()) + 1);
 		}
 		/**
 		 * Добавляем страницу
 		 */
-		if (LS::Make(ModulePage::class)->AddPage($oPage)) {
+		if (LS::Make(ModuleStaticPage::class)->AddPage($oPage)) {
 			LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('page.create_submit_save_ok'));
 			$this->SetParam(0,null);
 		} else {
@@ -363,7 +363,7 @@ class ActionPage extends Action {
 		/**
 		 * Проверяем страницу в которую хотим вложить
 		 */
-		if (getRequest('page_pid')!=0 and !($oPageParent=LS::Make(ModulePage::class)->GetPageById(getRequest('page_pid')))) {
+		if (getRequest('page_pid')!=0 and !($oPageParent=LS::Make(ModuleStaticPage::class)->GetPageById(getRequest('page_pid')))) {
 			LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('page.create_parent_page_error'),LS::Make(ModuleLang::class)->Get('error'));
 			$bOk=false;
 		}

@@ -17,19 +17,18 @@
 
 namespace App\Actions;
 
-use App\Modules\Crypto\ModuleCrypto;
-use App\Modules\Notify\ModuleNotify;
-use App\Modules\User\Entity\ModuleUser_EntityReminder;
-use App\Modules\User\ModuleUser;
-use Engine\Engine;
+use App\Modules\ModuleCrypto;
+use App\Modules\ModuleNotify;
+use App\Entities\EntityUserReminder;
+use App\Modules\ModuleUser;
 use Engine\Action;
 use Engine\Config;
 use Engine\LS;
-use Engine\Modules\Lang\ModuleLang;
-use Engine\Modules\Message\ModuleMessage;
-use Engine\Modules\Security\ModuleSecurity;
-use Engine\Modules\Session\ModuleSession;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleLang;
+use Engine\Modules\ModuleMessage;
+use Engine\Modules\ModuleSecurity;
+use Engine\Modules\ModuleSession;
+use Engine\Modules\ModuleViewer;
 use Engine\Router;
 
 /**
@@ -203,7 +202,7 @@ class ActionLogin extends Action {
 			/**
 			 * Формируем и отправляем ссылку на смену пароля
 			 */
-			$oReminder = new ModuleUser_EntityReminder();
+			$oReminder = new EntityUserReminder();
 			$oReminder->setCode(func_generator(32));
 			$oReminder->setDateAdd(date("Y-m-d H:i:s"));
 			$oReminder->setDateExpire(date("Y-m-d H:i:s",time()+60*60*24*7));

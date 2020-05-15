@@ -17,11 +17,11 @@
 
 namespace App\Blocks;
 
-use App\Modules\Comment\ModuleComment;
+use App\Modules\ModuleComment;
 use Engine\Block;
 use Engine\Config;
 use Engine\LS;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleViewer;
 
 /**
  * Обработка блока с комментариями (прямой эфир)

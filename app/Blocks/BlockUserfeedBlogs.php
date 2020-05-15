@@ -17,12 +17,12 @@
 
 namespace App\Blocks;
 
-use App\Modules\Blog\ModuleBlog;
-use App\Modules\User\ModuleUser;
-use App\Modules\Userfeed\ModuleUserfeed;
+use App\Modules\ModuleBlog;
+use App\Modules\ModuleUser;
+use App\Modules\ModuleUserfeed;
 use Engine\Block;
 use Engine\LS;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleViewer;
 
 /**
  * Блок настройки списка блогов в ленте
@@ -53,7 +53,7 @@ public function Exec() {
 			/**
 			 * Выводим в шаблон
 			 */
-            /** @var ModuleViewer $viewer */
+            /** @var \Engine\Modules\ModuleViewer $viewer */
             $viewer = LS::Make(ModuleViewer::class);
 			$viewer->Assign('aUserfeedSubscribedBlogs', $aUserSubscribes['blogs']);
 			$viewer->Assign('aUserfeedBlogs', $aBlogs);

@@ -6,7 +6,7 @@
  */
 
 use Engine\LS;
-use Engine\Modules\Lang\ModuleLang;
+use Engine\Modules\ModuleLang;
 
 /**
  * Модификатор declension: склонение существительных по правилам английского языка

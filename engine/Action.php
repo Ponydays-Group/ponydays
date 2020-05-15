@@ -17,7 +17,7 @@
 
 namespace Engine;
 
-use Engine\Modules\Hook\ModuleHook;
+use Engine\Modules\ModuleHook;
 
 /**
  * Абстрактный класс экшена.
@@ -176,7 +176,7 @@ abstract class Action extends LsObject {
 					}
 				}
 				$this->sCurrentEventName=$aEvent['name'];
-				/** @var ModuleHook $hook */
+				/** @var \Engine\Modules\ModuleHook $hook */
 				$hook = LS::Make(ModuleHook::class);
 				$pars = array('event'=>$this->sCurrentEvent,'params'=>$this->GetParams());
 				$hook->Run("action_event_".strtolower($this->sCurrentAction)."_before",$pars);

@@ -17,25 +17,25 @@
 
 namespace App\Actions;
 
-use App\Modules\ACL\ModuleACL;
-use App\Modules\Blog\ModuleBlog;
-use App\Modules\Comment\ModuleComment;
-use App\Modules\Stream\ModuleStream;
-use App\Modules\Subscribe\ModuleSubscribe;
-use App\Modules\Topic\Entity\ModuleTopic_EntityTopic;
-use App\Modules\Topic\Entity\ModuleTopic_EntityTopicPhoto;
-use App\Modules\Topic\ModuleTopic;
-use App\Modules\User\Entity\ModuleUser_EntityUser;
-use App\Modules\User\ModuleUser;
+use App\Modules\ModuleACL;
+use App\Modules\ModuleBlog;
+use App\Modules\ModuleComment;
+use App\Modules\ModuleStream;
+use App\Modules\ModuleSubscribe;
+use App\Entities\EntityTopic;
+use App\Entities\EntityTopicPhoto;
+use App\Modules\ModuleTopic;
+use App\Entities\EntityUser;
+use App\Modules\ModuleUser;
 use Engine\Action;
 use Engine\Config;
 use Engine\LS;
-use Engine\Modules\Hook\ModuleHook;
-use Engine\Modules\Lang\ModuleLang;
-use Engine\Modules\Message\ModuleMessage;
-use Engine\Modules\Security\ModuleSecurity;
-use Engine\Modules\Text\ModuleText;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleHook;
+use Engine\Modules\ModuleLang;
+use Engine\Modules\ModuleMessage;
+use Engine\Modules\ModuleSecurity;
+use Engine\Modules\ModuleText;
+use Engine\Modules\ModuleViewer;
 use Engine\Router;
 
 /**
@@ -66,7 +66,7 @@ class ActionPhotoset extends Action {
 	/**
 	 * Текущий юзер
 	 *
-	 * @var ModuleUser_EntityUser|null
+	 * @var \App\Modules\User\\App\Entities\EntityUser|null
 	 */
 	protected $oUserCurrent=null;
 
@@ -297,7 +297,7 @@ class ActionPhotoset extends Action {
 			/**
 			 * Создаем фото
 			 */
-			$oPhoto = new ModuleTopic_EntityTopicPhoto();
+			$oPhoto = new EntityTopicPhoto();
 			$oPhoto->setPath($sFile);
 			if ($iTopicId) {
 				$oPhoto->setTopicId($iTopicId);
@@ -446,7 +446,7 @@ class ActionPhotoset extends Action {
 		if (!isPost('submit_topic_publish') and !isPost('submit_topic_save')) {
 			return;
 		}
-		$oTopic = new ModuleTopic_EntityTopic();
+		$oTopic = new EntityTopic();
 		$oTopic->_setValidateScenario('photoset');
 		/**
 		 * Заполняем поля для валидации
@@ -595,7 +595,8 @@ class ActionPhotoset extends Action {
 	/**
 	 * Обработка редактирования топика
 	 *
-	 * @param ModuleTopic_EntityTopic $oTopic
+	 * @param \App\Entities\EntityTopic $oTopic
+	 *
 	 * @return mixed
 	 */
 	protected function SubmitEdit($oTopic) {

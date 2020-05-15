@@ -17,7 +17,7 @@
 
 namespace Engine;
 
-use Engine\Modules\Hook\ModuleHook;
+use Engine\Modules\ModuleHook;
 
 /**
  * Абстракция хука, от которой наследуются все хуки

@@ -17,14 +17,14 @@
 
 namespace App\Actions;
 
-use App\Modules\API\ModuleAPI;
-use App\Modules\Crypto\ModuleCrypto;
-use App\Modules\User\Entity\ModuleUser_EntityUser;
-use App\Modules\User\ModuleUser;
+use App\Modules\ModuleAPI;
+use App\Modules\ModuleCrypto;
+use App\Entities\EntityUser;
+use App\Modules\ModuleUser;
 use Engine\Action;
 use Engine\LS;
-use Engine\Modules\Security\ModuleSecurity;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleSecurity;
+use Engine\Modules\ModuleViewer;
 
 class ActionApi extends Action
 
@@ -32,7 +32,7 @@ class ActionApi extends Action
     /**
      * Текущий пользователь
      *
-     * @var ModuleUser_EntityUser|null
+     * @var EntityUser|null
      */
     protected $oUserCurrent = null;
 

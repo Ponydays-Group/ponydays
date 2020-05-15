@@ -17,10 +17,10 @@
 
 namespace App\Hooks;
 
-use App\Modules\Page\ModulePage;
+use App\Modules\ModuleStaticPage;
 use Engine\Hook;
 use Engine\LS;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleViewer;
 
 /**
  * Регистрация хука для вывода меню страниц
@@ -32,7 +32,7 @@ class HookPage extends Hook {
 	}
 
 	public function Menu() {
-		$aPages=LS::Make(ModulePage::class)->GetPages(array('pid'=>null,'main'=>1,'active'=>1));
+		$aPages=LS::Make(ModuleStaticPage::class)->GetPages(array('pid' =>null, 'main' =>1, 'active' =>1));
 
         /** @var ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);

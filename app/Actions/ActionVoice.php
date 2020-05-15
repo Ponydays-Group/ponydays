@@ -19,7 +19,7 @@ namespace App\Actions;
 
 use Engine\Action;
 use Engine\LS;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleViewer;
 
 /**
  * Экшен обработки ajax запросов

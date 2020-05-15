@@ -17,12 +17,12 @@
 
 namespace Engine;
 
-use App\Modules\User\Entity\ModuleUser_EntityUser;
-use App\Modules\User\ModuleUser;
+use App\Entities\EntityUser;
+use App\Modules\ModuleUser;
 use DbSimple_Mysql;
-use Engine\Modules\Cache\ModuleCache;
-use Engine\Modules\Database\ModuleDatabase;
-use Engine\Modules\Hook\ModuleHook;
+use Engine\Modules\ModuleCache;
+use Engine\Modules\ModuleDatabase;
+use Engine\Modules\ModuleHook;
 use ReflectionFunction;
 
 set_include_path(get_include_path() . PATH_SEPARATOR . dirname(__FILE__));
@@ -229,7 +229,7 @@ class Engine extends LsObject {
 		/**
 		 * Запускаем хуки для события завершения инициализации Engine
 		 */
-		/** @var ModuleHook $hook */
+		/** @var \Engine\Modules\ModuleHook $hook */
 		$hook = $this->make(ModuleHook::class);
 		$hook->Run('engine_init_complete');
 	}
@@ -374,7 +374,7 @@ class Engine extends LsObject {
 	public function getStats() {
 	    /** @var ModuleDatabase $db */
 	    $db = LS::Make(ModuleDatabase::class);
-	    /** @var ModuleCache $cache */
+	    /** @var \Engine\Modules\ModuleCache $cache */
 	    $cache = LS::Make(ModuleCache::class);
 		return array(
 		    'sql' => $db->GetStats(),
@@ -482,7 +482,7 @@ class LS extends LsObject
      *
      * @see ModuleUser::GetUserCurrent
      *
-     * @return ModuleUser_EntityUser
+     * @return \App\Modules\User\\App\Entities\EntityUser
      */
     static public function CurUsr()
     {
@@ -493,7 +493,7 @@ class LS extends LsObject
      * Возвращает true если текущий пользователь администратор
      *
      * @see ModuleUser::GetUserCurrent
-     * @see ModuleUser_EntityUser::isAdministrator
+     * @see \App\Entities\EntityUser::isAdministrator
      *
      * @return bool
      */

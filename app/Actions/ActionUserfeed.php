@@ -17,18 +17,18 @@
 
 namespace App\Actions;
 
-use App\Modules\Blog\ModuleBlog;
-use App\Modules\Topic\ModuleTopic;
-use App\Modules\User\Entity\ModuleUser_EntityUser;
-use App\Modules\User\ModuleUser;
-use App\Modules\Userfeed\ModuleUserfeed;
+use App\Modules\ModuleBlog;
+use App\Modules\ModuleTopic;
+use App\Entities\EntityUser;
+use App\Modules\ModuleUser;
+use App\Modules\ModuleUserfeed;
 use Engine\Action;
 use Engine\Config;
 use Engine\LS;
-use Engine\Modules\Hook\ModuleHook;
-use Engine\Modules\Lang\ModuleLang;
-use Engine\Modules\Message\ModuleMessage;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleHook;
+use Engine\Modules\ModuleLang;
+use Engine\Modules\ModuleMessage;
+use Engine\Modules\ModuleViewer;
 
 /**
  * Обрабатывает пользовательские ленты контента
@@ -40,7 +40,7 @@ class ActionUserfeed extends Action {
 	/**
 	 * Текущий пользователь
 	 *
-	 * @var ModuleUser_EntityUser|null
+	 * @var EntityUser|null
 	 */
 	protected $oUserCurrent;
 
@@ -87,7 +87,7 @@ class ActionUserfeed extends Action {
 		 */
 		LS::Make(ModuleHook::class)->Run('topics_list_show',array('aTopics'=>$aTopics));
 
-        /** @var ModuleViewer $viewer */
+        /** @var \Engine\Modules\ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);
 
         $viewer->Assign('aTopics', $aTopics);
@@ -106,7 +106,7 @@ class ActionUserfeed extends Action {
 	 *
 	 */
 	protected function EventGetMore() {
-        /** @var ModuleViewer $viewer */
+        /** @var \Engine\Modules\ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);
 
         /**
@@ -196,7 +196,7 @@ class ActionUserfeed extends Action {
 	 *
 	 */
 	protected function EventSubscribeByLogin() {
-        /** @var ModuleViewer $viewer */
+        /** @var \Engine\Modules\ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);
 
         /**
@@ -241,7 +241,7 @@ class ActionUserfeed extends Action {
 	 *
 	 */
 	protected function EventUnsubscribe() {
-        /** @var ModuleViewer $viewer */
+        /** @var \Engine\Modules\ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);
 
         /**
@@ -314,7 +314,7 @@ class ActionUserfeed extends Action {
 		/**
 		 * Загружаем переменные в шаблон
 		 */
-        /** @var ModuleViewer $viewer */
+        /** @var \Engine\Modules\ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);
 
         $viewer->Assign('iCountTopicsCollectiveNew',$iCountTopicsCollectiveNew);

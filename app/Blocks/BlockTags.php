@@ -17,13 +17,13 @@
 
 namespace App\Blocks;
 
-use App\Modules\Tools\ModuleTools;
-use App\Modules\Topic\ModuleTopic;
-use App\Modules\User\ModuleUser;
+use App\Modules\ModuleTools;
+use App\Modules\ModuleTopic;
+use App\Modules\ModuleUser;
 use Engine\Block;
 use Engine\Config;
 use Engine\LS;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleViewer;
 
 /**
  * Обрабатывает блок облака тегов
@@ -36,7 +36,7 @@ class BlockTags extends Block {
 	 * Запуск обработки
 	 */
 	public function Exec() {
-        /** @var ModuleTopic $topic */
+        /** @var \App\Modules\ModuleTopic $topic */
         $topic = LS::Make(ModuleTopic::class);
 		/**
 		 * Получаем список тегов

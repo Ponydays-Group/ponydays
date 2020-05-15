@@ -2,13 +2,13 @@
 
 namespace App\Actions;
 
-use App\Modules\Notification\ModuleNotification;
-use App\Modules\User\ModuleUser;
+use App\Modules\ModuleNotification;
+use App\Modules\ModuleUser;
 use Engine\Action;
 use Engine\LS;
-use Engine\Modules\Lang\ModuleLang;
-use Engine\Modules\Message\ModuleMessage;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleLang;
+use Engine\Modules\ModuleMessage;
+use Engine\Modules\ModuleViewer;
 use Engine\Router;
 
 class ActionNotifications extends Action {

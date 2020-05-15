@@ -15,8 +15,8 @@
 ---------------------------------------------------------
 */
 
-use App\Modules\User\ModuleUser;
-use Engine\Modules\Lang\ModuleLang;
+use App\Modules\ModuleUser;
+use Engine\Modules\ModuleLang;
 
 /**
  * Плагин для смарти.

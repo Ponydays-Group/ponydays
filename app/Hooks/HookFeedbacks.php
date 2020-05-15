@@ -2,12 +2,12 @@
 
 namespace App\Hooks;
 
-use App\Modules\Feedbacks\Entity\ModuleFeedbacks_EntityAction;
-use App\Modules\Feedbacks\ModuleFeedbacks;
-use App\Modules\User\ModuleUser;
+use App\Entities\EntityFeedbacksAction;
+use App\Modules\ModuleFeedbacks;
+use App\Modules\ModuleUser;
 use Engine\Hook;
 use Engine\LS;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleViewer;
 
 class HookFeedbacks extends Hook {
 
@@ -28,7 +28,7 @@ class HookFeedbacks extends Hook {
 		$oCommentParent	= $aParams['oCommentParent'];
 		$oTopic			= $aParams['oTopic'];
 
-		$oAction = new ModuleFeedbacks_EntityAction();
+		$oAction = new EntityFeedbacksAction();
 		$oAction->setUserIdFrom($oComment->getUserId());
 		$oAction->setId(null);
 		$oAction->setAddDatetime(time());
@@ -77,7 +77,7 @@ class HookFeedbacks extends Hook {
 			$iUnreadActionsCount	= LS::Make(ModuleFeedbacks::class)->GetCurrentUserUnreadItemsCount();
 			
 			if($iUnreadActionsCount > 0){
-                /** @var ModuleViewer $viewer */
+                /** @var \Engine\Modules\ModuleViewer $viewer */
                 $viewer = LS::Make(ModuleViewer::class);
                 $viewer->Assign('iUnreadActionsCount', $iUnreadActionsCount);
 				return $viewer->Fetch('userbar_item.tpl');

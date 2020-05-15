@@ -17,26 +17,26 @@
 
 namespace App\Actions;
 
-use App\Modules\ACL\ModuleACL;
-use App\Modules\Comment\ModuleComment;
-use App\Modules\Crypto\ModuleCrypto;
-use App\Modules\Geo\ModuleGeo;
-use App\Modules\Notify\ModuleNotify;
-use App\Modules\Topic\ModuleTopic;
-use App\Modules\User\Entity\ModuleUser_EntityUser;
-use App\Modules\User\ModuleUser;
-use App\Modules\Wall\ModuleWall;
+use App\Modules\ModuleACL;
+use App\Modules\ModuleComment;
+use App\Modules\ModuleCrypto;
+use App\Modules\ModuleGeo;
+use App\Modules\ModuleNotify;
+use App\Modules\ModuleTopic;
+use App\Entities\EntityUser;
+use App\Modules\ModuleUser;
+use App\Modules\ModuleWall;
 use Engine\Action;
 use Engine\Config;
 use Engine\LS;
-use Engine\Modules\Hook\ModuleHook;
-use Engine\Modules\Image\ModuleImage;
-use Engine\Modules\Lang\ModuleLang;
-use Engine\Modules\Message\ModuleMessage;
-use Engine\Modules\Security\ModuleSecurity;
-use Engine\Modules\Session\ModuleSession;
-use Engine\Modules\Text\ModuleText;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleHook;
+use Engine\Modules\ModuleImage;
+use Engine\Modules\ModuleLang;
+use Engine\Modules\ModuleMessage;
+use Engine\Modules\ModuleSecurity;
+use Engine\Modules\ModuleSession;
+use Engine\Modules\ModuleText;
+use Engine\Modules\ModuleViewer;
 use Engine\Router;
 
 /**
@@ -61,7 +61,7 @@ class ActionSettings extends Action {
 	/**
 	 * Текущий юзер
 	 *
-	 * @var ModuleUser_EntityUser|null
+	 * @var \App\Entities\EntityUser|null
 	 */
 	protected $oUserCurrent=null;
 

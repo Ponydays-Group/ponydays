@@ -17,19 +17,19 @@
 
 namespace App\Actions;
 
-use App\Modules\Crypto\ModuleCrypto;
-use App\Modules\Notify\ModuleNotify;
-use App\Modules\Stream\ModuleStream;
-use App\Modules\User\Entity\ModuleUser_EntityUser;
-use App\Modules\User\ModuleUser;
+use App\Modules\ModuleCrypto;
+use App\Modules\ModuleNotify;
+use App\Modules\ModuleStream;
+use App\Entities\EntityUser;
+use App\Modules\ModuleUser;
 use Engine\Action;
 use Engine\Config;
 use Engine\LS;
-use Engine\Modules\Hook\ModuleHook;
-use Engine\Modules\Lang\ModuleLang;
-use Engine\Modules\Message\ModuleMessage;
-use Engine\Modules\Session\ModuleSession;
-use Engine\Modules\Viewer\ModuleViewer;
+use Engine\Modules\ModuleHook;
+use Engine\Modules\ModuleLang;
+use Engine\Modules\ModuleMessage;
+use Engine\Modules\ModuleSession;
+use Engine\Modules\ModuleViewer;
 use Engine\Router;
 
 /**
@@ -101,7 +101,7 @@ class ActionRegistration extends Action {
 		/**
 		 * Создаем объект пользователя и устанавливаем сценарий валидации
 		 */
-		$oUser = new ModuleUser_EntityUser();
+		$oUser = new EntityUser();
 		$oUser->_setValidateScenario('registration');
 		/**
 		 * Пробегаем по переданным полям/значениям и валидируем их каждое в отдельности
@@ -187,7 +187,7 @@ class ActionRegistration extends Action {
 		/**
 		 * Создаем объект пользователя и устанавливаем сценарий валидации
 		 */
-		$oUser = new ModuleUser_EntityUser();
+		$oUser = new EntityUser();
 		$oUser->_setValidateScenario('registration');
 		/**
 		 * Заполняем поля (данные)

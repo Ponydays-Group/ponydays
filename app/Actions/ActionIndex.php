@@ -341,14 +341,18 @@ class ActionIndex extends Action
     /**
      * Вывод интересных на главную
      *
+     * @param \Engine\Modules\ModuleViewer $viewer
+     * @param \App\Modules\ModuleUser      $user
+     *
+     * @return void
      */
-    protected function EventIndex()
+    protected function EventIndex(ModuleViewer $viewer, ModuleUser $user)
     {
-        LS::Make(ModuleViewer::class)->Assign('sMenuHeadItemSelect', 'blog');
-        if (LS::Make(ModuleUser::class)->getUserCurrent()) {
-            return Router::Action('feed');
+        $viewer->Assign('sMenuHeadItemSelect', 'blog');
+        if ($user->getUserCurrent()) {
+            Router::Action('feed');
         } else {
-            return Router::Action('index', 'newall');
+            Router::Action('index', 'newall');
         }
     }
 

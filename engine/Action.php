@@ -114,7 +114,7 @@ abstract class Action extends LsObject
      * @see AddEventPreg
      *
      * @param string $sEventName     Название евента
-     * @param string $sEventFunction Какой метод ему соответствует
+     * @param callable $sEventFunction Какой метод ему соответствует
      *
      * @throws \Exception
      */
@@ -187,7 +187,7 @@ abstract class Action extends LsObject
                 $hook = LS::Make(ModuleHook::class);
                 $pars = ['event' => $this->sCurrentEvent, 'params' => $this->GetParams()];
                 $hook->Run("action_event_".strtolower($this->sCurrentAction)."_before", $pars);
-                call_user_func_array([$this, $aEvent['method']], []);
+                $this->oEngine->order(\Closure::fromCallable([$this, $aEvent['method']]));
                 $hook->Run("action_event_".strtolower($this->sCurrentAction)."_after", $pars);
 
                 return;

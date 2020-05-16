@@ -26,12 +26,6 @@ namespace Engine;
  */
 abstract class Module extends LsObject {
 	/**
-	 * Объект ядра
-	 *
-	 * @var Engine
-	 */
-	protected $oEngine=null;
-	/**
 	 * Указывает на то, была ли проведенна инициализация модуля
 	 *
 	 * @var bool
@@ -41,11 +35,8 @@ abstract class Module extends LsObject {
 	/**
 	 * При создании модуля передаем объект ядра
 	 *
-	 * @param Engine $oEngine
 	 */
-	final public function __construct(Engine $oEngine) {
-		$this->oEngine=$oEngine;
-	}
+	final public function __construct() {}
 	/**
 	 * Блокируем копирование/клонирование объекта
 	 *

@@ -1,5 +1,6 @@
 <?php
 
+use App\Modules\ModuleCrypto;
 use Engine\Config;
 use PHPUnit\Framework\TestCase;
 
@@ -40,10 +41,13 @@ final class PasswordTest extends TestCase {
 		'qxa\5&@PC%jyCdUY'
 	);
 
+	/**
+	 * @var ModuleCrypto $crypto
+	 */
 	private static $crypto;
 
 	public static function setUpBeforeClass(): void {
-		self::$crypto = new Crypto(new Engine());
+		self::$crypto = new ModuleCrypto();
 		Config::Set('crypto.password.current_algo', 'pbkdf2');
 		Config::Set('crypto.password.sha512.salt', 'testsalt');
 		Config::Set('crypto.password.pbkdf2.hash_algo', 'sha256');

@@ -43,99 +43,6 @@ set_include_path(get_include_path() . PATH_SEPARATOR . dirname(__FILE__));
  * @since 1.0
  */
 class Engine extends LsObject {
-
-	/**
-	 * Имя плагина
-	 * @var int
-	 */
-	//const CI_PLUGIN = 1;
-
-	/**
-	 * Имя экшна
-	 * @var int
-	 */
-	const CI_ACTION = 2;
-
-	/**
-	 * Имя модуля
-	 * @var int
-	 */
-	const CI_MODULE = 4;
-
-	/**
-	 * Имя сущности
-	 * @var int
-	 */
-	const CI_ENTITY = 8;
-
-	/**
-	 * Имя маппера
-	 * @var int
-	 */
-	const CI_MAPPER = 16;
-
-	/**
-	 * Имя метода
-	 * @var int
-	 */
-	const CI_METHOD = 32;
-
-	/**
-	 * Имя хука
-	 * @var int
-	 */
-	const CI_HOOK = 64;
-
-	/**
-	 * Имя класс наследования
-	 * @var int
-	 */
-	const CI_INHERIT = 128;
-
-	/**
-	 * Имя блока
-	 * @var int
-	 */
-	const CI_BLOCK = 256;
-
-	/**
-	 * Префикс плагина
-	 * @var int
-	 */
-	const CI_PPREFIX = 8192;
-
-	/**
-	 * Разобранный класс наследования
-	 * @var int
-	 */
-	const CI_INHERITS = 16384;
-
-	/**
-	 * Путь к файлу класса
-	 * @var int
-	 */
-	const CI_CLASSPATH = 32768;
-
-	/**
-	 * Все свойства класса
-	 * @var int
-	 */
-	const CI_ALL = 65535;
-
-	/**
-	 * Свойства по-умолчанию
-	 * CI_ALL ^ (CI_CLASSPATH | CI_INHERITS | CI_PPREFIX)
-	 * @var int
-	 */
-	const CI_DEFAULT = 8191;
-
-	/**
-	 * Объекты
-	 * CI_ACTION | CI_MAPPER | CI_HOOK | CI_PLUGIN | CI_ACTION | CI_MODULE | CI_ENTITY | CI_BLOCK
-	 * @var int
-	 */
-	const CI_OBJECT = 350;
-
 	/**
 	 * Текущий экземпляр движка, используется для синглтона.
 	 * @see getInstance использование синглтона
@@ -418,7 +325,7 @@ class Engine extends LsObject {
 			if (!class_exists($class)) {
 				throw new \RuntimeException(sprintf('Class "%s" not found!', $class));
 			}
-			$module = new $class($this);
+			$module = new $class();
 			$this->aModules[$class] = $module;
 			$this->InitModule($module);
 			return $module;

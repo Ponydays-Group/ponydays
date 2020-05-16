@@ -3,6 +3,7 @@
 use PHPUnit\Framework\TestCase;
 
 require_once('include/function.php');
+require_once('include/data_format.php');
 
 class FunctionTest extends TestCase {
 	const EXAMPLES_B64URL = array(

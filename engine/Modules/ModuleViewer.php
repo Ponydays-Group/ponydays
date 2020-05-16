@@ -627,11 +627,11 @@ class ModuleViewer extends Module
                                 $bUse = true;
                                 break;
                             }
-                        } elseif (substr($sEventPreg, 0, 1) == '{') {
+                        } elseif (substr($sEventPreg, 0, 1) == '@') {
                             /**
                              * Это имя event'a (именованный евент, если его нет, то совпадает с именем метода евента в экшене)
                              */
-                            if (trim($sEventPreg, '{}') == $sEventName) {
+                            if (trim($sEventPreg, '@') == $sEventName) {
                                 $bUse = true;
                                 break;
                             }

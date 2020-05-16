@@ -89,6 +89,8 @@ class MapperEditComment extends Mapper
 
     /**
      * @param $data EntityEditCommentData
+     *
+     * @return bool
      */
     public function SaveData($data) {
         $sql="INSERT INTO " . Config::Get('db.table.editcomment') ."

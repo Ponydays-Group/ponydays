@@ -17,12 +17,9 @@
 
 namespace App\Modules;
 
-use App\Entities\EntityGeoCountry;
 use App\Entities\EntityGeo;
-use App\Entities\EntityGeoRegion;
 use App\Entities\EntityGeoTarget;
 use App\Mappers\MapperGeo;
-use App\Entities\EntityUser;
 use Engine\Engine;
 use Engine\LS;
 use Engine\Module;
@@ -399,7 +396,7 @@ class ModuleGeo extends Module {
 	 * @param string $sTargetType	Тип владельца
 	 * @param int $iTargetId	ID владельца
 	 *
-	 * @return \App\Entities\EntityGeoCity|\App\Modules\Geo\EntityGeoCountry|\App\Modules\Geo\\App\Entities\EntityGeoRegion|null
+	 * @return \App\Entities\EntityGeo|\App\Entities\EntityGeoCity|\App\Entities\EntityGeoCountry|\App\Entities\EntityGeoRegion|null
 	 */
 	public function GetGeoObjectByTarget($sTargetType,$iTargetId) {
 		$aTargets=$this->GetTargets(array('target_type'=>$sTargetType,'target_id'=>$iTargetId),1,1);

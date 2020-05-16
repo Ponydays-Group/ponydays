@@ -710,7 +710,7 @@ class MapperTopic extends Mapper {
 	 *
 	 * @param string $sTag	Тэг
 	 * @param int $iLimit	Количество
-	 * @return bool
+	 * @return array
 	 */
 	public function GetTopicTagsByLike($sTag,$iLimit) {
 		$sTag=mb_strtolower($sTag,"UTF-8");
@@ -1071,7 +1071,7 @@ class MapperTopic extends Mapper {
 	 * @param \App\Entities\EntityTopicPhoto $oPhoto Объект фото
 	 */
 	public function updateTopicPhoto($oPhoto) {
-		if (!$oPhoto->getTopicId() && !$oPhoto->getTargetTmp()) return false;
+		if (!$oPhoto->getTopicId() && !$oPhoto->getTargetTmp()) return;
 		if ($oPhoto->getTopicId()) {
 			$oPhoto->setTargetTmp = null;
 		}

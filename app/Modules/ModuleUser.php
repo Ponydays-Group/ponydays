@@ -79,7 +79,7 @@ class ModuleUser extends Module
     /**
      * Объект сессии текущего пользователя
      *
-     * @var \App\Modules\User\EntityUserSession|null
+     * @var \App\Entities\EntityUserSession|null
      */
     protected $oSession = null;
     /**
@@ -103,6 +103,7 @@ class ModuleUser extends Module
          */
 
         $sUserId = LS::Make(ModuleSession::class)->Get('user_id');
+        $oUser = null;
         if ($sUserId and $oUser = $this->GetUserById($sUserId) and $oUser->getActivate()) {
             if ($this->oSession = $oUser->getSession()) {
                 /**
@@ -1227,7 +1228,7 @@ class ModuleUser extends Module
     {
         $sDay = 7;
         $iCountUsed = $this->GetCountInviteUsedByDate($oUserFrom->getId(), date("Y-m-d 00:00:00", mktime(0, 0, 0, date("m"), date("d") - $sDay, date("Y"))));
-        $iCountAllAvailable = round($oUserFrom->getRating() + $oUserFrom->getSkill());
+        $iCountAllAvailable = round((float)$oUserFrom->getRating() + (float)$oUserFrom->getSkill());
         $iCountAllAvailable = $iCountAllAvailable < 0 ? 0 : $iCountAllAvailable;
         $iCountAvailable = $iCountAllAvailable - $iCountUsed;
         $iCountAvailable = $iCountAvailable < 0 ? 0 : $iCountAvailable;
@@ -1358,7 +1359,7 @@ class ModuleUser extends Module
             /**
              * Достаем переменные x1 и т.п. из $aSize
              */
-            extract($aSize, EXTR_PREFIX_SAME, 'ops');
+            list($x1, $x2, $y1, $y2) = [$aSize['x1'], $aSize['x2'], $aSize['y1'], $aSize['y2']];
             if ($x1 > $x2) {
                 // меняем значения переменных
                 $x1 = $x1 + $x2;
@@ -1473,7 +1474,7 @@ class ModuleUser extends Module
                 return false;
             }
 
-            extract($aSize, EXTR_PREFIX_SAME, 'ops');
+            list($x1, $x2, $y1, $y2) = [$aSize['x1'], $aSize['x2'], $aSize['y1'], $aSize['y2']];
 
             if (($y1+200*($x2/1340))>$y2) {
                 $y1 = $y2-200*($x2/1340);
@@ -1497,7 +1498,7 @@ class ModuleUser extends Module
     /**
      * Удаляет фото пользователя
      *
-     * @param \App\Modules\User\\App\Entities\EntityUser $oUser
+     * @param \App\Entities\EntityUser $oUser
      */
     public
     function DeleteFoto($oUser)
@@ -1581,12 +1582,11 @@ class ModuleUser extends Module
      * @param int $iUserId ID пользователя
      * @param array $aFields Ассоциативный массив полей id => value
      * @param int $iCountMax Максимальное количество одинаковых полей
-     * @return bool
      */
     public
     function setUserFieldsValues($iUserId, $aFields, $iCountMax = 1)
     {
-        return $this->oMapper->setUserFieldsValues($iUserId, $aFields, $iCountMax);
+        $this->oMapper->setUserFieldsValues($iUserId, $aFields, $iCountMax);
     }
 
     /**
@@ -1892,7 +1892,7 @@ class ModuleUser extends Module
     /**
      * Формирование процесса смены емайла в профиле пользователя
      *
-     * @param \App\Modules\User\\App\Entities\EntityUser $oUser    Объект пользователя
+     * @param \App\Entities\EntityUser $oUser    Объект пользователя
      * @param string                                     $sMailNew Новый емайл
      *
      * @return bool|\App\Entities\EntityUserChangemail

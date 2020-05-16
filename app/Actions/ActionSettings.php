@@ -23,7 +23,6 @@ use App\Modules\ModuleCrypto;
 use App\Modules\ModuleGeo;
 use App\Modules\ModuleNotify;
 use App\Modules\ModuleTopic;
-use App\Entities\EntityUser;
 use App\Modules\ModuleUser;
 use App\Modules\ModuleWall;
 use Engine\Action;

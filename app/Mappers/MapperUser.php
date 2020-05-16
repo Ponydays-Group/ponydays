@@ -957,7 +957,6 @@ class MapperUser extends Mapper
      * @param int $iUserId ID пользователя
      * @param array $aFields Ассоциативный массив полей id => value
      * @param int $iCountMax Максимальное количество одинаковых полей
-     * @return bool
      */
     public function setUserFieldsValues($iUserId, $aFields, $iCountMax)
     {
@@ -1122,7 +1121,7 @@ class MapperUser extends Mapper
      * @param int $iTargetUserId ID пользователя о ком заметка
      * @param int $iUserId       ID пользователя автора заметки
      *
-     * @return \App\Modules\User\EntityUserNote|null
+     * @return \App\Entities\EntityUserNote|null
      * @throws \Exception
      */
     public function GetUserNote($iTargetUserId, $iUserId)

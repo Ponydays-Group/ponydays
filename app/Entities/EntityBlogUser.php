@@ -17,9 +17,7 @@
 
 namespace App\Entities;
 
-use App\Entities\EntityBlog;
 use App\Modules\ModuleBlog;
-use App\Entities\EntityUser;
 use Engine\Entity;
 
 /**
@@ -80,7 +78,7 @@ class EntityBlogUser extends Entity {
 	/**
 	 * Возвращает объект пользователя
 	 *
-	 * @return \App\Modules\User\EntityUser|null
+	 * @return \App\Entities\EntityUser|null
 	 */
 	public function getUser() {
 		return $this->_getDataOne('user');

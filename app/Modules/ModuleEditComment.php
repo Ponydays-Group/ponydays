@@ -64,7 +64,7 @@ class ModuleEditComment extends Module
     }
 
     /**
-     * @param $data \App\Modules\EditComment\\App\Entities\EntityEditCommentData
+     * @param $data \App\Entities\EntityEditCommentData
      *
      * @return bool
      */

@@ -17,8 +17,6 @@
 
 namespace App\Entities;
 
-use App\Entities\EntityUser;
-use App\Entities\EntityVote;
 use Engine\Config;
 use Engine\Entity;
 use Engine\Router;
@@ -88,7 +86,7 @@ class EntityBlog extends Entity {
 	}
 	/**
 	 * Возвращает рейтинг блога
-	 *
+     * TODO: make it return float
 	 * @return string
 	 */
 	public function getRating() {
@@ -163,7 +161,7 @@ class EntityBlog extends Entity {
 	/**
 	 * Возвращает объект голосования за блог
 	 *
-	 * @return \App\Modules\Vote\EntityVote|null
+	 * @return \App\Entities\EntityVote|null
 	 */
 	public function getVote() {
 		return $this->_getDataOne('vote');
@@ -369,7 +367,7 @@ class EntityBlog extends Entity {
 	/**
 	 * Устанавливает объект голосования за блог
 	 *
-	 * @param \App\Modules\Vote\EntityVote $data
+	 * @param \App\Entities\EntityVote $data
 	 */
 	public function setVote($data) {
 		$this->_aData['vote']=$data;

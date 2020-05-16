@@ -322,13 +322,14 @@ class ActionRss extends Action {
 	 * Вывод RSS топиков из персонального блога или всех персональных
 	 */
 	protected function RssPersonalBlog() {
-		$this->sUserLogin=$this->GetParam(0);
-		if(!$this->sUserLogin){
+		$sUserLogin=$this->GetParam(0);
+		$oUser = null;
+		if(!$sUserLogin){
 			/**
 			 * RSS-лента всех записей из персональных блогов
 			 */
 			$aResult=LS::Make(ModuleTopic::class)->GetTopicsPersonal(1,Config::Get('module.topic.per_page')*2);
-		}elseif(!$oUser=LS::Make(ModuleUser::class)->GetUserByLogin($this->sUserLogin)){
+		}elseif(!$oUser=LS::Make(ModuleUser::class)->GetUserByLogin($sUserLogin)){
 			parent::EventNotFound(); return;
 		}else{
 			/**
@@ -342,7 +343,7 @@ class ActionRss extends Action {
 		 */
 		$aChannel['title']=Config::Get('view.name');
 		$aChannel['link']=Config::Get('path.root.web');
-		$aChannel['description']=($this->sUserLogin)
+		$aChannel['description']=($sUserLogin)
 			? Config::Get('path.root.web').' / '.$oUser->getLogin().' / RSS channel'
 			: Config::Get('path.root.web').' / RSS channel';
 		$aChannel['language']='ru';

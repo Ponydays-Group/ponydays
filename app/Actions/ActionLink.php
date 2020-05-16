@@ -359,8 +359,6 @@ class ActionLink extends Action {
 	 * Обработка редактирования топика
 	 *
 	 * @param EntityTopic $oTopic
-	 *
-	 * @return mixed
 	 */
 	protected function SubmitEdit($oTopic) {
 		$oTopic->_setValidateScenario('link');
@@ -381,7 +379,7 @@ class ActionLink extends Action {
 		 * Проверка корректности полей формы
 		 */
 		if (!$this->checkTopicFields($oTopic)) {
-			return false;
+			return;
 		}
 		/**
 		 * Определяем в какой блог делаем запись
@@ -397,14 +395,14 @@ class ActionLink extends Action {
 		 */
 		if (!$oBlog) {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_create_blog_error_unknown'),LS::Make(ModuleLang::class)->Get('error'));
-			return false;
+			return;
 		}
 		/**
 		 * Проверяем права на постинг в блог
 		 */
 		if (!LS::Make(ModuleACL::class)->IsAllowBlog($oBlog,$this->oUserCurrent)) {
 			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_create_blog_error_noallow'),LS::Make(ModuleLang::class)->Get('error'));
-			return false;
+			return;
 		}
 		/**
 		 * Проверяем разрешено ли постить топик по времени

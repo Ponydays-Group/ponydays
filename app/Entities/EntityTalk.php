@@ -17,8 +17,6 @@
 
 namespace App\Entities;
 
-use App\Entities\EntityTalkUser;
-use App\Entities\EntityUser;
 use Engine\Entity;
 
 /**
@@ -132,7 +130,7 @@ class EntityTalk extends Entity {
 	/**
 	 * Возвращает объект пользователя
 	 *
-	 * @return \App\Modules\User\EntityUser|null
+	 * @return \App\Entities\EntityUser|null
 	 */
 	public function getUser() {
 		return $this->_getDataOne('user');
@@ -263,7 +261,7 @@ class EntityTalk extends Entity {
 	/**
 	 * Устанавливает объект пользователя
 	 *
-	 * @param \App\Modules\User\EntityUser $data
+	 * @param \App\Entities\EntityUser $data
 	 */
 	public function setUser($data) {
 		$this->_aData['user']=$data;

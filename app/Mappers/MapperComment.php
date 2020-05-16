@@ -402,6 +402,7 @@ class MapperComment extends Mapper {
 		if ($aRow=$this->oDb->selectRow($sql,$sId,$sTargetType)) {
 			return $aRow['c'];
 		}
+		return null;
 	}
 	/**
 	 * Возвращает количество комментариев
@@ -428,6 +429,7 @@ class MapperComment extends Mapper {
 		if ($aRow=$this->oDb->selectRow($sql,$sId,$sTargetType,$iLeft)) {
 			return $aRow['c'];
 		}
+		return null;
 	}
 	/**
 	 * Возвращает корневой комментарий

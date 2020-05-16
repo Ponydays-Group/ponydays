@@ -21,7 +21,6 @@ use App\Entities\EntityComment;
 use App\Entities\EntityCommentOnline;
 use App\Mappers\MapperComment;
 use App\Entities\EntityFavourite;
-use App\Entities\EntityUser;
 use Engine\Config;
 use Engine\Engine;
 use Engine\LS;
@@ -47,7 +46,7 @@ class ModuleComment extends Module {
 	/**
 	 * Объект текущего пользователя
 	 *
-	 * @var \App\Modules\User\EntityUser|null
+	 * @var \App\Entities\EntityUser|null
 	 */
 	protected $oUserCurrent=null;
 
@@ -651,7 +650,6 @@ class ModuleComment extends Module {
 	 * @param  int $sTargetId	ID владельца коммента
 	 * @param  string $sTargetType	Тип владельца комментария
 	 * @param  int    $iPublish	Статус отображать комментарии или нет
-	 * @return bool
 	 */
 	public function SetCommentsPublish($sTargetId,$sTargetType,$iPublish) {
 		if(!$aComments = $this->GetCommentsByTargetId($sTargetId,$sTargetType)) {

@@ -101,7 +101,8 @@ class ModuleVote extends Module {
 								$oAction->setActionType('VoteDownUser');
 						}
                         return true; //FIXME: Unreachable statement
-						LS::Make(ModuleFeedbacks::class)->SaveAction($oAction);
+                    /** @noinspection PhpUnreachableStatementInspection */
+                    LS::Make(ModuleFeedbacks::class)->SaveAction($oAction);
 				}
 
 				return true;

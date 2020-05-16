@@ -17,9 +17,6 @@
 
 namespace App\Entities;
 
-use App\Entities\EntityGeoCity;
-use App\Entities\EntityGeoCountry;
-use App\Entities\EntityGeoRegion;
 use App\Modules\ModuleGeo;
 use Engine\Config;
 use Engine\Entity;

@@ -19,12 +19,9 @@ namespace App\Entities;
 
 use App\Modules\ModuleACL;
 use App\Modules\ModuleBlog;
-use App\Entities\EntitySubscribe;
 use App\Modules\ModuleSubscribe;
 use App\Modules\ModuleTopic;
-use App\Entities\EntityUser;
 use App\Modules\ModuleUser;
-use App\Entities\EntityVote;
 use Engine\Config;
 use Engine\Entity;
 use Engine\LS;
@@ -242,7 +239,7 @@ class EntityTopic extends Entity {
 	}
 	/**
 	 * Возвращает рейтинг топика
-	 *
+     * TODO: make it return float
 	 * @return string
 	 */
 	public function getRating() {
@@ -351,7 +348,7 @@ class EntityTopic extends Entity {
 	/**
 	 * Возвращает объект пользователя, автора топик
 	 *
-	 * @return \App\Modules\User\EntityUser|null
+	 * @return \App\Entities\EntityUser|null
 	 */
 	public function getUser() {
 		if (!$this->_getDataOne('user')) {
@@ -386,7 +383,7 @@ class EntityTopic extends Entity {
 	/**
 	 * Возвращает объект голосования за топик текущим пользователем
 	 *
-	 * @return \App\Modules\Vote\EntityVote|null
+	 * @return \App\Entities\EntityVote|null
 	 */
 	public function getVote() {
 		return $this->_getDataOne('vote');
@@ -668,6 +665,7 @@ class EntityTopic extends Entity {
 				}
 			}
 		}
+		return 0;
 	}
 	/**
 	 * Возвращает общее число принявших участие в опросе в топике-опросе
@@ -706,7 +704,6 @@ class EntityTopic extends Entity {
 	 * Устанавливает число воздержавшихся от участия в опросе в топике-опросе
 	 *
 	 * @param int $data
-	 * @return mixed
 	 */
 	public function setQuestionCountVoteAbstain($data) {
 		if ($this->getType()!='question') {
@@ -972,7 +969,7 @@ class EntityTopic extends Entity {
 	/**
 	 * Устанавливает объект пользователя
 	 *
-	 * @param \App\Modules\User\EntityUser $data
+	 * @param \App\Entities\EntityUser $data
 	 */
 	public function setUser($data) {
 		$this->_aData['user']=$data;
@@ -996,7 +993,7 @@ class EntityTopic extends Entity {
 	/**
 	 * Устанавливает объект голосования за топик
 	 *
-	 * @param \App\Modules\Vote\EntityVote $data
+	 * @param \App\Entities\EntityVote $data
 	 */
 	public function setVote($data) {
 		$this->_aData['vote']=$data;

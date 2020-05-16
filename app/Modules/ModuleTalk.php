@@ -63,7 +63,7 @@ class ModuleTalk extends Module {
 	/**
 	 * Объект текущего пользователя
 	 *
-	 * @var \App\Modules\User\EntityUser|null
+	 * @var \App\Entities\EntityUser|null
 	 */
 	protected $oUserCurrent=null;
 
@@ -93,6 +93,7 @@ class ModuleTalk extends Module {
 			$aUserTo=array($aUserTo);
 		}
 		$aUserIdTo=array($iUserIdFrom);
+		$aUserInBlacklist = null;
 		if($bUseBlacklist) {
 			$aUserInBlacklist=$this->GetBlacklistByTargetId($iUserIdFrom);
 		}
@@ -416,6 +417,7 @@ class ModuleTalk extends Module {
 		$aTalks=$this->GetTalksAdditionalData($sId);
 		if (isset($aTalks[$sId])) {
 			$aResult=$this->GetTalkUsersByTalkId($sId);
+			$aTalkUsers = array();
 			foreach ((array)$aResult as $oTalkUser) {
 				$aTalkUsers[$oTalkUser->getUserId()]=$oTalkUser;
 			}
@@ -547,6 +549,7 @@ class ModuleTalk extends Module {
 		 */
 		foreach ($aTalks as $oTalk) {
 			$aResult=$this->GetTalkUsersByTalkId($oTalk->getId());
+			$aTalkUsers = array();
 			foreach ((array)$aResult as $oTalkUser) {
 				$aTalkUsers[$oTalkUser->getUserId()]=$oTalkUser;
 			}
@@ -803,6 +806,7 @@ class ModuleTalk extends Module {
 	 * @return bool
 	 */
 	public function AddUserArrayToBlacklist($aTargetId, $sUserId) {
+	    $aUsersId = array();
 		foreach ((array)$aTargetId as $oUser) {
 			$aUsersId[]= $oUser instanceof EntityUser ? $oUser->getId() : (int)$oUser;
 		}

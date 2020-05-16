@@ -233,6 +233,7 @@ class ModuleLang extends Module {
 		}
 
 		if(is_array($aReplace)&&count($aReplace)&&is_string($sLang)) {
+		    $aReplacePairs = array();
 			foreach ($aReplace as $sFrom => $sTo) {
 				$aReplacePairs["%%{$sFrom}%%"]=$sTo;
 			}

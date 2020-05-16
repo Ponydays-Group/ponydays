@@ -59,7 +59,7 @@ class ModuleRating extends Module {
 		/**
 		 * Устанавливаем рейтинг комментария
 		 */
-		$oComment->setRating($oComment->getRating()+$iValue);
+		$oComment->setRating((float)$oComment->getRating() + $iValue);
 		/**
 		 * Устанавливаем количество оценок
 		 */
@@ -125,7 +125,7 @@ class ModuleRating extends Module {
 	 * @throws \Exception
 	 */
 	public function VoteTopic(EntityUser $oUser, EntityTopic $oTopic, $iValue, $iValueOld, $iCountVote, $iVoteType) {
-		$oTopic->setRating($oTopic->getRating()+$iValue);
+		$oTopic->setRating((float)$oTopic->getRating() + $iValue);
 		/**
 		 * Устанавливаем количество оценок
 		 */
@@ -176,7 +176,7 @@ class ModuleRating extends Module {
 	 * @return int
 	 */
 	public function VoteBlog(EntityUser $oUser, EntityBlog $oBlog, $iValue) {
-		$oBlog->setRating($oBlog->getRating()+$iValue);
+		$oBlog->setRating((float)$oBlog->getRating() + $iValue);
 		return $iValue;
 	}
 	/**
@@ -189,14 +189,14 @@ class ModuleRating extends Module {
 	 * @return float
 	 */
 	public function VoteUser(EntityUser $oUser, EntityUser $oUserTarget, $iValue, $voted=false) {
-		$iRatingNew=$oUserTarget->getRating()+$iValue;
+		$iRatingNew=(float)$oUserTarget->getRating() + $iValue;
 		$oUserCurrent = LS::Make(ModuleUser::class)->GetUserCurrent();
 		$oUserTarget->setRating($iRatingNew);
 		if (!$voted){
 		    if ($iValue>0){
-		        $oUserTarget->setSkill($oUserTarget->getSkill()+5.0);
+		        $oUserTarget->setSkill((float)$oUserTarget->getSkill()+5.0);
 		    } else {
-			    $oUserTarget->setSkill($oUserTarget->getSkill()-5.0);
+			    $oUserTarget->setSkill((float)$oUserTarget->getSkill()-5.0);
 		    }
 	    }
 		LS::Make(ModuleUser::class)->Update($oUserTarget);

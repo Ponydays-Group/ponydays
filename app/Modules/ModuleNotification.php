@@ -4,7 +4,6 @@ namespace App\Modules;
 
 use App\Mappers\MapperComment;
 use App\Mappers\MapperNotification;
-use App\Entities\EntityUser;
 use Engine\Engine;
 use Engine\LS;
 use Engine\Module;
@@ -26,7 +25,7 @@ class ModuleNotification extends Module {
 	/**
 	 * Объект текущего пользователя
 	 *
-	 * @var \App\Modules\User\EntityUser|null
+	 * @var \App\Entities\EntityUser|null
 	 */
 	protected $oUserCurrent=null;
 

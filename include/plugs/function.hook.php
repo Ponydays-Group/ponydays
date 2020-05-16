@@ -29,7 +29,7 @@ use Engine\Modules\ModuleHook;
 function smarty_function_hook($aParams,&$oSmarty) {	
 	if(empty($aParams['run'])) {
 		trigger_error("Hook: missing 'run' parametr",E_USER_WARNING);
-		return;
+		return '';
 	}
 	
 	$sHookName='template_'.strtolower($aParams['run']);
@@ -46,4 +46,5 @@ function smarty_function_hook($aParams,&$oSmarty) {
 	} else {
 		return $sReturn;
 	}
+	return '';
 }

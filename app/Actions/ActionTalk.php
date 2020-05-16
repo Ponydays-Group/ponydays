@@ -1441,6 +1441,7 @@ class ActionTalk extends Action
         /**
          * Обрабатываем добавление по каждому переданному логину пользователя
          */
+        $aResult = array();
         foreach ($aUsers as $sUser) {
             $sUser = trim($sUser);
             if ($sUser == '') {

@@ -21,20 +21,20 @@ use Engine\Modules\ModuleViewer;
 /**
  * Добавляет блок(в сайдбар, тулбар и т.п.)
  *
- * @param unknown_type $params
- * @param unknown_type $smarty
- * @return unknown
+ * @param array $params
+ * @param \Smarty_Internal_Template $smarty
+ * @return string
  */
 function smarty_function_add_block($params, &$smarty)
 {
 	if (!array_key_exists('group', $params)) {
 		trigger_error("add_block: missing 'group' parameter",E_USER_WARNING);
-        return;
+        return '';
     }
 
 	if (!array_key_exists('name', $params)) {
 		trigger_error("add_block: missing 'name' parameter",E_USER_WARNING);
-		return;
+		return '';
 	}
 
 	$aBlockParams=(isset($params['params']) && is_array($params['params'])) ? $params['params'] : array();

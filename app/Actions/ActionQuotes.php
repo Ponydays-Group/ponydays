@@ -116,10 +116,8 @@ class ActionQuotes extends Action {
 
 	/**
 	 * Ивент редактора цитатника
-	 *
-	 * @return bool
 	 */
-	protected function EventEdit (): bool {
+	protected function EventEdit() {
 		if (!$this->IsAdmin()) {
 			$this->SetTemplateAction('blank');
 			echo "Permission denied.";

@@ -153,7 +153,7 @@ function smarty_function_date_format($aParams,&$oSmarty) {
 	/**
 	 * Определяем нужное текстовое значение названия месяца
 	 */
-	$iMonth = date("n",$iDate);
+	$iMonth = (int)date("n",$iDate);
 	$sMonth = isset($aMonth[$iMonth])
 		? $aMonth[$iMonth]
 		: "";

@@ -15,75 +15,17 @@
 ---------------------------------------------------------
 */
 
-/**
- * Если не стоит расширения mb
- *
- * @param unknown_type $s
- * @return unknown
- */
-
 use Engine\Entity;
-
-if (!function_exists('iconv')) {
-    function iconv($a, $b, $s) {
-        return $s;
-    }
-}
-
-if (!function_exists('iconv_substr')) {
-  function iconv_substr($s,$start,$l=null, $e="UTF-8") {
-      //$s=iconv($sEncode,"Windows-1251",$s);
-      $s=substr($s, $start, $l);
-      //$s=iconv("Windows-1251",$sEncode,$s);
-      return $s;
-  }
-}
-
-if (!function_exists('mb_strlen')) {
-	function mb_strlen($s,$sEncode="UTF-8") {
-		$length = strlen($s);
-      	return (int)$length;
-	}
-}
-
-/**
- * Если не стоит расширения mb
- */
-if (!function_exists('mb_strtolower')) {
-    function mb_strtolower($s,$sEncode="UTF-8") {
-        $s=iconv($sEncode,"Windows-1251",$s);
-        $s=strtolower($s);
-        //$s=iconv("Windows-1251",$sEncode,$s);
-        return $s;
-    }
-}
-
-if (!function_exists('mb_strtoupper')) {
-    function mb_strtoupper($s,$sEncode="UTF-8") {
-        //$s=iconv($sEncode,"Windows-1251",$s);
-        $s=strtoupper($s);
-        //$s=iconv("Windows-1251",$sEncode,$s);
-        return $s;
-    }
-}
-
-if (!function_exists('mb_substr')) {
-    function mb_substr($s,$start,$l=null, $e="UTF-8") {
-        //$s=iconv($sEncode,"Windows-1251",$s);
-        $s=substr($s, $start, $l);
-        //$s=iconv("Windows-1251",$sEncode,$s);
-        return $s;
-    }
-}
 
 /**
  * Проверяет запрос послан как ajax или нет
  * Пришлось продублировать здесь, чтобы получить к ней доступ до подключения роутера
  *
- * @return unknown
+ * @return bool
  */
 function isAjaxRequest() {
-	return isset($_SERVER['HTTP_X_REQUESTED_WITH']) && $_SERVER['HTTP_X_REQUESTED_WITH']==='XMLHttpRequest';
+	return isset($_SERVER['HTTP_X_REQUESTED_WITH'])
+           && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest';
 }
 
 /**
@@ -147,8 +89,8 @@ function isPost($sName) {
 /**
  * генерирует случайную последовательность символов
  *
- * @param unknown_type $iLength
- * @return unknown
+ * @param int $iLength
+ * @return string
  */
 function func_generator($iLength=10) {
 	if ($iLength>32) {
@@ -176,7 +118,7 @@ function func_htmlspecialchars(&$data, $walkIndex = null)
 /**
  * stripslashes умеющая обрабатывать массивы
  *
- * @param unknown_type $data
+ * @param array|string $data
  */
 function func_stripslashes(&$data) {
 	if (is_array($data)) {
@@ -195,11 +137,11 @@ function func_stripslashes(&$data) {
 /**
  * Проверяет на корректность значение соглавно правилу
  *
- * @param unknown_type $sValue
- * @param unknown_type $sParam
- * @param unknown_type $iMin
- * @param unknown_type $iMax
- * @return unknown
+ * @param string $sValue
+ * @param string $sParam
+ * @param int $iMin
+ * @param int $iMax
+ * @return bool
  */
 function func_check($sValue,$sParam,$iMin=1,$iMax=100) {
 	if (is_array($sValue)) {
@@ -223,7 +165,7 @@ function func_check($sValue,$sParam,$iMin=1,$iMax=100) {
 /**
  * Определяет IP адрес
  *
- * @return unknown
+ * @return string
  */
 function func_getIp() {
 	// Если запускаем через консоль, то REMOTE_ADDR не определен
@@ -234,7 +176,7 @@ function func_getIp() {
 /**
  * Заменяет стандартную header('Location: *');
  *
- * @param unknown_type $sLocation
+ * @param string $sLocation
  */
 function func_header_location($sLocation) {
 	$sProtocol=isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1';
@@ -246,8 +188,8 @@ function func_header_location($sLocation) {
 /**
  * Создаёт каталог по полному пути
  *
- * @param unknown_type $sBasePath
- * @param unknown_type $sNewDir
+ * @param string $sBasePath
+ * @param string $sNewDir
  */
 function func_mkdir($sBasePath,$sNewDir) {
   $sDirToCheck = rtrim ($sBasePath, '/') . '/' . $sNewDir;
@@ -257,32 +199,12 @@ function func_mkdir($sBasePath,$sNewDir) {
 }
 
 /**
- * Рекурсивное удаление директории (со всем содержимым)
- *
- * @param  string $sPath
- * @return bool
- */
-function func_rmdir($sPath) {
-	if(!is_dir($sPath)) return true;
-	$sPath = rtrim($sPath,'/').'/';
-
-	if ($aFiles = glob($sPath.'*', GLOB_MARK)) {
-		foreach($aFiles as $sFile ) {
-			if (is_dir($sFile)) {
-				func_rmdir($sFile);
-			} else {
-				@unlink($sFile);
-			}
-		}
-	}
-    if(is_dir($sPath)) @rmdir($sPath);
-}
-
-/**
  * Возвращает обрезанный текст по заданное число слов
  *
- * @param unknown_type $sText
- * @param unknown_type $iCountWords
+ * @param string $sText
+ * @param int $iCountWords
+ *
+ * @return string
  */
 function func_text_words($sText,$iCountWords) {
 	$aWords = preg_split('#[\s\r\n]+#um',$sText);
@@ -293,29 +215,10 @@ function func_text_words($sText,$iCountWords) {
 }
 
 /**
- * Изменяет элементы массива
- *
- * @param unknown_type $array
- * @param unknown_type $sBefore
- * @param unknown_type $sAfter
- * @return array
- */
-function func_array_change_value($array,$sBefore='',$sAfter='') {
-	foreach ($array as $key => $value) {
-		if (is_array($value)) {
-			$array[$key]=func_change_array_value($value,$sBefore,$sAfter);
-		} elseif (!is_object($value)) {
-			$array[$key]=$sBefore.$array[$key].$sAfter;
-		}
-	}
-	return $array;
-}
-
-/**
  * Меняет числовые ключи массива на их значения
  *
- * @param unknown_type $arr
- * @param unknown_type $sDefValue
+ * @param array $arr
+ * @param string $sDefValue
  */
 function func_array_simpleflip(&$arr,$sDefValue=1) {
 	foreach ($arr as $key => $value) {
@@ -347,9 +250,9 @@ function func_array_sort_by_keys($array,$aKeys) {
 /**
  * Сливает два ассоциативных массива
  *
- * @param unknown_type $aArr1
- * @param unknown_type $aArr2
- * @return unknown
+ * @param array $aArr1
+ * @param array $aArr2
+ * @return array
  */
 function func_array_merge_assoc($aArr1,$aArr2) {
 	$aRes=$aArr1;
@@ -486,16 +389,20 @@ function convert_config_size_to_bytes($sSize)
 	}
 	$iValue = substr($sSize, 0, -1);
 	switch ($sSuffix) {
-		case 'P':
+        /** @noinspection PhpMissingBreakStatementInspection */
+        case 'P':
 			$iValue *= 1024;
 		// Fallthrough intended
-		case 'T':
+        /** @noinspection PhpMissingBreakStatementInspection */
+        case 'T':
 			$iValue *= 1024;
 		// Fallthrough intended
-		case 'G':
+        /** @noinspection PhpMissingBreakStatementInspection */
+        case 'G':
 			$iValue *= 1024;
 		// Fallthrough intended
-		case 'M':
+        /** @noinspection PhpMissingBreakStatementInspection */
+        case 'M':
 			$iValue *= 1024;
 		// Fallthrough intended
 		case 'K':

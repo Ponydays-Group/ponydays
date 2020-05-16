@@ -364,8 +364,10 @@ class ModuleTopic extends Module {
 	 * @return bool
 	 */
 	public function DeleteTopic($oTopicId) {
-		return;
+	    //FIXME: unreachable
+		return false;
 
+        /** @noinspection PhpUnreachableStatementInspection */
         /** @var \Engine\Modules\ModuleCache $cache */
         $cache = LS::Make(ModuleCache::class);
 		if ($oTopicId instanceof EntityTopic) {
@@ -399,11 +401,13 @@ class ModuleTopic extends Module {
 	 * @return bool
 	 */
 	public function DeleteTopicAdditionalData($iTopicId,$aPhotos=array()) {
-		return;	
+	    //FIXME: unreachable
+		return false;
 	
 		/**
 		 * Чистим зависимые кеши
 		 */
+        /** @noinspection PhpUnreachableStatementInspection */
         /** @var \Engine\Modules\ModuleCache $cache */
         $cache = LS::Make(ModuleCache::class);
 		$cache->Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG,array('topic_update'));
@@ -514,7 +518,7 @@ class ModuleTopic extends Module {
 	 * @return bool
 	 */
 	public function DeleteTopicContentByTopicId($iTopicId) {
-		return;
+		return false;
 		//return $this->oMapperTopic->DeleteTopicContentByTopicId($iTopicId);
 	}
 	/**
@@ -1010,7 +1014,7 @@ class ModuleTopic extends Module {
 		if (isset($aReturn['collection'])) {
 			return $aReturn['collection'];
 		}
-		return false;
+		return array();
 	}
 	/**
 	 * список топиков из персональных блогов
@@ -1144,7 +1148,7 @@ class ModuleTopic extends Module {
 	 * @param  int   $iPerPage	Количество элементов на страницу
 	 * @param  array $aAllowData	Список типов данных для подгрузки в топики
 	 * @param  bool  $bIdsOnly	Возвращать только ID или список объектов
-	 * @return array
+	 * @return array|bool
 	 */
 	public function GetTopicsByBlogId($iBlogId,$iPage=0,$iPerPage=0,$aAllowData=array(),$bIdsOnly=true) {
 		$aFilter=array('blog_id'=>$iBlogId);
@@ -2209,7 +2213,7 @@ class ModuleTopic extends Module {
 	/**
 	 * Обновить данные по изображению
 	 *
-	 * @param \App\Modules\Topic\EntityTopicPhoto $oPhoto Объект фото
+	 * @param \App\Entities\EntityTopicPhoto $oPhoto Объект фото
 	 */
 	public function updateTopicPhoto($oPhoto) {
         /** @var \Engine\Modules\ModuleCache $cache */

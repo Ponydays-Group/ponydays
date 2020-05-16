@@ -68,7 +68,7 @@ class ModuleBlog extends Module {
 	/**
 	 * Объект текущего пользователя
 	 *
-	 * @var \App\Modules\User\EntityUser|null
+	 * @var \App\Entities\EntityUser|null
 	 */
 	protected $oUserCurrent=null;
 
@@ -893,9 +893,11 @@ class ModuleBlog extends Module {
 	 * @return bool
 	 */
 	public function DeleteBlog($iBlogId) {
+	    //FIXME: unreachable
 		return false;
-		
-		if($iBlogId instanceof EntityBlog){
+
+        /** @noinspection PhpUnreachableStatementInspection */
+        if($iBlogId instanceof EntityBlog){
 			$iBlogId = $iBlogId->getId();
 		}
 		/**

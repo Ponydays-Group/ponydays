@@ -61,12 +61,6 @@ class ActionPage extends Action {
 	 * Отображение страницы
 	 */
 	protected function EventShowPage() {
-		if (!$this->sCurrentEvent) {
-			/**
-			 * Показывает дефолтную страницу
-			 */
-			//а это какая страница?
-		}
 		/**
 		 * Составляем полный URL страницы для поиска по нему в БД
 		 */
@@ -109,8 +103,8 @@ class ActionPage extends Action {
 		/**
 		 * Если пользователь не авторизован и не админ, то выкидываем его
 		 */
-		$this->oUserCurrent=LS::Make(ModuleUser::class)->GetUserCurrent();
-		if (!$this->oUserCurrent or !$this->oUserCurrent->isAdministrator()) {
+		$oUserCurrent=LS::Make(ModuleUser::class)->GetUserCurrent();
+		if (!$oUserCurrent or !$oUserCurrent->isAdministrator()) {
 			$this->EventNotFound(); return;
 		}
 
@@ -227,7 +221,7 @@ class ActionPage extends Action {
 	/**
 	 * Обработка отправки формы при редактировании страницы
 	 *
-	 * @param unknown_type $oPageEdit
+	 * @param EntityStaticPage $oPageEdit
 	 */
 	protected function SubmitEditPage($oPageEdit) {
 		/**
@@ -324,7 +318,7 @@ class ActionPage extends Action {
 	/**
 	 * Проверка полей на корректность
 	 *
-	 * @return unknown
+	 * @return bool
 	 */
 	protected function CheckPageFields() {
 		LS::Make(ModuleSecurity::class)->ValidateSendForm();

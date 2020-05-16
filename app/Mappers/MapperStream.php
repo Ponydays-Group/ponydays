@@ -145,7 +145,6 @@ class MapperStream extends Mapper {
 	 *
 	 * @param int $iUserId	ID пользователя
 	 * @param string $sEventType	Тип
-	 * @return bool
 	 */
 	public function switchUserEventType($iUserId, $sEventType) {
 		$sql = 'SELECT * FROM ' . Config::Get('db.table.stream_user_type') . ' WHERE user_id = ?d AND event_type = ?';

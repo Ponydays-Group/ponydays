@@ -336,12 +336,15 @@ class ModuleACL extends Module {
 		}
 		return true;
 	}
-	/**
-	 * Проверяет можно или нет юзеру постить в данный блог
-	 *
-	 * @param EntityBlog               $oBlog Блог
-	 * @param \App\Entities\EntityUser $oUser Пользователь
-	 */
+
+    /**
+     * Проверяет можно или нет юзеру постить в данный блог
+     *
+     * @param EntityBlog               $oBlog Блог
+     * @param \App\Entities\EntityUser $oUser Пользователь
+     *
+     * @return bool
+     */
 	public function IsAllowBlog($oBlog,$oUser) {
 		if ($oUser->isAdministrator()) {
 			return true;
@@ -655,7 +658,7 @@ class ModuleACL extends Module {
 						return false;
 				}
 				if(isset($oTopic) || isset($oBlog)) {
-					if(!isset($oBlog) && $oTopic) $oBlog = $oTopic->getBlog();
+					if(!isset($oBlog) && isset($oTopic) && $oTopic) $oBlog = $oTopic->getBlog();
 					if($oUser->isGlobalModerator() && $oBlog->getType() == 'open') return true;
 					if($req >= 3 && ($oBlog->getUserIsAdministrator() || $oBlog->getOwnerId() == $oUser->getId())) return true;
 					if($req >= 4 && $oBlog->getUserIsModerator()) return true;

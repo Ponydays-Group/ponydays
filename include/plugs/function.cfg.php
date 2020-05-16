@@ -26,7 +26,7 @@
 function smarty_function_cfg($aParams,&$oSmarty) {	
 	if(empty($aParams['name'])) {
 		trigger_error("Config: missing 'name' parametr",E_USER_WARNING);
-		return ;
+		return '';
 	}
 	require_once('./engine/Config.php');
 	if(!isset($aParams['instance'])) {

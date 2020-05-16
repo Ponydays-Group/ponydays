@@ -109,12 +109,12 @@ class ValidatorEmail extends Validator {
 		$bValid=is_string($sValue) && strlen($sValue)<=254 && (preg_match($this->pattern,$sValue) || $this->allowName && preg_match($this->fullPattern,$sValue));
 		if($bValid) {
 			$sDomain=rtrim(substr($sValue,strpos($sValue,'@')+1),'>');
-		}
-		if($bValid && $this->checkMX && function_exists('checkdnsrr')) {
-			$bValid=checkdnsrr($sDomain,'MX');
-		}
-		if($bValid && $this->checkPort && function_exists('fsockopen')) {
-			$bValid=fsockopen($sDomain,25)!==false;
+            if($this->checkMX && function_exists('checkdnsrr')) {
+                $bValid=checkdnsrr($sDomain,'MX');
+            }
+            if($this->checkPort && function_exists('fsockopen')) {
+                $bValid=fsockopen($sDomain,25)!==false;
+            }
 		}
 		return $bValid;
 	}

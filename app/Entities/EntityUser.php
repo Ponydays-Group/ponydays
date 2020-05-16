@@ -17,12 +17,8 @@
 
 namespace App\Entities;
 
-use App\Entities\EntityUserFriend;
-use App\Entities\EntityUserNote;
-use App\Entities\EntityUserSession;
 use App\Modules\ModuleStream;
 use App\Modules\ModuleUser;
-use App\Entities\EntityVote;
 use Engine\Config;
 use Engine\Entity;
 use Engine\LS;
@@ -451,7 +447,7 @@ class EntityUser extends Entity {
 	/**
 	 * Возвращает объект голосования за пользователя текущего пользователя
 	 *
-	 * @return \App\Modules\Vote\EntityVote|null
+	 * @return \App\Entities\EntityVote|null
 	 */
 	public function getVote() {
 		return $this->_getDataOne('vote');
@@ -510,6 +506,7 @@ class EntityUser extends Entity {
 		if ($oUserCurrent=LS::Make(ModuleUser::class)->GetUserCurrent()) {
 			return LS::Make(ModuleStream::class)->IsSubscribe($oUserCurrent->getId(),$this->getId());
 		}
+		return false;
 	}
 	/**
 	 * Возвращает объект заметки о подльзователе, которую оставил текущий пользователй
@@ -829,7 +826,7 @@ class EntityUser extends Entity {
 	/**
 	 * Устанавливает объект голосования за пользователя текущего пользователя
 	 *
-	 * @param \App\Modules\Vote\EntityVote $data
+	 * @param \App\Entities\EntityVote $data
 	 */
 	public function setVote($data) {
 		$this->_aData['vote']=$data;

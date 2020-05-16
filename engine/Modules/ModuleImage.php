@@ -244,7 +244,7 @@ class ModuleImage extends Module {
 	 */
 	public function CropSquare(LiveImage $oImage,$bCenter=true) {
 		if(!$oImage || $oImage->get_last_error()) {
-			return false;
+			return null;
 		}
 		$iWidth  = $oImage->get_image_params('width');
 		$iHeight = $oImage->get_image_params('height');
@@ -280,7 +280,7 @@ class ModuleImage extends Module {
 	public function CropProportion(LiveImage $oImage,$iW,$iH,$bCenter=true) {
 
 		if(!$oImage || $oImage->get_last_error()) {
-			return false;
+			return null;
 		}
 		$iWidth  = $oImage->get_image_params('width');
 		$iHeight = $oImage->get_image_params('height');

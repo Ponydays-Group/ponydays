@@ -226,9 +226,7 @@ return array(
 	'topic_favourite_tags_block' => 'Теги избранного',
 	'topic_favourite_tags_block_all' => 'Все теги',
 	'topic_favourite_tags_block_user' => 'Мои теги',
-	'error_favorite_topic_is_draft' => 'Топик из черновиков нельзя добавить в избранное',
-	'block_stream_comments_all' => 'Весь эфир',
-	'block_stream_topics_all' => 'Весь эфир',
+	'error_favorite_topic_is_draft' => 'Топик из черновиков нельзя добавить в избранное', 'block_stream_topics_all' => 'Весь эфир',
 	'comments_all' => 'Прямой эфир',
 	'add_favourite_tags' => 'Добавить свои теги',
 	/**

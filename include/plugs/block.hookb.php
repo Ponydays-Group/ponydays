@@ -31,7 +31,7 @@ use Engine\Modules\ModuleHook;
 function smarty_block_hookb($aParams,$sContent,&$oSmarty,&$bRepeat) {
 	if(empty($aParams['run'])) {
 		trigger_error("Hook: missing 'run' parametr",E_USER_WARNING);
-		return;
+		return '';
 	}
 	
 	if ($sContent) {
@@ -41,8 +41,9 @@ function smarty_block_hookb($aParams,$sContent,&$oSmarty,&$bRepeat) {
 		$aResultHook=LS::Make(ModuleHook::class)->Run($sHookName,$aParams);
 		if (array_key_exists('template_result',$aResultHook)) {
 			echo join('',$aResultHook['template_result']);
-			return ;
+			return '';
 		}
 		echo $sContent;
 	}
+	return '';
 }

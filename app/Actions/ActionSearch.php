@@ -214,6 +214,7 @@ class ActionSearch extends Action {
 		/**
 		 *  Количество результатов по типам
 		 */
+		$aRes = array();
 		foreach($this->sTypesEnabled as $sType => $aExtra){
 			$aRes['aCounts'][$sType] = intval(LS::Make(ModuleSphinx::class)->GetNumResultsByType($aReq['q'], $sType, $aExtra));
 		}

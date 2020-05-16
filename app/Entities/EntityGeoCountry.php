@@ -17,8 +17,6 @@
 
 namespace App\Entities;
 
-use App\Entities\EntityGeo;
-
 /**
  * Объект сущности страны
  *

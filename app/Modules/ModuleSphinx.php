@@ -53,7 +53,7 @@ class ModuleSphinx extends Module {
 	 * @param array $aExtraFilters	Список фильтров
 	 * @return int
 	 */
-	public function GetNumResultsByType($sTerms, $sObjType = 'topics', $aExtraFilters){
+	public function GetNumResultsByType($sTerms, $sObjType = 'topics', $aExtraFilters = array()){
 		$aResults = $this->FindContent($sTerms, $sObjType, 1, 1, $aExtraFilters);
 		return $aResults['total_found'];
 	}
@@ -97,7 +97,7 @@ class ModuleSphinx extends Module {
 			 * Ищем
 			 */
 			if(!is_array($data = $this->oSphinx->Query($sTerms, Config::Get('module.search.entity_prefix').$sObjType.'Index'))) {
-				return FALSE; // Скорее всего недоступен демон searchd
+				return null; // Скорее всего недоступен демон searchd
 			}
 			/**
 			 * Если результатов нет, то и в кеш писать не стоит...

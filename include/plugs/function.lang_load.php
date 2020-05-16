@@ -21,16 +21,16 @@ use Engine\Modules\ModuleLang;
 /**
  * Загружает список языковых текстовок в шаблон
  *
- * @param unknown_type $params
- * @param unknown_type $smarty
- * @return unknown
+ * @param array $params
+ * @param \Smarty_Internal_Template $smarty
+ * @return string
  */
 function smarty_function_lang_load($params, &$smarty)
 {
 
 	if (!array_key_exists('name', $params)) {
 		trigger_error("lang_load: missing 'name' parameter",E_USER_WARNING);
-		return;
+		return '';
 	}
 
 	$aLangName=explode(',',$params['name']);
@@ -49,4 +49,5 @@ function smarty_function_lang_load($params, &$smarty)
 	} else {
 		return $aLangMsg;
 	}
+	return '';
 }

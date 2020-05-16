@@ -337,8 +337,6 @@ class ActionQuestion extends Action {
 	 * Обработка редактирования топика
 	 *
 	 * @param EntityTopic $oTopic
-	 *
-	 * @return mixed
 	 */
 	protected function SubmitEdit($oTopic) {
 		$oTopic->_setValidateScenario('question');

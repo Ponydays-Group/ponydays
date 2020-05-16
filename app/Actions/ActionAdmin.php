@@ -21,7 +21,6 @@ use App\Modules\ModuleBlog;
 use App\Modules\ModuleComment;
 use App\Modules\ModuleTopic;
 use App\Entities\EntityUserField;
-use App\Entities\EntityUser;
 use App\Modules\ModuleUser;
 use Engine\Action;
 use Engine\Config;
@@ -79,7 +78,6 @@ class ActionAdmin extends Action {
 		$this->AddEvent('recalcfavourite','EventRecalculateFavourite');
 		$this->AddEvent('recalcvote','EventRecalculateVote');
 		$this->AddEvent('recalctopic','EventRecalculateTopic');
-        $this->AddEvent('jsonconfiglocal','EventJsonConfigLocal');
         $this->AddEvent('config','EventAdminConfig');
         $this->AddEvent('save','EventAdminConfigSave');
         $this->AddEvent('user','EventSaveUser');
@@ -217,13 +215,6 @@ class ActionAdmin extends Action {
 	 */
 	protected function EventIndex() {
 
-	}
-	
-	protected function EventJsonConfigLocal() {
-		$config = array();
-		//TODO:
-		require("/var/www/ponydays-dev/config/config.local.php");
-		LS::Make(ModuleViewer::class)->Assign('config',json_encode($config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 	}
 	/**
 	 * Перестроение дерева комментариев, актуально при $config['module']['comment']['use_nested'] = true;

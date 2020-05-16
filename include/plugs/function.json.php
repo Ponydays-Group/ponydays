@@ -18,15 +18,15 @@
 /**
  * Позволяет транслировать данные в json
  *
- * @param unknown_type $params
- * @param unknown_type $smarty
- * @return unknown
+ * @param array $params
+ * @param \Smarty_Internal_Template $smarty
+ * @return string
  */
 function smarty_function_json($params, &$smarty)
 {
 	if (!array_key_exists('var', $params)) {
 		trigger_error("json: missing 'var' parameter",E_USER_WARNING);
-		return;
+		return '';
 	}
 
 	if(class_exists('Entity')
@@ -50,4 +50,5 @@ function smarty_function_json($params, &$smarty)
 	} else {
 		return $_contents;
 	}
+	return '';
 }

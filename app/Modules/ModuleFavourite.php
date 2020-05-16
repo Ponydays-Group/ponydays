@@ -199,7 +199,7 @@ class ModuleFavourite extends Module {
 	 * @param  int $sUserId	ID пользователя
 	 * @param  string $sTargetType	Тип владельца
 	 * @param  array $aExcludeTarget	Список ID владельцев для исклчения
-	 * @return array
+	 * @return int
 	 */
 	public function GetCountFavouritesByUserId($sUserId,$sTargetType,$aExcludeTarget=array()) {
 		$s=serialize($aExcludeTarget);
@@ -252,7 +252,7 @@ class ModuleFavourite extends Module {
 	 * Возвращает число комментариев к открытым блогам в избранном по ID пользователя
 	 *
 	 * @param  int $sUserId	ID пользователя
-	 * @return array
+	 * @return int
 	 */
 	public function GetCountFavouriteOpenCommentsByUserId($sUserId) {
         /** @var \Engine\Modules\ModuleCache $cache */
@@ -304,7 +304,7 @@ class ModuleFavourite extends Module {
 	 * Возвращает число топиков в открытых блогах из избранного по ID пользователя
 	 *
 	 * @param  string $sUserId	ID пользователя
-	 * @return array
+	 * @return int
 	 */
 	public function GetCountFavouriteOpenTopicsByUserId($sUserId) {
         /** @var ModuleCache $cache */

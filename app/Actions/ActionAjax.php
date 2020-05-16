@@ -620,6 +620,7 @@ class ActionAjax extends Action
          * Как именно голосует пользователь
          * FIXME: Unreachable statement
          */
+        /** @noinspection PhpUnreachableStatementInspection */
         $iValue = getRequestStr('value', null, 'post');
         if (in_array($iValue, array(
             '1',
@@ -1433,6 +1434,7 @@ class ActionAjax extends Action
         }
 
         $sFile = null;
+        $sText = '';
         if (isPost('img_url') && $_REQUEST['img_url'] != '' && $_REQUEST['img_url'] != 'http://') {
             /**
              * Загрузка файла по URl

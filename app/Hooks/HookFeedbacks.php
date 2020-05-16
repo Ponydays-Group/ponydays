@@ -83,6 +83,7 @@ class HookFeedbacks extends Hook {
 				return $viewer->Fetch('userbar_item.tpl');
 			}
 		}
+		return '';
 	}
 
 	//***************************************************************************************
@@ -94,6 +95,7 @@ class HookFeedbacks extends Hook {
             $viewer->Assign('iUnreadActionsCount', $iUnreadActionsCount);
             return $viewer->Fetch('navbar_item.tpl');
 		}
+		return '';
 	}
 	
 	//***************************************************************************************
@@ -101,5 +103,6 @@ class HookFeedbacks extends Hook {
 		if(LS::Make(ModuleUser::class)->GetUserCurrent()){
 				return LS::Make(ModuleFeedbacks::class)->Fetch('navbar_stream.tpl');
 		}
+		return '';
 	}
 }

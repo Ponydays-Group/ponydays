@@ -131,6 +131,7 @@ class ProfilerSimple {
 		$this->aTimes[$this->sRequestId.$iTimeId]['time_stop']=microtime();
 		$this->aTimes[$this->sRequestId.$iTimeId]['time_full']=$this->GetTimeFull($iTimeId);
 		$this->iTimePidCurrent=$this->aTimes[$this->sRequestId.$iTimeId]['time_pid'];
+		return true;
 	}
 	/**
 	 * Сохранение лога в файл
@@ -159,7 +160,9 @@ class ProfilerSimple {
 				fwrite($fp,$s);
 			}
 			fclose($fp);
+			return true;
 		}
+		return false;
 	}
 	/**
 	 * Сохраняем лог при завершении работы

@@ -742,7 +742,7 @@ class ModuleViewer extends Module {
 	 */
 	public function MakePaging($iCount,$iCurrentPage,$iCountPerPage,$iCountPageLine,$sBaseUrl,$aGetParamsList=array()) {
 		if ($iCount==0) {
-			return false;
+			return null;
 		}
 
 		$iCountPage=ceil($iCount/$iCountPerPage);

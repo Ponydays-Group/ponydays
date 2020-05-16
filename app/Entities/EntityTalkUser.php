@@ -18,7 +18,6 @@
 namespace App\Entities;
 
 use App\Modules\ModuleTalk;
-use App\Entities\EntityUser;
 use Engine\Entity;
 
 /**

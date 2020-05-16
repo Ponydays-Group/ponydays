@@ -21,15 +21,15 @@ use Engine\Modules\ModuleViewer;
 /**
  * Загружает в переменную список блоков
  *
- * @param unknown_type $params
- * @param unknown_type $smarty
- * @return unknown
+ * @param array $params
+ * @param \Smarty_Internal_Template $smarty
+ * @return string
  */
 function smarty_function_get_blocks($params, &$smarty)
 {
 	if (!array_key_exists('assign', $params)) {
 		trigger_error("get_blocks: missing 'assign' parameter",E_USER_WARNING);
-        return;
+        return '';
     }
 
 	$smarty->assign($params['assign'], LS::Make(ModuleViewer::class)->GetBlocks(true));

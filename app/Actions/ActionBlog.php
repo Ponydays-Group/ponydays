@@ -34,7 +34,6 @@ use App\Modules\ModuleSubscribe;
 use App\Modules\ModuleTalk;
 use App\Entities\EntityTopicRead;
 use App\Modules\ModuleTopic;
-use App\Entities\EntityUser;
 use App\Modules\ModuleUser;
 use App\Modules\ModuleUserfeed;
 use Engine\Action;
@@ -87,7 +86,7 @@ class ActionBlog extends Action
     /**
      * Текущий пользователь
      *
-     * @var \App\Modules\User\EntityUser|null
+     * @var \App\Entities\EntityUser|null
      */
     protected $oUserCurrent = null;
     /**
@@ -2255,6 +2254,7 @@ class ActionBlog extends Action
         /**
          * Определяем тип блога и получаем его
          */
+        $oBlog = null;
         if ($sBlogId == 0) {
             if ($this->oUserCurrent) {
                 $oBlog = LS::Make(ModuleBlog::class)->GetPersonalBlogByUserId($this->oUserCurrent->getId());

@@ -349,7 +349,8 @@ class Engine extends LsObject {
 		//FIXME: пока так
 		return file_exists($sFile);
 
-		if(
+        /** @noinspection PhpUnreachableStatementInspection */
+        if(
 			!$this->isInit('cache')
 			|| !Config::Get('sys.cache.use')
 			|| Config::Get('sys.cache.type') != 'memory'
@@ -482,7 +483,7 @@ class LS extends LsObject
      *
      * @see ModuleUser::GetUserCurrent
      *
-     * @return \App\Modules\User\\App\Entities\EntityUser
+     * @return \App\Entities\EntityUser
      */
     static public function CurUsr()
     {

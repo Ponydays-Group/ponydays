@@ -26,13 +26,13 @@
 function smarty_function_router($aParams,&$oSmarty) {	
 	if(empty($aParams['page'])) {
 		trigger_error("Router: missing 'page' parametr",E_USER_WARNING);
-		return ;
+		return '';
 	}
 	require_once('./engine/Router.php');
 	
 	if(!$sPath = Engine\Router::GetPath($aParams['page'])) {
 		trigger_error("Router: unknown 'page' given",E_USER_WARNING);
-		return ;
+		return '';
 	}
 	/**
 	 * Возвращаем полный адрес к указаному Action
@@ -46,4 +46,5 @@ function smarty_function_router($aParams,&$oSmarty) {
 	} else {
 		return $sReturn;
 	}
+	return '';
 }

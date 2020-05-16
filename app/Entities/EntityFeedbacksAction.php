@@ -29,6 +29,7 @@ class EntityFeedbacksAction extends Entity {
 
 		if( in_array($sActionType, array('CommentReply', 'VoteComment', 'VoteDownComment')) )
 			return LS::Make(ModuleComment::class)->GetCommentById($this->getDestinationObjectId());
+		return null;
 	}
 
 	//**************************************************************************************************
@@ -37,6 +38,7 @@ class EntityFeedbacksAction extends Entity {
 
 		if( in_array($sActionType, array('QaReply', 'TopicComment', 'QaReplyTree', 'TopicCommentTree', 'CommentReply')) )
 			return LS::Make(ModuleComment::class)->GetCommentById($this->getActionObjectId());
+		return null;
 	}
 
 	//**************************************************************************************************
@@ -46,6 +48,7 @@ class EntityFeedbacksAction extends Entity {
 			$oTopic	= $this->getTarget()->getTarget();
 			return "{$oTopic->getUrl()}#comment{$this->getTarget()->getId()}";
 		}
+		return null;
 	}
 
 	//**************************************************************************************************

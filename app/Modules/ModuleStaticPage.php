@@ -46,7 +46,7 @@ class ModuleStaticPage extends Module {
 	 *
 	 * @param \App\Entities\EntityStaticPage $oPage
 	 *
-	 * @return unknown
+	 * @return bool
 	 */
 	public function AddPage(EntityStaticPage $oPage) {
 		if ($sId=$this->oMapper->AddPage($oPage)) {
@@ -60,8 +60,8 @@ class ModuleStaticPage extends Module {
 	/**
 	 * Обновляет страницу
 	 *
-	 * @param PageEntity_Page $oPage
-	 * @return unknown
+	 * @param EntityStaticPage $oPage
+	 * @return bool
 	 */
 	public function UpdatePage(EntityStaticPage $oPage) {
 		if ($this->oMapper->UpdatePage($oPage)) {
@@ -70,13 +70,15 @@ class ModuleStaticPage extends Module {
 			return true;
 		}
 		return false;
-		return false;
 	}
-	/**
-	 * Получает страницу по полному УРЛу
-	 *
-	 * @param unknown_type $sUrlFull
-	 */
+
+    /**
+     * Получает страницу по полному УРЛу
+     *
+     * @param string $sUrlFull
+     *
+     * @return bool|mixed
+     */
 	public function GetPageByUrlFull($sUrlFull,$iActive=1) {
         /** @var ModuleCache $cache */
         $cache = LS::Make(ModuleCache::class);
@@ -93,8 +95,8 @@ class ModuleStaticPage extends Module {
 	/**
 	 * Получает страницу по её айдишнику
 	 *
-	 * @param unknown_type $sId
-	 * @return unknown
+	 * @param int $sId
+	 * @return EntityStaticPage
 	 */
 	public function GetPageById($sId) {
 		return $this->oMapper->GetPageById($sId);
@@ -102,7 +104,7 @@ class ModuleStaticPage extends Module {
 	/**
 	 * Получает список всех страниц ввиде дерева
 	 *
-	 * @return unknown
+	 * @return array
 	 */
 	public function GetPages($aFilter=array()) {
 		$aPages=array();
@@ -115,9 +117,9 @@ class ModuleStaticPage extends Module {
 	/**
 	 * Строит дерево страниц
 	 *
-	 * @param unknown_type $aPages
-	 * @param unknown_type $bBegin
-	 * @return unknown
+	 * @param array $aPages
+	 * @param bool $bBegin
+	 * @return array
 	 */
 	protected function BuildPagesRecursive($aPages,$bBegin=true) {
 		static $aResultPages;
@@ -143,7 +145,7 @@ class ModuleStaticPage extends Module {
 	/**
 	 * Рекурсивно обновляет полный URL у всех дочерних страниц(веток)
 	 *
-	 * @param unknown_type $oPageStart
+	 * @param EntityStaticPage $oPageStart
 	 */
 	public function RebuildUrlFull($oPageStart) {
 		$aPages=$this->GetPagesByPid($oPageStart->getId());
@@ -163,8 +165,8 @@ class ModuleStaticPage extends Module {
 	/**
 	 * Получает список дочерних страниц первого уровня
 	 *
-	 * @param unknown_type $sPid
-	 * @return unknown
+	 * @param int $sPid
+	 * @return array
 	 */
 	public function GetPagesByPid($sPid) {
 		return $this->oMapper->GetPagesByPid($sPid);
@@ -173,8 +175,8 @@ class ModuleStaticPage extends Module {
 	 * Удаляет страницу по её айдишнику
 	 * Если тип таблиц БД InnoDB, то удалятся и все дочернии страницы
 	 *
-	 * @param unknown_type $sId
-	 * @return unknown
+	 * @param string $sId
+	 * @return bool
 	 */
 	public function deletePageById($sId) {
 		if ($this->oMapper->deletePageById($sId)) {
@@ -187,7 +189,7 @@ class ModuleStaticPage extends Module {
 	/**
 	 * Получает число статических страниц
 	 *
-	 * @return unknown
+	 * @return int
 	 */
 	public function GetCountPage() {
 		return $this->oMapper->GetCountPage();
@@ -196,7 +198,7 @@ class ModuleStaticPage extends Module {
 	 * Устанавливает ВСЕМ страницам PID = NULL
 	 * Это бывает нужно, когда особо "умный" админ зациклит страницы сами на себя..
 	 *
-	 * @return unknown
+	 * @return bool
 	 */
 	public function SetPagesPidToNull() {
 		return $this->oMapper->SetPagesPidToNull();
@@ -204,9 +206,9 @@ class ModuleStaticPage extends Module {
 	/**
 	 * Получает слудующую по сортировке страницу
 	 *
-	 * @param unknown_type $iSort
-	 * @param unknown_type $sWay
-	 * @return unknown
+	 * @param int $iSort
+	 * @param string $sWay
+	 * @return EntityStaticPage
 	 */
 	public function GetNextPageBySort($iSort,$sPid,$sWay='up') {
 		return $this->oMapper->GetNextPageBySort($iSort,$sPid,$sWay);
@@ -214,7 +216,7 @@ class ModuleStaticPage extends Module {
 	/**
 	 * Получает значение максимальной сртировки
 	 *
-	 * @return unknown
+	 * @return int
 	 */
 	public function GetMaxSortByPid($sPid) {
 		return $this->oMapper->GetMaxSortByPid($sPid);

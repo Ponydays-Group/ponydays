@@ -18,7 +18,6 @@
 namespace App\Entities;
 
 use App\Modules\ModuleACL;
-use App\Entities\EntityUser;
 use App\Modules\ModuleUser;
 use App\Modules\ModuleWall;
 use Engine\Config;

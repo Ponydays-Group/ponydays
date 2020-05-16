@@ -1,5 +1,6 @@
 <?php
 
+use Engine\Config;
 use PHPUnit\Framework\TestCase;
 
 class Engine {}

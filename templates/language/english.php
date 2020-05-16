@@ -219,7 +219,6 @@ return array(
 	'topic_favourite_tags_block_all' => 'All tags',
 	'topic_favourite_tags_block_user' => 'My tags',
 	'error_favorite_topic_is_draft' => 'Topic of the draft can not be added to favorites',
-	'block_stream_comments_all' => 'All comment block',
 	'block_stream_topics_all' => 'All topics block',
 	'comments_all' => 'All comments',
 	'add_favourite_tags' => 'Add tags',

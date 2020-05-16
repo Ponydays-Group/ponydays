@@ -459,13 +459,11 @@ class ModuleStream extends Module {
 	 *
 	 * @param int $iUserId	ID пользователя
 	 * @param string $sType	Тип
-	 * @return bool
 	 */
 	public function switchUserEventType($iUserId, $sType) {
 		if ($this->IsAllowEventType($sType)) {
-			return $this->oMapper->switchUserEventType($iUserId, $sType);
+			$this->oMapper->switchUserEventType($iUserId, $sType);
 		}
-		return false;
 	}
 	/**
 	 * Переключает дефолтный список типов событий у пользователя

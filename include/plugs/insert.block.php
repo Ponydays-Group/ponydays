@@ -34,7 +34,7 @@ function smarty_insert_block($aParams,&$oSmarty) {
 
 	if (!isset($aParams['block']) or !$oSmarty->templateExists($sBlockTemplate)) {
 		trigger_error("Not found template for block: ".$sBlockTemplate,E_USER_WARNING);
-		return ;
+		return '';
 	}
 	/**
 	 * параметры

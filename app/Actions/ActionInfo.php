@@ -22,7 +22,6 @@ use App\Modules\ModuleBlog;
 use App\Modules\ModuleComment;
 use App\Modules\ModuleTalk;
 use App\Modules\ModuleTopic;
-use App\Entities\EntityUser;
 use App\Modules\ModuleUser;
 use Engine\Action;
 use Engine\Config;

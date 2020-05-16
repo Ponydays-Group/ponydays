@@ -125,6 +125,7 @@ abstract class Validator {
 			}
 		}
 		if ($aReplace) {
+		    $aReplacePairs = array();
 			foreach ($aReplace as $sFrom => $sTo) {
 				$aReplacePairs["%%{$sFrom}%%"]=$sTo;
 			}

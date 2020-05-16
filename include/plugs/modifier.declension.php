@@ -53,8 +53,8 @@ function smarty_modifier_declension_russian($forms, $count)
 		case 9:
 		case 0:
 			return $forms[2];
-
 	}
+	return $forms[0];
 }
 
 /**

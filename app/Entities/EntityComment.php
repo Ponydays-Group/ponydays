@@ -17,9 +17,7 @@
 
 namespace App\Entities;
 
-use App\Entities\EntityUser;
 use App\Modules\ModuleUser;
-use App\Entities\EntityVote;
 use Engine\Config;
 use Engine\Entity;
 use Engine\LS;
@@ -121,7 +119,7 @@ class EntityComment extends Entity {
 	}
 	/**
 	 * Возвращает рейтинг комментария
-	 *
+	 * TODO: make it return float
 	 * @return string
 	 */
 	public function getRating() {

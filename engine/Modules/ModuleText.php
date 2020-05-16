@@ -26,6 +26,7 @@ use Engine\Module;
 use Jevix;
 
 require_once('./lib/Jevix/jevix.class.php');
+require_once('./lib/simple_html_dom.php');
 
 /**
  * Модуль обработки текста на основе типографа Jevix
@@ -381,7 +382,6 @@ class ModuleText extends Module {
             $element->attr['data-src'] = $element->src;
             $element->src = "";
         }
-
         $sText = $html->save();
 
 		if ($bDice) {

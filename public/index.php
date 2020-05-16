@@ -34,8 +34,6 @@ use Engine\Config;
 use Engine\ProfilerSimple;
 use Engine\Router;
 
-require_once(__DIR__ . "/../lib/simple_html_dom.php");
-
 $oProfiler=ProfilerSimple::getInstance(Config::Get('path.root.server').'/logs/'.Config::Get('sys.logs.profiler_file'),Config::Get('sys.logs.profiler'));
 $iTimeId=$oProfiler->Start('full_time');
 $oRouter=Router::getInstance();

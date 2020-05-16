@@ -6,11 +6,13 @@ use App\Mappers\MapperAPI;
 use Engine\Engine;
 use Engine\Module;
 
-class ModuleAPI extends Module {
+class ModuleAPI extends Module
+{
     protected $oMapper;
 
-    public function Init() {
-        $this->oMapper=Engine::MakeMapper(MapperAPI::class);
+    public function Init()
+    {
+        $this->oMapper = Engine::MakeMapper(MapperAPI::class);
     }
 
     public function setKey($iId, $sKey)
@@ -31,7 +33,8 @@ class ModuleAPI extends Module {
         }
     }
 
-    public function deleteKey($sKey){
+    public function deleteKey($sKey)
+    {
         if ($iResult = $this->oMapper->deleteKey($sKey)) {
             return true;
         } else {

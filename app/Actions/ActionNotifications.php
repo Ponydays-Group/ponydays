@@ -11,17 +11,19 @@ use Engine\Modules\ModuleMessage;
 use Engine\Modules\ModuleViewer;
 use Engine\Router;
 
-class ActionNotifications extends Action {
-    protected $oUserCurrent 		= null;
-    protected $iCurrentUserId		= null;
-    protected $bIsCurrentUserAdmin	= null;
+class ActionNotifications extends Action
+{
+    protected $oUserCurrent = null;
+    protected $iCurrentUserId = null;
+    protected $bIsCurrentUserAdmin = null;
 
     //***************************************************************************************
-    public function Init(){
-        if(LS::Make(ModuleUser::class)->IsAuthorization()){
-            $this->oUserCurrent 		= LS::Make(ModuleUser::class)->GetUserCurrent();
-            $this->iCurrentUserId		= $this->oUserCurrent->getId();
-            $this->bIsCurrentUserAdmin	= $this->oUserCurrent->isAdministrator();
+    public function Init()
+    {
+        if (LS::Make(ModuleUser::class)->IsAuthorization()) {
+            $this->oUserCurrent = LS::Make(ModuleUser::class)->GetUserCurrent();
+            $this->iCurrentUserId = $this->oUserCurrent->getId();
+            $this->bIsCurrentUserAdmin = $this->oUserCurrent->isAdministrator();
         }
 
         $this->SetDefaultEvent('main');
@@ -29,46 +31,62 @@ class ActionNotifications extends Action {
     }
 
     //***************************************************************************************
-    protected function RegisterEvent(){
-        $this->AddEvent('main',					'EventMain');
-        $this->AddEvent('LoadMoreActions',		'EventLoadMoreActions');
+    protected function RegisterEvent()
+    {
+        $this->AddEvent('main', 'EventMain');
+        $this->AddEvent('LoadMoreActions', 'EventLoadMoreActions');
     }
 
     //***************************************************************************************
-    protected function Redirect($sEvent = null, $sParam = null, $sMessage = null, $sError = null){
-        $sPath	= Router::GetPath('notifications');
-        if(!empty($sEvent)) $sPath = $sPath.$sEvent.'/';
-        if(!empty($sParam)) $sPath = $sPath.$sParam.'/';
+    protected function Redirect($sEvent = null, $sParam = null, $sMessage = null, $sError = null)
+    {
+        $sPath = Router::GetPath('notifications');
+        if (!empty($sEvent)) {
+            $sPath = $sPath.$sEvent.'/';
+        }
+        if (!empty($sParam)) {
+            $sPath = $sPath.$sParam.'/';
+        }
 
-        if(!empty($sMessage))	LS::Make(ModuleMessage::class)->AddNotice($sMessage,'',true);
-        if(!empty($sError))		LS::Make(ModuleMessage::class)->AddErrorSingle($sError,'',true);
+        if (!empty($sMessage)) {
+            LS::Make(ModuleMessage::class)->AddNotice($sMessage, '', true);
+        }
+        if (!empty($sError)) {
+            LS::Make(ModuleMessage::class)->AddErrorSingle($sError, '', true);
+        }
 
         return Router::Location($sPath);
     }
 
     //***************************************************************************************
-    protected function CheckAdmin(){
-        if($this->oUserCurrent){
-            if(!$this->oUserCurrent->isAdministrator())
+    protected function CheckAdmin()
+    {
+        if ($this->oUserCurrent) {
+            if (!$this->oUserCurrent->isAdministrator()) {
                 Router::Location(Router::GetPath('error'));
+            }
         } else {
             Router::Location(Router::GetPath('error'));
         }
     }
 
     //***************************************************************************************
-    protected function CheckUserLogin(){
-        if(!$this->oUserCurrent)
+    protected function CheckUserLogin()
+    {
+        if (!$this->oUserCurrent) {
             Router::Location(Router::GetPath('error'));
+        }
     }
 
     //***************************************************************************************
-    protected function Error(){
+    protected function Error()
+    {
         return Router::Location(Router::GetPath('error'));
     }
 
     //***************************************************************************************
-    protected function ReturnToReferer(){
+    protected function ReturnToReferer()
+    {
         return Router::Location($_SERVER['HTTP_REFERER']);
     }
 
@@ -76,12 +94,14 @@ class ActionNotifications extends Action {
     //***************************************************************************************
 
     //***************************************************************************************
-    protected function EventMain(){
+    protected function EventMain()
+    {
 
         $this->CheckUserLogin();
 
-        $aNotifications = LS::Make(ModuleNotification::class)->getNotification($this->oUserCurrent->getId(), 1, 20, null);
-        $aUsers = array();
+        $aNotifications =
+            LS::Make(ModuleNotification::class)->getNotification($this->oUserCurrent->getId(), 1, 20, null);
+        $aUsers = [];
         foreach ($aNotifications as $oNotification) {
             array_push($aUsers, LS::Make(ModuleUser::class)->GetUserById($oNotification->getSenderUserId()));
         }
@@ -94,14 +114,16 @@ class ActionNotifications extends Action {
     }
 
     //***************************************************************************************
-    protected function EventLoadMoreActions(){
+    protected function EventLoadMoreActions()
+    {
 
-        $aResult = array('Errors' => array(), 'Text' => '', 'Stats' => '');
+        $aResult = ['Errors' => [], 'Text' => '', 'Stats' => ''];
         $this->CheckUserLogin();
 
-        $iPage	= getRequest('Page');
-        $aNotifications = LS::Make(ModuleNotification::class)->getNotification($this->oUserCurrent->getId(), $iPage, 20, null);
-        $aUsers = array();
+        $iPage = getRequest('Page');
+        $aNotifications =
+            LS::Make(ModuleNotification::class)->getNotification($this->oUserCurrent->getId(), $iPage, 20, null);
+        $aUsers = [];
         foreach ($aNotifications as $oNotification) {
             array_push($aUsers, LS::Make(ModuleUser::class)->GetUserById($oNotification->getSenderUserId()));
         }
@@ -111,7 +133,7 @@ class ActionNotifications extends Action {
         $oViewerLocal->Assign('iPage', $iPage + 1);
         $oViewerLocal->Assign('aUsers', $aUsers);
 
-        $aResult['Text']	= $oViewerLocal->Fetch('notifications.tpl');
+        $aResult['Text'] = $oViewerLocal->Fetch('notifications.tpl');
 
         LS::Make(ModuleViewer::class)->SetResponseAjax('json');
         LS::Make(ModuleViewer::class)->AssignAjax('aResult', $aResult);
@@ -119,10 +141,12 @@ class ActionNotifications extends Action {
     }
 
     //***************************************************************************************
-    protected function EventDebug(){
+    protected function EventDebug()
+    {
     }
 
     //***************************************************************************************
-    public function EventShutdown(){
+    public function EventShutdown()
+    {
     }
 }

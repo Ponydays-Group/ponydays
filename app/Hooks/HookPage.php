@@ -26,17 +26,21 @@ use Engine\Modules\ModuleViewer;
  * Регистрация хука для вывода меню страниц
  *
  */
-class HookPage extends Hook {
-	public function RegisterHook() {
-		$this->AddHook('template_main_menu_item','Menu');
-	}
+class HookPage extends Hook
+{
+    public function RegisterHook()
+    {
+        $this->AddHook('template_main_menu_item', 'Menu');
+    }
 
-	public function Menu() {
-		$aPages=LS::Make(ModuleStaticPage::class)->GetPages(array('pid' =>null, 'main' =>1, 'active' =>1));
+    public function Menu()
+    {
+        $aPages = LS::Make(ModuleStaticPage::class)->GetPages(['pid' => null, 'main' => 1, 'active' => 1]);
 
         /** @var ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);
-        $viewer->Assign('aPagesMain',$aPages);
-		return $viewer->Fetch('main_menu.tpl');
-	}
+        $viewer->Assign('aPagesMain', $aPages);
+
+        return $viewer->Fetch('main_menu.tpl');
+    }
 }

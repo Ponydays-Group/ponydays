@@ -27,28 +27,30 @@ use Engine\Modules\ModuleViewer;
  * Блок настройки ленты активности
  *
  * @package blocks
- * @since 1.0
+ * @since   1.0
  */
-class BlockStreamConfig extends Block {
-	/**
-	 * Запуск обработки
-	 */
-	public function Exec() {
-		/**
-		 * пользователь авторизован?
-		 */
-		if ($oUserCurrent = LS::Make(ModuleUser::class)->getUserCurrent()) {
+class BlockStreamConfig extends Block
+{
+    /**
+     * Запуск обработки
+     */
+    public function Exec()
+    {
+        /**
+         * пользователь авторизован?
+         */
+        if ($oUserCurrent = LS::Make(ModuleUser::class)->getUserCurrent()) {
             /** @var ModuleViewer $viewer */
             $viewer = LS::Make(ModuleViewer::class);
-			/**
-			 * Получаем и прогружаем необходимые переменные в шаблон
-			 */
-			$aTypesList = LS::Make(ModuleStream::class)->getTypesList($oUserCurrent->getId());
-			$viewer->Assign('aStreamTypesList', $aTypesList);
-			$aUserSubscribes = LS::Make(ModuleStream::class)->getUserSubscribes($oUserCurrent->getId());
-			$aFriends = LS::Make(ModuleUser::class)->getUsersFriend($oUserCurrent->getId());
-			$viewer->Assign('aStreamSubscribedUsers', $aUserSubscribes);
-			$viewer->Assign('aStreamFriends', $aFriends['collection']);
-		}
-	}
+            /**
+             * Получаем и прогружаем необходимые переменные в шаблон
+             */
+            $aTypesList = LS::Make(ModuleStream::class)->getTypesList($oUserCurrent->getId());
+            $viewer->Assign('aStreamTypesList', $aTypesList);
+            $aUserSubscribes = LS::Make(ModuleStream::class)->getUserSubscribes($oUserCurrent->getId());
+            $aFriends = LS::Make(ModuleUser::class)->getUsersFriend($oUserCurrent->getId());
+            $viewer->Assign('aStreamSubscribedUsers', $aUserSubscribes);
+            $viewer->Assign('aStreamFriends', $aFriends['collection']);
+        }
+    }
 }

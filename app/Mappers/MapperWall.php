@@ -25,86 +25,106 @@ use Engine\Mapper;
  * Маппер для работы с БД
  *
  * @package modules.wall
- * @since 1.0
+ * @since   1.0
  */
-class MapperWall extends Mapper {
-	/**
-	 * Добавление записи на стену
-	 *
-	 * @param \App\Entities\EntityWall $oWall Объект записи на стене
-	 *
-	 * @return bool|int
-	 */
-	public function AddWall($oWall) {
-		$sql = "INSERT INTO ".Config::Get('db.table.wall')." SET ?a ";
-		if ($iId=$this->oDb->query($sql,$oWall->_getData())) {
-			return $iId;
-		}
-		return false;
-	}
-	/**
-	 * Обновление записи
-	 *
-	 * @param \App\Entities\EntityWall $oWall Объект записи на стене
-	 *
-	 * @return bool
-	 */
-	public function UpdateWall($oWall) {
-		$sql = "UPDATE ".Config::Get('db.table.wall')."
+class MapperWall extends Mapper
+{
+    /**
+     * Добавление записи на стену
+     *
+     * @param \App\Entities\EntityWall $oWall Объект записи на стене
+     *
+     * @return bool|int
+     */
+    public function AddWall($oWall)
+    {
+        $sql = "INSERT INTO ".Config::Get('db.table.wall')." SET ?a ";
+        if ($iId = $this->oDb->query($sql, $oWall->_getData())) {
+            return $iId;
+        }
+
+        return false;
+    }
+
+    /**
+     * Обновление записи
+     *
+     * @param \App\Entities\EntityWall $oWall Объект записи на стене
+     *
+     * @return bool
+     */
+    public function UpdateWall($oWall)
+    {
+        $sql = "UPDATE ".Config::Get('db.table.wall')."
 			SET 
 			 	count_reply = ?d,
 			 	last_reply = ?
 			WHERE id = ?d
 		";
-		return $this->oDb->query($sql,$oWall->getCountReply(),
-								 $oWall->getLastReply(),
-								 $oWall->getId());
-	}
-	/**
-	 * Удаление записи
-	 *
-	 * @param int $iId ID записи
-	 * @return bool
-	 */
-	public function DeleteWallById($iId) {
-		$sql = "DELETE FROM ".Config::Get('db.table.wall')." WHERE id = ?d ";
-		return $this->oDb->query($sql,$iId);
-	}
-	/**
-	 * @param int $iPid	ID родительской записи
-	 * @return bool
-	 */
-	public function DeleteWallsByPid($iPid) {
-		$sql = "DELETE FROM ".Config::Get('db.table.wall')." WHERE pid = ?d ";
-		return $this->oDb->query($sql,$iPid);
-	}
-	/**
-	 * Получение списка записей по фильтру
-	 *
-	 * @param array $aFilter	Фильтр
-	 * @param array $aOrder	Сортировка
-	 * @param int $iCount	Возвращает общее количество элементов
-	 * @param int $iCurrPage	Номер страницы
-	 * @param int $iPerPage	Количество элементов на страницу
-	 * @return array
-	 */
-	public function GetWall($aFilter,$aOrder,&$iCount,$iCurrPage,$iPerPage) {
-		$aOrderAllow=array('id','date_add');
-		$sOrder='';
-		foreach ($aOrder as $key=>$value) {
-			if (!in_array($key,$aOrderAllow)) {
-				unset($aOrder[$key]);
-			} elseif (in_array($value,array('asc','desc'))) {
-				$sOrder.=" {$key} {$value},";
-			}
-		}
-		$sOrder=trim($sOrder,',');
-		if ($sOrder=='') {
-			$sOrder=' id desc ';
-		}
+
+        return $this->oDb->query(
+            $sql,
+            $oWall->getCountReply(),
+            $oWall->getLastReply(),
+            $oWall->getId()
+        );
+    }
+
+    /**
+     * Удаление записи
+     *
+     * @param int $iId ID записи
+     *
+     * @return bool
+     */
+    public function DeleteWallById($iId)
+    {
+        $sql = "DELETE FROM ".Config::Get('db.table.wall')." WHERE id = ?d ";
+
+        return $this->oDb->query($sql, $iId);
+    }
+
+    /**
+     * @param int $iPid ID родительской записи
+     *
+     * @return bool
+     */
+    public function DeleteWallsByPid($iPid)
+    {
+        $sql = "DELETE FROM ".Config::Get('db.table.wall')." WHERE pid = ?d ";
+
+        return $this->oDb->query($sql, $iPid);
+    }
+
+    /**
+     * Получение списка записей по фильтру
+     *
+     * @param array $aFilter   Фильтр
+     * @param array $aOrder    Сортировка
+     * @param int   $iCount    Возвращает общее количество элементов
+     * @param int   $iCurrPage Номер страницы
+     * @param int   $iPerPage  Количество элементов на страницу
+     *
+     * @return array
+     */
+    public function GetWall($aFilter, $aOrder, &$iCount, $iCurrPage, $iPerPage)
+    {
+        $aOrderAllow = ['id', 'date_add'];
+        $sOrder = '';
+        foreach ($aOrder as $key => $value) {
+            if (!in_array($key, $aOrderAllow)) {
+                unset($aOrder[$key]);
+            } elseif (in_array($value, ['asc', 'desc'])) {
+                $sOrder .= " {$key} {$value},";
+            }
+        }
+        $sOrder = trim($sOrder, ',');
+        if ($sOrder == '') {
+            $sOrder = ' id desc ';
+        }
 
 
-		$sql = "SELECT
+        $sql = "SELECT
 					id
 				FROM
 					".Config::Get('db.table.wall')."
@@ -121,32 +141,40 @@ class MapperWall extends Mapper {
 				ORDER by {$sOrder}
 				LIMIT ?d, ?d ;
 					";
-		$aResult=array();
-		if ($aRows=$this->oDb->selectPage($iCount,$sql,
-										  (isset($aFilter['pid']) and !is_null($aFilter['pid'])) ? $aFilter['pid'] : DBSIMPLE_SKIP,
-										  (array_key_exists('pid',$aFilter) and is_null($aFilter['pid'])) ? 1 : DBSIMPLE_SKIP,
-										  isset($aFilter['wall_user_id']) ? $aFilter['wall_user_id'] : DBSIMPLE_SKIP,
-										  isset($aFilter['user_id']) ? $aFilter['user_id'] : DBSIMPLE_SKIP,
-										  isset($aFilter['ip']) ? $aFilter['ip'] : DBSIMPLE_SKIP,
-										  isset($aFilter['id']) ? $aFilter['id'] : DBSIMPLE_SKIP,
-										  isset($aFilter['id_less']) ? $aFilter['id_less'] : DBSIMPLE_SKIP,
-										  isset($aFilter['id_more']) ? $aFilter['id_more'] : DBSIMPLE_SKIP,
-										  ($iCurrPage-1)*$iPerPage, $iPerPage
-		)) {
-			foreach ($aRows as $aRow) {
-				$aResult[]=$aRow['id'];
-			}
-		}
-		return $aResult;
-	}
-	/**
-	 * Возвращает число сообщений на стене по фильтру
-	 *
-	 * @param array $aFilter	Фильтр
-	 * @return int
-	 */
-	public function GetCountWall($aFilter) {
-		$sql = "SELECT
+        $aResult = [];
+        if ($aRows = $this->oDb->selectPage(
+            $iCount,
+            $sql,
+            (isset($aFilter['pid']) and !is_null($aFilter['pid'])) ? $aFilter['pid'] : DBSIMPLE_SKIP,
+            (array_key_exists('pid', $aFilter) and is_null($aFilter['pid'])) ? 1 : DBSIMPLE_SKIP,
+            isset($aFilter['wall_user_id']) ? $aFilter['wall_user_id'] : DBSIMPLE_SKIP,
+            isset($aFilter['user_id']) ? $aFilter['user_id'] : DBSIMPLE_SKIP,
+            isset($aFilter['ip']) ? $aFilter['ip'] : DBSIMPLE_SKIP,
+            isset($aFilter['id']) ? $aFilter['id'] : DBSIMPLE_SKIP,
+            isset($aFilter['id_less']) ? $aFilter['id_less'] : DBSIMPLE_SKIP,
+            isset($aFilter['id_more']) ? $aFilter['id_more'] : DBSIMPLE_SKIP,
+            ($iCurrPage - 1) * $iPerPage,
+            $iPerPage
+        )
+        ) {
+            foreach ($aRows as $aRow) {
+                $aResult[] = $aRow['id'];
+            }
+        }
+
+        return $aResult;
+    }
+
+    /**
+     * Возвращает число сообщений на стене по фильтру
+     *
+     * @param array $aFilter Фильтр
+     *
+     * @return int
+     */
+    public function GetCountWall($aFilter)
+    {
+        $sql = "SELECT
 					count(*) as c
 				FROM
 					".Config::Get('db.table.wall')."
@@ -160,43 +188,50 @@ class MapperWall extends Mapper {
 					{ AND id < ?d }
 					{ AND id > ?d };
 					";
-		if ($aRow=$this->oDb->selectRow($sql,
-										(isset($aFilter['pid']) and !is_null($aFilter['pid'])) ? $aFilter['pid'] : DBSIMPLE_SKIP,
-										(array_key_exists('pid',$aFilter) and is_null($aFilter['pid'])) ? 1 : DBSIMPLE_SKIP,
-										isset($aFilter['wall_user_id']) ? $aFilter['wall_user_id'] : DBSIMPLE_SKIP,
-										isset($aFilter['ip']) ? $aFilter['ip'] : DBSIMPLE_SKIP,
-										isset($aFilter['id']) ? $aFilter['id'] : DBSIMPLE_SKIP,
-										isset($aFilter['id_less']) ? $aFilter['id_less'] : DBSIMPLE_SKIP,
-										isset($aFilter['id_more']) ? $aFilter['id_more'] : DBSIMPLE_SKIP
-		)) {
-			return $aRow['c'];
-		}
-		return 0;
-	}
-	/**
-	 * Получение записей по ID, без дополнительных данных
-	 *
-	 * @param array $aArrayId	Список ID сообщений
-	 * @return array
-	 */
-	public function GetWallsByArrayId($aArrayId) {
-		if (!is_array($aArrayId) or count($aArrayId)==0) {
-			return array();
-		}
+        if ($aRow = $this->oDb->selectRow(
+            $sql,
+            (isset($aFilter['pid']) and !is_null($aFilter['pid'])) ? $aFilter['pid'] : DBSIMPLE_SKIP,
+            (array_key_exists('pid', $aFilter) and is_null($aFilter['pid'])) ? 1 : DBSIMPLE_SKIP,
+            isset($aFilter['wall_user_id']) ? $aFilter['wall_user_id'] : DBSIMPLE_SKIP,
+            isset($aFilter['ip']) ? $aFilter['ip'] : DBSIMPLE_SKIP,
+            isset($aFilter['id']) ? $aFilter['id'] : DBSIMPLE_SKIP,
+            isset($aFilter['id_less']) ? $aFilter['id_less'] : DBSIMPLE_SKIP,
+            isset($aFilter['id_more']) ? $aFilter['id_more'] : DBSIMPLE_SKIP
+        )
+        ) {
+            return $aRow['c'];
+        }
 
-		$sql = "SELECT
+        return 0;
+    }
+
+    /**
+     * Получение записей по ID, без дополнительных данных
+     *
+     * @param array $aArrayId Список ID сообщений
+     *
+     * @return array
+     */
+    public function GetWallsByArrayId($aArrayId)
+    {
+        if (!is_array($aArrayId) or count($aArrayId) == 0) {
+            return [];
+        }
+
+        $sql = "SELECT
 					*
 				FROM
 					".Config::Get('db.table.wall')."
 				WHERE
 					id IN(?a)
 				ORDER BY FIELD(id,?a) ";
-		$aResult=array();
-		if ($aRows=$this->oDb->select($sql,$aArrayId,$aArrayId)) {
-			foreach ($aRows as $aRow) {
-				$aResult[] = new EntityWall($aRow);
-			}
-		}
-		return $aResult;
-	}
+        $aResult = [];
+        if ($aRows = $this->oDb->select($sql, $aArrayId, $aArrayId)) {
+            foreach ($aRows as $aRow) {
+                $aResult[] = new EntityWall($aRow);
+            }
+        }
+
+        return $aResult;
+    }
 }

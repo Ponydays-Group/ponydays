@@ -27,24 +27,26 @@ use Engine\Modules\ModuleViewer;
  * Обрабатывает блок облака тегов городов юзеров
  *
  * @package blocks
- * @since 1.0
+ * @since   1.0
  */
-class BlockTagsCity extends Block {
-	/**
-	 * Запуск обработки
-	 */
-	public function Exec() {
-		/**
-		 * Получаем города
-		 */
-		$aCities=LS::Make(ModuleGeo::class)->GetGroupCitiesByTargetType('user',20);
-		/**
-		 * Формируем облако тегов
-		 */
-		LS::Make(ModuleTools::class)->MakeCloud($aCities);
-		/**
-		 * Выводим в шаблон
-		 */
-        LS::Make(ModuleViewer::class)->Assign("aCityList",$aCities);
-	}
+class BlockTagsCity extends Block
+{
+    /**
+     * Запуск обработки
+     */
+    public function Exec()
+    {
+        /**
+         * Получаем города
+         */
+        $aCities = LS::Make(ModuleGeo::class)->GetGroupCitiesByTargetType('user', 20);
+        /**
+         * Формируем облако тегов
+         */
+        LS::Make(ModuleTools::class)->MakeCloud($aCities);
+        /**
+         * Выводим в шаблон
+         */
+        LS::Make(ModuleViewer::class)->Assign("aCityList", $aCities);
+    }
 }

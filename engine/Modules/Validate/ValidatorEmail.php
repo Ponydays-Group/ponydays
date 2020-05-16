@@ -20,10 +20,10 @@ namespace Engine\Modules\Validate;
 /**
  * CEmailValidator class file.
  *
- * @author Qiang Xue <qiang.xue@gmail.com>
- * @link http://www.yiiframework.com/
+ * @author    Qiang Xue <qiang.xue@gmail.com>
+ * @link      http://www.yiiframework.com/
  * @copyright Copyright &copy; 2008-2011 Yii Software LLC
- * @license http://www.yiiframework.com/license/
+ * @license   http://www.yiiframework.com/license/
  */
 
 use Engine\LS;
@@ -33,89 +33,98 @@ use Engine\Modules\ModuleLang;
  * Валидатор емайл адресов
  *
  * @package engine.modules.validate
- * @since 1.0
+ * @since   1.0
  */
-class ValidatorEmail extends Validator {
-	/**
-	 * Регулярное выражение для проверки емайла
-	 *
-	 * @var string
-	 * @see http://www.regular-expressions.info/email.html
-	 */
-	public $pattern='/^[a-zA-Z0-9!#$%&\'*+\\/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&\'*+\\/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$/';
-	/**
-	 * Регулярное выражение для проверки емайла с именем отправителя.
-	 * Используется только при allowName = true
-	 *
-	 * @var string
-	 * @see allowName
-	 */
-	public $fullPattern='/^[^@]*<[a-zA-Z0-9!#$%&\'*+\\/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&\'*+\\/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?>$/';
-	/**
-	 * Учитывать при проверке имя отправителя, например, "Ivanov <ivanov@site.com>"
-	 *
-	 * @var bool
-	 * @see fullPattern
-	 */
-	public $allowName=false;
-	/**
-	 * Производить проверку MX записи для емайла
-	 *
-	 * @var bool
-	 */
-	public $checkMX=false;
-	/**
-	 * Проверять 25 порт для емайла
-	 *
-	 * @var bool
-	 */
-	public $checkPort=false;
-	/**
-	 * Допускать или нет пустое значение
-	 *
-	 * @var bool
-	 */
-	public $allowEmpty=true;
+class ValidatorEmail extends Validator
+{
+    /**
+     * Регулярное выражение для проверки емайла
+     *
+     * @var string
+     * @see http://www.regular-expressions.info/email.html
+     */
+    public $pattern = '/^[a-zA-Z0-9!#$%&\'*+\\/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&\'*+\\/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?$/';
+    /**
+     * Регулярное выражение для проверки емайла с именем отправителя.
+     * Используется только при allowName = true
+     *
+     * @var string
+     * @see allowName
+     */
+    public $fullPattern = '/^[^@]*<[a-zA-Z0-9!#$%&\'*+\\/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&\'*+\\/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?>$/';
+    /**
+     * Учитывать при проверке имя отправителя, например, "Ivanov <ivanov@site.com>"
+     *
+     * @var bool
+     * @see fullPattern
+     */
+    public $allowName = false;
+    /**
+     * Производить проверку MX записи для емайла
+     *
+     * @var bool
+     */
+    public $checkMX = false;
+    /**
+     * Проверять 25 порт для емайла
+     *
+     * @var bool
+     */
+    public $checkPort = false;
+    /**
+     * Допускать или нет пустое значение
+     *
+     * @var bool
+     */
+    public $allowEmpty = true;
 
-	/**
-	 * Запуск валидации
-	 *
-	 * @param mixed $sValue	Данные для валидации
-	 *
-	 * @return bool|string
-	 */
-	public function validate($sValue) {
-	    /** @var \Engine\Modules\ModuleLang $lang */
-	    $lang = LS::Make(ModuleLang::class);
-		if (is_array($sValue)) {
-			return $this->getMessage($lang->Get('validate_email_not_valid',null,false),'msg');
-		}
-		if($this->allowEmpty && $this->isEmpty($sValue)) {
-			return true;
-		}
-		if(!$this->validateValue($sValue)) {
-			return $this->getMessage($lang->Get('validate_email_not_valid',null,false),'msg');
-		}
-		return true;
-	}
-	/**
-	 * Проверка емайла на корректность
-	 *
-	 * @param string $sValue	Данные для валидации
-	 *
-	 * @return bool
-	 */
-	public function validateValue($sValue) {
-		$bValid=is_string($sValue) && strlen($sValue)<=254 && (preg_match($this->pattern,$sValue) || $this->allowName && preg_match($this->fullPattern,$sValue));
-		if($bValid) {
-			$sDomain=rtrim(substr($sValue,strpos($sValue,'@')+1),'>');
-            if($this->checkMX && function_exists('checkdnsrr')) {
-                $bValid=checkdnsrr($sDomain,'MX');
+    /**
+     * Запуск валидации
+     *
+     * @param mixed $sValue Данные для валидации
+     *
+     * @return bool|string
+     */
+    public function validate($sValue)
+    {
+        /** @var \Engine\Modules\ModuleLang $lang */
+        $lang = LS::Make(ModuleLang::class);
+        if (is_array($sValue)) {
+            return $this->getMessage($lang->Get('validate_email_not_valid', null, false), 'msg');
+        }
+        if ($this->allowEmpty && $this->isEmpty($sValue)) {
+            return true;
+        }
+        if (!$this->validateValue($sValue)) {
+            return $this->getMessage($lang->Get('validate_email_not_valid', null, false), 'msg');
+        }
+
+        return true;
+    }
+
+    /**
+     * Проверка емайла на корректность
+     *
+     * @param string $sValue Данные для валидации
+     *
+     * @return bool
+     */
+    public function validateValue($sValue)
+    {
+        $bValid = is_string($sValue) && strlen($sValue) <= 254
+            && (preg_match($this->pattern, $sValue)
+                || $this->allowName
+                && preg_match($this->fullPattern, $sValue));
+        if ($bValid) {
+            $sDomain = rtrim(substr($sValue, strpos($sValue, '@') + 1), '>');
+            if ($this->checkMX && function_exists('checkdnsrr')) {
+                $bValid = checkdnsrr($sDomain, 'MX');
             }
-            if($this->checkPort && function_exists('fsockopen')) {
-                $bValid=fsockopen($sDomain,25)!==false;
+            if ($this->checkPort && function_exists('fsockopen')) {
+                $bValid = fsockopen($sDomain, 25) !== false;
             }
-		}
-		return $bValid;
-	}
+        }
+
+        return $bValid;
+    }
 }

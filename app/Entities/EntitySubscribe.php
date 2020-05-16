@@ -23,8 +23,9 @@ use Engine\Entity;
  * Объект сущности подписки
  *
  * @package modules.subscribe
- * @since 1.0
+ * @since   1.0
  */
-class EntitySubscribe extends Entity {
+class EntitySubscribe extends Entity
+{
 
 }

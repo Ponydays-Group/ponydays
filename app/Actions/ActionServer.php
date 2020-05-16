@@ -16,7 +16,7 @@ use Engine\Modules\ModuleViewer;
  * Ответ отдает в JSON фомате
  *
  * @package actions
- * @since 1.0
+ * @since   1.0
  */
 class ActionServer extends Action
 {
@@ -30,7 +30,7 @@ class ActionServer extends Action
     /**
      * Инициализация
      */
-    public function Init() {}
+    public function Init() { }
 
     /**
      * Регистрация евентов
@@ -48,20 +48,23 @@ class ActionServer extends Action
      **********************************************************************************
      */
 
-    protected function EventDeploy() {
+    protected function EventDeploy()
+    {
         LS::Make(ModuleViewer::class)->SetResponseJson();
         if (!hash_equals(getRequest('token'), Config::Get('deploy_token'))) {
             LS::Make(ModuleViewer::class)->AssignAjax("success", false);
             LS::Make(ModuleViewer::class)->AssignAjax("msg", "Wrong deploy token");
+
             return;
         }
-        $output = array();
+        $output = [];
         $return = 1;
         exec('bash ./database/deploy.sh 2>&1', $output, $return);
         if ($return != 0) {
             LS::Make(ModuleViewer::class)->AssignAjax("success", false);
             LS::Make(ModuleViewer::class)->AssignAjax("msg", "An error occurred during execution");
             LS::Make(ModuleViewer::class)->AssignAjax("output", $output);
+
             return;
         }
         LS::Make(ModuleViewer::class)->AssignAjax("success", true);
@@ -70,7 +73,8 @@ class ActionServer extends Action
 //      LS::Make(ModuleNower::class)->Post('/site-update');
     }
 
-    function EventGetUserByKey() {
+    function EventGetUserByKey()
+    {
         LS::Make(ModuleViewer::class)->SetResponseAjax('json', true, false);
         if (!hash_equals(getRequest('token'), Config::Get('deploy_token'))) {
             return;
@@ -85,10 +89,12 @@ class ActionServer extends Action
         LS::Make(ModuleViewer::class)->AssignAjax("sUserLogin", $oUser->getLogin());
     }
 
-    function EventHasTopicAccess() {
+    function EventHasTopicAccess()
+    {
         LS::Make(ModuleViewer::class)->SetResponseAjax('json', true, false);
         if (!hash_equals(getRequest('token'), Config::Get('deploy_token'))) {
             LS::Make(ModuleViewer::class)->AssignAjax("bAccess", false);
+
             return;
         }
 
@@ -101,30 +107,36 @@ class ActionServer extends Action
 //        }
         if (!$oTopic) {
             LS::Make(ModuleViewer::class)->AssignAjax("bAccess", false);
+
             return;
         }
         /**
          * Проверяем права на просмотр топика
          */
         if (!$oUser) {
-            if ($oTopic->getPublish() && $oTopic->getBlog()->getType()=="open") {
+            if ($oTopic->getPublish() && $oTopic->getBlog()->getType() == "open") {
                 LS::Make(ModuleViewer::class)->AssignAjax("bAccess", true);
+
                 return;
             } else {
                 LS::Make(ModuleViewer::class)->AssignAjax("bAccess", "NOOOO");
+
                 return;
             }
         }
-        if (!$oTopic->getPublish() and (!$oUser or ($oUser->getId()!=$oTopic->getUserId() and !$oUser->isAdministrator()))) {
+        if (!$oTopic->getPublish() and (!$oUser or ($oUser->getId() != $oTopic->getUserId()
+                    and !$oUser->isAdministrator()))
+        ) {
 //            echo "PBL";
             LS::Make(ModuleViewer::class)->AssignAjax("bAccess", false);
+
             return;
         }
 
         /**
          * Определяем права на отображение записи из закрытого блога
          */
-        if (in_array($oTopic->getBlog()->getType(), array('close', 'invite'))
+        if (in_array($oTopic->getBlog()->getType(), ['close', 'invite'])
             and (!$oUser
                 || !in_array(
                     $oTopic->getBlog()->getId(),
@@ -134,16 +146,20 @@ class ActionServer extends Action
         ) {
 //            echo "Close";
             LS::Make(ModuleViewer::class)->AssignAjax("bAccess", false);
+
             return;
         }
         LS::Make(ModuleViewer::class)->AssignAjax("bAccess", true);
+
         return;
     }
 
-    function EventHasTalkAccess() {
+    function EventHasTalkAccess()
+    {
         LS::Make(ModuleViewer::class)->SetResponseAjax('json', true, false);
         if (!hash_equals(getRequest('token'), Config::Get('deploy_token'))) {
             LS::Make(ModuleViewer::class)->AssignAjax("bAccess", false);
+
             return;
         }
 
@@ -154,6 +170,7 @@ class ActionServer extends Action
          */
         if (!($oTalkUser = LS::Make(ModuleTalk::class)->GetTalkUser($sTalkId, $sUserId))) {
             LS::Make(ModuleViewer::class)->AssignAjax("bAccess", false);
+
             return;
         }
         /**
@@ -161,9 +178,11 @@ class ActionServer extends Action
          */
         if ($oTalkUser->getUserActive() != ModuleTalk::TALK_USER_ACTIVE) {
             LS::Make(ModuleViewer::class)->AssignAjax("bAccess", false);
+
             return;
         }
         LS::Make(ModuleViewer::class)->AssignAjax("bAccess", true);
+
         return;
     }
 }

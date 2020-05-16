@@ -10,8 +10,9 @@ class MapperCast extends Mapper
 
     protected $oDb;
 
-	public function castExist($sTarget,$iTargerId,$iUserId){
-		$sql = "SELECT 
+    public function castExist($sTarget, $iTargerId, $iUserId)
+    {
+        $sql = "SELECT 
 					COUNT(*) as cast_count	 
 				FROM 
 	 				".Config::Get('db.table.user_cast_history')." AS tc
@@ -23,31 +24,32 @@ class MapperCast extends Mapper
 	 				user_id = ?d
 			";
 
-		$iExistCount = 0;
-		
-		if ($aRows=$this->oDb->select($sql,$sTarget,$iTargerId,$iUserId)) {
-			foreach ($aRows as $iItem) {
-				$iExistCount = $iItem['cast_count'];
-			}
-		}
+        $iExistCount = 0;
 
-		return $iExistCount;	
-	}
-    
-	public function saveExist($sTarget,$iTargerId,$iUserId){
-		$sql="
+        if ($aRows = $this->oDb->select($sql, $sTarget, $iTargerId, $iUserId)) {
+            foreach ($aRows as $iItem) {
+                $iExistCount = $iItem['cast_count'];
+            }
+        }
+
+        return $iExistCount;
+    }
+
+    public function saveExist($sTarget, $iTargerId, $iUserId)
+    {
+        $sql = "
 			INSERT INTO 
 				".Config::Get('db.table.user_cast_history')."
 			VALUES (NULL,?,?d,?d);
 		";
-		
-		return $this->oDb->query(
-			$sql,
-			$sTarget,
-			$iTargerId,
-			$iUserId
-		);		
-		
-	}
-	
+
+        return $this->oDb->query(
+            $sql,
+            $sTarget,
+            $iTargerId,
+            $iUserId
+        );
+
+    }
+
 }

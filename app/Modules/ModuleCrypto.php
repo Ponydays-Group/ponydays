@@ -46,20 +46,18 @@ use Engine\Module;
 class ModuleCrypto extends Module
 {
 
-    public const CRYPTO_PASSWORD_ALGOS
-        = [
-            'md5'    => CryptoMD5::class,
-            'sha512' => CryptoSHA512::class,
-            'pbkdf2' => CryptoPBKDF2::class,
+    public const CRYPTO_PASSWORD_ALGOS = [
+        'md5'    => CryptoMD5::class,
+        'sha512' => CryptoSHA512::class,
+        'pbkdf2' => CryptoPBKDF2::class,
 
-            'wrapped'   => CryptoWrapped::class,
-            'incorrect' => CryptoIncorrect::class,
-        ];
+        'wrapped'   => CryptoWrapped::class,
+        'incorrect' => CryptoIncorrect::class,
+    ];
 
-    public const SIGNATURE_ALGOS
-        = [
-            'hmac' => CryptoSignatureHMAC::class,
-        ];
+    public const SIGNATURE_ALGOS = [
+        'hmac' => CryptoSignatureHMAC::class,
+    ];
 
     protected $oMapper;
 
@@ -85,8 +83,11 @@ class ModuleCrypto extends Module
         if (count($params) < 3) {
             return false;
         }
-        $correct = self::PasswordHashExt($password, $params[1],
-            array_slice($params, 2));
+        $correct = self::PasswordHashExt(
+            $password,
+            $params[1],
+            array_slice($params, 2)
+        );
 
         return hash_equals($correct, $hash);
     }
@@ -135,7 +136,7 @@ class ModuleCrypto extends Module
         array $params = []
     ): string {
         $class = self::CRYPTO_PASSWORD_ALGOS[$algo];
-        $data  = (new $class())->hash($password, $params);
+        $data = (new $class())->hash($password, $params);
 
         return implode('$', array_merge(['', $algo], $data));
     }
@@ -149,20 +150,22 @@ class ModuleCrypto extends Module
      */
     public function PasswordHash(string $password): string
     {
-        return self::PasswordHashExt($password,
-            Config::Get('crypto.password.current_algo'));
+        return self::PasswordHashExt(
+            $password,
+            Config::Get('crypto.password.current_algo')
+        );
     }
 
     private function PasswordUpdate(string $hash): string
     {
         if (strlen($hash) == 32) {
-            return '$md5$' . $hash;
+            return '$md5$'.$hash;
         }
         if (strlen($hash) == 128) {
-            return '$sha512$' . $hash;
+            return '$sha512$'.$hash;
         }
 
-        return '$incorrect$' . $hash;
+        return '$incorrect$'.$hash;
     }
 
 
@@ -190,7 +193,7 @@ class ModuleCrypto extends Module
      */
     public function UpdateKeyFor(string $type): int
     {
-        $key          = openssl_random_pseudo_bytes(64);
+        $key = openssl_random_pseudo_bytes(64);
         $expires_time = time() + 60 * 60 * 24; // 1 сутки
 
         return $this->oMapper->AddKey($type, $expires_time, $key);
@@ -219,8 +222,10 @@ class ModuleCrypto extends Module
                 return self::GetKeyById($id);
             }
         }
-        throw new CryptoException("could not get a key for type '$type'",
-            CryptoException::DB_ERROR);
+        throw new CryptoException(
+            "could not get a key for type '$type'",
+            CryptoException::DB_ERROR
+        );
     }
 
     /**
@@ -237,15 +242,20 @@ class ModuleCrypto extends Module
         if ($data) {
             list($id, $expires, $type, $key) = $data;
             if ($expires < time()
-                           - Config::Get("crypto.keyring.max_key_life")) {
+                - Config::Get("crypto.keyring.max_key_life")
+            ) {
                 $this->oMapper->DestroyKey($kid);
-                throw new CryptoException("key has been destroyed",
-                    CryptoException::DB_ERROR);
+                throw new CryptoException(
+                    "key has been destroyed",
+                    CryptoException::DB_ERROR
+                );
             }
 
             return [$id, $type, $key];
         }
-        throw new CryptoException("could not get a key by id",
-            CryptoException::DB_ERROR);
+        throw new CryptoException(
+            "could not get a key by id",
+            CryptoException::DB_ERROR
+        );
     }
 }

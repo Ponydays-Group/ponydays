@@ -27,25 +27,31 @@ use Engine\Router;
  * Регистрация основных хуков
  *
  * @package hooks
- * @since 1.0
+ * @since   1.0
  */
-class HookMain extends Hook {
-	/**
-	 * Регистрируем хуки
-	 */
-	public function RegisterHook() {
-		$this->AddHook('init_action','InitAction',__CLASS__,1000);
-	}
-	/**
-	 * Обработка хука инициализации экшенов
-	 */
-	public function InitAction() {
-		/**
-		 * Проверка на закрытый режим
-		 */
-		$oUserCurrent=LS::Make(ModuleUser::class)->GetUserCurrent();
-		if (!$oUserCurrent and Config::Get('general.close') and Router::GetAction()!='registration' and Router::GetAction()!='login') {
-			Router::Action('login');
-		}
-	}
+class HookMain extends Hook
+{
+    /**
+     * Регистрируем хуки
+     */
+    public function RegisterHook()
+    {
+        $this->AddHook('init_action', 'InitAction', __CLASS__, 1000);
+    }
+
+    /**
+     * Обработка хука инициализации экшенов
+     */
+    public function InitAction()
+    {
+        /**
+         * Проверка на закрытый режим
+         */
+        $oUserCurrent = LS::Make(ModuleUser::class)->GetUserCurrent();
+        if (!$oUserCurrent and Config::Get('general.close') and Router::GetAction() != 'registration'
+            and Router::GetAction() != 'login'
+        ) {
+            Router::Action('login');
+        }
+    }
 }

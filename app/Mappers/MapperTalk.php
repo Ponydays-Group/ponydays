@@ -27,18 +27,20 @@ use Engine\Mapper;
  * Объект маппера для работы с БД
  *
  * @package modules.talk
- * @since 1.0
+ * @since   1.0
  */
-class MapperTalk extends Mapper {
-	/**
-	 * Добавляет новую тему разговора
-	 *
-	 * @param \App\Entities\EntityTalk $oTalk Объект сообщения
-	 *
-	 * @return int|bool
-	 */
-	public function AddTalk(EntityTalk $oTalk) {
-		$sql = "INSERT INTO ".Config::Get('db.table.talk')." 
+class MapperTalk extends Mapper
+{
+    /**
+     * Добавляет новую тему разговора
+     *
+     * @param \App\Entities\EntityTalk $oTalk Объект сообщения
+     *
+     * @return int|bool
+     */
+    public function AddTalk(EntityTalk $oTalk)
+    {
+        $sql = "INSERT INTO ".Config::Get('db.table.talk')." 
 			(user_id,
 			talk_title,
 			talk_text,
@@ -49,34 +51,48 @@ class MapperTalk extends Mapper {
 			)
 			VALUES(?d,	?,	?,	?,  ?, ?, ?)
 		";
-		if ($iId=$this->oDb->query($sql,$oTalk->getUserId(),$oTalk->getTitle(),$oTalk->getText(),$oTalk->getDate(),$oTalk->getDateLast(),$oTalk->getUserIdLast(),$oTalk->getUserIp()))
-		{
-			return $iId;
-		}
-		return false;
-	}
-	/**
-	 * Удаление письма из БД
-	 *
-	 * @param int $iTalkId	ID разговора
-	 */
-	public function DeleteTalk($iTalkId) {
-		// Удаление беседы
-		$sql = 'DELETE FROM '.Config::Get('db.table.talk').'  WHERE talk_id = ?d';
-		$this->oDb->query($sql,$iTalkId);
-		// Физическое удаление пользователей беседы (не флагом)
-		$sql = 'DELETE FROM '.Config::Get('db.table.talk_user').'  WHERE talk_id = ?d';
-		$this->oDb->query($sql,$iTalkId);
-	}
-	/**
-	 * Обновление разговора
-	 *
-	 * @param \App\Entities\EntityTalk $oTalk Объект сообщения
-	 *
-	 * @return int
-	 */
-	public function UpdateTalk(EntityTalk $oTalk) {
-		$sql = "UPDATE ".Config::Get('db.table.talk')." SET			
+        if ($iId = $this->oDb->query(
+            $sql,
+            $oTalk->getUserId(),
+            $oTalk->getTitle(),
+            $oTalk->getText(),
+            $oTalk->getDate(),
+            $oTalk->getDateLast(),
+            $oTalk->getUserIdLast(),
+            $oTalk->getUserIp()
+        )
+        ) {
+            return $iId;
+        }
+
+        return false;
+    }
+
+    /**
+     * Удаление письма из БД
+     *
+     * @param int $iTalkId ID разговора
+     */
+    public function DeleteTalk($iTalkId)
+    {
+        // Удаление беседы
+        $sql = 'DELETE FROM '.Config::Get('db.table.talk').'  WHERE talk_id = ?d';
+        $this->oDb->query($sql, $iTalkId);
+        // Физическое удаление пользователей беседы (не флагом)
+        $sql = 'DELETE FROM '.Config::Get('db.table.talk_user').'  WHERE talk_id = ?d';
+        $this->oDb->query($sql, $iTalkId);
+    }
+
+    /**
+     * Обновление разговора
+     *
+     * @param \App\Entities\EntityTalk $oTalk Объект сообщения
+     *
+     * @return int
+     */
+    public function UpdateTalk(EntityTalk $oTalk)
+    {
+        $sql = "UPDATE ".Config::Get('db.table.talk')." SET			
 				talk_date_last = ? ,
 				talk_user_id_last = ? ,
 				talk_comment_id_last = ? ,
@@ -85,20 +101,32 @@ class MapperTalk extends Mapper {
 			WHERE 
 				talk_id = ?d
 		";
-		return $this->oDb->query($sql,$oTalk->getDateLast(),$oTalk->getUserIdLast(),$oTalk->getCommentIdLast(),$oTalk->getCountComment(),$oTalk->getDeleted(),$oTalk->getId());
-	}
-	/**
-	 * Получить список разговоров по списку айдишников
-	 *
-	 * @param array $aArrayId	Список ID сообщений
-	 * @return array
-	 */
-	public function GetTalksByArrayId($aArrayId) {
-		if (!is_array($aArrayId) or count($aArrayId)==0) {
-			return array();
-		}
 
-		$sql = "SELECT 
+        return $this->oDb->query(
+            $sql,
+            $oTalk->getDateLast(),
+            $oTalk->getUserIdLast(),
+            $oTalk->getCommentIdLast(),
+            $oTalk->getCountComment(),
+            $oTalk->getDeleted(),
+            $oTalk->getId()
+        );
+    }
+
+    /**
+     * Получить список разговоров по списку айдишников
+     *
+     * @param array $aArrayId Список ID сообщений
+     *
+     * @return array
+     */
+    public function GetTalksByArrayId($aArrayId)
+    {
+        if (!is_array($aArrayId) or count($aArrayId) == 0) {
+            return [];
+        }
+
+        $sql = "SELECT 
 					t.*							 
 				FROM 
 					".Config::Get('db.table.talk')." as t 
@@ -107,27 +135,31 @@ class MapperTalk extends Mapper {
 				AND
 					t.talk_deleted = 0
 				ORDER BY FIELD(t.talk_id,?a) ";
-		$aTalks=array();
-		if ($aRows=$this->oDb->select($sql,$aArrayId,$aArrayId)) {
-			foreach ($aRows as $aRow) {
-				$aTalks[] = new EntityTalk($aRow);
-			}
-		}
-		return $aTalks;
-	}
-	/**
-	 * Получить список отношений разговор-юзер по списку айдишников
-	 *
-	 * @param array $aArrayId	Список ID сообщений
-	 * @param int $sUserId	ID пользователя
-	 * @return array
-	 */
-	public function GetTalkUserByArray($aArrayId,$sUserId) {
-		if (!is_array($aArrayId) or count($aArrayId)==0) {
-			return array();
-		}
+        $aTalks = [];
+        if ($aRows = $this->oDb->select($sql, $aArrayId, $aArrayId)) {
+            foreach ($aRows as $aRow) {
+                $aTalks[] = new EntityTalk($aRow);
+            }
+        }
 
-		$sql = "SELECT 
+        return $aTalks;
+    }
+
+    /**
+     * Получить список отношений разговор-юзер по списку айдишников
+     *
+     * @param array $aArrayId Список ID сообщений
+     * @param int   $sUserId  ID пользователя
+     *
+     * @return array
+     */
+    public function GetTalkUserByArray($aArrayId, $sUserId)
+    {
+        if (!is_array($aArrayId) or count($aArrayId) == 0) {
+            return [];
+        }
+
+        $sql = "SELECT 
 					t.*							 
 				FROM 
 					".Config::Get('db.table.talk_user')." as t 
@@ -136,24 +168,27 @@ class MapperTalk extends Mapper {
 					AND
 					t.user_id = ?d 								
 				";
-		$aTalkUsers=array();
-		if ($aRows=$this->oDb->select($sql,$aArrayId,$sUserId)) {
-			foreach ($aRows as $aRow) {
-				$aTalkUsers[] = new EntityTalkUser($aRow);
-			}
-		}
-		return $aTalkUsers;
-	}
-	/**
-	 * Получает тему разговора по айдишнику
-	 *
-	 * @param int $sId	ID сообщения
-	 *
-	 * @return \App\Entities\EntityTalk|null
-	 */
-	public function GetTalkById($sId) {
+        $aTalkUsers = [];
+        if ($aRows = $this->oDb->select($sql, $aArrayId, $sUserId)) {
+            foreach ($aRows as $aRow) {
+                $aTalkUsers[] = new EntityTalkUser($aRow);
+            }
+        }
 
-		$sql = "SELECT 
+        return $aTalkUsers;
+    }
+
+    /**
+     * Получает тему разговора по айдишнику
+     *
+     * @param int $sId ID сообщения
+     *
+     * @return \App\Entities\EntityTalk|null
+     */
+    public function GetTalkById($sId)
+    {
+
+        $sql = "SELECT 
 				t.*,
 				u.user_login as user_login							 
 				FROM 
@@ -167,20 +202,23 @@ class MapperTalk extends Mapper {
 					t.talk_deleted = 0			
 					";
 
-		if ($aRow=$this->oDb->selectRow($sql,$sId)) {
-			return new EntityTalk($aRow);
-		}
-		return null;
-	}
-	/**
-	 * Добавляет юзера к разговору(теме)
-	 *
-	 * @param \App\Entities\EntityTalkUser $oTalkUser Объект связи пользователя и сообщения(разговора)
-	 *
-	 * @return bool
-	 */
-	public function AddTalkUser(EntityTalkUser $oTalkUser) {
-		$sql = "INSERT INTO ".Config::Get('db.table.talk_user')." 
+        if ($aRow = $this->oDb->selectRow($sql, $sId)) {
+            return new EntityTalk($aRow);
+        }
+
+        return null;
+    }
+
+    /**
+     * Добавляет юзера к разговору(теме)
+     *
+     * @param \App\Entities\EntityTalkUser $oTalkUser Объект связи пользователя и сообщения(разговора)
+     *
+     * @return bool
+     */
+    public function AddTalkUser(EntityTalkUser $oTalkUser)
+    {
+        $sql = "INSERT INTO ".Config::Get('db.table.talk_user')." 
 			(talk_id,
 			user_id,
 			date_last,
@@ -190,26 +228,31 @@ class MapperTalk extends Mapper {
 			ON DUPLICATE KEY 
 				UPDATE talk_user_active = ?d 
 		";
-		if ($this->oDb->query($sql,
-							  $oTalkUser->getTalkId(),
-							  $oTalkUser->getUserId(),
-							  $oTalkUser->getDateLast(),
-							  $oTalkUser->getUserActive(),
-							  $oTalkUser->getUserActive()
-		)===0) {
-			return true;
-		}
-		return false;
-	}
-	/**
-	 * Обновляет связку разговор-юзер
-	 *
-	 * @param EntityTalkUser $oTalkUser Объект связи пользователя с разговором
-	 *
-	 * @return bool
-	 */
-	public function UpdateTalkUser(EntityTalkUser $oTalkUser) {
-		$sql = "UPDATE ".Config::Get('db.table.talk_user')." 
+        if ($this->oDb->query(
+                $sql,
+                $oTalkUser->getTalkId(),
+                $oTalkUser->getUserId(),
+                $oTalkUser->getDateLast(),
+                $oTalkUser->getUserActive(),
+                $oTalkUser->getUserActive()
+            ) === 0
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Обновляет связку разговор-юзер
+     *
+     * @param EntityTalkUser $oTalkUser Объект связи пользователя с разговором
+     *
+     * @return bool
+     */
+    public function UpdateTalkUser(EntityTalkUser $oTalkUser)
+    {
+        $sql = "UPDATE ".Config::Get('db.table.talk_user')." 
 			SET 
 				date_last = ?, 				
 				comment_id_last = ?d, 				
@@ -221,34 +264,38 @@ class MapperTalk extends Mapper {
 				user_id = ?d
 		";
 
-		if (
-			$this->oDb->query(
-				$sql,
-				$oTalkUser->getDateLast(),
-				$oTalkUser->getCommentIdLast(),
-				$oTalkUser->getCommentCountNew(),
-				$oTalkUser->getUserActive(),
-				$oTalkUser->getTalkId(),
-				$oTalkUser->getUserId()
-			)
-		) {
-			return true;
-		}
-		return false;
-	}
-	/**
-	 * Удаляет юзера из разговора
-	 *
-	 * @param array $aTalkId	Список ID сообщений
-	 * @param int $sUserId	ID пользователя
-	 * @param int $iActive	Статус связи
-	 * @return bool
-	 */
-	public function DeleteTalkUserByArray($aTalkId,$sUserId,$iActive) {
-		if (!is_array($aTalkId)) {
-			$aTalkId=array($aTalkId);
-		}
-		$sql = "
+        if (
+        $this->oDb->query(
+            $sql,
+            $oTalkUser->getDateLast(),
+            $oTalkUser->getCommentIdLast(),
+            $oTalkUser->getCommentCountNew(),
+            $oTalkUser->getUserActive(),
+            $oTalkUser->getTalkId(),
+            $oTalkUser->getUserId()
+        )
+        ) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Удаляет юзера из разговора
+     *
+     * @param array $aTalkId Список ID сообщений
+     * @param int   $sUserId ID пользователя
+     * @param int   $iActive Статус связи
+     *
+     * @return bool
+     */
+    public function DeleteTalkUserByArray($aTalkId, $sUserId, $iActive)
+    {
+        if (!is_array($aTalkId)) {
+            $aTalkId = [$aTalkId];
+        }
+        $sql = "
 			UPDATE ".Config::Get('db.table.talk_user')." 
 			SET 
 				talk_user_active = ?d
@@ -257,20 +304,23 @@ class MapperTalk extends Mapper {
 				AND
 				user_id = ?d				
 		";
-		if ($this->oDb->query($sql,$iActive,$aTalkId,$sUserId))
-		{
-			return true;
-		}
-		return false;
-	}
-	/**
-	 * Возвращает количество новых комментариев
-	 *
-	 * @param $sUserId
-	 * @return bool
-	 */
-	public function GetCountCommentNew($sUserId) {
-		$sql = "
+        if ($this->oDb->query($sql, $iActive, $aTalkId, $sUserId)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Возвращает количество новых комментариев
+     *
+     * @param $sUserId
+     *
+     * @return bool
+     */
+    public function GetCountCommentNew($sUserId)
+    {
+        $sql = "
 					SELECT
 						SUM(tu.comment_count_new) as count_new												
 					FROM   						
@@ -280,19 +330,23 @@ class MapperTalk extends Mapper {
   						AND
   						tu.talk_user_active=?d							
 		";
-		if ($aRow=$this->oDb->selectRow($sql,$sUserId, ModuleTalk::TALK_USER_ACTIVE)) {
-			return $aRow['count_new'];
-		}
-		return false;
-	}
-	/**
-	 * Получает число новых тем и комментов где есть юзер
-	 *
-	 * @param int $sUserId	ID пользователя
-	 * @return int
-	 */
-	public function GetCountTalkNew($sUserId) {
-		$sql = "
+        if ($aRow = $this->oDb->selectRow($sql, $sUserId, ModuleTalk::TALK_USER_ACTIVE)) {
+            return $aRow['count_new'];
+        }
+
+        return false;
+    }
+
+    /**
+     * Получает число новых тем и комментов где есть юзер
+     *
+     * @param int $sUserId ID пользователя
+     *
+     * @return int
+     */
+    public function GetCountTalkNew($sUserId)
+    {
+        $sql = "
 					SELECT
 						COUNT(tu.talk_id) as count_new												
 					FROM   						
@@ -304,22 +358,26 @@ class MapperTalk extends Mapper {
   						AND
   						tu.talk_user_active=?d						
 		";
-		if ($aRow=$this->oDb->selectRow($sql,$sUserId,ModuleTalk::TALK_USER_ACTIVE)) {
-			return $aRow['count_new'];
-		}
-		return false;
-	}
-	/**
-	 * Получить все темы разговора где есть юзер
-	 *
-	 * @param  int $sUserId	ID пользователя
-	 * @param  int $iCount	Возвращает общее количество элементов
-	 * @param  int    $iCurrPage	Номер страницы
-	 * @param  int    $iPerPage	Количество элементов на страницу
-	 * @return array
-	 */
-	public function GetTalksByUserId($sUserId,&$iCount,$iCurrPage,$iPerPage) {
-		$sql = "SELECT 
+        if ($aRow = $this->oDb->selectRow($sql, $sUserId, ModuleTalk::TALK_USER_ACTIVE)) {
+            return $aRow['count_new'];
+        }
+
+        return false;
+    }
+
+    /**
+     * Получить все темы разговора где есть юзер
+     *
+     * @param  int $sUserId   ID пользователя
+     * @param  int $iCount    Возвращает общее количество элементов
+     * @param  int $iCurrPage Номер страницы
+     * @param  int $iPerPage  Количество элементов на страницу
+     *
+     * @return array
+     */
+    public function GetTalksByUserId($sUserId, &$iCount, $iCurrPage, $iPerPage)
+    {
+        $sql = "SELECT 
 					tu.talk_id									
 				FROM 
 					".Config::Get('db.table.talk_user')." as tu, 					
@@ -336,23 +394,35 @@ class MapperTalk extends Mapper {
 				LIMIT ?d, ?d	
 					";
 
-		$aTalks=array();
-		if ($aRows=$this->oDb->selectPage($iCount,$sql,$sUserId,ModuleTalk::TALK_USER_ACTIVE,($iCurrPage-1)*$iPerPage, $iPerPage)) {
-			foreach ($aRows as $aRow) {
-				$aTalks[]=$aRow['talk_id'];
-			}
-		}
-		return $aTalks;
-	}
-	/**
-	 * Получает список юзеров в теме разговора
-	 *
-	 * @param  int $sTalkId	ID разговора
-	 * @param  array  $aUserActive	Список статусов
-	 * @return array
-	 */
-	public function GetUsersTalk($sTalkId,$aUserActive=array()) {
-		$sql = "
+        $aTalks = [];
+        if ($aRows = $this->oDb->selectPage(
+            $iCount,
+            $sql,
+            $sUserId,
+            ModuleTalk::TALK_USER_ACTIVE,
+            ($iCurrPage - 1) * $iPerPage,
+            $iPerPage
+        )
+        ) {
+            foreach ($aRows as $aRow) {
+                $aTalks[] = $aRow['talk_id'];
+            }
+        }
+
+        return $aTalks;
+    }
+
+    /**
+     * Получает список юзеров в теме разговора
+     *
+     * @param  int   $sTalkId     ID разговора
+     * @param  array $aUserActive Список статусов
+     *
+     * @return array
+     */
+    public function GetUsersTalk($sTalkId, $aUserActive = [])
+    {
+        $sql = "
 			SELECT 
 				user_id	 
 			FROM 
@@ -361,45 +431,55 @@ class MapperTalk extends Mapper {
 				talk_id = ? 
 				{ AND talk_user_active IN(?a) }
 			";
-		$aReturn=array();
-		if ($aRows=$this->oDb->select($sql,$sTalkId,
-			(count($aUserActive) ? $aUserActive : DBSIMPLE_SKIP )
-		)) {
-			foreach ($aRows as $aRow) {
-				$aReturn[]=$aRow['user_id'];
-			}
-		}
+        $aReturn = [];
+        if ($aRows = $this->oDb->select(
+            $sql,
+            $sTalkId,
+            (count($aUserActive) ? $aUserActive : DBSIMPLE_SKIP)
+        )
+        ) {
+            foreach ($aRows as $aRow) {
+                $aReturn[] = $aRow['user_id'];
+            }
+        }
 
-		return $aReturn;
-	}
-	/**
-	 * Увеличивает число новых комментов у юзеров
-	 *
-	 * @param int $sTalkId	ID разговора
-	 * @param array $aExcludeId	Список ID пользователей для исключения
-	 * @return int
-	 */
-	public function increaseCountCommentNew($sTalkId,$aExcludeId) {
-		if (!is_null($aExcludeId) and !is_array($aExcludeId)) {
-			$aExcludeId=array($aExcludeId);
-		}
+        return $aReturn;
+    }
 
-		$sql = "UPDATE 			  
+    /**
+     * Увеличивает число новых комментов у юзеров
+     *
+     * @param int   $sTalkId    ID разговора
+     * @param array $aExcludeId Список ID пользователей для исключения
+     *
+     * @return int
+     */
+    public function increaseCountCommentNew($sTalkId, $aExcludeId)
+    {
+        if (!is_null($aExcludeId) and !is_array($aExcludeId)) {
+            $aExcludeId = [$aExcludeId];
+        }
+
+        $sql = "UPDATE 			  
 				".Config::Get('db.table.talk_user')."   
 				SET comment_count_new=comment_count_new+1 
 			WHERE
 				talk_id = ? 
 				{ AND user_id NOT IN (?a) }";
-		return $this->oDb->select($sql,$sTalkId,!is_null($aExcludeId) ? $aExcludeId : DBSIMPLE_SKIP);
-	}
-	/**
-	 * Возвращает массив пользователей, участвующих в разговоре
-	 *
-	 * @param  int $sTalkId	ID разговора
-	 * @return array
-	 */
-	public function GetTalkUsers($sTalkId) {
-		$sql = "
+
+        return $this->oDb->select($sql, $sTalkId, !is_null($aExcludeId) ? $aExcludeId : DBSIMPLE_SKIP);
+    }
+
+    /**
+     * Возвращает массив пользователей, участвующих в разговоре
+     *
+     * @param  int $sTalkId ID разговора
+     *
+     * @return array
+     */
+    public function GetTalkUsers($sTalkId)
+    {
+        $sql = "
 			SELECT 
 				t.* 
 			FROM 
@@ -408,29 +488,32 @@ class MapperTalk extends Mapper {
 				talk_id = ? 
 
 			";
-		$aReturn=array();
-		if ($aRows=$this->oDb->select($sql,$sTalkId)) {
-			foreach ($aRows as $aRow) {
-				$aReturn[] = new EntityTalkUser($aRow);
-			}
-		}
+        $aReturn = [];
+        if ($aRows = $this->oDb->select($sql, $sTalkId)) {
+            foreach ($aRows as $aRow) {
+                $aReturn[] = new EntityTalkUser($aRow);
+            }
+        }
 
-		return $aReturn;
-	}
-	/**
-	 * Получить все темы разговора по фильтру
-	 *
-	 * @param  array  $aFilter	Фильтр
-	 * @param  int    $iCount	Возвращает общее количество элементов
-	 * @param  int    $iCurrPage	Номер страницы
-	 * @param  int    $iPerPage	Количество элементов на страницу
-	 * @return array('collection'=>array,'count'=>int)
-	 */
-	public function GetTalksByFilter($aFilter,&$iCount,$iCurrPage,$iPerPage) {
-		if (isset($aFilter['id']) and !is_array($aFilter['id'])) {
-			$aFilter['id']=array($aFilter['id']);
-		}
-		$sql = "SELECT 
+        return $aReturn;
+    }
+
+    /**
+     * Получить все темы разговора по фильтру
+     *
+     * @param  array $aFilter   Фильтр
+     * @param  int   $iCount    Возвращает общее количество элементов
+     * @param  int   $iCurrPage Номер страницы
+     * @param  int   $iPerPage  Количество элементов на страницу
+     *
+     * @return array('collection'=>array,'count'=>int)
+     */
+    public function GetTalksByFilter($aFilter, &$iCount, $iCurrPage, $iPerPage)
+    {
+        if (isset($aFilter['id']) and !is_array($aFilter['id'])) {
+            $aFilter['id'] = [$aFilter['id']];
+        }
+        $sql = "SELECT 
 					tu.talk_id									
 				FROM 
 					".Config::Get('db.table.talk_user')." as tu,
@@ -454,130 +537,151 @@ class MapperTalk extends Mapper {
 				LIMIT ?d, ?d	
 					";
 
-		$aTalks=array();
-		if (
-			$aRows=$this->oDb->selectPage(
-				$iCount,
-				$sql,
-				ModuleTalk::TALK_USER_ACTIVE,
-				(!empty($aFilter['user_id']) ? $aFilter['user_id'] : DBSIMPLE_SKIP),
-				((isset($aFilter['id']) and count($aFilter['id'])) ? $aFilter['id'] : DBSIMPLE_SKIP),
-				(!empty($aFilter['only_new']) ? 0 : DBSIMPLE_SKIP),
-				(!empty($aFilter['date_max']) ? $aFilter['date_max'] : DBSIMPLE_SKIP),
-				(!empty($aFilter['date_min']) ? $aFilter['date_min'] : DBSIMPLE_SKIP),
-				(!empty($aFilter['keyword']) ? $aFilter['keyword'] : DBSIMPLE_SKIP),
-				(!empty($aFilter['text_like']) ? $aFilter['text_like'] : DBSIMPLE_SKIP),
-				(!empty($aFilter['user_login']) ? $aFilter['user_login'] : DBSIMPLE_SKIP),
-				(!empty($aFilter['sender_id']) ? $aFilter['sender_id'] : DBSIMPLE_SKIP),
-				($iCurrPage-1)*$iPerPage,
-				$iPerPage
-			)
-		) {
-			foreach ($aRows as $aRow) {
-				$aTalks[]=$aRow['talk_id'];
-			}
-		}
-		return $aTalks;
-	}
-	/**
-	 * Получает информацию о пользователях, занесенных в блеклист
-	 *
-	 * @param  int $sUserId	ID пользователя
-	 * @return array
-	 */
-	public function GetBlacklistByUserId($sUserId) {
-		$sql = "SELECT 
+        $aTalks = [];
+        if (
+        $aRows = $this->oDb->selectPage(
+            $iCount,
+            $sql,
+            ModuleTalk::TALK_USER_ACTIVE,
+            (!empty($aFilter['user_id']) ? $aFilter['user_id'] : DBSIMPLE_SKIP),
+            ((isset($aFilter['id']) and count($aFilter['id'])) ? $aFilter['id'] : DBSIMPLE_SKIP),
+            (!empty($aFilter['only_new']) ? 0 : DBSIMPLE_SKIP),
+            (!empty($aFilter['date_max']) ? $aFilter['date_max'] : DBSIMPLE_SKIP),
+            (!empty($aFilter['date_min']) ? $aFilter['date_min'] : DBSIMPLE_SKIP),
+            (!empty($aFilter['keyword']) ? $aFilter['keyword'] : DBSIMPLE_SKIP),
+            (!empty($aFilter['text_like']) ? $aFilter['text_like'] : DBSIMPLE_SKIP),
+            (!empty($aFilter['user_login']) ? $aFilter['user_login'] : DBSIMPLE_SKIP),
+            (!empty($aFilter['sender_id']) ? $aFilter['sender_id'] : DBSIMPLE_SKIP),
+            ($iCurrPage - 1) * $iPerPage,
+            $iPerPage
+        )
+        ) {
+            foreach ($aRows as $aRow) {
+                $aTalks[] = $aRow['talk_id'];
+            }
+        }
+
+        return $aTalks;
+    }
+
+    /**
+     * Получает информацию о пользователях, занесенных в блеклист
+     *
+     * @param  int $sUserId ID пользователя
+     *
+     * @return array
+     */
+    public function GetBlacklistByUserId($sUserId)
+    {
+        $sql = "SELECT 
 					tb.user_target_id							 
 				FROM 
 					".Config::Get('db.table.talk_blacklist')." as tb 
 				WHERE 
 					tb.user_id = ?d";
-		$aTargetId=array();
-		if ($aRows=$this->oDb->select($sql,$sUserId)) {
-			foreach ($aRows as $aRow) {
-				$aTargetId[]=$aRow['user_target_id'];
-			}
-		}
-		return $aTargetId;
-	}
-	/**
-	 * Возвращает пользователей, у которых данный занесен в Blacklist
-	 *
-	 * @param  int $sUserId ID пользователя
-	 * @return array
-	 */
-	public function GetBlacklistByTargetId($sUserId) {
-		$sql = "SELECT 
+        $aTargetId = [];
+        if ($aRows = $this->oDb->select($sql, $sUserId)) {
+            foreach ($aRows as $aRow) {
+                $aTargetId[] = $aRow['user_target_id'];
+            }
+        }
+
+        return $aTargetId;
+    }
+
+    /**
+     * Возвращает пользователей, у которых данный занесен в Blacklist
+     *
+     * @param  int $sUserId ID пользователя
+     *
+     * @return array
+     */
+    public function GetBlacklistByTargetId($sUserId)
+    {
+        $sql = "SELECT 
 					tb.user_id							 
 				FROM 
 					".Config::Get('db.table.talk_blacklist')." as tb 
 				WHERE 
 					tb.user_target_id = ?d";
-		$aUserId=array();
-		if ($aRows=$this->oDb->select($sql,$sUserId)) {
-			foreach ($aRows as $aRow) {
-				$aUserId[]=$aRow['user_id'];
-			}
-		}
-		return $aUserId;
-	}
-	/**
-	 * Добавление пользователя в блеклист по переданному идентификатору
-	 *
-	 * @param  int $sTargetId	ID пользователя, которого добавляем в блэклист
-	 * @param  int $sUserId	ID пользователя
-	 * @return bool
-	 */
-	public function AddUserToBlacklist($sTargetId, $sUserId) {
-		$sql = "
+        $aUserId = [];
+        if ($aRows = $this->oDb->select($sql, $sUserId)) {
+            foreach ($aRows as $aRow) {
+                $aUserId[] = $aRow['user_id'];
+            }
+        }
+
+        return $aUserId;
+    }
+
+    /**
+     * Добавление пользователя в блеклист по переданному идентификатору
+     *
+     * @param  int $sTargetId ID пользователя, которого добавляем в блэклист
+     * @param  int $sUserId   ID пользователя
+     *
+     * @return bool
+     */
+    public function AddUserToBlacklist($sTargetId, $sUserId)
+    {
+        $sql = "
 			INSERT INTO ".Config::Get('db.table.talk_blacklist')." 
 				( user_id, user_target_id )
 			VALUES
 				(?d, ?d)
 		";
-		if ($this->oDb->query($sql,$sUserId,$sTargetId)===0) {
-			return true;
-		}
-		return false;
-	}
-	/**
-	 * Удаляем пользователя из блеклиста
-	 *
-	 * @param  int $sTargetId	ID пользователя, которого удаляем из блэклиста
-	 * @param  int $sUserId	ID пользователя
-	 * @return bool
-	 */
-	public function DeleteUserFromBlacklist($sTargetId, $sUserId) {
-		$sql = "
+        if ($this->oDb->query($sql, $sUserId, $sTargetId) === 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Удаляем пользователя из блеклиста
+     *
+     * @param  int $sTargetId ID пользователя, которого удаляем из блэклиста
+     * @param  int $sUserId   ID пользователя
+     *
+     * @return bool
+     */
+    public function DeleteUserFromBlacklist($sTargetId, $sUserId)
+    {
+        $sql = "
 			DELETE FROM ".Config::Get('db.table.talk_blacklist')." 
 			WHERE
 				user_id = ?d
 			AND
 				user_target_id = ?d
 		";
-		if ($this->oDb->query($sql,$sUserId,$sTargetId)) {
-			return true;
-		}
-		return false;
-	}
-	/**
-	 * Добавление пользователя в блеклист по списку идентификаторов
-	 *
-	 * @param  array $aTargetId	Список ID пользователей, которых добавляем в блэклист
-	 * @param  int $sUserId	ID пользователя
-	 * @return bool
-	 */
-	public function AddUserArrayToBlacklist($aTargetId, $sUserId) {
-		$sql = "
+        if ($this->oDb->query($sql, $sUserId, $sTargetId)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Добавление пользователя в блеклист по списку идентификаторов
+     *
+     * @param  array $aTargetId Список ID пользователей, которых добавляем в блэклист
+     * @param  int   $sUserId   ID пользователя
+     *
+     * @return bool
+     */
+    public function AddUserArrayToBlacklist($aTargetId, $sUserId)
+    {
+        $sql = "
 			INSERT INTO ".Config::Get('db.table.talk_blacklist')." 
 				( user_id, user_target_id )
 			VALUES
 				(?d, ?d)
 		";
-		$bOk=true;
-		foreach ($aTargetId as $sTarget) {
-			$bOk = $bOk && $this->oDb->query($sql, $sUserId, $sTarget);
-		}
-		return $bOk;
-	}
+        $bOk = true;
+        foreach ($aTargetId as $sTarget) {
+            $bOk = $bOk && $this->oDb->query($sql, $sUserId, $sTarget);
+        }
+
+        return $bOk;
+    }
 }

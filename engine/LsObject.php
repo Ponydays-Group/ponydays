@@ -21,8 +21,9 @@ namespace Engine;
  * От этого класса наследуются все остальные
  *
  * @package engine
- * @since 1.0
+ * @since   1.0
  */
-abstract class LsObject {
+abstract class LsObject
+{
 
 }

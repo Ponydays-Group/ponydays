@@ -25,121 +25,140 @@ use Engine\Mapper;
  * Маппер для работы с БД
  *
  * @package modules.notify
- * @since 1.0
+ * @since   1.0
  */
-class MapperNotify extends Mapper {
-	/**
-	 * Добавляет задание
-	 *
-	 * @param \App\Entities\EntityNotifyTask $oNotifyTask Объект задания
-	 *
-	 * @return bool
-	 */
-	public function AddTask(EntityNotifyTask $oNotifyTask) {
-		$sql = "
+class MapperNotify extends Mapper
+{
+    /**
+     * Добавляет задание
+     *
+     * @param \App\Entities\EntityNotifyTask $oNotifyTask Объект задания
+     *
+     * @return bool
+     */
+    public function AddTask(EntityNotifyTask $oNotifyTask)
+    {
+        $sql = "
 			INSERT INTO ".Config::Get('db.table.notify_task')." 
 				( user_login, user_mail, notify_subject, notify_text, date_created, notify_task_status )
 			VALUES
 				( ?, ?, ?, ?, ?, ?d )
 		";
 
-		if ($this->oDb->query(
-			$sql,
-			$oNotifyTask->getUserLogin(),
-			$oNotifyTask->getUserMail(),
-			$oNotifyTask->getNotifySubject(),
-			$oNotifyTask->getNotifyText(),
-			$oNotifyTask->getDateCreated(),
-			$oNotifyTask->getTaskStatus()
-		)===0) {
-			return true;
-		}
-		return false;
-	}
-	/**
-	 * Добавляет задания списком
-	 *
-	 * @param array $aTasks	Список объектов заданий
-	 * @return bool
-	 */
-	public function AddTaskArray($aTasks) {
-		if(!is_array($aTasks)&&count($aTasks)==0) {
-			return false;
-		}
+        if ($this->oDb->query(
+                $sql,
+                $oNotifyTask->getUserLogin(),
+                $oNotifyTask->getUserMail(),
+                $oNotifyTask->getNotifySubject(),
+                $oNotifyTask->getNotifyText(),
+                $oNotifyTask->getDateCreated(),
+                $oNotifyTask->getTaskStatus()
+            ) === 0
+        ) {
+            return true;
+        }
 
-		$aValues=array();
-		foreach ($aTasks as $oTask) {
-			$aValues[]="(".implode(',',
-								   array(
-									   $this->oDb->escape($oTask->getUserLogin()),
-									   $this->oDb->escape($oTask->getUserMail()),
-									   $this->oDb->escape($oTask->getNotifySubject()),
-									   $this->oDb->escape($oTask->getNotifyText()),
-									   $this->oDb->escape($oTask->getDateCreated()),
-									   $this->oDb->escape($oTask->getTaskStatus())
-								   )
-			).")";
-		}
-		$sql = "
+        return false;
+    }
+
+    /**
+     * Добавляет задания списком
+     *
+     * @param array $aTasks Список объектов заданий
+     *
+     * @return bool
+     */
+    public function AddTaskArray($aTasks)
+    {
+        if (!is_array($aTasks) && count($aTasks) == 0) {
+            return false;
+        }
+
+        $aValues = [];
+        foreach ($aTasks as $oTask) {
+            $aValues[] = "(".implode(
+                    ',',
+                    [
+                        $this->oDb->escape($oTask->getUserLogin()),
+                        $this->oDb->escape($oTask->getUserMail()),
+                        $this->oDb->escape($oTask->getNotifySubject()),
+                        $this->oDb->escape($oTask->getNotifyText()),
+                        $this->oDb->escape($oTask->getDateCreated()),
+                        $this->oDb->escape($oTask->getTaskStatus())
+                    ]
+                ).")";
+        }
+        $sql = "
 			INSERT INTO ".Config::Get('db.table.notify_task')." 
 				( user_login, user_mail, notify_subject, notify_text, date_created, notify_task_status )
 			VALUES 
 				".implode(', ', $aValues);
 
-		return $this->oDb->query($sql);
-	}
-	/**
-	 * Удаляет задание
-	 *
-	 * @param \App\Entities\EntityNotifyTask $oNotifyTask Объект задания
-	 *
-	 * @return bool
-	 */
-	public function DeleteTask(EntityNotifyTask $oNotifyTask) {
-		$sql = "
+        return $this->oDb->query($sql);
+    }
+
+    /**
+     * Удаляет задание
+     *
+     * @param \App\Entities\EntityNotifyTask $oNotifyTask Объект задания
+     *
+     * @return bool
+     */
+    public function DeleteTask(EntityNotifyTask $oNotifyTask)
+    {
+        $sql = "
 			DELETE FROM ".Config::Get('db.table.notify_task')." 
 			WHERE
 				notify_task_id = ?d			
 		";
-		if ($this->oDb->query($sql,$oNotifyTask->getTaskId())) {
-			return true;
-		}
-		return false;
-	}
-	/**
-	 * Удаляет отложенные Notify-задания по списку идентификаторов
-	 *
-	 * @param  array $aTaskId	Список ID заданий на отправку
-	 * @return bool
-	 */
-	public function DeleteTaskByArrayId($aTaskId) {
-		$sql = "
+        if ($this->oDb->query($sql, $oNotifyTask->getTaskId())) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Удаляет отложенные Notify-задания по списку идентификаторов
+     *
+     * @param  array $aTaskId Список ID заданий на отправку
+     *
+     * @return bool
+     */
+    public function DeleteTaskByArrayId($aTaskId)
+    {
+        $sql = "
 			DELETE FROM ".Config::Get('db.table.notify_task')." 
 			WHERE
 				notify_task_id IN(?a)			
 		";
-		if ($this->oDb->query($sql,$aTaskId)) {
-			return true;
-		}
-		return false;
-	}
-	/**
-	 * Получает массив заданий на публикацию из базы с указанным количественным ограничением (выборка FIFO)
-	 *
-	 * @param  int	$iLimit	Количество
-	 * @return array
-	 */
-	public function GetTasks($iLimit) {
-		$sql = "SELECT *
+        if ($this->oDb->query($sql, $aTaskId)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Получает массив заданий на публикацию из базы с указанным количественным ограничением (выборка FIFO)
+     *
+     * @param  int $iLimit Количество
+     *
+     * @return array
+     */
+    public function GetTasks($iLimit)
+    {
+        $sql = "SELECT *
 				FROM ".Config::Get('db.table.notify_task')."	
 				ORDER BY date_created ASC
 				LIMIT ?d";
-		$aTasks=array();
-		if ($aRows=$this->oDb->select($sql,$iLimit)) {
-			foreach ($aRows as $aTask) {
-				$aTasks[] = new EntityNotifyTask($aTask);
-			}
-		}
-		return $aTasks;
-	}
+        $aTasks = [];
+        if ($aRows = $this->oDb->select($sql, $iLimit)) {
+            foreach ($aRows as $aTask) {
+                $aTasks[] = new EntityNotifyTask($aTask);
+            }
+        }
+
+        return $aTasks;
+    }
 }

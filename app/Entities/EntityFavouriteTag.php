@@ -23,8 +23,9 @@ use Engine\Entity;
  * Объект сущности тега для избранного
  *
  * @package modules.favourite
- * @since 1.0
+ * @since   1.0
  */
-class EntityFavouriteTag extends Entity {
+class EntityFavouriteTag extends Entity
+{
 
 }

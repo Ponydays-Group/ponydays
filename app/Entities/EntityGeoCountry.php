@@ -21,8 +21,9 @@ namespace App\Entities;
  * Объект сущности страны
  *
  * @package modules.geo
- * @since 1.0
+ * @since   1.0
  */
-class EntityGeoCountry extends EntityGeo {
+class EntityGeoCountry extends EntityGeo
+{
 
 }

@@ -29,7 +29,7 @@ class ModuleEditComment extends Module
      */
     public function Init()
     {
-        $this->oMapper=Engine::MakeMapper(MapperEditComment::class);
+        $this->oMapper = Engine::MakeMapper(MapperEditComment::class);
     }
 
     /**
@@ -40,8 +40,10 @@ class ModuleEditComment extends Module
     public function GetLastEditData($iCommentId)
     {
         $data = $this->oMapper->GetLastEditData($iCommentId);
+
         return $data;
     }
+
     /**
      * @param $iCommentId
      *
@@ -50,9 +52,10 @@ class ModuleEditComment extends Module
     public function GetDataItemsByCommentId($iCommentId)
     {
         $iCount = 0;
+
         return $this->oMapper->GetDataItemsByCommentId($iCommentId, $iCount);
     }
-    
+
     public function HasAnswers($sId)
     {
         return $this->oMapper->HasAnswers($sId);
@@ -68,7 +71,8 @@ class ModuleEditComment extends Module
      *
      * @return bool
      */
-    public function SaveData($data) {
+    public function SaveData($data)
+    {
         return $this->oMapper->SaveData($data);
     }
 }

@@ -17,22 +17,22 @@
 
 namespace App\Actions;
 
-use App\Modules\ModuleACL;
 use App\Entities\EntityBlog;
 use App\Entities\EntityBlogUser;
-use App\Modules\ModuleBlog;
-use App\Modules\ModuleCast;
 use App\Entities\EntityComment;
 use App\Entities\EntityCommentOnline;
-use App\Modules\ModuleComment;
 use App\Entities\EntityNotification;
+use App\Entities\EntityTopicRead;
+use App\Modules\ModuleACL;
+use App\Modules\ModuleBlog;
+use App\Modules\ModuleCast;
+use App\Modules\ModuleComment;
 use App\Modules\ModuleNotification;
 use App\Modules\ModuleNotify;
 use App\Modules\ModuleNower;
 use App\Modules\ModuleStream;
 use App\Modules\ModuleSubscribe;
 use App\Modules\ModuleTalk;
-use App\Entities\EntityTopicRead;
 use App\Modules\ModuleTopic;
 use App\Modules\ModuleUser;
 use App\Modules\ModuleUserfeed;
@@ -55,7 +55,7 @@ use Zend_Cache;
  * Экшен обработки URL'ов вида /blog/
  *
  * @package actions
- * @since 1.0
+ * @since   1.0
  */
 class ActionBlog extends Action
 {
@@ -118,7 +118,26 @@ class ActionBlog extends Action
      *
      * @var array
      */
-    protected $aBadBlogUrl = array('new', 'good', 'bad', 'discussed', 'top', 'edit', 'add', 'deleted', 'admin', 'delete', 'restore', 'invite', 'ajaxaddcomment', 'ajaxaddbloginvite', 'ajaxresponsecomment', 'ajaxrebloginvite', 'ajaxbloginfo', 'ajaxblogjoin');
+    protected $aBadBlogUrl = [
+        'new',
+        'good',
+        'bad',
+        'discussed',
+        'top',
+        'edit',
+        'add',
+        'deleted',
+        'admin',
+        'delete',
+        'restore',
+        'invite',
+        'ajaxaddcomment',
+        'ajaxaddbloginvite',
+        'ajaxresponsecomment',
+        'ajaxrebloginvite',
+        'ajaxbloginfo',
+        'ajaxblogjoin'
+    ];
 
     /**
      * Инизиализация экшена
@@ -145,9 +164,12 @@ class ActionBlog extends Action
         /**
          * Загружаем в шаблон JS текстовки
          */
-        LS::Make(ModuleLang::class)->AddLangJs(array(
-            'blog_join', 'blog_leave'
-        ));
+        LS::Make(ModuleLang::class)->AddLangJs(
+            [
+                'blog_join',
+                'blog_leave'
+            ]
+        );
     }
 
     /**
@@ -156,13 +178,13 @@ class ActionBlog extends Action
      */
     protected function RegisterEvent()
     {
-        $this->AddEventPreg('/^good$/i', '/^(page([1-9]\d{0,5}))?$/i', array('EventTopics', 'topics'));
-        $this->AddEvent('good', array('EventTopics', 'topics'));
-        $this->AddEventPreg('/^bad$/i', '/^(page([1-9]\d{0,5}))?$/i', array('EventTopics', 'topics'));
-        $this->AddEventPreg('/^new$/i', '/^(page([1-9]\d{0,5}))?$/i', array('EventTopics', 'topics'));
-        $this->AddEventPreg('/^newall$/i', '/^(page([1-9]\d{0,5}))?$/i', array('EventTopics', 'topics'));
-        $this->AddEventPreg('/^discussed$/i', '/^(page([1-9]\d{0,5}))?$/i', array('EventTopics', 'topics'));
-        $this->AddEventPreg('/^top$/i', '/^(page([1-9]\d{0,5}))?$/i', array('EventTopics', 'topics'));
+        $this->AddEventPreg('/^good$/i', '/^(page([1-9]\d{0,5}))?$/i', ['EventTopics', 'topics']);
+        $this->AddEvent('good', ['EventTopics', 'topics']);
+        $this->AddEventPreg('/^bad$/i', '/^(page([1-9]\d{0,5}))?$/i', ['EventTopics', 'topics']);
+        $this->AddEventPreg('/^new$/i', '/^(page([1-9]\d{0,5}))?$/i', ['EventTopics', 'topics']);
+        $this->AddEventPreg('/^newall$/i', '/^(page([1-9]\d{0,5}))?$/i', ['EventTopics', 'topics']);
+        $this->AddEventPreg('/^discussed$/i', '/^(page([1-9]\d{0,5}))?$/i', ['EventTopics', 'topics']);
+        $this->AddEventPreg('/^top$/i', '/^(page([1-9]\d{0,5}))?$/i', ['EventTopics', 'topics']);
 
         $this->AddEvent('add', 'EventAddBlog');
         $this->AddEvent('edit', 'EventEditBlog');
@@ -180,17 +202,27 @@ class ActionBlog extends Action
         $this->AddEvent('ajaxblogjoin', 'AjaxBlogJoin');
         $this->AddEvent('ajax-search', 'EventAjaxSearch');
 
-        $this->AddEventPreg('/^[\w\-\_]+$/i', '/^(\d+)$/i', '/comments/', array('EventShowTopicComments', 'topic'));
-        $this->AddEventPreg('/^[\w\-\_]+$/i', '/^(\d+)$/i', array('EventShowTopic', 'topic'));
-        $this->AddEventPreg('/^[\w\-\_]+$/i', '/^(\d+)\.html$/i', array('EventShowTopic', 'topic'));
+        $this->AddEventPreg('/^[\w\-\_]+$/i', '/^(\d+)$/i', '/comments/', ['EventShowTopicComments', 'topic']);
+        $this->AddEventPreg('/^[\w\-\_]+$/i', '/^(\d+)$/i', ['EventShowTopic', 'topic']);
+        $this->AddEventPreg('/^[\w\-\_]+$/i', '/^(\d+)\.html$/i', ['EventShowTopic', 'topic']);
 
-        $this->AddEventPreg('/^[\w\-\_]+$/i', '/^(page([1-9]\d{0,5}))?$/i', array('EventShowBlog', 'blog'));
-        $this->AddEventPreg('/^[\w\-\_]+$/i', '/^bad$/i', '/^(page([1-9]\d{0,5}))?$/i', array('EventShowBlog', 'blog'));
-        $this->AddEventPreg('/^[\w\-\_]+$/i', '/^new$/i', '/^(page([1-9]\d{0,5}))?$/i', array('EventShowBlog', 'blog'));
-        $this->AddEventPreg('/^[\w\-\_]+$/i', '/^newall$/i', '/^(page([1-9]\d{0,5}))?$/i', array('EventShowBlog', 'blog'));
-        $this->AddEventPreg('/^[\w\-\_]+$/i', '/^discussed$/i', '/^(page([1-9]\d{0,5}))?$/i', array('EventShowBlog', 'blog'));
-        $this->AddEventPreg('/^[\w\-\_]+$/i', '/^top$/i', '/^(page([1-9]\d{0,5}))?$/i', array('EventShowBlog', 'blog'));
-        $this->AddEventPreg('/^[\w\-\_]+$/i', '/^deleted$/i', '/^(page([1-9]\d{0,5}))?$/i', array('EventShowDeletedBlog', 'blog'));
+        $this->AddEventPreg('/^[\w\-\_]+$/i', '/^(page([1-9]\d{0,5}))?$/i', ['EventShowBlog', 'blog']);
+        $this->AddEventPreg('/^[\w\-\_]+$/i', '/^bad$/i', '/^(page([1-9]\d{0,5}))?$/i', ['EventShowBlog', 'blog']);
+        $this->AddEventPreg('/^[\w\-\_]+$/i', '/^new$/i', '/^(page([1-9]\d{0,5}))?$/i', ['EventShowBlog', 'blog']);
+        $this->AddEventPreg('/^[\w\-\_]+$/i', '/^newall$/i', '/^(page([1-9]\d{0,5}))?$/i', ['EventShowBlog', 'blog']);
+        $this->AddEventPreg(
+            '/^[\w\-\_]+$/i',
+            '/^discussed$/i',
+            '/^(page([1-9]\d{0,5}))?$/i',
+            ['EventShowBlog', 'blog']
+        );
+        $this->AddEventPreg('/^[\w\-\_]+$/i', '/^top$/i', '/^(page([1-9]\d{0,5}))?$/i', ['EventShowBlog', 'blog']);
+        $this->AddEventPreg(
+            '/^[\w\-\_]+$/i',
+            '/^deleted$/i',
+            '/^(page([1-9]\d{0,5}))?$/i',
+            ['EventShowDeletedBlog', 'blog']
+        );
 
         $this->AddEventPreg('/^[\w\-\_]+$/i', '/^users$/i', '/^(page([1-9]\d{0,5}))?$/i', 'EventShowUsers');
     }
@@ -220,16 +252,26 @@ class ActionBlog extends Action
          * Проверяем авторизован ли пользователь
          */
         if (!LS::Make(ModuleUser::class)->IsAuthorization()) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('not_access'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
             Router::Action('error');
+
             return;
         }
         /**
          * Проверяем хватает ли рейтинга юзеру чтоб создать блог
          */
-        if (!LS::Make(ModuleACL::class)->CanCreateBlog($this->oUserCurrent) and !$this->oUserCurrent->isAdministrator()) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('blog_create_acl'), LS::Make(ModuleLang::class)->Get('error'));
+        if (!LS::Make(ModuleACL::class)->CanCreateBlog($this->oUserCurrent) and !$this->oUserCurrent->isAdministrator(
+            )
+        ) {
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('blog_create_acl'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
             Router::Action('error');
+
             return;
         }
         LS::Make(ModuleHook::class)->Run('blog_add_show');
@@ -263,16 +305,20 @@ class ActionBlog extends Action
             if ($sPath = LS::Make(ModuleBlog::class)->UploadBlogAvatar($_FILES['avatar'], $oBlog)) {
                 $oBlog->setAvatar($sPath);
             } else {
-                LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('blog_create_avatar_error'), LS::Make(ModuleLang::class)->Get('error'));
+                LS::Make(ModuleMessage::class)->AddError(
+                    LS::Make(ModuleLang::class)->Get('blog_create_avatar_error'),
+                    LS::Make(ModuleLang::class)->Get('error')
+                );
+
                 return;
             }
         }
         /**
          * Создаём блог
          */
-        LS::Make(ModuleHook::class)->Run('blog_add_before', array('oBlog' => $oBlog));
+        LS::Make(ModuleHook::class)->Run('blog_add_before', ['oBlog' => $oBlog]);
         if (LS::Make(ModuleBlog::class)->AddBlog($oBlog)) {
-            LS::Make(ModuleHook::class)->Run('blog_add_after', array('oBlog' => $oBlog));
+            LS::Make(ModuleHook::class)->Run('blog_add_after', ['oBlog' => $oBlog]);
             /**
              * Получаем блог, это для получение полного пути блога, если он в будущем будет зависит от других сущностей(компании, юзер и т.п.)
              */
@@ -284,7 +330,10 @@ class ActionBlog extends Action
             LS::Make(ModuleStream::class)->write($oBlog->getOwnerId(), 'add_blog', $oBlog->getId());
             Router::Location($oBlog->getUrlFull());
         } else {
-            LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddError(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
         }
     }
 
@@ -300,11 +349,16 @@ class ActionBlog extends Action
         $sBlogId = getRequest('blog_id');
         if (!$oBlog = LS::Make(ModuleBlog::class)->GetBlogById($sBlogId)) {
             parent::EventNotFound();
+
             return;
         }
         if (!LS::Make(ModuleUser::class)->IsAuthorization()) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('not_access'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
             Router::Action('error');
+
             return;
         }
         /**
@@ -312,13 +366,15 @@ class ActionBlog extends Action
          */
         if (!LS::Make(ModuleACL::class)->IsAllowEditBlog($oBlog, $this->oUserCurrent)) {
             parent::EventNotFound();
+
             return;
         }
         $sTitle = getRequest('user_login');
         if (is_string($sTitle) and mb_strlen($sTitle, 'utf-8')) {
-            $sTitle = str_replace(array('_', '%'), array('\_', '\%'), $sTitle);
+            $sTitle = str_replace(['_', '%'], ['\_', '\%'], $sTitle);
         } else {
             LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'));
+
             return;
         }
         /**
@@ -327,22 +383,25 @@ class ActionBlog extends Action
         if (getRequest('isPrefix')) {
             $sTitle .= '%';
         } elseif (getRequest('isPostfix')) {
-            $sTitle = '%' . $sTitle;
+            $sTitle = '%'.$sTitle;
         } else {
-            $sTitle = '%' . $sTitle . '%';
+            $sTitle = '%'.$sTitle.'%';
         }
         /**
          * Ищем пользователей
          */
         $aResult = LS::Make(ModuleBlog::class)->GetBlogUsersByBlogIdLike(
             $oBlog->getId(),
-            array(
+            [
                 ModuleBlog::BLOG_USER_ROLE_BAN,
                 ModuleBlog::BLOG_USER_ROLE_RO,
                 ModuleBlog::BLOG_USER_ROLE_USER,
                 ModuleBlog::BLOG_USER_ROLE_MODERATOR,
                 ModuleBlog::BLOG_USER_ROLE_ADMINISTRATOR
-            ), 1, Config::Get('module.blog.users_per_page'), $sTitle
+            ],
+            1,
+            Config::Get('module.blog.users_per_page'),
+            $sTitle
         );
         /**
          * Формируем ответ
@@ -375,14 +434,19 @@ class ActionBlog extends Action
         $sBlogId = $this->GetParam(0);
         if (!$oBlog = LS::Make(ModuleBlog::class)->GetBlogById($sBlogId)) {
             parent::EventNotFound();
+
             return;
         }
         /**
          * Проверям авторизован ли пользователь
          */
         if (!LS::Make(ModuleUser::class)->IsAuthorization()) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('not_access'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
             Router::Action('error');
+
             return;
         }
         /**
@@ -390,10 +454,11 @@ class ActionBlog extends Action
          */
         if (!LS::Make(ModuleACL::class)->IsAllowEditBlog($oBlog, $this->oUserCurrent)) {
             parent::EventNotFound();
+
             return;
         }
 
-        LS::Make(ModuleHook::class)->Run('blog_edit_show', array('oBlog' => $oBlog));
+        LS::Make(ModuleHook::class)->Run('blog_edit_show', ['oBlog' => $oBlog]);
         /**
          * Устанавливаем title страницы
          */
@@ -426,7 +491,10 @@ class ActionBlog extends Action
              * Нужна доработка, т.к. в этом блоге могут быть топики других юзеров
              */
             if ($oBlog->getType() != getRequestStr('blog_type')) {
-                LS::Make(ModuleCache::class)->Clean(Zend_Cache::CLEANING_MODE_MATCHING_TAG, array("topic_update_user_{$oBlog->getOwnerId()}"));
+                LS::Make(ModuleCache::class)->Clean(
+                    Zend_Cache::CLEANING_MODE_MATCHING_TAG,
+                    ["topic_update_user_{$oBlog->getOwnerId()}"]
+                );
             }
             $oBlog->setType(getRequestStr('blog_type'));
             $oBlog->setLimitRatingTopic(getRequestStr('blog_limit_rating_topic'));
@@ -440,7 +508,11 @@ class ActionBlog extends Action
                 if ($sPath = LS::Make(ModuleBlog::class)->UploadBlogAvatar($_FILES['avatar'], $oBlog)) {
                     $oBlog->setAvatar($sPath);
                 } else {
-                    LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('blog_create_avatar_error'), LS::Make(ModuleLang::class)->Get('error'));
+                    LS::Make(ModuleMessage::class)->AddError(
+                        LS::Make(ModuleLang::class)->Get('blog_create_avatar_error'),
+                        LS::Make(ModuleLang::class)->Get('error')
+                    );
+
                     return;
                 }
             }
@@ -454,13 +526,17 @@ class ActionBlog extends Action
             /**
              * Обновляем блог
              */
-            LS::Make(ModuleHook::class)->Run('blog_edit_before', array('oBlog' => $oBlog));
+            LS::Make(ModuleHook::class)->Run('blog_edit_before', ['oBlog' => $oBlog]);
             if (LS::Make(ModuleBlog::class)->UpdateBlog($oBlog)) {
-                LS::Make(ModuleHook::class)->Run('blog_edit_after', array('oBlog' => $oBlog));
+                LS::Make(ModuleHook::class)->Run('blog_edit_after', ['oBlog' => $oBlog]);
                 Router::Location($oBlog->getUrlFull());
             } else {
-                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
+                LS::Make(ModuleMessage::class)->AddErrorSingle(
+                    LS::Make(ModuleLang::class)->Get('system_error'),
+                    LS::Make(ModuleLang::class)->Get('error')
+                );
                 Router::Action('error');
+
                 return;
             }
         } else {
@@ -493,14 +569,19 @@ class ActionBlog extends Action
         $sBlogId = $this->GetParam(0);
         if (!$oBlog = LS::Make(ModuleBlog::class)->GetBlogById($sBlogId)) {
             parent::EventNotFound();
+
             return;
         }
         /**
          * Проверям авторизован ли пользователь
          */
         if (!LS::Make(ModuleUser::class)->IsAuthorization()) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('not_access'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
             Router::Action('error');
+
             return;
         }
         /**
@@ -508,6 +589,7 @@ class ActionBlog extends Action
          */
         if (!LS::Make(ModuleACL::class)->IsAllowAdminBlog($oBlog, $this->oUserCurrent)) {
             parent::EventNotFound();
+
             return;
         }
         /**
@@ -516,20 +598,27 @@ class ActionBlog extends Action
         if (isPost('submit_blog_admin')) {
             LS::Make(ModuleSecurity::class)->ValidateSendForm();
 
-            $aUserRank = getRequest('user_rank', array());
+            $aUserRank = getRequest('user_rank', []);
             if (!is_array($aUserRank)) {
-                $aUserRank = array();
+                $aUserRank = [];
             }
             foreach ($aUserRank as $sUserId => $sRank) {
                 $sRank = (string)$sRank;
-                if (!($oBlogUser = LS::Make(ModuleBlog::class)->GetBlogUserByBlogIdAndUserId($oBlog->getId(), $sUserId))) {
-                    LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
+                if (!($oBlogUser =
+                    LS::Make(ModuleBlog::class)->GetBlogUserByBlogIdAndUserId($oBlog->getId(), $sUserId))
+                ) {
+                    LS::Make(ModuleMessage::class)->AddError(
+                        LS::Make(ModuleLang::class)->Get('system_error'),
+                        LS::Make(ModuleLang::class)->Get('error')
+                    );
                     break;
                 }
                 /**
                  * Увеличиваем число читателей блога
                  */
-                if (in_array($sRank, array('administrator', 'moderator', 'reader')) and $oBlogUser->getUserRole() == ModuleBlog::BLOG_USER_ROLE_BAN) {
+                if (in_array($sRank, ['administrator', 'moderator', 'reader']) and $oBlogUser->getUserRole()
+                    == ModuleBlog::BLOG_USER_ROLE_BAN
+                ) {
                     $oBlog->setCountUser($oBlog->getCountUser() + 1);
                 }
 
@@ -556,7 +645,9 @@ class ActionBlog extends Action
                         $oBlogUser->setUserRole(ModuleBlog::BLOG_USER_ROLE_GUEST);
                 }
                 LS::Make(ModuleBlog::class)->UpdateRelationBlogUser($oBlogUser);
-                LS::Make(ModuleMessage::class)->AddNoticeSingle(LS::Make(ModuleLang::class)->Get('blog_admin_users_submit_ok'));
+                LS::Make(ModuleMessage::class)->AddNoticeSingle(
+                    LS::Make(ModuleLang::class)->Get('blog_admin_users_submit_ok')
+                );
             }
             LS::Make(ModuleBlog::class)->UpdateBlog($oBlog);
         }
@@ -569,19 +660,27 @@ class ActionBlog extends Action
          */
         $aResult = LS::Make(ModuleBlog::class)->GetBlogUsersByBlogId(
             $oBlog->getId(),
-            array(
+            [
                 ModuleBlog::BLOG_USER_ROLE_BAN,
                 ModuleBlog::BLOG_USER_ROLE_RO,
                 ModuleBlog::BLOG_USER_ROLE_USER,
                 ModuleBlog::BLOG_USER_ROLE_MODERATOR,
                 ModuleBlog::BLOG_USER_ROLE_ADMINISTRATOR
-            ), $iPage, Config::Get('module.blog.users_per_page')
+            ],
+            $iPage,
+            Config::Get('module.blog.users_per_page')
         );
         $aBlogUsers = $aResult['collection'];
         /**
          * Формируем постраничность
          */
-        $aPaging = LS::Make(ModuleViewer::class)->MakePaging($aResult['count'], $iPage, Config::Get('module.blog.users_per_page'), Config::Get('pagination.pages.count'), Router::GetPath('blog') . "admin/{$oBlog->getId()}");
+        $aPaging = LS::Make(ModuleViewer::class)->MakePaging(
+            $aResult['count'],
+            $iPage,
+            Config::Get('module.blog.users_per_page'),
+            Config::Get('pagination.pages.count'),
+            Router::GetPath('blog')."admin/{$oBlog->getId()}"
+        );
         LS::Make(ModuleViewer::class)->Assign('aPaging', $aPaging);
         LS::Make(ModuleViewer::class)->Assign('oBlog', $oBlog);
         /**
@@ -601,7 +700,11 @@ class ActionBlog extends Action
          * и добавляем блок-форму для приглашения
          */
         if ($oBlog->getType() == 'close') {
-            $aBlogUsersInvited = LS::Make(ModuleBlog::class)->GetBlogUsersByBlogId($oBlog->getId(), ModuleBlog::BLOG_USER_ROLE_INVITE, null);
+            $aBlogUsersInvited = LS::Make(ModuleBlog::class)->GetBlogUsersByBlogId(
+                $oBlog->getId(),
+                ModuleBlog::BLOG_USER_ROLE_INVITE,
+                null
+            );
             LS::Make(ModuleViewer::class)->Assign('aBlogUsersInvited', $aBlogUsersInvited['collection']);
             LS::Make(ModuleViewer::class)->AddBlock('right', 'actions/ActionBlog/invited.tpl');
         }
@@ -621,6 +724,7 @@ class ActionBlog extends Action
          */
         if (!isPost('submit_blog_add')) {
             $_REQUEST['blog_limit_rating_topic'] = 0;
+
             return false;
         }
         LS::Make(ModuleSecurity::class)->ValidateSendForm();
@@ -630,7 +734,10 @@ class ActionBlog extends Action
          * Проверяем есть ли название блога
          */
         if (!func_check(getRequestStr('blog_title'), 'text', 2, 200)) {
-            LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('blog_create_title_error'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddError(
+                LS::Make(ModuleLang::class)->Get('blog_create_title_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
             $bOk = false;
         } else {
             /**
@@ -638,7 +745,10 @@ class ActionBlog extends Action
              */
             if ($oBlogExists = LS::Make(ModuleBlog::class)->GetBlogByTitle(getRequestStr('blog_title'))) {
                 if (!$oBlog or $oBlog->getId() != $oBlogExists->getId()) {
-                    LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('blog_create_title_error_unique'), LS::Make(ModuleLang::class)->Get('error'));
+                    LS::Make(ModuleMessage::class)->AddError(
+                        LS::Make(ModuleLang::class)->Get('blog_create_title_error_unique'),
+                        LS::Make(ModuleLang::class)->Get('error')
+                    );
                     $bOk = false;
                 }
             }
@@ -651,7 +761,10 @@ class ActionBlog extends Action
             $blogUrl = preg_replace("/\s+/", '_', getRequestStr('blog_url'));
             $_REQUEST['blog_url'] = $blogUrl;
             if (!func_check(getRequestStr('blog_url'), 'login', 2, 50)) {
-                LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('blog_create_url_error'), LS::Make(ModuleLang::class)->Get('error'));
+                LS::Make(ModuleMessage::class)->AddError(
+                    LS::Make(ModuleLang::class)->Get('blog_create_url_error'),
+                    LS::Make(ModuleLang::class)->Get('error')
+                );
                 $bOk = false;
             }
         }
@@ -659,7 +772,10 @@ class ActionBlog extends Action
          * Проверяем на счет плохих УРЛов
          */
         if (in_array(getRequestStr('blog_url'), $this->aBadBlogUrl)) {
-            LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('blog_create_url_error_badword') . ' ' . join(',', $this->aBadBlogUrl), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddError(
+                LS::Make(ModuleLang::class)->Get('blog_create_url_error_badword').' '.join(',', $this->aBadBlogUrl),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
             $bOk = false;
         }
         /**
@@ -667,7 +783,10 @@ class ActionBlog extends Action
          */
         if ($oBlogExists = LS::Make(ModuleBlog::class)->GetBlogByUrl(getRequestStr('blog_url'))) {
             if (!$oBlog or $oBlog->getId() != $oBlogExists->getId()) {
-                LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('blog_create_url_error_unique'), LS::Make(ModuleLang::class)->Get('error'));
+                LS::Make(ModuleMessage::class)->AddError(
+                    LS::Make(ModuleLang::class)->Get('blog_create_url_error_unique'),
+                    LS::Make(ModuleLang::class)->Get('error')
+                );
                 $bOk = false;
             }
         }
@@ -675,27 +794,37 @@ class ActionBlog extends Action
          * Проверяем есть ли описание блога
          */
         if (!func_check(getRequestStr('blog_description'), 'text', 10, 50000)) {
-            LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('blog_create_description_error'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddError(
+                LS::Make(ModuleLang::class)->Get('blog_create_description_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
             $bOk = false;
         }
         /**
          * Проверяем доступные типы блога для создания
          */
-        if (!in_array(getRequestStr('blog_type'), array('open', 'close', 'invite', 'personal'))) {
-            LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('blog_create_type_error'), LS::Make(ModuleLang::class)->Get('error'));
+        if (!in_array(getRequestStr('blog_type'), ['open', 'close', 'invite', 'personal'])) {
+            LS::Make(ModuleMessage::class)->AddError(
+                LS::Make(ModuleLang::class)->Get('blog_create_type_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
             $bOk = false;
         }
         /**
          * Преобразуем ограничение по рейтингу в число
          */
         if (!func_check(getRequestStr('blog_limit_rating_topic'), 'float')) {
-            LS::Make(ModuleMessage::class)->AddError(LS::Make(ModuleLang::class)->Get('blog_create_rating_error'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddError(
+                LS::Make(ModuleLang::class)->Get('blog_create_rating_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
             $bOk = false;
         }
         /**
          * Выполнение хуков
          */
-        LS::Make(ModuleHook::class)->Run('check_blog_fields', array('bOk' => &$bOk));
+        LS::Make(ModuleHook::class)->Run('check_blog_fields', ['bOk' => &$bOk]);
+
         return $bOk;
     }
 
@@ -706,11 +835,11 @@ class ActionBlog extends Action
     protected function EventTopics()
     {
         $sPeriod = 1; // по дефолту 1 день
-        if (in_array(getRequestStr('period'), array(1, 7, 30, 'all'))) {
+        if (in_array(getRequestStr('period'), [1, 7, 30, 'all'])) {
             $sPeriod = getRequestStr('period');
         }
-        $sShowType=$this->sCurrentEvent;
-        if (!in_array($sShowType, array('discussed', 'top'))) {
+        $sShowType = $this->sCurrentEvent;
+        if (!in_array($sShowType, ['discussed', 'top'])) {
             $sPeriod = 'all';
         }
         /**
@@ -722,40 +851,60 @@ class ActionBlog extends Action
          */
         $iPage = $this->GetParamEventMatch(0, 2) ? $this->GetParamEventMatch(0, 2) : 1;
         if ($iPage == 1 and !getRequest('period')) {
-            LS::Make(ModuleViewer::class)->SetHtmlCanonical(Router::GetPath('blog') . $sShowType . '/');
+            LS::Make(ModuleViewer::class)->SetHtmlCanonical(Router::GetPath('blog').$sShowType.'/');
         }
         /**
          * Получаем список топиков
          */
-        $aResult = LS::Make(ModuleTopic::class)->GetTopicsCollective($iPage, Config::Get('module.topic.per_page'), $sShowType, $sPeriod == 'all' ? null : $sPeriod * 60 * 60 * 24);
+        $aResult = LS::Make(ModuleTopic::class)->GetTopicsCollective(
+            $iPage,
+            Config::Get('module.topic.per_page'),
+            $sShowType,
+            $sPeriod == 'all' ? null : $sPeriod * 60 * 60 * 24
+        );
         /**
          * Если нет топиков за 1 день, то показываем за неделю (7)
          */
-        if (in_array($sShowType, array('discussed', 'top')) and !$aResult['count'] and $iPage == 1 and !getRequest('period')) {
+        if (in_array($sShowType, ['discussed', 'top']) and !$aResult['count'] and $iPage == 1 and !getRequest(
+                'period'
+            )
+        ) {
             $sPeriod = 7;
-            $aResult = LS::Make(ModuleTopic::class)->GetTopicsCollective($iPage, Config::Get('module.topic.per_page'), $sShowType, $sPeriod == 'all' ? null : $sPeriod * 60 * 60 * 24);
+            $aResult = LS::Make(ModuleTopic::class)->GetTopicsCollective(
+                $iPage,
+                Config::Get('module.topic.per_page'),
+                $sShowType,
+                $sPeriod == 'all' ? null : $sPeriod * 60 * 60 * 24
+            );
         }
         $aTopics = $aResult['collection'];
         /**
          * Вызов хуков
          */
-        LS::Make(ModuleHook::class)->Run('topics_list_show', array('aTopics' => $aTopics));
+        LS::Make(ModuleHook::class)->Run('topics_list_show', ['aTopics' => $aTopics]);
         /**
          * Формируем постраничность
          */
-        $aPaging = LS::Make(ModuleViewer::class)->MakePaging($aResult['count'], $iPage, Config::Get('module.topic.per_page'), Config::Get('pagination.pages.count'), Router::GetPath('blog') . $sShowType, in_array($sShowType, array('discussed', 'top')) ? array('period' => $sPeriod) : array());
+        $aPaging = LS::Make(ModuleViewer::class)->MakePaging(
+            $aResult['count'],
+            $iPage,
+            Config::Get('module.topic.per_page'),
+            Config::Get('pagination.pages.count'),
+            Router::GetPath('blog').$sShowType,
+            in_array($sShowType, ['discussed', 'top']) ? ['period' => $sPeriod] : []
+        );
         /**
          * Вызов хуков
          */
-        LS::Make(ModuleHook::class)->Run('blog_show', array('sShowType' => $sShowType));
+        LS::Make(ModuleHook::class)->Run('blog_show', ['sShowType' => $sShowType]);
         /**
          * Загружаем переменные в шаблон
          */
         LS::Make(ModuleViewer::class)->Assign('aTopics', $aTopics);
         LS::Make(ModuleViewer::class)->Assign('aPaging', $aPaging);
-        if (in_array($sShowType, array('discussed', 'top'))) {
+        if (in_array($sShowType, ['discussed', 'top'])) {
             LS::Make(ModuleViewer::class)->Assign('sPeriodSelectCurrent', $sPeriod);
-            LS::Make(ModuleViewer::class)->Assign('sPeriodSelectRoot', Router::GetPath('blog') . $sShowType . '/');
+            LS::Make(ModuleViewer::class)->Assign('sPeriodSelectRoot', Router::GetPath('blog').$sShowType.'/');
         }
         /**
          * Устанавливаем шаблон вывода
@@ -787,19 +936,28 @@ class ActionBlog extends Action
          * Проверяем есть ли такой топик
          */
         if (!($oTopic = LS::Make(ModuleTopic::class)->GetTopicById($iTopicId))) {
-            parent::EventNotFound(); return;
+            parent::EventNotFound();
+
+            return;
         }
         /**
          * Проверяем права на просмотр топика
          */
-        if (!$oTopic->getPublish() and (!$this->oUserCurrent or ($this->oUserCurrent->getId() != $oTopic->getUserId() and !$this->oUserCurrent->isAdministrator() and !LS::Make(ModuleACL::class)->IsAllowEditTopic($oTopic,$this->oUserCurrent)))) {
-            parent::EventNotFound(); return;
+        if (!$oTopic->getPublish() and (!$this->oUserCurrent or ($this->oUserCurrent->getId() != $oTopic->getUserId()
+                    and !$this->oUserCurrent->isAdministrator() and !LS::Make(ModuleACL::class)->IsAllowEditTopic(
+                        $oTopic,
+                        $this->oUserCurrent
+                    )))
+        ) {
+            parent::EventNotFound();
+
+            return;
         }
 
         /**
          * Определяем права на отображение записи из закрытого блога
          */
-        if (in_array($oTopic->getBlog()->getType(), array('close', 'invite'))
+        if (in_array($oTopic->getBlog()->getType(), ['close', 'invite'])
             and (!$this->oUserCurrent
                 || !in_array(
                     $oTopic->getBlog()->getId(),
@@ -807,8 +965,13 @@ class ActionBlog extends Action
                 )
             )
         ) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('blog_close_show'), LS::Make(ModuleLang::class)->Get('not_access'));
-            Router::Action('error'); return;
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('blog_close_show'),
+                LS::Make(ModuleLang::class)->Get('not_access')
+            );
+            Router::Action('error');
+
+            return;
         }
         //Router::Location($oTopic->getUrl());
         if ($sBlogUrl == '') {
@@ -829,20 +992,37 @@ class ActionBlog extends Action
         /**
          * Достаём комменты к топику
          */
-        if (!Config::Get('module.comment.nested_page_reverse') and Config::Get('module.comment.use_nested') and Config::Get('module.comment.nested_per_page')) {
-            $iPageDef = ceil(LS::Make(ModuleComment::class)->GetCountCommentsRootByTargetId($oTopic->getId(), 'topic') / Config::Get('module.comment.nested_per_page'));
+        if (!Config::Get('module.comment.nested_page_reverse') and Config::Get('module.comment.use_nested')
+            and Config::Get('module.comment.nested_per_page')
+        ) {
+            $iPageDef = ceil(
+                LS::Make(ModuleComment::class)->GetCountCommentsRootByTargetId($oTopic->getId(), 'topic') / Config::Get(
+                    'module.comment.nested_per_page'
+                )
+            );
         } else {
             $iPageDef = 1;
         }
         $iPage = getRequest('cmtpage', 0) ? (int)getRequest('cmtpage', 0) : $iPageDef;
-        $aReturn = LS::Make(ModuleComment::class)->GetCommentsByTargetId($oTopic->getId(), 'topic', $iPage, Config::Get('module.comment.nested_per_page'));
+        $aReturn = LS::Make(ModuleComment::class)->GetCommentsByTargetId(
+            $oTopic->getId(),
+            'topic',
+            $iPage,
+            Config::Get('module.comment.nested_per_page')
+        );
         $iMaxIdComment = $aReturn['iMaxIdComment'];
         $aComments = $aReturn['comments'];
         /**
          * Если используется постраничность для комментариев - формируем ее
          */
         if (Config::Get('module.comment.use_nested') and Config::Get('module.comment.nested_per_page')) {
-            $aPaging = $viewer->MakePaging($aReturn['count'], $iPage, Config::Get('module.comment.nested_per_page'), Config::Get('pagination.pages.count'), '');
+            $aPaging = $viewer->MakePaging(
+                $aReturn['count'],
+                $iPage,
+                Config::Get('module.comment.nested_per_page'),
+                Config::Get('pagination.pages.count'),
+                ''
+            );
             if (!Config::Get('module.comment.nested_page_reverse') and $aPaging) {
                 // переворачиваем страницы в обратном порядке
                 $aPaging['aPagesLeft'] = array_reverse($aPaging['aPagesLeft']);
@@ -863,12 +1043,12 @@ class ActionBlog extends Action
         /**
          * Вызов хуков
          */
-        LS::Make(ModuleHook::class)->Run('topic_show', array("oTopic" => $oTopic));
+        LS::Make(ModuleHook::class)->Run('topic_show', ["oTopic" => $oTopic]);
         /**
          * Загружаем переменные в шаблон
          */
         //$aRawVote = LS::Make(ModuleVote::class)->GetVoteById($oTopic->getId(), 'topic');
-        $aVote = array();
+        $aVote = [];
         //foreach ($aRawVote as $key) {
         //	$aVote[LS::Make(ModuleUser::class)->_GetUserById($key->getVoterId())->getLogin()] = $key->getDirection();
         //}
@@ -892,36 +1072,43 @@ class ActionBlog extends Action
          */
         $viewer->AddHtmlTitle($oTopic->getBlog()->getTitle());
         $viewer->AddHtmlTitle($oTopic->getTitle());
-        $viewer->SetHtmlRssAlternate(Router::GetPath('rss') . 'comments/' . $oTopic->getId() . '/', $oTopic->getTitle());
+        $viewer->SetHtmlRssAlternate(Router::GetPath('rss').'comments/'.$oTopic->getId().'/', $oTopic->getTitle());
         /**
          * Устанавливаем шаблон вывода
          */
         $this->SetTemplateAction('topic');
     }
 
-    protected function EventShowTopicComments() {
-        $sBlogUrl='';
-        if ($this->GetParamEventMatch(0,1)) {
+    protected function EventShowTopicComments()
+    {
+        $sBlogUrl = '';
+        if ($this->GetParamEventMatch(0, 1)) {
             // из коллективного блога
-            $sBlogUrl=$this->sCurrentEvent;
-            $iTopicId=$this->GetParamEventMatch(0,1);
+            $sBlogUrl = $this->sCurrentEvent;
+            $iTopicId = $this->GetParamEventMatch(0, 1);
         } else {
             // из персонального блога
-            $iTopicId=$this->GetEventMatch(1);
+            $iTopicId = $this->GetEventMatch(1);
         }
-        if (!($oTopic=LS::Make(ModuleTopic::class)->GetTopicById($iTopicId))) {
-            parent::EventNotFound(); return;
+        if (!($oTopic = LS::Make(ModuleTopic::class)->GetTopicById($iTopicId))) {
+            parent::EventNotFound();
+
+            return;
         }
         /**
          * Проверяем права на просмотр топика
          */
-        if (!$oTopic->getPublish() and (!$this->oUserCurrent or ($this->oUserCurrent->getId()!=$oTopic->getUserId() and !$this->oUserCurrent->isAdministrator()))) {
-            parent::EventNotFound(); return;
+        if (!$oTopic->getPublish() and (!$this->oUserCurrent or ($this->oUserCurrent->getId() != $oTopic->getUserId()
+                    and !$this->oUserCurrent->isAdministrator()))
+        ) {
+            parent::EventNotFound();
+
+            return;
         }
         /**
          * Определяем права на отображение записи из закрытого блога
          */
-        if(in_array($oTopic->getBlog()->getType(), array('close', 'invite'))
+        if (in_array($oTopic->getBlog()->getType(), ['close', 'invite'])
             and (!$this->oUserCurrent
                 || !in_array(
                     $oTopic->getBlog()->getId(),
@@ -929,33 +1116,44 @@ class ActionBlog extends Action
                 )
             )
         ) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('blog_close_show'),LS::Make(ModuleLang::class)->Get('not_access'));
-            Router::Action('error'); return;
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('blog_close_show'),
+                LS::Make(ModuleLang::class)->Get('not_access')
+            );
+            Router::Action('error');
+
+            return;
         }
         //Router::Location($oTopic->getUrl());
-        if ($sBlogUrl=='') {
+        if ($sBlogUrl == '') {
             Router::Location($oTopic->getUrl());
         }
         /**
          * Достаём комменты к топику
          */
-        if (!Config::Get('module.comment.nested_page_reverse') and Config::Get('module.comment.use_nested') and Config::Get('module.comment.nested_per_page')) {
-            $iPageDef=ceil(LS::Make(ModuleComment::class)->GetCountCommentsRootByTargetId($oTopic->getId(),'topic')/Config::Get('module.comment.nested_per_page'));
+        if (!Config::Get('module.comment.nested_page_reverse') and Config::Get('module.comment.use_nested')
+            and Config::Get('module.comment.nested_per_page')
+        ) {
+            $iPageDef = ceil(
+                LS::Make(ModuleComment::class)->GetCountCommentsRootByTargetId($oTopic->getId(), 'topic') / Config::Get(
+                    'module.comment.nested_per_page'
+                )
+            );
         } else {
-            $iPageDef=1;
+            $iPageDef = 1;
         }
-        $iPage=getRequest('cmtpage',0) ? (int)getRequest('cmtpage',0) : $iPageDef;
-        $aReturn=LS::Make(ModuleComment::class)->GetCommentsByTargetId($oTopic->getId(),'topic');
+        $iPage = getRequest('cmtpage', 0) ? (int)getRequest('cmtpage', 0) : $iPageDef;
+        $aReturn = LS::Make(ModuleComment::class)->GetCommentsByTargetId($oTopic->getId(), 'topic');
         $iMaxIdComment = $aReturn['iMaxIdComment'];
-        $aComments=$aReturn['comments'];
-        $aResult = array();
+        $aComments = $aReturn['comments'];
+        $aResult = [];
         $sReadlast = $oTopic->getDateRead();
-        foreach($aComments as $oComment) {
+        foreach ($aComments as $oComment) {
             $aComment = LS::Make(ModuleComment::class)->ConvertCommentToArray($oComment, $sReadlast);
             $aResult[$aComment['id']] = $aComment;
         }
         if ($this->oUserCurrent) {
-            $oTopicRead= new EntityTopicRead();
+            $oTopicRead = new EntityTopicRead();
             $oTopicRead->setTopicId($oTopic->getId());
             $oTopicRead->setUserId($this->oUserCurrent->getId());
             $oTopicRead->setCommentCountLast($oTopic->getCountComment());
@@ -982,7 +1180,9 @@ class ActionBlog extends Action
          * Проверяем есть ли блог с таким УРЛ
          */
         if (!($oBlog = LS::Make(ModuleBlog::class)->GetBlogByUrl($sBlogUrl))) {
-            parent::EventNotFound(); return;
+            parent::EventNotFound();
+
+            return;
         }
         /**
          * Меню
@@ -993,19 +1193,30 @@ class ActionBlog extends Action
          * Текущая страница
          */
         $iPage = $this->GetParamEventMatch(1, 2) ? $this->GetParamEventMatch(1, 2) : 1;
-        $aBlogUsersResult = LS::Make(ModuleBlog::class)->GetBlogUsersByBlogId($oBlog->getId(), ModuleBlog::BLOG_USER_ROLE_USER, $iPage, Config::Get('module.blog.users_per_page'));
+        $aBlogUsersResult = LS::Make(ModuleBlog::class)->GetBlogUsersByBlogId(
+            $oBlog->getId(),
+            ModuleBlog::BLOG_USER_ROLE_USER,
+            $iPage,
+            Config::Get('module.blog.users_per_page')
+        );
         $aBlogUsers = $aBlogUsersResult['collection'];
         /**
          * Формируем постраничность
          */
         /** @var \Engine\Modules\ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);
-        $aPaging = $viewer->MakePaging($aBlogUsersResult['count'], $iPage, Config::Get('module.blog.users_per_page'), Config::Get('pagination.pages.count'), $oBlog->getUrlFull() . 'users');
+        $aPaging = $viewer->MakePaging(
+            $aBlogUsersResult['count'],
+            $iPage,
+            Config::Get('module.blog.users_per_page'),
+            Config::Get('pagination.pages.count'),
+            $oBlog->getUrlFull().'users'
+        );
         $viewer->Assign('aPaging', $aPaging);
         /**
          * Вызов хуков
          */
-        LS::Make(ModuleHook::class)->Run('blog_collective_show_users', array('oBlog' => $oBlog));
+        LS::Make(ModuleHook::class)->Run('blog_collective_show_users', ['oBlog' => $oBlog]);
         /**
          * Загружаем переменные в шаблон
          */
@@ -1029,19 +1240,22 @@ class ActionBlog extends Action
     protected function EventShowBlog()
     {
         $sPeriod = 1; // по дефолту 1 день
-        if (in_array(getRequestStr('period'), array(1, 7, 30, 'all'))) {
+        if (in_array(getRequestStr('period'), [1, 7, 30, 'all'])) {
             $sPeriod = getRequestStr('period');
         }
         $sBlogUrl = $this->sCurrentEvent;
-        $sShowType = in_array($this->GetParamEventMatch(0,0),array('bad','new','newall','discussed','top')) ? $this->GetParamEventMatch(0,0) : 'good';
-        if (!in_array($sShowType, array('discussed', 'top'))) {
+        $sShowType = in_array($this->GetParamEventMatch(0, 0), ['bad', 'new', 'newall', 'discussed', 'top'])
+            ? $this->GetParamEventMatch(0, 0) : 'good';
+        if (!in_array($sShowType, ['discussed', 'top'])) {
             $sPeriod = 'all';
         }
         /**
          * Проверяем есть ли блог с таким УРЛ
          */
         if (!($oBlog = LS::Make(ModuleBlog::class)->GetBlogByUrl($sBlogUrl))) {
-            parent::EventNotFound(); return;
+            parent::EventNotFound();
+
+            return;
         }
         /**
          * Определяем права на отображение закрытого блога
@@ -1069,30 +1283,61 @@ class ActionBlog extends Action
         /**
          * Передан ли номер страницы
          */
-        $iPage = $this->GetParamEventMatch(($sShowType == 'good') ? 0 : 1, 2) ? $this->GetParamEventMatch(($sShowType == 'good') ? 0 : 1, 2) : 1;
-        if ($iPage == 1 and !getRequest('period') and in_array($sShowType, array('discussed', 'top'))) {
-            $viewer->SetHtmlCanonical($oBlog->getUrlFull() . $sShowType . '/');
+        $iPage = $this->GetParamEventMatch(($sShowType == 'good') ? 0 : 1, 2) ? $this->GetParamEventMatch(
+            ($sShowType == 'good') ? 0 : 1,
+            2
+        ) : 1;
+        if ($iPage == 1 and !getRequest('period') and in_array($sShowType, ['discussed', 'top'])) {
+            $viewer->SetHtmlCanonical($oBlog->getUrlFull().$sShowType.'/');
         }
 
         if (!$bCloseBlog) {
             /**
              * Получаем список топиков
              */
-            $aResult = LS::Make(ModuleTopic::class)->GetTopicsByBlog($oBlog, $iPage, Config::Get('module.topic.per_page'), $sShowType, $sPeriod == 'all' ? null : $sPeriod * 60 * 60 * 24);
+            $aResult = LS::Make(ModuleTopic::class)->GetTopicsByBlog(
+                $oBlog,
+                $iPage,
+                Config::Get('module.topic.per_page'),
+                $sShowType,
+                $sPeriod == 'all' ? null : $sPeriod * 60 * 60 * 24
+            );
             /**
              * Если нет топиков за 1 день, то показываем за неделю (7)
              */
-            if (in_array($sShowType, array('discussed', 'top')) and !$aResult['count'] and $iPage == 1 and !getRequest('period')) {
+            if (in_array($sShowType, ['discussed', 'top']) and !$aResult['count'] and $iPage == 1 and !getRequest(
+                    'period'
+                )
+            ) {
                 $sPeriod = 7;
-                $aResult = LS::Make(ModuleTopic::class)->GetTopicsByBlog($oBlog, $iPage, Config::Get('module.topic.per_page'), $sShowType, $sPeriod == 'all' ? null : $sPeriod * 60 * 60 * 24);
+                $aResult = LS::Make(ModuleTopic::class)->GetTopicsByBlog(
+                    $oBlog,
+                    $iPage,
+                    Config::Get('module.topic.per_page'),
+                    $sShowType,
+                    $sPeriod == 'all' ? null : $sPeriod * 60 * 60 * 24
+                );
             }
             $aTopics = $aResult['collection'];
             /**
              * Формируем постраничность
              */
             $aPaging = ($sShowType == 'good')
-                ? $viewer->MakePaging($aResult['count'], $iPage, Config::Get('module.topic.per_page'), Config::Get('pagination.pages.count'), rtrim($oBlog->getUrlFull(), '/'))
-                : $viewer->MakePaging($aResult['count'], $iPage, Config::Get('module.topic.per_page'), Config::Get('pagination.pages.count'), $oBlog->getUrlFull() . $sShowType, array('period' => $sPeriod));
+                ? $viewer->MakePaging(
+                    $aResult['count'],
+                    $iPage,
+                    Config::Get('module.topic.per_page'),
+                    Config::Get('pagination.pages.count'),
+                    rtrim($oBlog->getUrlFull(), '/')
+                )
+                : $viewer->MakePaging(
+                    $aResult['count'],
+                    $iPage,
+                    Config::Get('module.topic.per_page'),
+                    Config::Get('pagination.pages.count'),
+                    $oBlog->getUrlFull().$sShowType,
+                    ['period' => $sPeriod]
+                );
             /**
              * Получаем число новых топиков в текущем блоге
              */
@@ -1100,9 +1345,9 @@ class ActionBlog extends Action
 
             $viewer->Assign('aPaging', $aPaging);
             $viewer->Assign('aTopics', $aTopics);
-            if (in_array($sShowType, array('discussed', 'top'))) {
+            if (in_array($sShowType, ['discussed', 'top'])) {
                 $viewer->Assign('sPeriodSelectCurrent', $sPeriod);
-                $viewer->Assign('sPeriodSelectRoot', $oBlog->getUrlFull() . $sShowType . '/');
+                $viewer->Assign('sPeriodSelectRoot', $oBlog->getUrlFull().$sShowType.'/');
             }
         }
         /**
@@ -1113,11 +1358,16 @@ class ActionBlog extends Action
         /**
          * Получаем список юзеров блога
          */
-        $aBlogUsersResult = LS::Make(ModuleBlog::class)->GetBlogUsersByBlogId($oBlog->getId(), ModuleBlog::BLOG_USER_ROLE_USER, 1, 25);
+        $aBlogUsersResult =
+            LS::Make(ModuleBlog::class)->GetBlogUsersByBlogId($oBlog->getId(), ModuleBlog::BLOG_USER_ROLE_USER, 1, 25);
         $aBlogUsers = $aBlogUsersResult['collection'];
-        $aBlogModeratorsResult = LS::Make(ModuleBlog::class)->GetBlogUsersByBlogId($oBlog->getId(), ModuleBlog::BLOG_USER_ROLE_MODERATOR);
+        $aBlogModeratorsResult =
+            LS::Make(ModuleBlog::class)->GetBlogUsersByBlogId($oBlog->getId(), ModuleBlog::BLOG_USER_ROLE_MODERATOR);
         $aBlogModerators = $aBlogModeratorsResult['collection'];
-        $aBlogAdministratorsResult = LS::Make(ModuleBlog::class)->GetBlogUsersByBlogId($oBlog->getId(), ModuleBlog::BLOG_USER_ROLE_ADMINISTRATOR);
+        $aBlogAdministratorsResult = LS::Make(ModuleBlog::class)->GetBlogUsersByBlogId(
+            $oBlog->getId(),
+            ModuleBlog::BLOG_USER_ROLE_ADMINISTRATOR
+        );
         $aBlogAdministrators = $aBlogAdministratorsResult['collection'];
         /**
          * Для админов проекта получаем список блогов и передаем их во вьювер
@@ -1131,7 +1381,7 @@ class ActionBlog extends Action
         /**
          * Вызов хуков
          */
-        LS::Make(ModuleHook::class)->Run('blog_collective_show', array('oBlog' => $oBlog, 'sShowType' => $sShowType));
+        LS::Make(ModuleHook::class)->Run('blog_collective_show', ['oBlog' => $oBlog, 'sShowType' => $sShowType]);
         /**
          * Загружаем переменные в шаблон
          */
@@ -1147,7 +1397,7 @@ class ActionBlog extends Action
          * Устанавливаем title страницы
          */
         $viewer->AddHtmlTitle($oBlog->getTitle());
-        $viewer->SetHtmlRssAlternate(Router::GetPath('rss') . 'blog/' . $oBlog->getUrl() . '/', $oBlog->getTitle());
+        $viewer->SetHtmlRssAlternate(Router::GetPath('rss').'blog/'.$oBlog->getUrl().'/', $oBlog->getTitle());
         /**
          * Устанавливаем шаблон вывода
          */
@@ -1168,7 +1418,9 @@ class ActionBlog extends Action
          * Проверяем есть ли блог с таким УРЛ
          */
         if (!($oBlog = LS::Make(ModuleBlog::class)->GetBlogByUrl($sBlogUrl))) {
-            parent::EventNotFound(); return;
+            parent::EventNotFound();
+
+            return;
         }
         /**
          * Определяем права на отображение закрытого блога
@@ -1190,24 +1442,46 @@ class ActionBlog extends Action
         /**
          * Передан ли номер страницы
          */
-        $iPage = $this->GetParamEventMatch(($sShowType == 'good') ? 0 : 1, 2) ? $this->GetParamEventMatch(($sShowType == 'good') ? 0 : 1, 2) : 1;
-        if ($iPage == 1 and !getRequest('period') and in_array($sShowType, array('discussed', 'top'))) {
-            $viewer->SetHtmlCanonical($oBlog->getUrlFull() . $sShowType . '/');
+        $iPage = $this->GetParamEventMatch(($sShowType == 'good') ? 0 : 1, 2) ? $this->GetParamEventMatch(
+            ($sShowType == 'good') ? 0 : 1,
+            2
+        ) : 1;
+        if ($iPage == 1 and !getRequest('period') and in_array($sShowType, ['discussed', 'top'])) {
+            $viewer->SetHtmlCanonical($oBlog->getUrlFull().$sShowType.'/');
         }
 
         if (!$bCloseBlog) {
             /**
              * Получаем список топиков
              */
-            $aResult = LS::Make(ModuleTopic::class)->GetDeletedTopicsByBlog($oBlog, $iPage, Config::Get('module.topic.per_page'), $sShowType, $sPeriod == 'all' ? null : $sPeriod * 60 * 60 * 24);
+            $aResult = LS::Make(ModuleTopic::class)->GetDeletedTopicsByBlog(
+                $oBlog,
+                $iPage,
+                Config::Get('module.topic.per_page'),
+                $sShowType,
+                $sPeriod == 'all' ? null : $sPeriod * 60 * 60 * 24
+            );
 
             $aTopics = $aResult['collection'];
             /**
              * Формируем постраничность
              */
             $aPaging = ($sShowType == 'good')
-                ? $viewer->MakePaging($aResult['count'], $iPage, Config::Get('module.topic.per_page'), Config::Get('pagination.pages.count'), rtrim($oBlog->getUrlFull(), '/'))
-                : $viewer->MakePaging($aResult['count'], $iPage, Config::Get('module.topic.per_page'), Config::Get('pagination.pages.count'), $oBlog->getUrlFull() . $sShowType, array('period' => $sPeriod));
+                ? $viewer->MakePaging(
+                    $aResult['count'],
+                    $iPage,
+                    Config::Get('module.topic.per_page'),
+                    Config::Get('pagination.pages.count'),
+                    rtrim($oBlog->getUrlFull(), '/')
+                )
+                : $viewer->MakePaging(
+                    $aResult['count'],
+                    $iPage,
+                    Config::Get('module.topic.per_page'),
+                    Config::Get('pagination.pages.count'),
+                    $oBlog->getUrlFull().$sShowType,
+                    ['period' => $sPeriod]
+                );
             /**
              * Получаем число новых топиков в текущем блоге
              */
@@ -1215,9 +1489,9 @@ class ActionBlog extends Action
 
             $viewer->Assign('aPaging', $aPaging);
             $viewer->Assign('aTopics', $aTopics);
-            if (in_array($sShowType, array('discussed', 'top'))) {
+            if (in_array($sShowType, ['discussed', 'top'])) {
                 $viewer->Assign('sPeriodSelectCurrent', $sPeriod);
-                $viewer->Assign('sPeriodSelectRoot', $oBlog->getUrlFull() . $sShowType . '/');
+                $viewer->Assign('sPeriodSelectRoot', $oBlog->getUrlFull().$sShowType.'/');
             }
         }
         /**
@@ -1228,11 +1502,16 @@ class ActionBlog extends Action
         /**
          * Получаем список юзеров блога
          */
-        $aBlogUsersResult = LS::Make(ModuleBlog::class)->GetBlogUsersByBlogId($oBlog->getId(), ModuleBlog::BLOG_USER_ROLE_USER, 1, 25);
+        $aBlogUsersResult =
+            LS::Make(ModuleBlog::class)->GetBlogUsersByBlogId($oBlog->getId(), ModuleBlog::BLOG_USER_ROLE_USER, 1, 25);
         $aBlogUsers = $aBlogUsersResult['collection'];
-        $aBlogModeratorsResult = LS::Make(ModuleBlog::class)->GetBlogUsersByBlogId($oBlog->getId(), ModuleBlog::BLOG_USER_ROLE_MODERATOR);
+        $aBlogModeratorsResult =
+            LS::Make(ModuleBlog::class)->GetBlogUsersByBlogId($oBlog->getId(), ModuleBlog::BLOG_USER_ROLE_MODERATOR);
         $aBlogModerators = $aBlogModeratorsResult['collection'];
-        $aBlogAdministratorsResult = LS::Make(ModuleBlog::class)->GetBlogUsersByBlogId($oBlog->getId(), ModuleBlog::BLOG_USER_ROLE_ADMINISTRATOR);
+        $aBlogAdministratorsResult = LS::Make(ModuleBlog::class)->GetBlogUsersByBlogId(
+            $oBlog->getId(),
+            ModuleBlog::BLOG_USER_ROLE_ADMINISTRATOR
+        );
         $aBlogAdministrators = $aBlogAdministratorsResult['collection'];
         /**
          * Для админов проекта получаем список блогов и передаем их во вьювер
@@ -1246,7 +1525,7 @@ class ActionBlog extends Action
         /**
          * Вызов хуков
          */
-        LS::Make(ModuleHook::class)->Run('blog_collective_show', array('oBlog' => $oBlog, 'sShowType' => $sShowType));
+        LS::Make(ModuleHook::class)->Run('blog_collective_show', ['oBlog' => $oBlog, 'sShowType' => $sShowType]);
         /**
          * Загружаем переменные в шаблон
          */
@@ -1258,12 +1537,12 @@ class ActionBlog extends Action
         $viewer->Assign('iCountBlogAdministrators', $aBlogAdministratorsResult['count'] + 1);
         $viewer->Assign('oBlog', $oBlog);
         $viewer->Assign('bCloseBlog', $bCloseBlog);
-		$viewer->Assign('bInTrash', true);
+        $viewer->Assign('bInTrash', true);
         /**
          * Устанавливаем title страницы
          */
         $viewer->AddHtmlTitle($oBlog->getTitle());
-        $viewer->SetHtmlRssAlternate(Router::GetPath('rss') . 'blog/' . $oBlog->getUrl() . '/', $oBlog->getTitle());
+        $viewer->SetHtmlRssAlternate(Router::GetPath('rss').'blog/'.$oBlog->getUrl().'/', $oBlog->getTitle());
         /**
          * Устанавливаем шаблон вывода
          */
@@ -1295,47 +1574,89 @@ class ActionBlog extends Action
          * Проверям авторизован ли пользователь
          */
         if (!LS::Make(ModuleUser::class)->IsAuthorization()) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('need_authorization'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('need_authorization'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
         /**
          * Проверяем топик
          */
         if (!($oTopic = LS::Make(ModuleTopic::class)->GetTopicById(getRequestStr('cmt_target_id')))) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
         /**
          * Возможность постить коммент в топик в черновиках
          */
-        if (!$oTopic->getPublish() and $this->oUserCurrent->getId() != $oTopic->getUserId() and !$this->oUserCurrent->isAdministrator()) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
+        if (!$oTopic->getPublish() and $this->oUserCurrent->getId() != $oTopic->getUserId()
+            and !$this->oUserCurrent->isAdministrator()
+        ) {
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
         /**
          * Проверяем разрешено ли постить комменты
          */
-        if (!LS::Make(ModuleACL::class)->CanPostComment($this->oUserCurrent) and !$this->oUserCurrent->isAdministrator()) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_comment_acl'), LS::Make(ModuleLang::class)->Get('error'));
+        if (!LS::Make(ModuleACL::class)->CanPostComment($this->oUserCurrent) and !$this->oUserCurrent->isAdministrator(
+            )
+        ) {
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('topic_comment_acl'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
         /**
          * Проверяем разрешено ли постить комменты по времени
          */
-        if (!LS::Make(ModuleACL::class)->CanPostCommentTime($this->oUserCurrent) and !$this->oUserCurrent->isAdministrator()) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_comment_limit'), LS::Make(ModuleLang::class)->Get('error'));
+        if (!LS::Make(ModuleACL::class)->CanPostCommentTime($this->oUserCurrent)
+            and !$this->oUserCurrent->isAdministrator()
+        ) {
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('topic_comment_limit'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
         /**
          * Проверяем запрет на добавления коммента автором топика
          */
         if ($oTopic->getForbidComment()) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_comment_notallow'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('topic_comment_notallow'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
-        if (LS::Make(ModuleBlog::class)->GetBlogUserByBlogIdAndUserId($oTopic->getBlog()->getId(), $this->oUserCurrent->getId())) {
-            if (LS::Make(ModuleBlog::class)->GetBlogUserByBlogIdAndUserId($oTopic->getBlog()->getId(), $this->oUserCurrent->getId())->getUserRole() == ModuleBlog::BLOG_USER_ROLE_RO) {
-                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_create_blog_error_noallow'), LS::Make(ModuleLang::class)->Get('error'));
+        if (LS::Make(ModuleBlog::class)->GetBlogUserByBlogIdAndUserId(
+            $oTopic->getBlog()->getId(),
+            $this->oUserCurrent->getId()
+        )
+        ) {
+            if (LS::Make(ModuleBlog::class)->GetBlogUserByBlogIdAndUserId(
+                    $oTopic->getBlog()->getId(),
+                    $this->oUserCurrent->getId()
+                )->getUserRole() == ModuleBlog::BLOG_USER_ROLE_RO
+            ) {
+                LS::Make(ModuleMessage::class)->AddErrorSingle(
+                    LS::Make(ModuleLang::class)->Get('topic_create_blog_error_noallow'),
+                    LS::Make(ModuleLang::class)->Get('error')
+                );
+
                 return;
             }
         }
@@ -1344,13 +1665,19 @@ class ActionBlog extends Action
          * Проверяем текст комментария
          */
 //        echo getRequestStr('comment_text');
-        $bMark = getRequestStr('form_comment_mark')=="on";
-        if ($bMark)
-            $sText = LS::Make(ModuleText::class)->Parser(LS::Make(ModuleText::class)->Mark(getRequestStr('comment_text')));
-        else
+        $bMark = getRequestStr('form_comment_mark') == "on";
+        if ($bMark) {
+            $sText =
+                LS::Make(ModuleText::class)->Parser(LS::Make(ModuleText::class)->Mark(getRequestStr('comment_text')));
+        } else {
             $sText = LS::Make(ModuleText::class)->Parser(getRequestStr('comment_text'));
+        }
         if (!func_check($sText, 'text', 2, Config::Get('module.comment.max_length'))) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_comment_add_text_error'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('topic_comment_add_text_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
         /**
@@ -1358,7 +1685,11 @@ class ActionBlog extends Action
          */
         $sParentId = (int)getRequest('reply');
         if (!func_check($sParentId, 'id')) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
         $oCommentParent = null;
@@ -1367,18 +1698,30 @@ class ActionBlog extends Action
              * Проверяем существует ли комментарий на который отвечаем
              */
             if (!($oCommentParent = LS::Make(ModuleComment::class)->GetCommentById($sParentId))) {
-                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
+                LS::Make(ModuleMessage::class)->AddErrorSingle(
+                    LS::Make(ModuleLang::class)->Get('system_error'),
+                    LS::Make(ModuleLang::class)->Get('error')
+                );
+
                 return;
             }
             /**
              * Проверяем из одного топика ли новый коммент и тот на который отвечаем
              */
             if ($oCommentParent->getTargetId() != $oTopic->getId()) {
-                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
+                LS::Make(ModuleMessage::class)->AddErrorSingle(
+                    LS::Make(ModuleLang::class)->Get('system_error'),
+                    LS::Make(ModuleLang::class)->Get('error')
+                );
+
                 return;
             }
             if ($oCommentParent->getDelete()) {
-                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
+                LS::Make(ModuleMessage::class)->AddErrorSingle(
+                    LS::Make(ModuleLang::class)->Get('system_error'),
+                    LS::Make(ModuleLang::class)->Get('error')
+                );
+
                 return;
             }
 
@@ -1391,8 +1734,19 @@ class ActionBlog extends Action
         /**
          * Проверка на дублирующий коммент
          */
-        if (LS::Make(ModuleComment::class)->GetCommentUnique($oTopic->getId(), 'topic', $this->oUserCurrent->getId(), $sParentId, md5($sText))) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_comment_spam'), LS::Make(ModuleLang::class)->Get('error'));
+        if (LS::Make(ModuleComment::class)->GetCommentUnique(
+            $oTopic->getId(),
+            'topic',
+            $this->oUserCurrent->getId(),
+            $sParentId,
+            md5($sText)
+        )
+        ) {
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('topic_comment_spam'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
         /**
@@ -1410,69 +1764,84 @@ class ActionBlog extends Action
         $oCommentNew->setTextHash(md5($sText));
         $oCommentNew->setPublish($oTopic->getPublish());
         $oCommentNew->setUserRank($this->oUserCurrent->getRank());
-		$sFile = LS::Make(ModuleTopic::class)->UploadTopicImageUrl('http:'.$this->oUserCurrent->getProfileAvatarPath(64), $this->oUserCurrent, false);
+        $sFile = LS::Make(ModuleTopic::class)->UploadTopicImageUrl(
+            'http:'.$this->oUserCurrent->getProfileAvatarPath(64),
+            $this->oUserCurrent,
+            false
+        );
         $oCommentNew->setUserAvatar($sFile);
         /**
          * Добавляем коммент
          */
 
-        LS::Make(ModuleHook::class)->Run('comment_add_before', array('oCommentNew' => $oCommentNew, 'oCommentParent' => $oCommentParent, 'oTopic' => $oTopic));
+        LS::Make(ModuleHook::class)->Run(
+            'comment_add_before',
+            ['oCommentNew' => $oCommentNew, 'oCommentParent' => $oCommentParent, 'oTopic' => $oTopic]
+        );
         if (LS::Make(ModuleComment::class)->AddComment($oCommentNew)) {
-			/**
-			 * Отправка уведомления пользователям
-			 */
-			$postLink = LS::Make(ModuleTopic::class)->GetTopicById($oCommentNew->getTargetId())->getUrl();
-			$notificationLink = $postLink."#comment".$oCommentNew->getId();
-			$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> <a href='".$notificationLink."'>ответил</a> вам в посте <a href='".$postLink."'>".$oTopic->getTitle()."</a>";
-			$notificationText = "";
-			if ($oCommentParent && $this->oUserCurrent->getId() != $oCommentParent->getUserId()) {
-				$notification = new EntityNotification(
-					array(
-						'user_id' => $oCommentParent->getUserId(),
-						'text' => $notificationText,
-						'title' => $notificationTitle,
-						'link' => $notificationLink,
-						'rating' => 0,
-						'notification_type' => 3,
-						'target_type' => 'comment',
-						'target_id' => $oCommentNew->getId(),
-						'sender_user_id' => $this->oUserCurrent->getId(),
-						'group_target_type' => 'topic',
-						'group_target_id' => $oCommentNew->getTargetId()
-					)
-				);
-				if ($notificationCreated = LS::Make(ModuleNotification::class)->createNotification($notification)) {
-					LS::Make(ModuleNower::class)->PostNotificationWithComment($notificationCreated, $oCommentNew);
-				}
-			}
+            /**
+             * Отправка уведомления пользователям
+             */
+            $postLink = LS::Make(ModuleTopic::class)->GetTopicById($oCommentNew->getTargetId())->getUrl();
+            $notificationLink = $postLink."#comment".$oCommentNew->getId();
+            $notificationTitle =
+                "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin()."</a> <a href='"
+                .$notificationLink."'>ответил</a> вам в посте <a href='".$postLink."'>".$oTopic->getTitle()."</a>";
+            $notificationText = "";
+            if ($oCommentParent && $this->oUserCurrent->getId() != $oCommentParent->getUserId()) {
+                $notification = new EntityNotification(
+                    [
+                        'user_id'           => $oCommentParent->getUserId(),
+                        'text'              => $notificationText,
+                        'title'             => $notificationTitle,
+                        'link'              => $notificationLink,
+                        'rating'            => 0,
+                        'notification_type' => 3,
+                        'target_type'       => 'comment',
+                        'target_id'         => $oCommentNew->getId(),
+                        'sender_user_id'    => $this->oUserCurrent->getId(),
+                        'group_target_type' => 'topic',
+                        'group_target_id'   => $oCommentNew->getTargetId()
+                    ]
+                );
+                if ($notificationCreated = LS::Make(ModuleNotification::class)->createNotification($notification)) {
+                    LS::Make(ModuleNower::class)->PostNotificationWithComment($notificationCreated, $oCommentNew);
+                }
+            }
 
-			if ($this->oUserCurrent->getId() != $oTopic->getUserId()) {
-				$notificationLink = $postLink . "#comment" . $oCommentNew->getId();
-				$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> оставил <a href='".$notificationLink."'>комментарий</a> в вашем посте <a href='".$postLink."'>".$oTopic->getTitle()."</a>";
-				$notificationText = "";
-				$notification = new EntityNotification(
-					array(
-						'user_id' => $oTopic->getUserId(),
-						'text' => $notificationText,
-						'title' => $notificationTitle,
-						'link' => $notificationLink,
-						'rating' => 0,
-						'notification_type' => 5,
-						'target_type' => 'comment',
-						'target_id' => $oCommentNew->getId(),
-						'sender_user_id' => $this->oUserCurrent->getId(),
-						'group_target_type' => 'topic',
-						'group_target_id' => $oCommentNew->getTargetId()
-					)
-				);
-				//TODO: Требуется система подписок, чтобы не создавать копии постов.
+            if ($this->oUserCurrent->getId() != $oTopic->getUserId()) {
+                $notificationLink = $postLink."#comment".$oCommentNew->getId();
+                $notificationTitle =
+                    "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin()
+                    ."</a> оставил <a href='".$notificationLink."'>комментарий</a> в вашем посте <a href='".$postLink
+                    ."'>".$oTopic->getTitle()."</a>";
+                $notificationText = "";
+                $notification = new EntityNotification(
+                    [
+                        'user_id'           => $oTopic->getUserId(),
+                        'text'              => $notificationText,
+                        'title'             => $notificationTitle,
+                        'link'              => $notificationLink,
+                        'rating'            => 0,
+                        'notification_type' => 5,
+                        'target_type'       => 'comment',
+                        'target_id'         => $oCommentNew->getId(),
+                        'sender_user_id'    => $this->oUserCurrent->getId(),
+                        'group_target_type' => 'topic',
+                        'group_target_id'   => $oCommentNew->getTargetId()
+                    ]
+                );
+                //TODO: Требуется система подписок, чтобы не создавать копии постов.
 //				if ($notificationCreated = LS::Make(ModuleNotification::class)->createNotification($notification)) {
 //                    LS::Make(ModuleNower::class)->PostNotificationWithComment($notificationCreated, $oCommentNew);
 //				}
                 LS::Make(ModuleNower::class)->PostNotificationWithComment($notification, $oCommentNew);
-			}
+            }
 
-            LS::Make(ModuleHook::class)->Run('comment_add_after', array('oCommentNew' => $oCommentNew, 'oCommentParent' => $oCommentParent, 'oTopic' => $oTopic));
+            LS::Make(ModuleHook::class)->Run(
+                'comment_add_after',
+                ['oCommentNew' => $oCommentNew, 'oCommentParent' => $oCommentParent, 'oTopic' => $oTopic]
+            );
             LS::Make(ModuleCast::class)->sendCastNotify('comment', $oCommentNew, $oTopic, $oCommentNew->getText());
 
             /** @var \Engine\Modules\ModuleViewer $viewer */
@@ -1499,30 +1868,51 @@ class ActionBlog extends Action
             /**
              * Список емайлов на которые не нужно отправлять уведомление
              */
-            $aExcludeMail = array($this->oUserCurrent->getMail());
+            $aExcludeMail = [$this->oUserCurrent->getMail()];
             /**
              * Отправляем уведомление тому на чей коммент ответили
              */
             if ($oCommentParent and $oCommentNew->getUserId() != $oCommentParent->getUserId()) {
                 $oUserAuthorComment = $oCommentParent->getUser();
                 $aExcludeMail[] = $oUserAuthorComment->getMail();
-                LS::Make(ModuleNotify::class)->SendCommentReplyToAuthorParentComment($oUserAuthorComment, $oTopic, $oCommentNew, $this->oUserCurrent);
+                LS::Make(ModuleNotify::class)->SendCommentReplyToAuthorParentComment(
+                    $oUserAuthorComment,
+                    $oTopic,
+                    $oCommentNew,
+                    $this->oUserCurrent
+                );
             }
             /**
              * Отправка уведомления автору топика
              */
-            LS::Make(ModuleSubscribe::class)->Send('topic_new_comment', $oTopic->getId(), 'notify.comment_new.tpl', LS::Make(ModuleLang::class)->Get('notify_subject_comment_new'), array(
-                'oTopic' => $oTopic,
-                'oComment' => $oCommentNew,
-                'oUserComment' => $this->oUserCurrent,
-            ), $aExcludeMail);
+            LS::Make(ModuleSubscribe::class)->Send(
+                'topic_new_comment',
+                $oTopic->getId(),
+                'notify.comment_new.tpl',
+                LS::Make(ModuleLang::class)->Get('notify_subject_comment_new'),
+                [
+                    'oTopic'       => $oTopic,
+                    'oComment'     => $oCommentNew,
+                    'oUserComment' => $this->oUserCurrent,
+                ],
+                $aExcludeMail
+            );
             /**
              * Добавляем событие в ленту
              */
-            if ($oCommentNew)
-                LS::Make(ModuleStream::class)->write($oCommentNew->getUserId(), 'add_comment', $oCommentNew->getId(), $oTopic->getPublish() && !in_array($oTopic->getBlog()->getType(), array('close', 'invite')));
+            if ($oCommentNew) {
+                LS::Make(ModuleStream::class)->write(
+                    $oCommentNew->getUserId(),
+                    'add_comment',
+                    $oCommentNew->getId(),
+                    $oTopic->getPublish() && !in_array($oTopic->getBlog()->getType(), ['close', 'invite'])
+                );
+            }
         } else {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
         }
     }
 
@@ -1550,18 +1940,34 @@ class ActionBlog extends Action
          */
         $idTopic = getRequestStr('idTarget', null, 'post');
         if (!($oTopic = LS::Make(ModuleTopic::class)->GetTopicById($idTopic))) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
         if ($oTopic->getType() != 'talk') {
             if ($this->oUserCurrent) {
-                if (!in_array($oTopic->getBlogId(), LS::Make(ModuleBlog::class)->GetAccessibleBlogsByUser($this->oUserCurrent)) and $oTopic->getBlog()->getType() != "open") {
-                    LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
+                if (!in_array(
+                        $oTopic->getBlogId(),
+                        LS::Make(ModuleBlog::class)->GetAccessibleBlogsByUser($this->oUserCurrent)
+                    ) and $oTopic->getBlog()->getType() != "open"
+                ) {
+                    LS::Make(ModuleMessage::class)->AddErrorSingle(
+                        LS::Make(ModuleLang::class)->Get('system_error'),
+                        LS::Make(ModuleLang::class)->Get('error')
+                    );
+
                     return;
                 }
             } else {
                 if ($oTopic->getBlog()->getType() != "open") {
-                    LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
+                    LS::Make(ModuleMessage::class)->AddErrorSingle(
+                        LS::Make(ModuleLang::class)->Get('system_error'),
+                        LS::Make(ModuleLang::class)->Get('error')
+                    );
+
                     return;
                 }
             }
@@ -1569,30 +1975,35 @@ class ActionBlog extends Action
 
         $idCommentLast = getRequestStr('idCommentLast', null, 'post');
         $selfIdComment = getRequestStr('selfIdComment', null, 'post');
-        $aComments = array();
+        $aComments = [];
         /**
          * Если используется постраничность, возвращаем только добавленный комментарий
          */
         if (getRequest('bUsePaging', null, 'post') and $selfIdComment) {
-            if ($oComment = LS::Make(ModuleComment::class)->GetCommentById($selfIdComment) and $oComment->getTargetId() == $oTopic->getId() and $oComment->getTargetType() == 'topic') {
+            if ($oComment = LS::Make(ModuleComment::class)->GetCommentById($selfIdComment) and $oComment->getTargetId()
+                == $oTopic->getId() and $oComment->getTargetType() == 'topic'
+            ) {
                 $oViewerLocal = $viewer->GetLocalViewer();
                 $oViewerLocal->Assign('oUserCurrent', $this->oUserCurrent);
                 $oViewerLocal->Assign('bOneComment', true);
 
                 $oViewerLocal->Assign('oComment', $oComment);
-                $sText = $oViewerLocal->Fetch(LS::Make(ModuleComment::class)->GetTemplateCommentByTarget($oTopic->getId(), 'topic'));
-                $aCmt = array();
-                $aCmt[] = array(
-                    'html' => $sText,
-                    'obj' => $oComment,
+                $sText = $oViewerLocal->Fetch(
+                    LS::Make(ModuleComment::class)->GetTemplateCommentByTarget($oTopic->getId(), 'topic')
                 );
+                $aCmt = [];
+                $aCmt[] = [
+                    'html' => $sText,
+                    'obj'  => $oComment,
+                ];
             } else {
-                $aCmt = array();
+                $aCmt = [];
             }
             $aReturn['comments'] = $aCmt;
             $aReturn['iMaxIdComment'] = $selfIdComment;
         } else {
-            $aReturn = LS::Make(ModuleComment::class)->GetCommentsNewByTargetId($oTopic->getId(), 'topic', $idCommentLast);
+            $aReturn =
+                LS::Make(ModuleComment::class)->GetCommentsNewByTargetId($oTopic->getId(), 'topic', $idCommentLast);
         }
         $iMaxIdComment = $aReturn['iMaxIdComment'];
 
@@ -1611,10 +2022,11 @@ class ActionBlog extends Action
         }
 
         $aEditedComments = [];
-        $aEditedCommentsRaw = LS::Make(ModuleComment::class)->GetCommentsOlderThenEdited('topic', $oTopic->getId(), $idCommentLast);
+        $aEditedCommentsRaw =
+            LS::Make(ModuleComment::class)->GetCommentsOlderThenEdited('topic', $oTopic->getId(), $idCommentLast);
         foreach ($aEditedCommentsRaw as $oComment) {
             $aEditedComments[$oComment->getId()] = [
-                'id' => $oComment->getId(),
+                'id'   => $oComment->getId(),
                 'text' => $oComment->getText(),
             ];
         }
@@ -1622,11 +2034,11 @@ class ActionBlog extends Action
         $aCmts = $aReturn['comments'];
         if ($aCmts and is_array($aCmts)) {
             foreach ($aCmts as $aCmt) {
-                $aComments[] = array(
-                    'html' => $aCmt['html'],
+                $aComments[] = [
+                    'html'     => $aCmt['html'],
                     'idParent' => $aCmt['obj']->getPid(),
-                    'id' => $aCmt['obj']->getId(),
-                );
+                    'id'       => $aCmt['obj']->getId(),
+                ];
             }
         }
         $viewer->AssignAjax('iMaxIdComment', $iMaxIdComment);
@@ -1636,7 +2048,10 @@ class ActionBlog extends Action
         $viewer->AssignAjax('aComments', $aComments);
         $viewer->AssignAjax('aEditedComments', $aEditedComments);
         if ($this->oUserCurrent) {
-            $viewer->AssignAjax('iUserCurrentCountTalkNew', LS::Make(ModuleTalk::class)->GetCountTalkNew($this->oUserCurrent->getId()));
+            $viewer->AssignAjax(
+                'iUserCurrentCountTalkNew',
+                LS::Make(ModuleTalk::class)->GetCountTalkNew($this->oUserCurrent->getId())
+            );
         }
     }
 
@@ -1658,7 +2073,11 @@ class ActionBlog extends Action
          * Если пользователь не авторизирован, возвращаем ошибку
          */
         if (!LS::Make(ModuleUser::class)->IsAuthorization()) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('need_authorization'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('need_authorization'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
         $this->oUserCurrent = LS::Make(ModuleUser::class)->GetUserCurrent();
@@ -1666,16 +2085,27 @@ class ActionBlog extends Action
          * Проверяем существование блога
          */
         if (!$oBlog = LS::Make(ModuleBlog::class)->GetBlogById($sBlogId) or !is_string($sUsers)) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
         /**
          * Проверяем, имеет ли право текущий пользователь добавлять invite в blog
          */
-        $oBlogUser = LS::Make(ModuleBlog::class)->GetBlogUserByBlogIdAndUserId($oBlog->getId(), $this->oUserCurrent->getId());
+        $oBlogUser =
+            LS::Make(ModuleBlog::class)->GetBlogUserByBlogIdAndUserId($oBlog->getId(), $this->oUserCurrent->getId());
         $bIsAdministratorBlog = $oBlogUser ? $oBlogUser->getIsAdministrator() : false;
-        if ($oBlog->getOwnerId() != $this->oUserCurrent->getId() and !$this->oUserCurrent->isAdministrator() and !$bIsAdministratorBlog) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
+        if ($oBlog->getOwnerId() != $this->oUserCurrent->getId() and !$this->oUserCurrent->isAdministrator()
+            and !$bIsAdministratorBlog
+        ) {
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
         /**
@@ -1684,19 +2114,20 @@ class ActionBlog extends Action
          */
         $aBlogUsersResult = LS::Make(ModuleBlog::class)->GetBlogUsersByBlogId(
             $oBlog->getId(),
-            array(
+            [
                 ModuleBlog::BLOG_USER_ROLE_BAN,
                 ModuleBlog::BLOG_USER_ROLE_REJECT,
                 ModuleBlog::BLOG_USER_ROLE_INVITE,
                 ModuleBlog::BLOG_USER_ROLE_USER,
                 ModuleBlog::BLOG_USER_ROLE_MODERATOR,
                 ModuleBlog::BLOG_USER_ROLE_ADMINISTRATOR
-            ), null // пока костылем
+            ],
+            null // пока костылем
         );
         $aBlogUsers = $aBlogUsersResult['collection'];
         $aUsers = explode(',', $sUsers);
 
-        $aResult = array();
+        $aResult = [];
         /**
          * Обрабатываем добавление по каждому из переданных логинов
          */
@@ -1710,11 +2141,11 @@ class ActionBlog extends Action
              * самому себе, возвращаем ошибку
              */
             if (strtolower($sUser) == strtolower($this->oUserCurrent->getLogin())) {
-                $aResult[] = array(
+                $aResult[] = [
                     'bStateError' => true,
-                    'sMsgTitle' => LS::Make(ModuleLang::class)->Get('error'),
-                    'sMsg' => LS::Make(ModuleLang::class)->Get('blog_user_invite_add_self')
-                );
+                    'sMsgTitle'   => LS::Make(ModuleLang::class)->Get('error'),
+                    'sMsg'        => LS::Make(ModuleLang::class)->Get('blog_user_invite_add_self')
+                ];
                 continue;
             }
             /**
@@ -1722,12 +2153,15 @@ class ActionBlog extends Action
              * возвращаем ошибку
              */
             if (!$oUser = LS::Make(ModuleUser::class)->GetUserByLogin($sUser) or $oUser->getActivate() != 1) {
-                $aResult[] = array(
+                $aResult[] = [
                     'bStateError' => true,
-                    'sMsgTitle' => LS::Make(ModuleLang::class)->Get('error'),
-                    'sMsg' => LS::Make(ModuleLang::class)->Get('user_not_found', array('login' => htmlspecialchars($sUser))),
-                    'sUserLogin' => htmlspecialchars($sUser)
-                );
+                    'sMsgTitle'   => LS::Make(ModuleLang::class)->Get('error'),
+                    'sMsg'        => LS::Make(ModuleLang::class)->Get(
+                        'user_not_found',
+                        ['login' => htmlspecialchars($sUser)]
+                    ),
+                    'sUserLogin'  => htmlspecialchars($sUser)
+                ];
                 continue;
             }
 
@@ -1741,22 +2175,25 @@ class ActionBlog extends Action
                 $oBlogUserNew->setUserRole(ModuleBlog::BLOG_USER_ROLE_INVITE);
 
                 if (LS::Make(ModuleBlog::class)->AddRelationBlogUser($oBlogUserNew)) {
-                    $aResult[] = array(
-                        'bStateError' => false,
-                        'sMsgTitle' => LS::Make(ModuleLang::class)->Get('attention'),
-                        'sMsg' => LS::Make(ModuleLang::class)->Get('blog_user_invite_add_ok', array('login' => htmlspecialchars($sUser))),
-                        'sUserLogin' => htmlspecialchars($sUser),
-                        'sUserWebPath' => $oUser->getUserWebPath(),
+                    $aResult[] = [
+                        'bStateError'   => false,
+                        'sMsgTitle'     => LS::Make(ModuleLang::class)->Get('attention'),
+                        'sMsg'          => LS::Make(ModuleLang::class)->Get(
+                            'blog_user_invite_add_ok',
+                            ['login' => htmlspecialchars($sUser)]
+                        ),
+                        'sUserLogin'    => htmlspecialchars($sUser),
+                        'sUserWebPath'  => $oUser->getUserWebPath(),
                         'sUserAvatar48' => $oUser->getProfileAvatarPath(48)
-                    );
+                    ];
                     $this->SendBlogInvite($oBlog, $oUser);
                 } else {
-                    $aResult[] = array(
+                    $aResult[] = [
                         'bStateError' => true,
-                        'sMsgTitle' => LS::Make(ModuleLang::class)->Get('error'),
-                        'sMsg' => LS::Make(ModuleLang::class)->Get('system_error'),
-                        'sUserLogin' => htmlspecialchars($sUser)
-                    );
+                        'sMsgTitle'   => LS::Make(ModuleLang::class)->Get('error'),
+                        'sMsg'        => LS::Make(ModuleLang::class)->Get('system_error'),
+                        'sUserLogin'  => htmlspecialchars($sUser)
+                    ];
                 }
             } else {
                 /**
@@ -1765,23 +2202,32 @@ class ActionBlog extends Action
                  */
                 switch (true) {
                     case ($aBlogUsers[$oUser->getId()]->getUserRole() == ModuleBlog::BLOG_USER_ROLE_INVITE):
-                        $sErrorMessage = LS::Make(ModuleLang::class)->Get('blog_user_already_invited', array('login' => htmlspecialchars($sUser)));
+                        $sErrorMessage = LS::Make(ModuleLang::class)->Get(
+                            'blog_user_already_invited',
+                            ['login' => htmlspecialchars($sUser)]
+                        );
                         break;
                     case ($aBlogUsers[$oUser->getId()]->getUserRole() > ModuleBlog::BLOG_USER_ROLE_GUEST):
-                        $sErrorMessage = LS::Make(ModuleLang::class)->Get('blog_user_already_exists', array('login' => htmlspecialchars($sUser)));
+                        $sErrorMessage = LS::Make(ModuleLang::class)->Get(
+                            'blog_user_already_exists',
+                            ['login' => htmlspecialchars($sUser)]
+                        );
                         break;
                     case ($aBlogUsers[$oUser->getId()]->getUserRole() == ModuleBlog::BLOG_USER_ROLE_REJECT):
-                        $sErrorMessage = LS::Make(ModuleLang::class)->Get('blog_user_already_reject', array('login' => htmlspecialchars($sUser)));
+                        $sErrorMessage = LS::Make(ModuleLang::class)->Get(
+                            'blog_user_already_reject',
+                            ['login' => htmlspecialchars($sUser)]
+                        );
                         break;
                     default:
                         $sErrorMessage = LS::Make(ModuleLang::class)->Get('system_error');
                 }
-                $aResult[] = array(
+                $aResult[] = [
                     'bStateError' => true,
-                    'sMsgTitle' => LS::Make(ModuleLang::class)->Get('error'),
-                    'sMsg' => $sErrorMessage,
-                    'sUserLogin' => htmlspecialchars($sUser)
-                );
+                    'sMsgTitle'   => LS::Make(ModuleLang::class)->Get('error'),
+                    'sMsg'        => $sErrorMessage,
+                    'sUserLogin'  => htmlspecialchars($sUser)
+                ];
                 continue;
             }
         }
@@ -1809,7 +2255,11 @@ class ActionBlog extends Action
          * Если пользователь не авторизирован, возвращаем ошибку
          */
         if (!LS::Make(ModuleUser::class)->IsAuthorization()) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('need_authorization'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('need_authorization'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
         $this->oUserCurrent = LS::Make(ModuleUser::class)->GetUserCurrent();
@@ -1817,32 +2267,53 @@ class ActionBlog extends Action
          * Проверяем существование блога
          */
         if (!$oBlog = LS::Make(ModuleBlog::class)->GetBlogById($sBlogId)) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
         /**
          * Пользователь существует и активен?
          */
         if (!$oUser = LS::Make(ModuleUser::class)->GetUserById($sUserId) or $oUser->getActivate() != 1) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
         /**
          * Проверяем, имеет ли право текущий пользователь добавлять invite в blog
          */
-        $oBlogUser = LS::Make(ModuleBlog::class)->GetBlogUserByBlogIdAndUserId($oBlog->getId(), $this->oUserCurrent->getId());
+        $oBlogUser =
+            LS::Make(ModuleBlog::class)->GetBlogUserByBlogIdAndUserId($oBlog->getId(), $this->oUserCurrent->getId());
         $bIsAdministratorBlog = $oBlogUser ? $oBlogUser->getIsAdministrator() : false;
-        if ($oBlog->getOwnerId() != $this->oUserCurrent->getId() and !$this->oUserCurrent->isAdministrator() and !$bIsAdministratorBlog) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
+        if ($oBlog->getOwnerId() != $this->oUserCurrent->getId() and !$this->oUserCurrent->isAdministrator()
+            and !$bIsAdministratorBlog
+        ) {
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
         $oBlogUser = LS::Make(ModuleBlog::class)->GetBlogUserByBlogIdAndUserId($oBlog->getId(), $oUser->getId());
         if ($oBlogUser->getUserRole() == ModuleBlog::BLOG_USER_ROLE_INVITE) {
             $this->SendBlogInvite($oBlog, $oUser);
-            LS::Make(ModuleMessage::class)->AddNoticeSingle(LS::Make(ModuleLang::class)->Get('blog_user_invite_add_ok', array('login' => $oUser->getLogin())), LS::Make(ModuleLang::class)->Get('attention'));
+            LS::Make(ModuleMessage::class)->AddNoticeSingle(
+                LS::Make(ModuleLang::class)->Get('blog_user_invite_add_ok', ['login' => $oUser->getLogin()]),
+                LS::Make(ModuleLang::class)->Get('attention')
+            );
         } else {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
         }
     }
 
@@ -1863,7 +2334,11 @@ class ActionBlog extends Action
          * Если пользователь не авторизирован, возвращаем ошибку
          */
         if (!LS::Make(ModuleUser::class)->IsAuthorization()) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('need_authorization'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('need_authorization'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
         $this->oUserCurrent = LS::Make(ModuleUser::class)->GetUserCurrent();
@@ -1871,23 +2346,38 @@ class ActionBlog extends Action
          * Проверяем существование блога
          */
         if (!$oBlog = LS::Make(ModuleBlog::class)->GetBlogById($sBlogId)) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
         /**
          * Пользователь существует и активен?
          */
         if (!$oUser = LS::Make(ModuleUser::class)->GetUserById($sUserId) or $oUser->getActivate() != 1) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
         /**
          * Проверяем, имеет ли право текущий пользователь добавлять invite в blog
          */
-        $oBlogUser = LS::Make(ModuleBlog::class)->GetBlogUserByBlogIdAndUserId($oBlog->getId(), $this->oUserCurrent->getId());
+        $oBlogUser =
+            LS::Make(ModuleBlog::class)->GetBlogUserByBlogIdAndUserId($oBlog->getId(), $this->oUserCurrent->getId());
         $bIsAdministratorBlog = $oBlogUser ? $oBlogUser->getIsAdministrator() : false;
-        if ($oBlog->getOwnerId() != $this->oUserCurrent->getId() and !$this->oUserCurrent->isAdministrator() and !$bIsAdministratorBlog) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
+        if ($oBlog->getOwnerId() != $this->oUserCurrent->getId() and !$this->oUserCurrent->isAdministrator()
+            and !$bIsAdministratorBlog
+        ) {
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
@@ -1897,9 +2387,15 @@ class ActionBlog extends Action
              * Удаляем связь/приглашение
              */
             LS::Make(ModuleBlog::class)->DeleteRelationBlogUser($oBlogUser);
-            LS::Make(ModuleMessage::class)->AddNoticeSingle(LS::Make(ModuleLang::class)->Get('blog_user_invite_remove_ok', array('login' => $oUser->getLogin())), LS::Make(ModuleLang::class)->Get('attention'));
+            LS::Make(ModuleMessage::class)->AddNoticeSingle(
+                LS::Make(ModuleLang::class)->Get('blog_user_invite_remove_ok', ['login' => $oUser->getLogin()]),
+                LS::Make(ModuleLang::class)->Get('attention')
+            );
         } else {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
         }
     }
 
@@ -1916,50 +2412,51 @@ class ActionBlog extends Action
         $lang = LS::Make(ModuleLang::class);
         $sTitle = $lang->Get(
             'blog_user_invite_title',
-            array(
+            [
                 'blog_title' => $oBlog->getTitle()
-            )
+            ]
         );
 
         require_once './lib/XXTEA/encrypt.php';
         /**
          * Формируем код подтверждения в URL
          */
-        $sCode = $oBlog->getId() . '_' . $oUser->getId();
+        $sCode = $oBlog->getId().'_'.$oUser->getId();
         $sCode = rawurlencode(base64_encode(xxtea_encrypt($sCode, Config::Get('module.blog.encrypt'))));
 
-        $aPath = array(
-            'accept' => Router::GetPath('blog') . 'invite/accept/?code=' . $sCode,
-            'reject' => Router::GetPath('blog') . 'invite/reject/?code=' . $sCode
-        );
+        $aPath = [
+            'accept' => Router::GetPath('blog').'invite/accept/?code='.$sCode,
+            'reject' => Router::GetPath('blog').'invite/reject/?code='.$sCode
+        ];
 
         $sText = $lang->Get(
             'blog_user_invite_text',
-            array(
-                'login' => $this->oUserCurrent->getLogin(),
+            [
+                'login'       => $this->oUserCurrent->getLogin(),
                 'accept_path' => $aPath['accept'],
                 'reject_path' => $aPath['reject'],
-                'blog_title' => $oBlog->getTitle()
-            )
+                'blog_title'  => $oBlog->getTitle()
+            ]
         );
 
-		$notification = new EntityNotification(array(
-				'user_id' => $oUser->getUserId(),
-				'text' => $sText,
-				'title' => $sTitle,
-				'link' => "",
-				'rating' => 0,
-				'notification_type' => 13,
-				'target_type' => 'blog',
-				'target_id' => $oBlog->getId(),
-                'sender_user_id' => $this->oUserCurrent->getId(),
+        $notification = new EntityNotification(
+            [
+                'user_id'           => $oUser->getUserId(),
+                'text'              => $sText,
+                'title'             => $sTitle,
+                'link'              => "",
+                'rating'            => 0,
+                'notification_type' => 13,
+                'target_type'       => 'blog',
+                'target_id'         => $oBlog->getId(),
+                'sender_user_id'    => $this->oUserCurrent->getId(),
                 'group_target_type' => 'nothing',
-                'group_target_id' => -1
-			)
-		);
-		if ($notificationCreated = LS::Make(ModuleNotification::class)->createNotification($notification)) {
-			LS::Make(ModuleNower::class)->PostNotification($notificationCreated);
-		}
+                'group_target_id'   => -1
+            ]
+        );
+        if ($notificationCreated = LS::Make(ModuleNotification::class)->createNotification($notification)) {
+            LS::Make(ModuleNower::class)->PostNotification($notificationCreated);
+        }
     }
 
     /**
@@ -1973,7 +2470,9 @@ class ActionBlog extends Action
          */
         $sCode = xxtea_decrypt(base64_decode(rawurldecode(getRequestStr('code'))), Config::Get('module.blog.encrypt'));
         if (!$sCode) {
-            $this->EventNotFound(); return;
+            $this->EventNotFound();
+
+            return;
         }
         list($sBlogId, $sUserId) = explode('_', $sCode, 2);
 
@@ -1982,48 +2481,67 @@ class ActionBlog extends Action
          * Получаем текущего пользователя
          */
         if (!LS::Make(ModuleUser::class)->IsAuthorization()) {
-            $this->EventNotFound(); return;
+            $this->EventNotFound();
+
+            return;
         }
         $this->oUserCurrent = LS::Make(ModuleUser::class)->GetUserCurrent();
         /**
          * Если приглашенный пользователь не является авторизированным
          */
         if ($this->oUserCurrent->getId() != $sUserId) {
-            $this->EventNotFound(); return;
+            $this->EventNotFound();
+
+            return;
         }
         /**
          * Получаем указанный блог
          */
         if ((!$oBlog = LS::Make(ModuleBlog::class)->GetBlogById($sBlogId)) || $oBlog->getType() != 'close') {
-            $this->EventNotFound(); return;
+            $this->EventNotFound();
+
+            return;
         }
         /**
          * Получаем связь "блог-пользователь" и проверяем,
          * чтобы ее тип был INVITE или REJECT
          */
-        if (!$oBlogUser = LS::Make(ModuleBlog::class)->GetBlogUserByBlogIdAndUserId($oBlog->getId(), $this->oUserCurrent->getId())) {
-            $this->EventNotFound(); return;
+        if (!$oBlogUser =
+            LS::Make(ModuleBlog::class)->GetBlogUserByBlogIdAndUserId($oBlog->getId(), $this->oUserCurrent->getId())
+        ) {
+            $this->EventNotFound();
+
+            return;
         }
         if ($oBlogUser->getUserRole() > ModuleBlog::BLOG_USER_ROLE_GUEST) {
             $sMessage = LS::Make(ModuleLang::class)->Get('blog_user_invite_already_done');
             LS::Make(ModuleMessage::class)->AddError($sMessage, LS::Make(ModuleLang::class)->Get('error'), true);
             Router::Location(Router::GetPath('talk'));
+
             return;
         }
         /** @var ModuleLang $lang */
         $lang = LS::Make(ModuleLang::class);
-        if (!in_array($oBlogUser->getUserRole(), array(ModuleBlog::BLOG_USER_ROLE_INVITE, ModuleBlog::BLOG_USER_ROLE_REJECT))) {
+        if (!in_array(
+            $oBlogUser->getUserRole(),
+            [ModuleBlog::BLOG_USER_ROLE_INVITE, ModuleBlog::BLOG_USER_ROLE_REJECT]
+        )
+        ) {
             LS::Make(ModuleMessage::class)->AddError($lang->Get('system_error'), $lang->Get('error'), true);
             Router::Location(Router::GetPath('talk'));
+
             return;
         }
         /**
          * Обновляем роль пользователя до читателя
          */
-        $oBlogUser->setUserRole(($sAction == 'accept') ? ModuleBlog::BLOG_USER_ROLE_USER : ModuleBlog::BLOG_USER_ROLE_REJECT);
+        $oBlogUser->setUserRole(
+            ($sAction == 'accept') ? ModuleBlog::BLOG_USER_ROLE_USER : ModuleBlog::BLOG_USER_ROLE_REJECT
+        );
         if (!LS::Make(ModuleBlog::class)->UpdateRelationBlogUser($oBlogUser)) {
             LS::Make(ModuleMessage::class)->AddError($lang->Get('system_error'), $lang->Get('error'), true);
             Router::Location(Router::GetPath('talk'));
+
             return;
         }
         if ($sAction == 'accept') {
@@ -2060,6 +2578,7 @@ class ActionBlog extends Action
         $sBlogId = $this->GetParam(0);
         if (!$oBlog = LS::Make(ModuleBlog::class)->GetBlogById($sBlogId)) {
             parent::EventNotFound();
+
             return;
         }
         /**
@@ -2070,6 +2589,7 @@ class ActionBlog extends Action
         if (!LS::Make(ModuleUser::class)->IsAuthorization()) {
             LS::Make(ModuleMessage::class)->AddErrorSingle($lang->Get('not_access'), $lang->Get('error'));
             Router::Action('error');
+
             return;
         }
         /**
@@ -2077,13 +2597,18 @@ class ActionBlog extends Action
          */
         if (!$bAccess = LS::Make(ModuleACL::class)->IsAllowDeleteBlog($oBlog, $this->oUserCurrent)) {
             parent::EventNotFound();
+
             return;
         }
         $aTopics = LS::Make(ModuleTopic::class)->GetTopicsByBlogId($sBlogId);
         switch ($bAccess) {
             case ModuleACL::CAN_DELETE_BLOG_EMPTY_ONLY :
                 if (is_array($aTopics) and count($aTopics)) {
-                    LS::Make(ModuleMessage::class)->AddErrorSingle($lang->Get('blog_admin_delete_not_empty'), $lang->Get('error'), true);
+                    LS::Make(ModuleMessage::class)->AddErrorSingle(
+                        $lang->Get('blog_admin_delete_not_empty'),
+                        $lang->Get('error'),
+                        true
+                    );
                     Router::Location($oBlog->getUrlFull());
                 }
                 break;
@@ -2094,16 +2619,26 @@ class ActionBlog extends Action
                  *
                  * (-1) - выбран пункт меню "удалить топики".
                  */
-                if ($sBlogIdNew = getRequestStr('topic_move_to') and ($sBlogIdNew != -1) and is_array($aTopics) and count($aTopics)) {
+                if ($sBlogIdNew = getRequestStr('topic_move_to') and ($sBlogIdNew != -1) and is_array($aTopics)
+                    and count($aTopics)
+                ) {
                     if (!$oBlogNew = LS::Make(ModuleBlog::class)->GetBlogById($sBlogIdNew)) {
-                        LS::Make(ModuleMessage::class)->AddErrorSingle($lang->Get('blog_admin_delete_move_error'), $lang->Get('error'), true);
+                        LS::Make(ModuleMessage::class)->AddErrorSingle(
+                            $lang->Get('blog_admin_delete_move_error'),
+                            $lang->Get('error'),
+                            true
+                        );
                         Router::Location($oBlog->getUrlFull());
                     }
                     /**
                      * Если выбранный блог является персональным, возвращаем ошибку
                      */
                     if ($oBlogNew->getType() == 'personal') {
-                        LS::Make(ModuleMessage::class)->AddErrorSingle($lang->Get('blog_admin_delete_move_personal'), $lang->Get('error'), true);
+                        LS::Make(ModuleMessage::class)->AddErrorSingle(
+                            $lang->Get('blog_admin_delete_move_personal'),
+                            $lang->Get('error'),
+                            true
+                        );
                         Router::Location($oBlog->getUrlFull());
                     }
                     /**
@@ -2114,15 +2649,20 @@ class ActionBlog extends Action
                 break;
             default:
                 parent::EventNotFound();
+
                 return;
         }
         /**
          * Удаляяем блог и перенаправляем пользователя к списку блогов
          */
-        LS::Make(ModuleHook::class)->Run('blog_delete_before', array('sBlogId' => $sBlogId));
+        LS::Make(ModuleHook::class)->Run('blog_delete_before', ['sBlogId' => $sBlogId]);
         if (LS::Make(ModuleBlog::class)->DeleteBlog($sBlogId)) {
-            LS::Make(ModuleHook::class)->Run('blog_delete_after', array('sBlogId' => $sBlogId));
-            LS::Make(ModuleMessage::class)->AddNoticeSingle($lang->Get('blog_admin_delete_success'), $lang->Get('attention'), true);
+            LS::Make(ModuleHook::class)->Run('blog_delete_after', ['sBlogId' => $sBlogId]);
+            LS::Make(ModuleMessage::class)->AddNoticeSingle(
+                $lang->Get('blog_admin_delete_success'),
+                $lang->Get('attention'),
+                true
+            );
             Router::Location(Router::GetPath('blogs'));
         } else {
             Router::Location($oBlog->getUrlFull());
@@ -2141,7 +2681,9 @@ class ActionBlog extends Action
          */
         $sBlogId = $this->GetParam(0);
         if (!$oBlog = LS::Make(ModuleBlog::class)->GetBlogById($sBlogId)) {
-            parent::EventNotFound(); return;
+            parent::EventNotFound();
+
+            return;
         }
         /**
          * Проверям авторизован ли пользователь
@@ -2150,31 +2692,41 @@ class ActionBlog extends Action
         $lang = LS::Make(ModuleLang::class);
         if (!LS::Make(ModuleUser::class)->IsAuthorization()) {
             LS::Make(ModuleMessage::class)->AddErrorSingle($lang->Get('not_access'), $lang->Get('error'));
-            Router::Action('error'); return;
+            Router::Action('error');
+
+            return;
         }
         /**
          * проверяем есть ли право на удаление топика
          */
         if (!$bAccess = LS::Make(ModuleACL::class)->IsAllowDeleteBlog($oBlog, $this->oUserCurrent)) {
-            parent::EventNotFound(); return;
+            parent::EventNotFound();
+
+            return;
         }
         switch ($bAccess) {
             case ModuleACL::CAN_DELETE_BLOG_EMPTY_ONLY :
-			case ModuleACL::CAN_DELETE_BLOG_WITH_TOPICS :
+            case ModuleACL::CAN_DELETE_BLOG_WITH_TOPICS :
                 break;
             default:
-                parent::EventNotFound(); return;
+                parent::EventNotFound();
+
+                return;
         }
         /**
          * Удаляяем блог и перенаправляем пользователя к списку блогов
          */
-        LS::Make(ModuleHook::class)->Run('blog_delete_before', array('sBlogId' => $sBlogId));
-		$oBlog->setDeleted(true);
-		if (LS::Make(ModuleBlog::class)->UpdateBlog($oBlog)) {
-            LS::Make(ModuleHook::class)->Run('blog_delete_after', array('sBlogId' => $sBlogId));
-            LS::Make(ModuleMessage::class)->AddNoticeSingle($lang->Get('blog_admin_delete_success'), $lang->Get('attention'), true);
-			$sLogText = $this->oUserCurrent->getLogin()." удалил блог ".$oBlog->getId();
-			LS::Make(ModuleLogger::class)->Notice($sLogText);
+        LS::Make(ModuleHook::class)->Run('blog_delete_before', ['sBlogId' => $sBlogId]);
+        $oBlog->setDeleted(true);
+        if (LS::Make(ModuleBlog::class)->UpdateBlog($oBlog)) {
+            LS::Make(ModuleHook::class)->Run('blog_delete_after', ['sBlogId' => $sBlogId]);
+            LS::Make(ModuleMessage::class)->AddNoticeSingle(
+                $lang->Get('blog_admin_delete_success'),
+                $lang->Get('attention'),
+                true
+            );
+            $sLogText = $this->oUserCurrent->getLogin()." удалил блог ".$oBlog->getId();
+            LS::Make(ModuleLogger::class)->Notice($sLogText);
             Router::Location(Router::GetPath('blogs'));
         } else {
             Router::Location($oBlog->getUrlFull());
@@ -2189,7 +2741,7 @@ class ActionBlog extends Action
     {
         /** @var \Engine\Modules\ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);
-		$viewer->SetResponseAjax('json');
+        $viewer->SetResponseAjax('json');
         LS::Make(ModuleSecurity::class)->ValidateSendForm();
         /**
          * Проверяем передан ли в УРЛе номер блога
@@ -2198,44 +2750,49 @@ class ActionBlog extends Action
         $lang = LS::Make(ModuleLang::class);
         $sBlogId = $this->GetParam(0);
         if (!$oBlog = LS::Make(ModuleBlog::class)->GetBlogById($sBlogId)) {
-			LS::Make(ModuleMessage::class)->AddErrorSingle($lang->Get('system_error'), $lang->Get('error'));
-			$viewer->AssignAjax('bState', true);
+            LS::Make(ModuleMessage::class)->AddErrorSingle($lang->Get('system_error'), $lang->Get('error'));
+            $viewer->AssignAjax('bState', true);
         }
         /**
          * Проверям авторизован ли пользователь
          */
         if (!LS::Make(ModuleUser::class)->IsAuthorization()) {
             LS::Make(ModuleMessage::class)->AddErrorSingle($lang->Get('not_access'), $lang->Get('error'));
-			$viewer->AssignAjax('bState', true);
+            $viewer->AssignAjax('bState', true);
         }
         /**
          * проверяем есть ли право на удаление топика
          */
         if (!$bAccess = LS::Make(ModuleACL::class)->IsAllowDeleteBlog($oBlog, $this->oUserCurrent)) {
-			LS::Make(ModuleMessage::class)->AddErrorSingle($lang->Get('system_error'), $lang->Get('error'));
-			$viewer->AssignAjax('bState', true);
+            LS::Make(ModuleMessage::class)->AddErrorSingle($lang->Get('system_error'), $lang->Get('error'));
+            $viewer->AssignAjax('bState', true);
         }
         switch ($bAccess) {
             case ModuleACL::CAN_DELETE_BLOG_EMPTY_ONLY :
-			case ModuleACL::CAN_DELETE_BLOG_WITH_TOPICS :
+            case ModuleACL::CAN_DELETE_BLOG_WITH_TOPICS :
                 break;
             default:
-				LS::Make(ModuleMessage::class)->AddErrorSingle($lang->Get('system_error'), $lang->Get('error'));
-				$viewer->AssignAjax('bState', true);
+                LS::Make(ModuleMessage::class)->AddErrorSingle($lang->Get('system_error'), $lang->Get('error'));
+                $viewer->AssignAjax('bState', true);
         }
         /**
          * Восстанавливаем блог
          */
-		$oBlog->setDeleted(false);
-		if (LS::Make(ModuleBlog::class)->UpdateBlog($oBlog)) {
-			$sLogText = $this->oUserCurrent->getLogin()." восстановил блог ".$oBlog->getId();
-			LS::Make(ModuleLogger::class)->Notice($sLogText);
-			LS::Make(ModuleMessage::class)->AddNoticeSingle($lang->Get('blog_admin_restore_success'), $lang->Get('attention'), true);
-			$viewer->AssignAjax('bState', false);
+        $oBlog->setDeleted(false);
+        if (LS::Make(ModuleBlog::class)->UpdateBlog($oBlog)) {
+            $sLogText = $this->oUserCurrent->getLogin()." восстановил блог ".$oBlog->getId();
+            LS::Make(ModuleLogger::class)->Notice($sLogText);
+            LS::Make(ModuleMessage::class)->AddNoticeSingle(
+                $lang->Get('blog_admin_restore_success'),
+                $lang->Get('attention'),
+                true
+            );
+            $viewer->AssignAjax('bState', false);
         } else {
-			LS::Make(ModuleMessage::class)->AddErrorSingle($lang->Get('system_error') , $lang->Get('error'));
-			return;
-		}
+            LS::Make(ModuleMessage::class)->AddErrorSingle($lang->Get('system_error'), $lang->Get('error'));
+
+            return;
+        }
     }
 
     /**
@@ -2290,6 +2847,7 @@ class ActionBlog extends Action
          */
         if (!$this->oUserCurrent) {
             LS::Make(ModuleMessage::class)->AddErrorSingle($lang->Get('need_authorization'), $lang->Get('error'));
+
             return;
         }
         /**
@@ -2298,21 +2856,29 @@ class ActionBlog extends Action
         $idBlog = getRequestStr('idBlog', null, 'post');
         if (!($oBlog = LS::Make(ModuleBlog::class)->GetBlogById($idBlog))) {
             LS::Make(ModuleMessage::class)->AddErrorSingle($lang->Get('system_error'), $lang->Get('error'));
+
             return;
         }
         /**
          * Проверяем тип блога
          */
-        if (!in_array($oBlog->getType(), array('open', 'close', 'invite'))) {
+        if (!in_array($oBlog->getType(), ['open', 'close', 'invite'])) {
             LS::Make(ModuleMessage::class)->AddErrorSingle($lang->Get('blog_join_error_invite'), $lang->Get('error'));
+
             return;
         }
         /**
          * Получаем текущий статус пользователя в блоге
          */
-        $oBlogUser = LS::Make(ModuleBlog::class)->GetBlogUserByBlogIdAndUserId($oBlog->getId(), $this->oUserCurrent->getId());
-        $roles = array(ModuleBlog::BLOG_USER_ROLE_BAN, ModuleBlog::BLOG_USER_ROLE_RO);
-        if (!$oBlogUser || (($oBlogUser->getUserRole() < ModuleBlog::BLOG_USER_ROLE_GUEST && $oBlog->getType() != 'close') && !in_array($oBlogUser->getUserRole(), $roles) || $this->oUserCurrent->getIsAdministrator() && $oBlog->getType() == 'close')) {
+        $oBlogUser =
+            LS::Make(ModuleBlog::class)->GetBlogUserByBlogIdAndUserId($oBlog->getId(), $this->oUserCurrent->getId());
+        $roles = [ModuleBlog::BLOG_USER_ROLE_BAN, ModuleBlog::BLOG_USER_ROLE_RO];
+        if (!$oBlogUser
+            || (($oBlogUser->getUserRole() < ModuleBlog::BLOG_USER_ROLE_GUEST
+                    && $oBlog->getType() != 'close')
+                && !in_array($oBlogUser->getUserRole(), $roles)
+                || $this->oUserCurrent->getIsAdministrator() && $oBlog->getType() == 'close')
+        ) {
             if ($oBlog->getOwnerId() != $this->oUserCurrent->getId()) {
                 /**
                  * Присоединяем юзера к блогу
@@ -2330,7 +2896,10 @@ class ActionBlog extends Action
                     $bResult = LS::Make(ModuleBlog::class)->AddRelationBlogUser($oBlogUserNew);
                 }
                 if ($bResult) {
-                    LS::Make(ModuleMessage::class)->AddNoticeSingle($lang->Get('blog_join_ok'), $lang->Get('attention'));
+                    LS::Make(ModuleMessage::class)->AddNoticeSingle(
+                        $lang->Get('blog_join_ok'),
+                        $lang->Get('attention')
+                    );
                     $viewer->AssignAjax('bState', true);
                     /**
                      * Увеличиваем число читателей блога
@@ -2351,10 +2920,15 @@ class ActionBlog extends Action
                         ? $lang->Get('blog_join_error_invite')
                         : $lang->Get('system_error');
                     LS::Make(ModuleMessage::class)->AddErrorSingle($sMsg, $lang->Get('error'));
+
                     return;
                 }
             } else {
-                LS::Make(ModuleMessage::class)->AddErrorSingle($lang->Get('blog_join_error_self'), $lang->Get('attention'));
+                LS::Make(ModuleMessage::class)->AddErrorSingle(
+                    $lang->Get('blog_join_error_self'),
+                    $lang->Get('attention')
+                );
+
                 return;
             }
         }
@@ -2364,6 +2938,7 @@ class ActionBlog extends Action
              */
             if (in_array($oBlogUser->getUserRole(), $roles)) {
                 LS::Make(ModuleMessage::class)->AddErrorSingle($lang->Get('system_error'), $lang->Get('error'));
+
                 return;
             }
             if (LS::Make(ModuleBlog::class)->DeleteRelationBlogUser($oBlogUser)) {
@@ -2378,9 +2953,14 @@ class ActionBlog extends Action
                 /**
                  * Удаляем подписку на этот блог в ленте пользователя
                  */
-                LS::Make(ModuleUserfeed::class)->unsubscribeUser($this->oUserCurrent->getId(), ModuleUserfeed::SUBSCRIBE_TYPE_BLOG, $oBlog->getId());
+                LS::Make(ModuleUserfeed::class)->unsubscribeUser(
+                    $this->oUserCurrent->getId(),
+                    ModuleUserfeed::SUBSCRIBE_TYPE_BLOG,
+                    $oBlog->getId()
+                );
             } else {
                 LS::Make(ModuleMessage::class)->AddErrorSingle($lang->Get('system_error'), $lang->Get('error'));
+
                 return;
             }
         }

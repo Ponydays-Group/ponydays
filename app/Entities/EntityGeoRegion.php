@@ -21,8 +21,9 @@ namespace App\Entities;
  * Объект сущности региона
  *
  * @package modules.geo
- * @since 1.0
+ * @since   1.0
  */
-class EntityGeoRegion extends EntityGeo {
+class EntityGeoRegion extends EntityGeo
+{
 
 }

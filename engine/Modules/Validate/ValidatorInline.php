@@ -24,36 +24,40 @@ use Engine\LsObject;
  * Валидация происходит через метод внешнего объекта
  *
  * @package engine.modules.validate
- * @since 1.0
+ * @since   1.0
  */
-class ValidatorInline extends Validator {
-	/**
-	 * Метод объекта для валидации, в него передаются параметры: $sValue и $aParam
-	 *
-	 * @var string
-	 */
-	public $method;
-	/**
-	 * Объект у которого будет вызван метод валидации, дляя сущности - это сам объект сущности
-	 *
-	 * @var LsObject object
-	 */
-	public $object;
-	/**
-	 * Список параметров для передачи в метод валидации
-	 *
-	 * @var array
-	 */
-	public $params;
+class ValidatorInline extends Validator
+{
+    /**
+     * Метод объекта для валидации, в него передаются параметры: $sValue и $aParam
+     *
+     * @var string
+     */
+    public $method;
+    /**
+     * Объект у которого будет вызван метод валидации, дляя сущности - это сам объект сущности
+     *
+     * @var LsObject object
+     */
+    public $object;
+    /**
+     * Список параметров для передачи в метод валидации
+     *
+     * @var array
+     */
+    public $params;
 
-	/**
-	 * Запуск валидации
-	 *
-	 * @param mixed $sValue	Данные для валидации
-	 * @return bool|string
-	 */
-	public function validate($sValue) {
-		$sMethod=$this->method;
-		return $this->object->$sMethod($sValue,$this->params);
-	}
+    /**
+     * Запуск валидации
+     *
+     * @param mixed $sValue Данные для валидации
+     *
+     * @return bool|string
+     */
+    public function validate($sValue)
+    {
+        $sMethod = $this->method;
+
+        return $this->object->$sMethod($sValue, $this->params);
+    }
 }

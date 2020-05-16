@@ -6,6 +6,6 @@ class CryptoIncorrect extends CryptoAlgorithm
 {
     public function hash(string $password, array $params): array
     {
-        return array();
+        return [];
     }
 }

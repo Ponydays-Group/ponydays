@@ -27,26 +27,28 @@ use Engine\Modules\ModuleViewer;
  * Обработка блока с комментариями (прямой эфир)
  *
  * @package blocks
- * @since 1.0
+ * @since   1.0
  */
-class BlockStream extends Block {
-	/**
-	 * Запуск обработки
-	 */
-	public function Exec() {
+class BlockStream extends Block
+{
+    /**
+     * Запуск обработки
+     */
+    public function Exec()
+    {
         /** @var ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);
-		/**
-		 * Получаем комментарии
-		 */
-		if ($aComments=LS::Make(ModuleComment::class)->GetCommentsOnline('topic',Config::Get('block.stream.row'))) {
-			$oViewer=$viewer->GetLocalViewer();
-			$oViewer->Assign('aComments',$aComments);
-			/**
-			 * Формируем результат в виде шаблона и возвращаем
-			 */
-			$sTextResult=$oViewer->Fetch("blocks/block.stream_comment.tpl");
-			$viewer->Assign('sStreamComments',$sTextResult);
-		}
-	}
+        /**
+         * Получаем комментарии
+         */
+        if ($aComments = LS::Make(ModuleComment::class)->GetCommentsOnline('topic', Config::Get('block.stream.row'))) {
+            $oViewer = $viewer->GetLocalViewer();
+            $oViewer->Assign('aComments', $aComments);
+            /**
+             * Формируем результат в виде шаблона и возвращаем
+             */
+            $sTextResult = $oViewer->Fetch("blocks/block.stream_comment.tpl");
+            $viewer->Assign('sStreamComments', $sTextResult);
+        }
+    }
 }

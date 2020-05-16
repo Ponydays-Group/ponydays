@@ -35,7 +35,7 @@ use Engine\Router;
  * Экшен обработки всплывашек (/info/)
  *
  * @package actions
- * @since 1.0
+ * @since   1.0
  */
 class ActionInfo extends Action
 {
@@ -69,24 +69,29 @@ class ActionInfo extends Action
         $this->AddEvent('profile', 'EventProfile');
     }
 
-    protected  function EventTopic() {
+    protected function EventTopic()
+    {
         $iTopicId = getRequest('iTopicId');
-        if (!($oTopic=LS::Make(ModuleTopic::class)->GetTopicById($iTopicId))) {
+        if (!($oTopic = LS::Make(ModuleTopic::class)->GetTopicById($iTopicId))) {
             parent::EventNotFound();
+
             return;
         }
         /**
          * Проверяем права на просмотр топика
          */
-        if (!$oTopic->getPublish() and (!$this->oUserCurrent or ($this->oUserCurrent->getId()!=$oTopic->getUserId() and !$this->oUserCurrent->isAdministrator()))) {
+        if (!$oTopic->getPublish() and (!$this->oUserCurrent or ($this->oUserCurrent->getId() != $oTopic->getUserId()
+                    and !$this->oUserCurrent->isAdministrator()))
+        ) {
             parent::EventNotFound();
+
             return;
         }
 
         /**
          * Определяем права на отображение записи из закрытого блога
          */
-        if(in_array($oTopic->getBlog()->getType(), array('close', 'invite'))
+        if (in_array($oTopic->getBlog()->getType(), ['close', 'invite'])
             and (!$this->oUserCurrent
                 || !in_array(
                     $oTopic->getBlog()->getId(),
@@ -94,8 +99,12 @@ class ActionInfo extends Action
                 )
             )
         ) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('blog_close_show'),LS::Make(ModuleLang::class)->Get('not_access'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('blog_close_show'),
+                LS::Make(ModuleLang::class)->Get('not_access')
+            );
             Router::Action('error');
+
             return;
         }
 
@@ -104,24 +113,31 @@ class ActionInfo extends Action
         LS::Make(ModuleViewer::class)->AssignAjax('sText', $oViewer->Fetch("actions/ActionInfo/topic.tpl"));
     }
 
-    protected  function EventComment() {
+    protected function EventComment()
+    {
         $iCommentId = getRequest('iCommentId');
-        if (!($oComment=LS::Make(ModuleComment::class)->GetCommentById($iCommentId))) {
-            parent::EventNotFound(); return;
+        if (!($oComment = LS::Make(ModuleComment::class)->GetCommentById($iCommentId))) {
+            parent::EventNotFound();
+
+            return;
         }
-        if ($oComment->getTargetType()=="topic") {
+        if ($oComment->getTargetType() == "topic") {
             $oTarget = LS::Make(ModuleTopic::class)->GetTopicById($oComment->getTargetId());
             /**
              * Проверяем права на просмотр топика
              */
-            if (!$oTarget->getPublish() and (!$this->oUserCurrent or ($this->oUserCurrent->getId() != $oTarget->getUserId() and !$this->oUserCurrent->isAdministrator()))) {
-                parent::EventNotFound(); return;
+            if (!$oTarget->getPublish() and (!$this->oUserCurrent or ($this->oUserCurrent->getId()
+                        != $oTarget->getUserId() and !$this->oUserCurrent->isAdministrator()))
+            ) {
+                parent::EventNotFound();
+
+                return;
             }
 
             /**
              * Определяем права на отображение записи из закрытого блога
              */
-            if (in_array($oTarget->getBlog()->getType(), array('close', 'invite'))
+            if (in_array($oTarget->getBlog()->getType(), ['close', 'invite'])
                 and (!$this->oUserCurrent
                     || !in_array(
                         $oTarget->getBlog()->getId(),
@@ -129,25 +145,38 @@ class ActionInfo extends Action
                     )
                 )
             ) {
-                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('blog_close_show'), LS::Make(ModuleLang::class)->Get('not_access'));
-                Router::Action('error'); return;
+                LS::Make(ModuleMessage::class)->AddErrorSingle(
+                    LS::Make(ModuleLang::class)->Get('blog_close_show'),
+                    LS::Make(ModuleLang::class)->Get('not_access')
+                );
+                Router::Action('error');
+
+                return;
             }
         } else {
             if ($this->oUserCurrent == null) {
                 echo "NO USER CURRENT";
-                parent::EventNotFound(); return;
+                parent::EventNotFound();
+
+                return;
             }
             $oTarget = LS::Make(ModuleTalk::class)->GetTalkById($oComment->getTargetId());
-            if (!($oTalkUser=LS::Make(ModuleTalk::class)->GetTalkUser($oTarget->getId(),$this->oUserCurrent->getId()))) {
+            if (!($oTalkUser =
+                LS::Make(ModuleTalk::class)->GetTalkUser($oTarget->getId(), $this->oUserCurrent->getId()))
+            ) {
                 echo "NO TALK USER";
-                parent::EventNotFound(); return;
+                parent::EventNotFound();
+
+                return;
             }
             /**
              * Пользователь активен в переписке?
              */
-            if($oTalkUser->getUserActive()!=ModuleTalk::TALK_USER_ACTIVE){
+            if ($oTalkUser->getUserActive() != ModuleTalk::TALK_USER_ACTIVE) {
                 echo "NO USER ACTIVE";
-                parent::EventNotFound(); return;
+                parent::EventNotFound();
+
+                return;
             }
         }
 
@@ -155,23 +184,40 @@ class ActionInfo extends Action
         $oViewer->Assign('oTarget', $oTarget);
         $oViewer->Assign('oComment', $oComment);
         if ($oComment->getDelete()) {
-			$oComment->setUserDelete(LS::Make(ModuleUser::class)->GetUserById($oComment->getDeleteUserId()));
-		}
-        $oViewer->Assign('bEnableVoteInfo', LS::Make(ModuleACL::class)->CheckSimpleAccessLevel(Config::Get('acl.vote_list.comment.ne_enable_level'), $this->oUserCurrent, $oComment, 'comment'));
+            $oComment->setUserDelete(LS::Make(ModuleUser::class)->GetUserById($oComment->getDeleteUserId()));
+        }
+        $oViewer->Assign(
+            'bEnableVoteInfo',
+            LS::Make(ModuleACL::class)->CheckSimpleAccessLevel(
+                Config::Get('acl.vote_list.comment.ne_enable_level'),
+                $this->oUserCurrent,
+                $oComment,
+                'comment'
+            )
+        );
         LS::Make(ModuleViewer::class)->AssignAjax('sText', $oViewer->Fetch("actions/ActionInfo/comment.tpl"));
     }
 
-    protected  function EventProfile() {
+    protected function EventProfile()
+    {
         $sLogin = getRequest('sLogin');
-        if (!($oUser=LS::Make(ModuleUser::class)->GetUserByLogin($sLogin))) {
-            parent::EventNotFound(); return;
+        if (!($oUser = LS::Make(ModuleUser::class)->GetUserByLogin($sLogin))) {
+            parent::EventNotFound();
+
+            return;
         }
 
         $oViewer = LS::Make(ModuleViewer::class)->GetLocalViewer();
 
         $oViewer->Assign('oUserProfile', $oUser);
-        $oViewer->Assign('iCountTopicUser', LS::Make(ModuleTopic::class)->GetCountTopicsPersonalByUser($oUser->getId(),1));
-        $oViewer->Assign('iCountCommentUser', LS::Make(ModuleComment::class)->GetCountCommentsByUserId($oUser->getId(),'topic'));
+        $oViewer->Assign(
+            'iCountTopicUser',
+            LS::Make(ModuleTopic::class)->GetCountTopicsPersonalByUser($oUser->getId(), 1)
+        );
+        $oViewer->Assign(
+            'iCountCommentUser',
+            LS::Make(ModuleComment::class)->GetCountCommentsByUserId($oUser->getId(), 'topic')
+        );
 
         LS::Make(ModuleViewer::class)->AssignAjax('sText', $oViewer->Fetch("actions/ActionInfo/profile.tpl"));
     }

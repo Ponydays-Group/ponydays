@@ -23,8 +23,9 @@ use Engine\Entity;
  * Объект связи гео-объекта с владельцем
  *
  * @package modules.geo
- * @since 1.0
+ * @since   1.0
  */
-class EntityGeoTarget extends Entity {
-    
+class EntityGeoTarget extends Entity
+{
+
 }

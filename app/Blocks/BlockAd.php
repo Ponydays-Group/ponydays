@@ -23,12 +23,14 @@ use Engine\Block;
  * Обработка блока с рейтингом блогов
  *
  * @package blocks
- * @since 1.0
+ * @since   1.0
  */
-class BlockAd extends Block {
-        /**
-         * Запуск обработки
-         */
-        public function Exec() {
-        }
+class BlockAd extends Block
+{
+    /**
+     * Запуск обработки
+     */
+    public function Exec()
+    {
+    }
 }

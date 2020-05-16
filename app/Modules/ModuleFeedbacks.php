@@ -7,42 +7,52 @@ use Engine\Engine;
 use Engine\LS;
 use Engine\Module;
 
-class ModuleFeedbacks extends Module {
+class ModuleFeedbacks extends Module
+{
 
-	protected $oMapper;
+    protected $oMapper;
 
-	//***************************************************************************************
-	public function Init(){		
-		$this->oMapper 	= Engine::MakeMapper(MapperFeedbacks::class);
-	}
+    //***************************************************************************************
+    public function Init()
+    {
+        $this->oMapper = Engine::MakeMapper(MapperFeedbacks::class);
+    }
 
-	//***************************************************************************************
-	public function SaveAction($oAction){
-		return $this->oMapper->SaveAction($oAction);
-	}
+    //***************************************************************************************
+    public function SaveAction($oAction)
+    {
+        return $this->oMapper->SaveAction($oAction);
+    }
 
-	//***************************************************************************************
-	public function GetActionsByUserId($iUserId, $iActionsCount){
-		return $this->oMapper->GetActionsByUserId($iUserId, $iActionsCount);
-	}
+    //***************************************************************************************
+    public function GetActionsByUserId($iUserId, $iActionsCount)
+    {
+        return $this->oMapper->GetActionsByUserId($iUserId, $iActionsCount);
+    }
 
-	//***************************************************************************************
-	public function UpdateViewDatetimeByUserId($iUserId){
-		return $this->oMapper->UpdateViewDatetimeByUserId($iUserId);
-	}
+    //***************************************************************************************
+    public function UpdateViewDatetimeByUserId($iUserId)
+    {
+        return $this->oMapper->UpdateViewDatetimeByUserId($iUserId);
+    }
 
-	//***************************************************************************************
-	public function GetCurrentUserUnreadItemsCount(){
+    //***************************************************************************************
+    public function GetCurrentUserUnreadItemsCount()
+    {
         /** @var ModuleUser $user */
         $user = LS::Make(ModuleUser::class);
-		if($user->GetUserCurrent()){
-			$iUserId	= $user->GetUserCurrent()->getId();
-			return $this->oMapper->GetUnreadItemsCountByUserId($iUserId);
-		}else return false;
-	}
+        if ($user->GetUserCurrent()) {
+            $iUserId = $user->GetUserCurrent()->getId();
 
-	//***************************************************************************************
-	public function GetActionsByUserIdLastActionId($iUserId, $iLastActionId, $iActionsCount){
-		return $this->oMapper->GetActionsByUserIdLastActionId($iUserId, $iLastActionId, $iActionsCount);
-	}
+            return $this->oMapper->GetUnreadItemsCountByUserId($iUserId);
+        } else {
+            return false;
+        }
+    }
+
+    //***************************************************************************************
+    public function GetActionsByUserIdLastActionId($iUserId, $iLastActionId, $iActionsCount)
+    {
+        return $this->oMapper->GetActionsByUserIdLastActionId($iUserId, $iLastActionId, $iActionsCount);
+    }
 }

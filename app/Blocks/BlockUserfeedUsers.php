@@ -27,27 +27,29 @@ use Engine\Modules\ModuleViewer;
  * Блок настройки списка пользователей в ленте
  *
  * @package blocks
- * @since 1.0
+ * @since   1.0
  */
-class BlockUserfeedUsers extends Block {
-	/**
-	 * Запуск обработки
-	 */
-	public function Exec() {
-		/**
-		 * Получаем необходимые переменные и прогружаем в шаблон
-		 */
-		if ($oUserCurrent = LS::Make(ModuleUser::class)->getUserCurrent()) {
-			/**
-			 * Получаем необходимые переменные и прогружаем в шаблон
-			 */
-			$aUserSubscribes = LS::Make(ModuleUserfeed::class)->getUserSubscribes($oUserCurrent->getId());
-			$aFriends = LS::Make(ModuleUser::class)->getUsersFriend($oUserCurrent->getId());
+class BlockUserfeedUsers extends Block
+{
+    /**
+     * Запуск обработки
+     */
+    public function Exec()
+    {
+        /**
+         * Получаем необходимые переменные и прогружаем в шаблон
+         */
+        if ($oUserCurrent = LS::Make(ModuleUser::class)->getUserCurrent()) {
+            /**
+             * Получаем необходимые переменные и прогружаем в шаблон
+             */
+            $aUserSubscribes = LS::Make(ModuleUserfeed::class)->getUserSubscribes($oUserCurrent->getId());
+            $aFriends = LS::Make(ModuleUser::class)->getUsersFriend($oUserCurrent->getId());
 
             /** @var \Engine\Modules\ModuleViewer $viewer */
             $viewer = LS::Make(ModuleViewer::class);
-			$viewer->Assign('aUserfeedSubscribedUsers', $aUserSubscribes['users']);
-			$viewer->Assign('aUserfeedFriends', $aFriends['collection']);
-		}
-	}
+            $viewer->Assign('aUserfeedSubscribedUsers', $aUserSubscribes['users']);
+            $viewer->Assign('aUserfeedFriends', $aFriends['collection']);
+        }
+    }
 }

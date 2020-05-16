@@ -23,8 +23,9 @@ use Engine\Entity;
  * Сущность смены емайла пользователем
  *
  * @package modules.user
- * @since 1.0
+ * @since   1.0
  */
-class EntityUserChangemail extends Entity {
+class EntityUserChangemail extends Entity
+{
 
 }

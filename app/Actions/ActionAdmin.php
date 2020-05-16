@@ -17,10 +17,10 @@
 
 namespace App\Actions;
 
+use App\Entities\EntityUserField;
 use App\Modules\ModuleBlog;
 use App\Modules\ModuleComment;
 use App\Modules\ModuleTopic;
-use App\Entities\EntityUserField;
 use App\Modules\ModuleUser;
 use Engine\Action;
 use Engine\Config;
@@ -35,64 +35,72 @@ use Engine\Modules\ModuleViewer;
  * Экшен обработки УРЛа вида /admin/
  *
  * @package actions
- * @since 1.0
+ * @since   1.0
  */
-class ActionAdmin extends Action {
-	/**
-	 * Текущий пользователь
-	 *
-	 * @var \App\Entities\EntityUser|null
-	 */
-	protected $oUserCurrent=null;
-	/**
-	 * Главное меню
-	 *
-	 * @var string
-	 */
-	protected $sMenuHeadItemSelect='admin';
+class ActionAdmin extends Action
+{
+    /**
+     * Текущий пользователь
+     *
+     * @var \App\Entities\EntityUser|null
+     */
+    protected $oUserCurrent = null;
+    /**
+     * Главное меню
+     *
+     * @var string
+     */
+    protected $sMenuHeadItemSelect = 'admin';
 
-	/**
-	 * Инициализация
-	 */
-	public function Init() {
-		/**
-		 * Если нет прав доступа - перекидываем на 404 страницу
-		 */
+    /**
+     * Инициализация
+     */
+    public function Init()
+    {
+        /**
+         * Если нет прав доступа - перекидываем на 404 страницу
+         */
         /** @var ModuleUser $user */
         $user = LS::Make(ModuleUser::class);
-		if(!$user->IsAuthorization() or !$oUserCurrent=$user->GetUserCurrent() or !$oUserCurrent->isAdministrator()) {
-			parent::EventNotFound();
-		} else {
+        if (!$user->IsAuthorization() or !$oUserCurrent = $user->GetUserCurrent() or !$oUserCurrent->isAdministrator(
+            )
+        ) {
+            parent::EventNotFound();
+        } else {
             $this->SetDefaultEvent('index');
 
             $this->oUserCurrent = $oUserCurrent;
         }
-	}
-	/**
-	 * Регистрация евентов
-	 */
-	protected function RegisterEvent() {
-		$this->AddEvent('index','EventIndex');
-		$this->AddEvent('restorecomment','EventRestoreComment');
-		$this->AddEvent('userfields','EventUserfields');
-		$this->AddEvent('recalcfavourite','EventRecalculateFavourite');
-		$this->AddEvent('recalcvote','EventRecalculateVote');
-		$this->AddEvent('recalctopic','EventRecalculateTopic');
-        $this->AddEvent('config','EventAdminConfig');
-        $this->AddEvent('save','EventAdminConfigSave');
-        $this->AddEvent('user','EventSaveUser');
-	}
-
-
-	/**********************************************************************************
-	 ************************ РЕАЛИЗАЦИЯ ЭКШЕНА ***************************************
-	 **********************************************************************************
-	 */
-
-    protected function EventUsers() {
     }
 
-    protected function EventSaveUser() {
+    /**
+     * Регистрация евентов
+     */
+    protected function RegisterEvent()
+    {
+        $this->AddEvent('index', 'EventIndex');
+        $this->AddEvent('restorecomment', 'EventRestoreComment');
+        $this->AddEvent('userfields', 'EventUserfields');
+        $this->AddEvent('recalcfavourite', 'EventRecalculateFavourite');
+        $this->AddEvent('recalcvote', 'EventRecalculateVote');
+        $this->AddEvent('recalctopic', 'EventRecalculateTopic');
+        $this->AddEvent('config', 'EventAdminConfig');
+        $this->AddEvent('save', 'EventAdminConfigSave');
+        $this->AddEvent('user', 'EventSaveUser');
+    }
+
+
+    /**********************************************************************************
+     ************************ РЕАЛИЗАЦИЯ ЭКШЕНА ***************************************
+     **********************************************************************************
+     */
+
+    protected function EventUsers()
+    {
+    }
+
+    protected function EventSaveUser()
+    {
         LS::Make(ModuleViewer::class)->SetResponseAjax('json');
         /** @var ModuleUser $user */
         $user = LS::Make(ModuleUser::class);
@@ -106,173 +114,203 @@ class ActionAdmin extends Action {
         $oUser->setMail($sMail);
         $oUser->setLogin($sLogin);
         $iPrivs = 0;
-        if(getRequest('user_privileges_moderator') == 'on') {
-        	$iPrivs |= ModuleUser::USER_PRIV_MODERATOR;
-		}
-        if(getRequest('user_privileges_quotes') == 'on') {
-        	$iPrivs |= ModuleUser::USER_PRIV_QUOTES;
-		}
+        if (getRequest('user_privileges_moderator') == 'on') {
+            $iPrivs |= ModuleUser::USER_PRIV_MODERATOR;
+        }
+        if (getRequest('user_privileges_quotes') == 'on') {
+            $iPrivs |= ModuleUser::USER_PRIV_QUOTES;
+        }
         $user->SetUserPrivileges($oUser->getId(), $iPrivs);
         $user->Update($oUser);
     }
 
-    protected function EventAdminConfigSave() {
+    protected function EventAdminConfigSave()
+    {
         LS::Make(ModuleViewer::class)->SetResponseAjax('json');
         $values = getRequest('values');
         //TODO
-        Config::LoadFromFile(dirname(__FILE__)."/../../config/local.config.json",true,'adminsave');
-        foreach ($values as $key=>$val) {
-            if ($val=="1") {
+        Config::LoadFromFile(dirname(__FILE__)."/../../config/local.config.json", true, 'adminsave');
+        foreach ($values as $key => $val) {
+            if ($val == "1") {
                 $val = true;
             }
-            if ($val=="0") {
+            if ($val == "0") {
                 $val = false;
             }
-            Config::Set($key, $val,'adminsave');
+            Config::Set($key, $val, 'adminsave');
         }
-        file_put_contents(dirname(__FILE__)."/../../config/local.config.json",json_encode(Config::getInstance('adminsave')->aConfig, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE));
+        file_put_contents(
+            dirname(__FILE__)."/../../config/local.config.json",
+            json_encode(
+                Config::getInstance('adminsave')->aConfig,
+                JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
+            )
+        );
     }
 
-	protected function EventAdminConfig() {
-	    $params = [
-	        "sep1" => ["type"=>"separator", "description"=>"Настройки сайта"],
-            "general.close" => [
-                "type" => "bool",
+    protected function EventAdminConfig()
+    {
+        $params = [
+            "sep1"                   => ["type" => "separator", "description" => "Настройки сайта"],
+            "general.close"          => [
+                "type"        => "bool",
                 "description" => "Закрытый режим работы сайта",
             ],
-            "general.reg.invite" => [
-                "type" => "bool",
+            "general.reg.invite"     => [
+                "type"        => "bool",
                 "description" => "Регистрация по инвайтам",
             ],
             "general.reg.activation" => [
-                "type" => "bool",
+                "type"        => "bool",
                 "description" => "Активация по почте",
             ],
-            "view.name" => [
-                "type" => "string",
+            "view.name"              => [
+                "type"        => "string",
                 "description" => "Название сайта",
             ],
-            "path.root.web" => [
-                "type" => "string",
+            "path.root.web"          => [
+                "type"        => "string",
                 "description" => "URL сайта",
             ],
-            "sep2" => ["type"=>"separator", "description"=>"Картинки"],
-            "module.image.use_anon" => [
-                "type" => "bool",
+            "sep2"                   => ["type" => "separator", "description" => "Картинки"],
+            "module.image.use_anon"  => [
+                "type"        => "bool",
                 "description" => "Использовать анонимайзер при загрузке изображений",
             ],
-            "sep" => ["type"=>"separator", "description"=>"БД"],
-            "db.params.host" => [
-                "type" => "string",
+            "sep"                    => ["type" => "separator", "description" => "БД"],
+            "db.params.host"         => [
+                "type"        => "string",
                 "description" => "Хост БД",
             ],
-            "db.params.port" => [
-                "type" => "int",
+            "db.params.port"         => [
+                "type"        => "int",
                 "description" => "Порт БД",
             ],
-            "db.params.user" => [
-                "type" => "string",
+            "db.params.user"         => [
+                "type"        => "string",
                 "description" => "Пользователь БД",
             ],
-            "db.params.pass" => [
-                "type" => "password",
+            "db.params.pass"         => [
+                "type"        => "password",
                 "description" => "Пароль БД",
             ],
-            "db.params.type" => [
-                "type" => "string",
+            "db.params.type"         => [
+                "type"        => "string",
                 "description" => "Тип БД",
             ],
-            "db.params.dbname" => [
-                "type" => "string",
+            "db.params.dbname"       => [
+                "type"        => "string",
                 "description" => "Название базы",
             ],
-            "sep3" => ["type"=>"separator", "description"=>"Модераторы"],
-            "moderator" => [
-                "type" => "list",
+            "sep3"                   => ["type" => "separator", "description" => "Модераторы"],
+            "moderator"              => [
+                "type"        => "list",
                 "description" => "Модераторы",
             ],
-            "sep4" => ["type"=>"separator", "description"=>"Почтовик"],
-            "sys.mail.from_email" => [
-                "type" => "string",
+            "sep4"                   => ["type" => "separator", "description" => "Почтовик"],
+            "sys.mail.from_email"    => [
+                "type"        => "string",
                 "description" => "Адрес для почтовика",
             ],
-            "sys.mail.from_name" => [
-                "type" => "string",
+            "sys.mail.from_name"     => [
+                "type"        => "string",
                 "description" => "Имя отправителя в почтовике",
             ],
-            "sep5" => ["type"=>"separator", "description"=>"Комментарии"],
-            "module.comment.bad" => [
-                "type" => "int",
+            "sep5"                   => ["type" => "separator", "description" => "Комментарии"],
+            "module.comment.bad"     => [
+                "type"        => "int",
                 "description" => "Порог скрытия комментария",
             ],
         ];
-	    LS::Make(ModuleViewer::class)->Assign("aConfig", $params);
+        LS::Make(ModuleViewer::class)->Assign("aConfig", $params);
     }
 
-	/**
-	 * Отображение главной страницы админки
-	 * Нет никакой логики, просто отображение дефолтного шаблона евента index.tpl
-	 */
-	protected function EventIndex() {
+    /**
+     * Отображение главной страницы админки
+     * Нет никакой логики, просто отображение дефолтного шаблона евента index.tpl
+     */
+    protected function EventIndex()
+    {
 
-	}
-	/**
-	 * Перестроение дерева комментариев, актуально при $config['module']['comment']['use_nested'] = true;
-	 *
-	 */
-	protected function EventRestoreComment() {
-		LS::Make(ModuleSecurity::class)->ValidateSendForm();
-		set_time_limit(0);
-		LS::Make(ModuleComment::class)->RestoreTree();
-		LS::Make(ModuleCache::class)->Clean();
+    }
 
-		LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('admin_comment_restore_tree'),LS::Make(ModuleLang::class)->Get('attention'));
-		$this->SetTemplateAction('index');
-	}
-	/**
-	 * Пересчет счетчика избранных
-	 *
-	 */
-	protected function EventRecalculateFavourite() {
+    /**
+     * Перестроение дерева комментариев, актуально при $config['module']['comment']['use_nested'] = true;
+     *
+     */
+    protected function EventRestoreComment()
+    {
         LS::Make(ModuleSecurity::class)->ValidateSendForm();
-		set_time_limit(0);
+        set_time_limit(0);
+        LS::Make(ModuleComment::class)->RestoreTree();
+        LS::Make(ModuleCache::class)->Clean();
+
+        LS::Make(ModuleMessage::class)->AddNotice(
+            LS::Make(ModuleLang::class)->Get('admin_comment_restore_tree'),
+            LS::Make(ModuleLang::class)->Get('attention')
+        );
+        $this->SetTemplateAction('index');
+    }
+
+    /**
+     * Пересчет счетчика избранных
+     *
+     */
+    protected function EventRecalculateFavourite()
+    {
+        LS::Make(ModuleSecurity::class)->ValidateSendForm();
+        set_time_limit(0);
         LS::Make(ModuleComment::class)->RecalculateFavourite();
         LS::Make(ModuleTopic::class)->RecalculateFavourite();
         LS::Make(ModuleCache::class)->Clean();
 
-        LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('admin_favourites_recalculated'),LS::Make(ModuleLang::class)->Get('attention'));
-		$this->SetTemplateAction('index');
-	}
-	/**
-	 * Пересчет счетчика голосований
-	 */
-	protected function EventRecalculateVote() {
+        LS::Make(ModuleMessage::class)->AddNotice(
+            LS::Make(ModuleLang::class)->Get('admin_favourites_recalculated'),
+            LS::Make(ModuleLang::class)->Get('attention')
+        );
+        $this->SetTemplateAction('index');
+    }
+
+    /**
+     * Пересчет счетчика голосований
+     */
+    protected function EventRecalculateVote()
+    {
         LS::Make(ModuleSecurity::class)->ValidateSendForm();
-		set_time_limit(0);
+        set_time_limit(0);
         LS::Make(ModuleTopic::class)->RecalculateVote();
         LS::Make(ModuleCache::class)->Clean();
 
-        LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('admin_votes_recalculated'),LS::Make(ModuleLang::class)->Get('attention'));
-		$this->SetTemplateAction('index');
-	}
-	/**
-	 * Пересчет количества топиков в блогах
-	 */
-	protected function EventRecalculateTopic() {
+        LS::Make(ModuleMessage::class)->AddNotice(
+            LS::Make(ModuleLang::class)->Get('admin_votes_recalculated'),
+            LS::Make(ModuleLang::class)->Get('attention')
+        );
+        $this->SetTemplateAction('index');
+    }
+
+    /**
+     * Пересчет количества топиков в блогах
+     */
+    protected function EventRecalculateTopic()
+    {
         LS::Make(ModuleSecurity::class)->ValidateSendForm();
-		set_time_limit(0);
+        set_time_limit(0);
         LS::Make(ModuleBlog::class)->RecalculateCountTopic();
         LS::Make(ModuleCache::class)->Clean();
 
-        LS::Make(ModuleMessage::class)->AddNotice(LS::Make(ModuleLang::class)->Get('admin_topics_recalculated'),LS::Make(ModuleLang::class)->Get('attention'));
-		$this->SetTemplateAction('index');
-	}
-	/**
-	 * Управление полями пользователя
-	 *
-	 */
-	protected function EventUserFields()
-	{
+        LS::Make(ModuleMessage::class)->AddNotice(
+            LS::Make(ModuleLang::class)->Get('admin_topics_recalculated'),
+            LS::Make(ModuleLang::class)->Get('attention')
+        );
+        $this->SetTemplateAction('index');
+    }
+
+    /**
+     * Управление полями пользователя
+     *
+     */
+    protected function EventUserFields()
+    {
         /** @var ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);
         /** @var ModuleUser $user */
@@ -281,144 +319,156 @@ class ActionAdmin extends Action {
         $message = LS::Make(ModuleMessage::class);
         /** @var \Engine\Modules\ModuleLang $lang */
         $lang = LS::Make(ModuleLang::class);
-		switch(getRequestStr('action')) {
-			/**
-			 * Создание нового поля
-			 */
-			case 'add':
-				/**
-				 * Обрабатываем как ajax запрос (json)
-				 */
-				$viewer->SetResponseAjax('json');
-				if (!$this->checkUserField()) {
-					return;
-				}
-				$oField = new EntityUserField();
-				$oField->setName(getRequestStr('name'));
-				$oField->setTitle(getRequestStr('title'));
-				$oField->setPattern(getRequestStr('pattern'));
-				if (in_array(getRequestStr('type'),$user->GetUserFieldTypes())) {
-					$oField->setType(getRequestStr('type'));
-				} else {
-					$oField->setType('');
-				}
+        switch (getRequestStr('action')) {
+            /**
+             * Создание нового поля
+             */
+            case 'add':
+                /**
+                 * Обрабатываем как ajax запрос (json)
+                 */
+                $viewer->SetResponseAjax('json');
+                if (!$this->checkUserField()) {
+                    return;
+                }
+                $oField = new EntityUserField();
+                $oField->setName(getRequestStr('name'));
+                $oField->setTitle(getRequestStr('title'));
+                $oField->setPattern(getRequestStr('pattern'));
+                if (in_array(getRequestStr('type'), $user->GetUserFieldTypes())) {
+                    $oField->setType(getRequestStr('type'));
+                } else {
+                    $oField->setType('');
+                }
 
-				$iId = $user->addUserField($oField);
-				if(!$iId) {
-					$message->AddError($lang->Get('system_error'),$lang->Get('error'));
-					return;
-				}
-				/**
-				 * Прогружаем переменные в ajax ответ
-				 */
-				$viewer->AssignAjax('id', $iId);
-				$viewer->AssignAjax('lang_delete', $lang->Get('user_field_delete'));
-				$viewer->AssignAjax('lang_edit', $lang->Get('user_field_update'));
-				$message->AddNotice($lang->Get('user_field_added'),$lang->Get('attention'));
-				break;
-			/**
-			 * Удаление поля
-			 */
-			case 'delete':
-				/**
-				 * Обрабатываем как ajax запрос (json)
-				 */
-				$viewer->SetResponseAjax('json');
-				if (!getRequestStr('id')) {
-					$message->AddError($lang->Get('system_error'),$lang->Get('error'));
-					return;
-				}
-				$user->deleteUserField(getRequestStr('id'));
-				$message->AddNotice($lang->Get('user_field_deleted'),$lang->Get('attention'));
-				break;
-			/**
-			 * Изменение поля
-			 */
-			case 'update':
-				/**
-				 * Обрабатываем как ajax запрос (json)
-				 */
-				$viewer->SetResponseAjax('json');
-				if (!getRequestStr('id')) {
-					$message->AddError($lang->Get('system_error'),$lang->Get('error'));
-					return;
-				}
-				if (!$user->userFieldExistsById(getRequestStr('id'))) {
-					$message->AddError($lang->Get('system_error'),$lang->Get('error'));
-					return;
-				}
-				if (!$this->checkUserField()) {
-					return;
-				}
-				$oField = new EntityUserField;
-				$oField->setId(getRequestStr('id'));
-				$oField->setName(getRequestStr('name'));
-				$oField->setTitle(getRequestStr('title'));
-				$oField->setPattern(getRequestStr('pattern'));
-				if (in_array(getRequestStr('type'),$user->GetUserFieldTypes())) {
-					$oField->setType(getRequestStr('type'));
-				} else {
-					$oField->setType('');
-				}
+                $iId = $user->addUserField($oField);
+                if (!$iId) {
+                    $message->AddError($lang->Get('system_error'), $lang->Get('error'));
 
-				if ($user->updateUserField($oField)) {
-					$message->AddError($lang->Get('system_error'),$lang->Get('error'));
-					return;
-				}
-				$message->AddNotice($lang->Get('user_field_updated'),$lang->Get('attention'));
-				break;
-			/**
-			 * Показываем страницу со списком полей
-			 */
-			default:
-				/**
-				 * Загружаем в шаблон JS текстовки
-				 */
-				$lang->AddLangJs(array('user_field_delete_confirm'));
-				/**
-				 * Получаем список всех полей
-				 */
-				$viewer->Assign('aUserFields',$user->getUserFields());
-				$viewer->Assign('aUserFieldTypes',$user->GetUserFieldTypes());
-				$this->SetTemplateAction('user_fields');
-		}
-	}
-	/**
-	 * Проверка поля пользователя на корректность из реквеста
-	 *
-	 * @return bool
-	 */
-	public function checkUserField()
-	{
+                    return;
+                }
+                /**
+                 * Прогружаем переменные в ajax ответ
+                 */
+                $viewer->AssignAjax('id', $iId);
+                $viewer->AssignAjax('lang_delete', $lang->Get('user_field_delete'));
+                $viewer->AssignAjax('lang_edit', $lang->Get('user_field_update'));
+                $message->AddNotice($lang->Get('user_field_added'), $lang->Get('attention'));
+                break;
+            /**
+             * Удаление поля
+             */
+            case 'delete':
+                /**
+                 * Обрабатываем как ajax запрос (json)
+                 */
+                $viewer->SetResponseAjax('json');
+                if (!getRequestStr('id')) {
+                    $message->AddError($lang->Get('system_error'), $lang->Get('error'));
+
+                    return;
+                }
+                $user->deleteUserField(getRequestStr('id'));
+                $message->AddNotice($lang->Get('user_field_deleted'), $lang->Get('attention'));
+                break;
+            /**
+             * Изменение поля
+             */
+            case 'update':
+                /**
+                 * Обрабатываем как ajax запрос (json)
+                 */
+                $viewer->SetResponseAjax('json');
+                if (!getRequestStr('id')) {
+                    $message->AddError($lang->Get('system_error'), $lang->Get('error'));
+
+                    return;
+                }
+                if (!$user->userFieldExistsById(getRequestStr('id'))) {
+                    $message->AddError($lang->Get('system_error'), $lang->Get('error'));
+
+                    return;
+                }
+                if (!$this->checkUserField()) {
+                    return;
+                }
+                $oField = new EntityUserField;
+                $oField->setId(getRequestStr('id'));
+                $oField->setName(getRequestStr('name'));
+                $oField->setTitle(getRequestStr('title'));
+                $oField->setPattern(getRequestStr('pattern'));
+                if (in_array(getRequestStr('type'), $user->GetUserFieldTypes())) {
+                    $oField->setType(getRequestStr('type'));
+                } else {
+                    $oField->setType('');
+                }
+
+                if ($user->updateUserField($oField)) {
+                    $message->AddError($lang->Get('system_error'), $lang->Get('error'));
+
+                    return;
+                }
+                $message->AddNotice($lang->Get('user_field_updated'), $lang->Get('attention'));
+                break;
+            /**
+             * Показываем страницу со списком полей
+             */
+            default:
+                /**
+                 * Загружаем в шаблон JS текстовки
+                 */
+                $lang->AddLangJs(['user_field_delete_confirm']);
+                /**
+                 * Получаем список всех полей
+                 */
+                $viewer->Assign('aUserFields', $user->getUserFields());
+                $viewer->Assign('aUserFieldTypes', $user->GetUserFieldTypes());
+                $this->SetTemplateAction('user_fields');
+        }
+    }
+
+    /**
+     * Проверка поля пользователя на корректность из реквеста
+     *
+     * @return bool
+     */
+    public function checkUserField()
+    {
         /** @var ModuleMessage $message */
         $message = LS::Make(ModuleMessage::class);
         /** @var \Engine\Modules\ModuleLang $lang */
         $lang = LS::Make(ModuleLang::class);
-		if (!getRequestStr('title')) {
-			$message->AddError($lang->Get('user_field_error_add_no_title'),$lang->Get('error'));
-			return false;
-		}
-		if (!getRequestStr('name')) {
-			$message->AddError($lang->Get('user_field_error_add_no_name'),$lang->Get('error'));
-			return false;
-		}
-		/**
-		 * Не допускаем дубликатов по имени
-		 */
-		if (LS::Make(ModuleUser::class)->userFieldExistsByName(getRequestStr('name'), getRequestStr('id'))) {
-			$message->AddError($lang->Get('user_field_error_name_exists'),$lang->Get('error'));
-			return false;
-		}
-		return true;
-	}
-	/**
-	 * Выполняется при завершении работы экшена
-	 *
-	 */
-	public function EventShutdown() {
-		/**
-		 * Загружаем в шаблон необходимые переменные
-		 */
-		LS::Make(ModuleViewer::class)->Assign('sMenuHeadItemSelect',$this->sMenuHeadItemSelect);
-	}
+        if (!getRequestStr('title')) {
+            $message->AddError($lang->Get('user_field_error_add_no_title'), $lang->Get('error'));
+
+            return false;
+        }
+        if (!getRequestStr('name')) {
+            $message->AddError($lang->Get('user_field_error_add_no_name'), $lang->Get('error'));
+
+            return false;
+        }
+        /**
+         * Не допускаем дубликатов по имени
+         */
+        if (LS::Make(ModuleUser::class)->userFieldExistsByName(getRequestStr('name'), getRequestStr('id'))) {
+            $message->AddError($lang->Get('user_field_error_name_exists'), $lang->Get('error'));
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Выполняется при завершении работы экшена
+     *
+     */
+    public function EventShutdown()
+    {
+        /**
+         * Загружаем в шаблон необходимые переменные
+         */
+        LS::Make(ModuleViewer::class)->Assign('sMenuHeadItemSelect', $this->sMenuHeadItemSelect);
+    }
 }

@@ -17,31 +17,31 @@
 
 namespace App\Actions;
 
+use App\Entities\EntityCommentOnline;
+use App\Entities\EntityEditCommentData;
+use App\Entities\EntityFavourite;
+use App\Entities\EntityNotification;
+use App\Entities\EntityTopic;
+use App\Entities\EntityTopicQuestionVote;
+use App\Entities\EntityUser;
+use App\Entities\EntityVote;
 use App\Modules\ModuleACL;
 use App\Modules\ModuleBlog;
 use App\Modules\ModuleCast;
-use App\Entities\EntityCommentOnline;
 use App\Modules\ModuleComment;
-use App\Entities\EntityEditCommentData;
 use App\Modules\ModuleEditComment;
-use App\Entities\EntityFavourite;
 use App\Modules\ModuleFavourite;
 use App\Modules\ModuleGeo;
-use App\Entities\EntityNotification;
 use App\Modules\ModuleNotification;
 use App\Modules\ModuleNower;
 use App\Modules\ModuleRating;
 use App\Modules\ModuleStream;
 use App\Modules\ModuleTalk;
-use App\Entities\EntityTopic;
-use App\Entities\EntityTopicQuestionVote;
 use App\Modules\ModuleTopic;
-use App\Entities\EntityUser;
 use App\Modules\ModuleUser;
-use App\Entities\EntityVote;
 use App\Modules\ModuleVote;
-use Engine\Config;
 use Engine\Action;
+use Engine\Config;
 use Engine\LS;
 use Engine\Modules\ModuleHook;
 use Engine\Modules\ModuleImage;
@@ -57,7 +57,7 @@ use Engine\Router;
  * Ответ отдает в JSON фомате
  *
  * @package actions
- * @since 1.0
+ * @since   1.0
  */
 class ActionAjax extends Action
 {
@@ -75,6 +75,7 @@ class ActionAjax extends Action
      * @var \App\Modules\ModuleUser
      */
     protected $user = null;
+
     /**
      * Инициализация
      */
@@ -134,49 +135,56 @@ class ActionAjax extends Action
     }
 
     /**********************************************************************************
-    ************************ РЕАЛИЗАЦИЯ ЭКШЕНА ***************************************
-    **********************************************************************************
-    */
+     ************************ РЕАЛИЗАЦИЯ ЭКШЕНА ***************************************
+     **********************************************************************************
+     */
 
     protected
     function EventBan()
     {
-        if (!$this->oUserCurrent || !($this->oUserCurrent->isAdministrator() || $this->oUserCurrent->isGlobalModerator())) {
+        if (!$this->oUserCurrent
+            || !($this->oUserCurrent->isAdministrator()
+                || $this->oUserCurrent->isGlobalModerator())
+        ) {
             Router::Action('error');
+
             return;
         }
 
         $iUserId = (int)getRequest('iUserId');
 
-        if ((int)$this->oUserCurrent->getId()==$iUserId) {
+        if ((int)$this->oUserCurrent->getId() == $iUserId) {
             Router::Action('error');
+
             return;
         }
 
         if ((int)getRequest('iUnban')) {
             $this->user->Unban($iUserId);
-			$sLogText = $this->oUserCurrent->getLogin()." разбанил пользователя ".$iUserId;
-			LS::Make(ModuleLogger::class)->Notice($sLogText);
+            $sLogText = $this->oUserCurrent->getLogin()." разбанил пользователя ".$iUserId;
+            LS::Make(ModuleLogger::class)->Notice($sLogText);
 
-			$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> разбанил вас на сайте";
-			$notification = new EntityNotification(
-				array(
-					'user_id' => $iUserId,
-					'text' => "",
-					'title' => $notificationTitle,
-					'link' => "",
-					'rating' => 0,
-					'notification_type' => 16,
-					'target_type' => "global",
-					'target_id' => -1,
-					'sender_user_id' => $this->oUserCurrent->getId(),
-					'group_target_type' => 'global',
-					'group_target_id' => -1
-				)
-			);
-			if($notificationCreated = LS::Make(ModuleNotification::class)->createNotification($notification)){
-				LS::Make(ModuleNower::class)->PostNotification($notificationCreated);
-			}
+            $notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin()
+                ."</a> разбанил вас на сайте";
+            $notification = new EntityNotification(
+                [
+                    'user_id'           => $iUserId,
+                    'text'              => "",
+                    'title'             => $notificationTitle,
+                    'link'              => "",
+                    'rating'            => 0,
+                    'notification_type' => 16,
+                    'target_type'       => "global",
+                    'target_id'         => -1,
+                    'sender_user_id'    => $this->oUserCurrent->getId(),
+                    'group_target_type' => 'global',
+                    'group_target_id'   => -1
+                ]
+            );
+            if ($notificationCreated = LS::Make(ModuleNotification::class)->createNotification($notification)) {
+                LS::Make(ModuleNower::class)->PostNotification($notificationCreated);
+            }
+
             return;
         }
 
@@ -184,7 +192,7 @@ class ActionAjax extends Action
         $iBanHours = getRequest('iBanHours');
 
         if ((int)$iBanHours) {
-            $t = time()+((int)$iBanHours*60*60);
+            $t = time() + ((int)$iBanHours * 60 * 60);
             $this->user->Ban($iUserId, $this->oUserCurrent->getId(), date("Y-m-d H:i:s", $t), 0, $sBanComment);
         } else {
             $this->user->Ban($iUserId, $this->oUserCurrent->getId(), null, 1, $sBanComment);
@@ -193,25 +201,26 @@ class ActionAjax extends Action
         $sLogText = $this->oUserCurrent->getLogin()." забанил пользователя ".$iUserId;
         LS::Make(ModuleLogger::class)->Notice($sLogText);
 
-		$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> забанил вас на сайте";
-		$notification = new EntityNotification(
-			array(
-				'user_id' => $iUserId,
-				'text' => "",
-				'title' => $notificationTitle,
-				'link' => "",
-				'rating' => 0,
-				'notification_type' => 16,
-				'target_type' => "global",
-				'target_id' => -1,
-				'sender_user_id' => $this->oUserCurrent->getId(),
-				'group_target_type' => 'global',
-				'group_target_id' => -1
-			)
-		);
-		if($notificationCreated = LS::Make(ModuleNotification::class)->createNotification($notification)){
-			LS::Make(ModuleNower::class)->PostNotification($notificationCreated);
-		}
+        $notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin()
+            ."</a> забанил вас на сайте";
+        $notification = new EntityNotification(
+            [
+                'user_id'           => $iUserId,
+                'text'              => "",
+                'title'             => $notificationTitle,
+                'link'              => "",
+                'rating'            => 0,
+                'notification_type' => 16,
+                'target_type'       => "global",
+                'target_id'         => -1,
+                'sender_user_id'    => $this->oUserCurrent->getId(),
+                'group_target_type' => 'global',
+                'group_target_id'   => -1
+            ]
+        );
+        if ($notificationCreated = LS::Make(ModuleNotification::class)->createNotification($notification)) {
+            LS::Make(ModuleNower::class)->PostNotification($notificationCreated);
+        }
     }
 
     /**
@@ -225,11 +234,15 @@ class ActionAjax extends Action
          */
         if (!is_string(getRequest('iBlogId'))) {
             LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'));
+
             return;
         }
 
-        if (!($oBlog = LS::Make(ModuleBlog::class)->GetBlogById(getRequest('iBlogId'))) or $oBlog->getType() == 'personal') {
+        if (!($oBlog = LS::Make(ModuleBlog::class)->GetBlogById(getRequest('iBlogId'))) or $oBlog->getType()
+            == 'personal'
+        ) {
             LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'));
+
             return;
         }
 
@@ -242,10 +255,14 @@ class ActionAjax extends Action
             /**
              * Получаем последний топик
              */
-            $aResult = LS::Make(ModuleTopic::class)->GetTopicsByFilter(array(
-                'blog_id' => $oBlog->getId() ,
-                'topic_publish' => 1
-            ) , 1, 1);
+            $aResult = LS::Make(ModuleTopic::class)->GetTopicsByFilter(
+                [
+                    'blog_id'       => $oBlog->getId(),
+                    'topic_publish' => 1
+                ],
+                1,
+                1
+            );
             $oViewer->Assign('oTopicLast', reset($aResult['collection']));
         }
 
@@ -273,23 +290,29 @@ class ActionAjax extends Action
          */
         if (!($oCountry = LS::Make(ModuleGeo::class)->GetGeoObject('country', $iCountryId))) {
             LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'));
+
             return;
         }
 
         /**
          * Получаем список регионов
          */
-        $aResult = LS::Make(ModuleGeo::class)->GetRegions(array(
-            'country_id' => $oCountry->getId()
-        ) , array(
-            'sort' => 'asc'
-        ) , 1, $iLimit);
-        $aRegions = array();
-        foreach($aResult['collection'] as $oObject) {
-            $aRegions[] = array(
-                'id' => $oObject->getId() ,
-                'name' => $oObject->getName() ,
-            );
+        $aResult = LS::Make(ModuleGeo::class)->GetRegions(
+            [
+                'country_id' => $oCountry->getId()
+            ],
+            [
+                'sort' => 'asc'
+            ],
+            1,
+            $iLimit
+        );
+        $aRegions = [];
+        foreach ($aResult['collection'] as $oObject) {
+            $aRegions[] = [
+                'id'   => $oObject->getId(),
+                'name' => $oObject->getName(),
+            ];
         }
 
         /**
@@ -315,23 +338,29 @@ class ActionAjax extends Action
          */
         if (!($oRegion = LS::Make(ModuleGeo::class)->GetGeoObject('region', $iRegionId))) {
             LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'));
+
             return;
         }
 
         /**
          * Получаем города
          */
-        $aResult = LS::Make(ModuleGeo::class)->GetCities(array(
-            'region_id' => $oRegion->getId()
-        ) , array(
-            'sort' => 'asc'
-        ) , 1, $iLimit);
-        $aCities = array();
-        foreach($aResult['collection'] as $oObject) {
-            $aCities[] = array(
-                'id' => $oObject->getId() ,
-                'name' => $oObject->getName() ,
-            );
+        $aResult = LS::Make(ModuleGeo::class)->GetCities(
+            [
+                'region_id' => $oRegion->getId()
+            ],
+            [
+                'sort' => 'asc'
+            ],
+            1,
+            $iLimit
+        );
+        $aCities = [];
+        foreach ($aResult['collection'] as $oObject) {
+            $aCities[] = [
+                'id'   => $oObject->getId(),
+                'name' => $oObject->getName(),
+            ];
         }
 
         /**
@@ -351,7 +380,11 @@ class ActionAjax extends Action
          * Пользователь авторизован?
          */
         if (!$this->oUserCurrent) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('need_authorization'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('need_authorization'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
@@ -359,7 +392,11 @@ class ActionAjax extends Action
          * Комментарий существует?
          */
         if (!($oComment = LS::Make(ModuleComment::class)->GetCommentById(getRequestStr('idComment', null, 'post')))) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('comment_vote_error_noexists'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('comment_vote_error_noexists'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
@@ -367,15 +404,27 @@ class ActionAjax extends Action
          * Голосует автор комментария?
          */
         if ($oComment->getUserId() == $this->oUserCurrent->getId()) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('comment_vote_error_self'), LS::Make(ModuleLang::class)->Get('attention'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('comment_vote_error_self'),
+                LS::Make(ModuleLang::class)->Get('attention')
+            );
+
             return;
         }
 
         /**
          * Время голосования истекло?
          */
-        if (Config::Get('acl.vote.comment.limit_time') != 0 && strtotime($oComment->getDate()) <= time() - Config::Get('acl.vote.comment.limit_time')) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('comment_vote_error_time'), LS::Make(ModuleLang::class)->Get('attention'));
+        if (Config::Get('acl.vote.comment.limit_time') != 0
+            && strtotime($oComment->getDate()) <= time() - Config::Get(
+                'acl.vote.comment.limit_time'
+            )
+        ) {
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('comment_vote_error_time'),
+                LS::Make(ModuleLang::class)->Get('attention')
+            );
+
             return;
         }
 
@@ -383,7 +432,11 @@ class ActionAjax extends Action
          * Пользователь имеет право голоса?
          */
         if (!LS::Make(ModuleACL::class)->CanVoteComment($this->oUserCurrent, $oComment)) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('comment_vote_error'), LS::Make(ModuleLang::class)->Get('attention'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('comment_vote_error'),
+                LS::Make(ModuleLang::class)->Get('attention')
+            );
+
             return;
         }
 
@@ -391,11 +444,19 @@ class ActionAjax extends Action
          * Как именно голосует пользователь
          */
         $iValue = getRequestStr('value', null, 'post');
-        if (!in_array($iValue, array(
-            '1',
-            '-1'
-        ))) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('comment_vote_error_value'), LS::Make(ModuleLang::class)->Get('attention'));
+        if (!in_array(
+            $iValue,
+            [
+                '1',
+                '-1'
+            ]
+        )
+        ) {
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('comment_vote_error_value'),
+                LS::Make(ModuleLang::class)->Get('attention')
+            );
+
             return;
         }
 
@@ -405,13 +466,15 @@ class ActionAjax extends Action
         $iValueOld = $iValue;
         $iVoteType = 0; //0 - при добавлении нового голоса, 1 - при его изменении, 2 - при отмене
         $iCountVote = 1;
-        if ($oTopicCommentVote = LS::Make(ModuleVote::class)->GetVote($oComment->getId(), 'comment', $this->oUserCurrent->getId())) {
+        if ($oTopicCommentVote =
+            LS::Make(ModuleVote::class)->GetVote($oComment->getId(), 'comment', $this->oUserCurrent->getId())
+        ) {
             if ($iValue == $oTopicCommentVote->getDirection()) {
                 $iValue -= 2 * $iValue;
                 $iValueOld = 0;
                 $iVoteType = 2;
                 $iCountVote = -1;
-            } else if ($oTopicCommentVote->getDirection() != 0){
+            } elseif ($oTopicCommentVote->getDirection() != 0) {
                 $iValue += $iValue;
                 $iVoteType = 1;
                 $iCountVote = 0;
@@ -425,15 +488,31 @@ class ActionAjax extends Action
         $oTopicCommentVote->setVoterId($this->oUserCurrent->getId());
         $oTopicCommentVote->setDirection($iValueOld);
         $oTopicCommentVote->setDate(date("Y-m-d H:i:s"));
-        $iVal = (float)LS::Make(ModuleRating::class)->VoteComment($this->oUserCurrent, $oComment, $iValue, $iValueOld, $iCountVote, $iVoteType);
+        $iVal = (float)LS::Make(ModuleRating::class)->VoteComment(
+            $this->oUserCurrent,
+            $oComment,
+            $iValue,
+            $iValueOld,
+            $iCountVote,
+            $iVoteType
+        );
         $oTopicCommentVote->setValue($iVal);
 
-        if (LS::Make(ModuleVote::class)->AddVote($oTopicCommentVote) and LS::Make(ModuleComment::class)->UpdateComment($oComment)) {
+        if (LS::Make(ModuleVote::class)->AddVote($oTopicCommentVote) and LS::Make(ModuleComment::class)->UpdateComment(
+                $oComment
+            )
+        ) {
             if ($iValueOld == 0) {
                 LS::Make(ModuleVote::class)->DeleteVote($oComment->getId(), 'comment', $this->oUserCurrent->getId());
-                LS::Make(ModuleMessage::class)->AddNoticeSingle(LS::Make(ModuleLang::class)->Get('comment_vote_deleted'), LS::Make(ModuleLang::class)->Get('attention'));
+                LS::Make(ModuleMessage::class)->AddNoticeSingle(
+                    LS::Make(ModuleLang::class)->Get('comment_vote_deleted'),
+                    LS::Make(ModuleLang::class)->Get('attention')
+                );
             } else {
-                LS::Make(ModuleMessage::class)->AddNoticeSingle(LS::Make(ModuleLang::class)->Get('comment_vote_ok'), LS::Make(ModuleLang::class)->Get('attention'));
+                LS::Make(ModuleMessage::class)->AddNoticeSingle(
+                    LS::Make(ModuleLang::class)->Get('comment_vote_ok'),
+                    LS::Make(ModuleLang::class)->Get('attention')
+                );
             }
             $this->viewer->AssignAjax('iRating', $oComment->getRating());
             $this->viewer->AssignAjax('iCountVote', $oComment->getCountVote());
@@ -441,7 +520,11 @@ class ActionAjax extends Action
              * Добавляем событие в ленту
              */
         } else {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('comment_vote_error'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('comment_vote_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
     }
@@ -457,7 +540,11 @@ class ActionAjax extends Action
          * Пользователь авторизован?
          */
         if (!$this->oUserCurrent) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('need_authorization') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('need_authorization'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
@@ -465,7 +552,11 @@ class ActionAjax extends Action
          * Топик существует?
          */
         if (!($oTopic = LS::Make(ModuleTopic::class)->GetTopicById(getRequestStr('idTopic', null, 'post')))) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
@@ -473,7 +564,11 @@ class ActionAjax extends Action
          * Голосует автор топика?
          */
         if ($oTopic->getUserId() == $this->oUserCurrent->getId()) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_vote_error_self') , LS::Make(ModuleLang::class)->Get('attention'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('topic_vote_error_self'),
+                LS::Make(ModuleLang::class)->Get('attention')
+            );
+
             return;
         }
 
@@ -481,7 +576,11 @@ class ActionAjax extends Action
          * Время голосования истекло?
          */
         if (strtotime($oTopic->getDateAdd()) <= time() - Config::Get('acl.vote.topic.limit_time')) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_vote_error_time') , LS::Make(ModuleLang::class)->Get('attention'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('topic_vote_error_time'),
+                LS::Make(ModuleLang::class)->Get('attention')
+            );
+
             return;
         }
 
@@ -489,12 +588,20 @@ class ActionAjax extends Action
          * Как проголосовал пользователь
          */
         $iValue = getRequestStr('value', null, 'post');
-        if (!in_array($iValue, array(
-            '1',
-            '-1',
-            '0'
-        ))) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('attention'));
+        if (!in_array(
+            $iValue,
+            [
+                '1',
+                '-1',
+                '0'
+            ]
+        )
+        ) {
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('attention')
+            );
+
             return;
         }
 
@@ -502,7 +609,11 @@ class ActionAjax extends Action
          * Права на голосование
          */
         if (!LS::Make(ModuleACL::class)->CanVoteTopic($this->oUserCurrent, $oTopic) and $iValue) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('comment_vote_error') , LS::Make(ModuleLang::class)->Get('attention'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('comment_vote_error'),
+                LS::Make(ModuleLang::class)->Get('attention')
+            );
+
             return;
         }
 
@@ -512,13 +623,15 @@ class ActionAjax extends Action
         $iValueOld = $iValue;
         $iCountVote = 1;
         $iVoteType = 0; //0 - при добавлении нового голоса, 1 - при его изменении, 2 - при отмене
-        if ($oTopicVote = LS::Make(ModuleVote::class)->GetVote($oTopic->getId() , 'topic', $this->oUserCurrent->getId())) {
+        if ($oTopicVote =
+            LS::Make(ModuleVote::class)->GetVote($oTopic->getId(), 'topic', $this->oUserCurrent->getId())
+        ) {
             if ($iValue == $oTopicVote->getDirection()) {
                 $iValue -= 2 * $iValue;
                 $iValueOld = 0;
                 $iVoteType = 2;
                 $iCountVote = -1;
-            } else if ($oTopicVote->getDirection() != 0){
+            } elseif ($oTopicVote->getDirection() != 0) {
                 $iValue += $iValue;
                 $iVoteType = 1;
                 $iCountVote = 0;
@@ -532,15 +645,20 @@ class ActionAjax extends Action
         $oTopicVote->setVoterId($this->oUserCurrent->getId());
         $oTopicVote->setDirection($iValueOld);
         $oTopicVote->setDate(date("Y-m-d H:i:s"));
-        $iVal = (float)LS::Make(ModuleRating::class)->VoteTopic($this->oUserCurrent, $oTopic, $iValue, $iValueOld, $iCountVote, $iVoteType);
+        $iVal = (float)LS::Make(ModuleRating::class)->VoteTopic(
+            $this->oUserCurrent,
+            $oTopic,
+            $iValue,
+            $iValueOld,
+            $iCountVote,
+            $iVoteType
+        );
         $oTopicVote->setValue($iVal);
         if ($iValue == 1) {
             $oTopic->setCountVoteUp($oTopic->getCountVoteUp() + 1);
-        }
-        elseif ($iValue == - 1) {
+        } elseif ($iValue == -1) {
             $oTopic->setCountVoteDown($oTopic->getCountVoteDown() + 1);
-        }
-        elseif ($iValue == 0) {
+        } elseif ($iValue == 0) {
             $oTopic->setCountVoteAbstain($oTopic->getCountVoteAbstain() + 1);
         }
 
@@ -548,13 +666,21 @@ class ActionAjax extends Action
             if ($iValue) {
                 if ($iValueOld == 0) {
                     LS::Make(ModuleVote::class)->DeleteVote($oTopic->getId(), 'topic', $this->oUserCurrent->getId());
-                    LS::Make(ModuleMessage::class)->AddNoticeSingle(LS::Make(ModuleLang::class)->Get('topic_vote_deleted'), LS::Make(ModuleLang::class)->Get('attention'));
+                    LS::Make(ModuleMessage::class)->AddNoticeSingle(
+                        LS::Make(ModuleLang::class)->Get('topic_vote_deleted'),
+                        LS::Make(ModuleLang::class)->Get('attention')
+                    );
                 } else {
-                    LS::Make(ModuleMessage::class)->AddNoticeSingle(LS::Make(ModuleLang::class)->Get('topic_vote_ok') , LS::Make(ModuleLang::class)->Get('attention'));
+                    LS::Make(ModuleMessage::class)->AddNoticeSingle(
+                        LS::Make(ModuleLang::class)->Get('topic_vote_ok'),
+                        LS::Make(ModuleLang::class)->Get('attention')
+                    );
                 }
-            }
-            else {
-                LS::Make(ModuleMessage::class)->AddNoticeSingle(LS::Make(ModuleLang::class)->Get('topic_vote_ok_abstain') , LS::Make(ModuleLang::class)->Get('attention'));
+            } else {
+                LS::Make(ModuleMessage::class)->AddNoticeSingle(
+                    LS::Make(ModuleLang::class)->Get('topic_vote_ok_abstain'),
+                    LS::Make(ModuleLang::class)->Get('attention')
+                );
             }
 
             $this->viewer->AssignAjax('iRating', $oTopic->getRating());
@@ -562,9 +688,12 @@ class ActionAjax extends Action
             /**
              * Добавляем событие в ленту
              */
-        }
-        else {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('error'));
+        } else {
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
     }
@@ -580,7 +709,11 @@ class ActionAjax extends Action
          * Пользователь авторизован?
          */
         if (!$this->oUserCurrent) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('need_authorization') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('need_authorization'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
@@ -588,7 +721,11 @@ class ActionAjax extends Action
          * Блог существует?
          */
         if (!($oBlog = LS::Make(ModuleBlog::class)->GetBlogById(getRequestStr('idBlog', null, 'post')))) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
@@ -596,7 +733,11 @@ class ActionAjax extends Action
          * Голосует за свой блог?
          */
         if ($oBlog->getOwnerId() == $this->oUserCurrent->getId()) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('blog_vote_error_self') , LS::Make(ModuleLang::class)->Get('attention'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('blog_vote_error_self'),
+                LS::Make(ModuleLang::class)->Get('attention')
+            );
+
             return;
         }
 
@@ -605,13 +746,21 @@ class ActionAjax extends Action
          */
         switch (LS::Make(ModuleACL::class)->CanVoteBlog($this->oUserCurrent, $oBlog)) {
             case ModuleACL::CAN_VOTE_BLOG_ERROR_CLOSE:
-                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('blog_vote_error_close') , LS::Make(ModuleLang::class)->Get('attention'));
+                LS::Make(ModuleMessage::class)->AddErrorSingle(
+                    LS::Make(ModuleLang::class)->Get('blog_vote_error_close'),
+                    LS::Make(ModuleLang::class)->Get('attention')
+                );
+
                 return;
                 break;
 
             default:
             case ModuleACL::CAN_VOTE_BLOG_FALSE:
-                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('blog_vote_error_acl') , LS::Make(ModuleLang::class)->Get('attention'));
+                LS::Make(ModuleMessage::class)->AddErrorSingle(
+                    LS::Make(ModuleLang::class)->Get('blog_vote_error_acl'),
+                    LS::Make(ModuleLang::class)->Get('attention')
+                );
+
                 return;
                 break;
         }
@@ -622,13 +771,20 @@ class ActionAjax extends Action
          */
         /** @noinspection PhpUnreachableStatementInspection */
         $iValue = getRequestStr('value', null, 'post');
-        if (in_array($iValue, array(
-            '1',
-            '-1'
-        ))) {
-        }
-        else {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('attention'));
+        if (in_array(
+            $iValue,
+            [
+                '1',
+                '-1'
+            ]
+        )
+        ) {
+        } else {
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('attention')
+            );
+
             return;
         }
 
@@ -636,11 +792,11 @@ class ActionAjax extends Action
          * Голосуем
          */
         $iValueOld = $iValue;
-        if ($oBlogVote = LS::Make(ModuleVote::class)->GetVote($oBlog->getId() , 'blog', $this->oUserCurrent->getId())) {
+        if ($oBlogVote = LS::Make(ModuleVote::class)->GetVote($oBlog->getId(), 'blog', $this->oUserCurrent->getId())) {
             if ($iValue == $oBlogVote->getDirection()) {
                 $iValue -= 2 * $iValue;
                 $iValueOld = 0;
-            } else if ($oBlogVote->getDirection() != 0){
+            } elseif ($oBlogVote->getDirection() != 0) {
                 $iValue += $iValue;
             }
             LS::Make(ModuleVote::class)->DeleteVote($oBlog->getId(), 'comment', $this->oUserCurrent->getId());
@@ -657,13 +813,19 @@ class ActionAjax extends Action
         if (LS::Make(ModuleVote::class)->AddVote($oBlogVote) and LS::Make(ModuleBlog::class)->UpdateBlog($oBlog)) {
             $this->viewer->AssignAjax('iCountVote', $oBlog->getCountVote());
             $this->viewer->AssignAjax('iRating', $oBlog->getRating());
-            LS::Make(ModuleMessage::class)->AddNoticeSingle(LS::Make(ModuleLang::class)->Get('blog_vote_ok') , LS::Make(ModuleLang::class)->Get('attention'));
+            LS::Make(ModuleMessage::class)->AddNoticeSingle(
+                LS::Make(ModuleLang::class)->Get('blog_vote_ok'),
+                LS::Make(ModuleLang::class)->Get('attention')
+            );
             /**
              * Добавляем событие в ленту
              */
-        }
-        else {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('attention'));
+        } else {
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('attention')
+            );
+
             return;
         }
     }
@@ -679,7 +841,11 @@ class ActionAjax extends Action
          * Пользователь авторизован?
          */
         if (!$this->oUserCurrent) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('need_authorization') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('need_authorization'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
@@ -687,7 +853,11 @@ class ActionAjax extends Action
          * Пользователь существует?
          */
         if (!($oUser = $this->user->GetUserById(getRequestStr('idUser', null, 'post')))) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
@@ -695,7 +865,11 @@ class ActionAjax extends Action
          * Голосует за себя?
          */
         if ($oUser->getId() == $this->oUserCurrent->getId()) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('user_vote_error_self') , LS::Make(ModuleLang::class)->Get('attention'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('user_vote_error_self'),
+                LS::Make(ModuleLang::class)->Get('attention')
+            );
+
             return;
         }
 
@@ -703,7 +877,11 @@ class ActionAjax extends Action
          * Имеет право на голосование?
          */
         if (!LS::Make(ModuleACL::class)->CanVoteUser($this->oUserCurrent, $oUser)) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('user_vote_error_acl') , LS::Make(ModuleLang::class)->Get('attention'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('user_vote_error_acl'),
+                LS::Make(ModuleLang::class)->Get('attention')
+            );
+
             return;
         }
 
@@ -711,23 +889,31 @@ class ActionAjax extends Action
          * Как проголосовал
          */
         $iValue = getRequestStr('value', null, 'post');
-        if (!in_array($iValue, array(
-            '1',
-            '-1'
-        ))) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('attention'));
+        if (!in_array(
+            $iValue,
+            [
+                '1',
+                '-1'
+            ]
+        )
+        ) {
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('attention')
+            );
+
             return;
         }
 
         $iValueOld = $iValue;
-        if ($oUserVote = LS::Make(ModuleVote::class)->GetVote($oUser->getId() , 'user', $this->oUserCurrent->getId())) {
+        if ($oUserVote = LS::Make(ModuleVote::class)->GetVote($oUser->getId(), 'user', $this->oUserCurrent->getId())) {
             if ($iValue == $oUserVote->getDirection()) {
                 $iValue -= 2 * $iValue;
                 $iValueOld = 0;
-            } else if ($oUserVote->getDirection() != 0){
+            } elseif ($oUserVote->getDirection() != 0) {
                 $iValue += $iValue;
             }
-            LS::Make(ModuleVote::class)->DeleteVote($oUser->getId() , 'user', $this->oUserCurrent->getId());
+            LS::Make(ModuleVote::class)->DeleteVote($oUser->getId(), 'user', $this->oUserCurrent->getId());
         }
 
         /**
@@ -749,10 +935,16 @@ class ActionAjax extends Action
         }
         if (LS::Make(ModuleVote::class)->AddVote($oUserVote) and $this->user->Update($oUser)) {
             if ($iValueOld == 0) {
-                LS::Make(ModuleVote::class)->DeleteVote($oUser->getId() , 'user', $this->oUserCurrent->getId());
-                LS::Make(ModuleMessage::class)->AddNoticeSingle(LS::Make(ModuleLang::class)->Get('user_vote_deleted'), LS::Make(ModuleLang::class)->Get('attention'));
+                LS::Make(ModuleVote::class)->DeleteVote($oUser->getId(), 'user', $this->oUserCurrent->getId());
+                LS::Make(ModuleMessage::class)->AddNoticeSingle(
+                    LS::Make(ModuleLang::class)->Get('user_vote_deleted'),
+                    LS::Make(ModuleLang::class)->Get('attention')
+                );
             } else {
-                LS::Make(ModuleMessage::class)->AddNoticeSingle(LS::Make(ModuleLang::class)->Get('user_vote_ok'), LS::Make(ModuleLang::class)->Get('attention'));
+                LS::Make(ModuleMessage::class)->AddNoticeSingle(
+                    LS::Make(ModuleLang::class)->Get('user_vote_ok'),
+                    LS::Make(ModuleLang::class)->Get('attention')
+                );
             }
             $this->viewer->AssignAjax('iRating', $oUser->getRating());
             $this->viewer->AssignAjax('iSkill', $oUser->getSkill());
@@ -760,9 +952,12 @@ class ActionAjax extends Action
             /**
              * Добавляем событие в ленту
              */
-        }
-        else {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('error'));
+        } else {
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
     }
@@ -778,7 +973,11 @@ class ActionAjax extends Action
          * Пользователь авторизован?
          */
         if (!$this->oUserCurrent) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('need_authorization') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('need_authorization'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
@@ -791,7 +990,11 @@ class ActionAjax extends Action
          * Топик существует?
          */
         if (!($oTopic = LS::Make(ModuleTopic::class)->GetTopicById($idTopic))) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
@@ -799,15 +1002,25 @@ class ActionAjax extends Action
          * Тип топика - опрос?
          */
         if ($oTopic->getType() != 'question') {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
         /**
          * Уже голосовал?
          */
-        if ($oTopicQuestionVote = LS::Make(ModuleTopic::class)->GetTopicQuestionVote($oTopic->getId() , $this->oUserCurrent->getId())) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_question_vote_already') , LS::Make(ModuleLang::class)->Get('error'));
+        if ($oTopicQuestionVote =
+            LS::Make(ModuleTopic::class)->GetTopicQuestionVote($oTopic->getId(), $this->oUserCurrent->getId())
+        ) {
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('topic_question_vote_already'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
@@ -815,15 +1028,18 @@ class ActionAjax extends Action
          * Вариант ответа
          */
         $aAnswer = $oTopic->getQuestionAnswers();
-        if (!isset($aAnswer[$idAnswer]) and $idAnswer != - 1) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('error'));
+        if (!isset($aAnswer[$idAnswer]) and $idAnswer != -1) {
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
-        if ($idAnswer == - 1) {
+        if ($idAnswer == -1) {
             $oTopic->setQuestionCountVoteAbstain($oTopic->getQuestionCountVoteAbstain() + 1);
-        }
-        else {
+        } else {
             $oTopic->increaseQuestionAnswerVote($idAnswer);
         }
 
@@ -835,14 +1051,22 @@ class ActionAjax extends Action
         $oTopicQuestionVote->setTopicId($oTopic->getId());
         $oTopicQuestionVote->setVoterId($this->oUserCurrent->getId());
         $oTopicQuestionVote->setAnswer($idAnswer);
-        if (LS::Make(ModuleTopic::class)->AddTopicQuestionVote($oTopicQuestionVote) and LS::Make(ModuleTopic::class)->updateTopic($oTopic)) {
-            LS::Make(ModuleMessage::class)->AddNoticeSingle(LS::Make(ModuleLang::class)->Get('topic_question_vote_ok') , LS::Make(ModuleLang::class)->Get('attention'));
+        if (LS::Make(ModuleTopic::class)->AddTopicQuestionVote($oTopicQuestionVote) and LS::Make(ModuleTopic::class)
+                ->updateTopic($oTopic)
+        ) {
+            LS::Make(ModuleMessage::class)->AddNoticeSingle(
+                LS::Make(ModuleLang::class)->Get('topic_question_vote_ok'),
+                LS::Make(ModuleLang::class)->Get('attention')
+            );
             $oViewer = $this->viewer->GetLocalViewer();
             $oViewer->Assign('oTopic', $oTopic);
             $this->viewer->AssignAjax('sText', $oViewer->Fetch("question_result.tpl"));
-        }
-        else {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('error'));
+        } else {
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
     }
@@ -858,47 +1082,60 @@ class ActionAjax extends Action
          * Пользователь авторизован?
          */
         if (!$this->oUserCurrent) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('need_authorization') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('need_authorization'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
         /**
          * Объект уже должен быть в избранном
          */
-        if ($oFavourite = LS::Make(ModuleFavourite::class)->GetFavourite(getRequestStr('target_id') , getRequestStr('target_type') , $this->oUserCurrent->getId())) {
+        if ($oFavourite = LS::Make(ModuleFavourite::class)->GetFavourite(
+            getRequestStr('target_id'),
+            getRequestStr('target_type'),
+            $this->oUserCurrent->getId()
+        )
+        ) {
             /**
              * Обрабатываем теги
              */
-            $aTags = explode(',', trim(getRequestStr('tags') , "\r\n\t\0\x0B ."));
-            $aTagsNew = array();
-            $aTagsNewLow = array();
-            $aTagsReturn = array();
-            foreach($aTags as $sTag) {
+            $aTags = explode(',', trim(getRequestStr('tags'), "\r\n\t\0\x0B ."));
+            $aTagsNew = [];
+            $aTagsNewLow = [];
+            $aTagsReturn = [];
+            foreach ($aTags as $sTag) {
                 $sTag = trim($sTag);
-                if (func_check($sTag, 'text', 2, 50) and !in_array(mb_strtolower($sTag, 'UTF-8') , $aTagsNewLow)) {
+                if (func_check($sTag, 'text', 2, 50) and !in_array(mb_strtolower($sTag, 'UTF-8'), $aTagsNewLow)) {
                     $sTagEsc = htmlspecialchars($sTag);
                     $aTagsNew[] = $sTagEsc;
-                    $aTagsReturn[] = array(
+                    $aTagsReturn[] = [
                         'tag' => $sTagEsc,
-                        'url' => $this->oUserCurrent->getUserWebPath() . 'favourites/' . $oFavourite->getTargetType() . 's/tag/' . $sTagEsc . '/', // костыль для URL с множественным числом
-                    );
+                        'url' => $this->oUserCurrent->getUserWebPath().'favourites/'.$oFavourite->getTargetType()
+                            .'s/tag/'.$sTagEsc.'/', // костыль для URL с множественным числом
+                    ];
                     $aTagsNewLow[] = mb_strtolower($sTag, 'UTF-8');
                 }
             }
 
             if (!count($aTagsNew)) {
                 $oFavourite->setTags('');
-            }
-            else {
+            } else {
                 $oFavourite->setTags(join(',', $aTagsNew));
             }
 
             $this->viewer->AssignAjax('aTags', $aTagsReturn);
             LS::Make(ModuleFavourite::class)->UpdateFavourite($oFavourite);
+
             return;
         }
 
-        LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('error'));
+        LS::Make(ModuleMessage::class)->AddErrorSingle(
+            LS::Make(ModuleLang::class)->Get('system_error'),
+            LS::Make(ModuleLang::class)->Get('error')
+        );
     }
 
     /**
@@ -912,7 +1149,11 @@ class ActionAjax extends Action
          * Пользователь авторизован?
          */
         if (!$this->oUserCurrent) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('need_authorization') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('need_authorization'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
@@ -920,11 +1161,19 @@ class ActionAjax extends Action
          * Можно только добавить или удалить из избранного
          */
         $iType = getRequestStr('type', null, 'post');
-        if (!in_array($iType, array(
-            '1',
-            '0'
-        ))) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('error'));
+        if (!in_array(
+            $iType,
+            [
+                '1',
+                '0'
+            ]
+        )
+        ) {
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
@@ -932,7 +1181,11 @@ class ActionAjax extends Action
          * Топик существует?
          */
         if (!($oTopic = LS::Make(ModuleTopic::class)->GetTopicById(getRequestStr('idTopic', null, 'post')))) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
@@ -940,52 +1193,83 @@ class ActionAjax extends Action
          * Пропускаем топик из черновиков
          */
         if (!$oTopic->getPublish()) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('error_favorite_topic_is_draft') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('error_favorite_topic_is_draft'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
         /**
          * Топик уже в избранном?
          */
-        $oFavouriteTopic = LS::Make(ModuleTopic::class)->GetFavouriteTopic($oTopic->getId() , $this->oUserCurrent->getId());
+        $oFavouriteTopic =
+            LS::Make(ModuleTopic::class)->GetFavouriteTopic($oTopic->getId(), $this->oUserCurrent->getId());
         if (!$oFavouriteTopic and $iType) {
-            $oFavouriteTopicNew = new EntityFavourite(array(
-                'target_id' => $oTopic->getId() ,
-                'user_id' => $this->oUserCurrent->getId() ,
-                'target_type' => 'topic',
-                'target_publish' => $oTopic->getPublish()
-            ));
+            $oFavouriteTopicNew = new EntityFavourite(
+                [
+                    'target_id'      => $oTopic->getId(),
+                    'user_id'        => $this->oUserCurrent->getId(),
+                    'target_type'    => 'topic',
+                    'target_publish' => $oTopic->getPublish()
+                ]
+            );
             $oTopic->setCountFavourite($oTopic->getCountFavourite() + 1);
-            if (LS::Make(ModuleTopic::class)->AddFavouriteTopic($oFavouriteTopicNew) and LS::Make(ModuleTopic::class)->UpdateTopic($oTopic)) {
-                LS::Make(ModuleMessage::class)->AddNoticeSingle(LS::Make(ModuleLang::class)->Get('topic_favourite_add_ok') , LS::Make(ModuleLang::class)->Get('attention'));
+            if (LS::Make(ModuleTopic::class)->AddFavouriteTopic($oFavouriteTopicNew) and LS::Make(ModuleTopic::class)
+                    ->UpdateTopic($oTopic)
+            ) {
+                LS::Make(ModuleMessage::class)->AddNoticeSingle(
+                    LS::Make(ModuleLang::class)->Get('topic_favourite_add_ok'),
+                    LS::Make(ModuleLang::class)->Get('attention')
+                );
                 $this->viewer->AssignAjax('bState', true);
                 $this->viewer->AssignAjax('iCount', $oTopic->getCountFavourite());
-            }
-            else {
-                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('error'));
+            } else {
+                LS::Make(ModuleMessage::class)->AddErrorSingle(
+                    LS::Make(ModuleLang::class)->Get('system_error'),
+                    LS::Make(ModuleLang::class)->Get('error')
+                );
+
                 return;
             }
         }
 
         if (!$oFavouriteTopic and !$iType) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_favourite_add_no') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('topic_favourite_add_no'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
         if ($oFavouriteTopic and $iType) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_favourite_add_already') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('topic_favourite_add_already'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
         if ($oFavouriteTopic and !$iType) {
             $oTopic->setCountFavourite($oTopic->getCountFavourite() - 1);
-            if (LS::Make(ModuleTopic::class)->DeleteFavouriteTopic($oFavouriteTopic) and LS::Make(ModuleTopic::class)->UpdateTopic($oTopic)) {
-                LS::Make(ModuleMessage::class)->AddNoticeSingle(LS::Make(ModuleLang::class)->Get('topic_favourite_del_ok') , LS::Make(ModuleLang::class)->Get('attention'));
+            if (LS::Make(ModuleTopic::class)->DeleteFavouriteTopic($oFavouriteTopic) and LS::Make(ModuleTopic::class)
+                    ->UpdateTopic($oTopic)
+            ) {
+                LS::Make(ModuleMessage::class)->AddNoticeSingle(
+                    LS::Make(ModuleLang::class)->Get('topic_favourite_del_ok'),
+                    LS::Make(ModuleLang::class)->Get('attention')
+                );
                 $this->viewer->AssignAjax('bState', false);
                 $this->viewer->AssignAjax('iCount', $oTopic->getCountFavourite());
-            }
-            else {
-                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('error'));
+            } else {
+                LS::Make(ModuleMessage::class)->AddErrorSingle(
+                    LS::Make(ModuleLang::class)->Get('system_error'),
+                    LS::Make(ModuleLang::class)->Get('error')
+                );
+
                 return;
             }
         }
@@ -1002,7 +1286,11 @@ class ActionAjax extends Action
          * Пользователь авторизован?
          */
         if (!$this->oUserCurrent) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('need_authorization') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('need_authorization'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
@@ -1010,11 +1298,19 @@ class ActionAjax extends Action
          * Можно только добавить или удалить из избранного
          */
         $iType = getRequestStr('type', null, 'post');
-        if (!in_array($iType, array(
-            '1',
-            '0'
-        ))) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('error'));
+        if (!in_array(
+            $iType,
+            [
+                '1',
+                '0'
+            ]
+        )
+        ) {
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
@@ -1022,7 +1318,11 @@ class ActionAjax extends Action
          * Комментарий существует?
          */
         if (!($oComment = LS::Make(ModuleComment::class)->GetCommentById(getRequestStr('idComment', null, 'post')))) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
@@ -1030,54 +1330,85 @@ class ActionAjax extends Action
          * Запрет на добавление удаленного комментария
          */
         if ($iType === '1' and $oComment->getDelete()) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
         /**
          * Комментарий уже в избранном?
          */
-        $oFavouriteComment = LS::Make(ModuleComment::class)->GetFavouriteComment($oComment->getId() , $this->oUserCurrent->getId());
+        $oFavouriteComment =
+            LS::Make(ModuleComment::class)->GetFavouriteComment($oComment->getId(), $this->oUserCurrent->getId());
         if (!$oFavouriteComment and $iType) {
             $oFavouriteCommentNew = new EntityFavourite(
-                array(
-                    'target_id' => $oComment->getId() ,
-                    'target_type' => 'comment',
-                    'user_id' => $this->oUserCurrent->getId() ,
+                [
+                    'target_id'      => $oComment->getId(),
+                    'target_type'    => 'comment',
+                    'user_id'        => $this->oUserCurrent->getId(),
                     'target_publish' => $oComment->getPublish()
-                )
+                ]
             );
             $oComment->setCountFavourite($oComment->getCountFavourite() + 1);
-            if (LS::Make(ModuleComment::class)->AddFavouriteComment($oFavouriteCommentNew) and LS::Make(ModuleComment::class)->UpdateComment($oComment)) {
-                LS::Make(ModuleMessage::class)->AddNoticeSingle(LS::Make(ModuleLang::class)->Get('comment_favourite_add_ok') , LS::Make(ModuleLang::class)->Get('attention'));
+            if (LS::Make(ModuleComment::class)->AddFavouriteComment($oFavouriteCommentNew) and LS::Make(
+                    ModuleComment::class
+                )->UpdateComment($oComment)
+            ) {
+                LS::Make(ModuleMessage::class)->AddNoticeSingle(
+                    LS::Make(ModuleLang::class)->Get('comment_favourite_add_ok'),
+                    LS::Make(ModuleLang::class)->Get('attention')
+                );
                 $this->viewer->AssignAjax('bState', true);
                 $this->viewer->AssignAjax('iCount', $oComment->getCountFavourite());
-            }
-            else {
-                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('error'));
+            } else {
+                LS::Make(ModuleMessage::class)->AddErrorSingle(
+                    LS::Make(ModuleLang::class)->Get('system_error'),
+                    LS::Make(ModuleLang::class)->Get('error')
+                );
+
                 return;
             }
         }
 
         if (!$oFavouriteComment and !$iType) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('comment_favourite_add_no') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('comment_favourite_add_no'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
         if ($oFavouriteComment and $iType) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('comment_favourite_add_already') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('comment_favourite_add_already'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
         if ($oFavouriteComment and !$iType) {
             $oComment->setCountFavourite($oComment->getCountFavourite() - 1);
-            if (LS::Make(ModuleComment::class)->DeleteFavouriteComment($oFavouriteComment) and LS::Make(ModuleComment::class)->UpdateComment($oComment)) {
-                LS::Make(ModuleMessage::class)->AddNoticeSingle(LS::Make(ModuleLang::class)->Get('comment_favourite_del_ok') , LS::Make(ModuleLang::class)->Get('attention'));
+            if (LS::Make(ModuleComment::class)->DeleteFavouriteComment($oFavouriteComment) and LS::Make(
+                    ModuleComment::class
+                )->UpdateComment($oComment)
+            ) {
+                LS::Make(ModuleMessage::class)->AddNoticeSingle(
+                    LS::Make(ModuleLang::class)->Get('comment_favourite_del_ok'),
+                    LS::Make(ModuleLang::class)->Get('attention')
+                );
                 $this->viewer->AssignAjax('bState', false);
                 $this->viewer->AssignAjax('iCount', $oComment->getCountFavourite());
-            }
-            else {
-                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('error'));
+            } else {
+                LS::Make(ModuleMessage::class)->AddErrorSingle(
+                    LS::Make(ModuleLang::class)->Get('system_error'),
+                    LS::Make(ModuleLang::class)->Get('error')
+                );
+
                 return;
             }
         }
@@ -1094,7 +1425,11 @@ class ActionAjax extends Action
          * Пользователь авторизован?
          */
         if (!$this->oUserCurrent) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('need_authorization') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('need_authorization'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
@@ -1102,60 +1437,94 @@ class ActionAjax extends Action
          * Можно только добавить или удалить из избранного
          */
         $iType = getRequestStr('type', null, 'post');
-        if (!in_array($iType, array(
-            '1',
-            '0'
-        ))) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('error'));
+        if (!in_array(
+            $iType,
+            [
+                '1',
+                '0'
+            ]
+        )
+        ) {
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
         /**
-         *	Сообщение существует?
+         *    Сообщение существует?
          */
         if (!($oTalk = LS::Make(ModuleTalk::class)->GetTalkById(getRequestStr('idTalk', null, 'post')))) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
         /**
          * Сообщение уже в избранном?
          */
-        $oFavouriteTalk = LS::Make(ModuleTalk::class)->GetFavouriteTalk($oTalk->getId() , $this->oUserCurrent->getId());
+        $oFavouriteTalk = LS::Make(ModuleTalk::class)->GetFavouriteTalk($oTalk->getId(), $this->oUserCurrent->getId());
         if (!$oFavouriteTalk and $iType) {
-            $oFavouriteTalkNew = new EntityFavourite(array(
-                'target_id' => $oTalk->getId() ,
-                'target_type' => 'talk',
-                'user_id' => $this->oUserCurrent->getId() ,
-                'target_publish' => '1'
-            ));
+            $oFavouriteTalkNew = new EntityFavourite(
+                [
+                    'target_id'      => $oTalk->getId(),
+                    'target_type'    => 'talk',
+                    'user_id'        => $this->oUserCurrent->getId(),
+                    'target_publish' => '1'
+                ]
+            );
             if (LS::Make(ModuleTalk::class)->AddFavouriteTalk($oFavouriteTalkNew)) {
-                LS::Make(ModuleMessage::class)->AddNoticeSingle(LS::Make(ModuleLang::class)->Get('talk_favourite_add_ok') , LS::Make(ModuleLang::class)->Get('attention'));
+                LS::Make(ModuleMessage::class)->AddNoticeSingle(
+                    LS::Make(ModuleLang::class)->Get('talk_favourite_add_ok'),
+                    LS::Make(ModuleLang::class)->Get('attention')
+                );
                 $this->viewer->AssignAjax('bState', true);
-            }
-            else {
-                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('error'));
+            } else {
+                LS::Make(ModuleMessage::class)->AddErrorSingle(
+                    LS::Make(ModuleLang::class)->Get('system_error'),
+                    LS::Make(ModuleLang::class)->Get('error')
+                );
+
                 return;
             }
         }
 
         if (!$oFavouriteTalk and !$iType) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('talk_favourite_add_no') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('talk_favourite_add_no'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
         if ($oFavouriteTalk and $iType) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('talk_favourite_add_already') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('talk_favourite_add_already'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
         if ($oFavouriteTalk and !$iType) {
             if (LS::Make(ModuleTalk::class)->DeleteFavouriteTalk($oFavouriteTalk)) {
-                LS::Make(ModuleMessage::class)->AddNoticeSingle(LS::Make(ModuleLang::class)->Get('talk_favourite_del_ok') , LS::Make(ModuleLang::class)->Get('attention'));
+                LS::Make(ModuleMessage::class)->AddNoticeSingle(
+                    LS::Make(ModuleLang::class)->Get('talk_favourite_del_ok'),
+                    LS::Make(ModuleLang::class)->Get('attention')
+                );
                 $this->viewer->AssignAjax('bState', false);
-            }
-            else {
-                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('error'));
+            } else {
+                LS::Make(ModuleMessage::class)->AddErrorSingle(
+                    LS::Make(ModuleLang::class)->Get('system_error'),
+                    LS::Make(ModuleLang::class)->Get('error')
+                );
+
                 return;
             }
         }
@@ -1174,9 +1543,12 @@ class ActionAjax extends Action
             $oViewer->Assign('aComments', $aComments);
             $sTextResult = $oViewer->Fetch("blocks/block.stream_comment.tpl");
             $this->viewer->AssignAjax('sText', $sTextResult);
-        }
-        else {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('block_stream_comments_no') , LS::Make(ModuleLang::class)->Get('attention'));
+        } else {
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('block_stream_comments_no'),
+                LS::Make(ModuleLang::class)->Get('attention')
+            );
+
             return;
         }
     }
@@ -1194,9 +1566,12 @@ class ActionAjax extends Action
             $oViewer->Assign('oTopics', $oTopics);
             $sTextResult = $oViewer->Fetch("blocks/block.stream_topic.tpl");
             $this->viewer->AssignAjax('sText', $sTextResult);
-        }
-        else {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('block_stream_topics_no') , LS::Make(ModuleLang::class)->Get('attention'));
+        } else {
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('block_stream_topics_no'),
+                LS::Make(ModuleLang::class)->Get('attention')
+            );
+
             return;
         }
     }
@@ -1218,9 +1593,12 @@ class ActionAjax extends Action
             $oViewer->Assign('aBlogs', $aBlogs);
             $sTextResult = $oViewer->Fetch("blocks/block.blogs_top.tpl");
             $this->viewer->AssignAjax('sText', $sTextResult);
-        }
-        else {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('error'));
+        } else {
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
     }
@@ -1237,21 +1615,32 @@ class ActionAjax extends Action
          * Пользователь авторизован?
          */
         if (!$this->oUserCurrent) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('need_authorization') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('need_authorization'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
         /**
          * Получаем список блогов и формируем ответ
          */
-        if ($aBlogs = LS::Make(ModuleBlog::class)->GetBlogsRatingSelf($this->oUserCurrent->getId() , Config::Get('block.blogs.row'))) {
+        if ($aBlogs = LS::Make(ModuleBlog::class)->GetBlogsRatingSelf(
+            $this->oUserCurrent->getId(),
+            Config::Get('block.blogs.row')
+        )
+        ) {
             $oViewer = $this->viewer->GetLocalViewer();
             $oViewer->Assign('aBlogs', $aBlogs);
             $sTextResult = $oViewer->Fetch("blocks/block.blogs_top.tpl");
             $this->viewer->AssignAjax('sText', $sTextResult);
-        }
-        else {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('block_blogs_self_error') , LS::Make(ModuleLang::class)->Get('attention'));
+        } else {
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('block_blogs_self_error'),
+                LS::Make(ModuleLang::class)->Get('attention')
+            );
+
             return;
         }
     }
@@ -1268,21 +1657,32 @@ class ActionAjax extends Action
          * Пользователь авторизован?
          */
         if (!$this->oUserCurrent) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('need_authorization') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('need_authorization'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
         /**
          * Получаем список блогов и формируем ответ
          */
-        if ($aBlogs = LS::Make(ModuleBlog::class)->GetBlogsRatingJoin($this->oUserCurrent->getId() , Config::Get('block.blogs.row'))) {
+        if ($aBlogs = LS::Make(ModuleBlog::class)->GetBlogsRatingJoin(
+            $this->oUserCurrent->getId(),
+            Config::Get('block.blogs.row')
+        )
+        ) {
             $oViewer = $this->viewer->GetLocalViewer();
             $oViewer->Assign('aBlogs', $aBlogs);
             $sTextResult = $oViewer->Fetch("blocks/block.blogs_top.tpl");
             $this->viewer->AssignAjax('sText', $sTextResult);
-        }
-        else {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('block_blogs_join_error') , LS::Make(ModuleLang::class)->Get('attention'));
+        } else {
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('block_blogs_join_error'),
+                LS::Make(ModuleLang::class)->Get('attention')
+            );
+
             return;
         }
     }
@@ -1303,7 +1703,11 @@ class ActionAjax extends Action
          * Пользователь авторизован?
          */
         if (!$this->oUserCurrent) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('need_authorization') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('need_authorization'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
@@ -1311,7 +1715,11 @@ class ActionAjax extends Action
          * Допустимый тип топика?
          */
         if (!LS::Make(ModuleTopic::class)->IsAllowTopicType($sType = getRequestStr('topic_type'))) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('topic_create_type_error') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('topic_create_type_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
@@ -1329,14 +1737,18 @@ class ActionAjax extends Action
         /**
          * Валидируем необходимые поля топика
          */
-        $oTopic->_Validate(array(
-            'topic_title',
-            'topic_text',
-            'topic_tags',
-            'topic_type'
-        ) , false);
+        $oTopic->_Validate(
+            [
+                'topic_title',
+                'topic_text',
+                'topic_tags',
+                'topic_type'
+            ],
+            false
+        );
         if ($oTopic->_hasValidateErrors()) {
             LS::Make(ModuleMessage::class)->AddErrorSingle($oTopic->_getValidateError());
+
             return;
         }
 
@@ -1362,6 +1774,7 @@ class ActionAjax extends Action
          * Передаем результат в ajax ответ
          */
         $this->viewer->AssignAjax('sText', $sTextResult);
+
         return;
     }
 
@@ -1379,33 +1792,41 @@ class ActionAjax extends Action
          */
         if ($bSave) {
             $sTextResult = htmlspecialchars($sText);
-        }
-        else {
-            if (getRequestStr('form_comment_mark')=="on")
+        } else {
+            if (getRequestStr('form_comment_mark') == "on") {
                 $sTextResult = LS::Make(ModuleText::class)->Parser(LS::Make(ModuleText::class)->Mark($sText));
-            else
+            } else {
                 $sTextResult = LS::Make(ModuleText::class)->Parser($sText);
+            }
         }
 
-        $sTextResult = preg_replace_callback('/@(.*?)\((.*?)\)/',
+        $sTextResult = preg_replace_callback(
+            '/@(.*?)\((.*?)\)/',
             function ($matches) {
                 $sLogin = $matches[1];
                 $sNick = $matches[2];
-                $r = "<a href=\"/profile/" . $sLogin . "/\" class=\"ls-user\">&#64;" . $sNick . "</a>";
+                $r = "<a href=\"/profile/".$sLogin."/\" class=\"ls-user\">&#64;".$sNick."</a>";
                 if ($oTargetUser = $this->user->getUserByLogin($sLogin)) {
                     return $r;
                 }
+
                 return $matches[0];
-            }, $sTextResult);
-        $sTextResult = preg_replace_callback('/@([a-zA-Zа-яА-Я0-9-_]+)/',
+            },
+            $sTextResult
+        );
+        $sTextResult = preg_replace_callback(
+            '/@([a-zA-Zа-яА-Я0-9-_]+)/',
             function ($matches) {
                 $sLogin = $matches[1];
-                $r = "<a href=\"/profile/" . $sLogin . "/\" class=\"ls-user\">&#64;" . $sLogin . "</a>";
+                $r = "<a href=\"/profile/".$sLogin."/\" class=\"ls-user\">&#64;".$sLogin."</a>";
                 if ($oTargetUser = $this->user->getUserByLogin($sLogin)) {
                     return $r;
                 }
+
                 return $matches[0];
-            }, $sTextResult);
+            },
+            $sTextResult
+        );
 
         /**
          * Передаем результат в ajax ответ
@@ -1429,7 +1850,11 @@ class ActionAjax extends Action
          * Пользователь авторизован?
          */
         if (!$this->oUserCurrent) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('need_authorization') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('need_authorization'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
@@ -1441,22 +1866,38 @@ class ActionAjax extends Action
              */
             $sFile = LS::Make(ModuleTopic::class)->UploadTopicImageUrl($_REQUEST['img_url'], $this->oUserCurrent);
             switch (true) {
-            case is_string($sFile):
-                break;
+                case is_string($sFile):
+                    break;
 
-            case ($sFile == ModuleImage::UPLOAD_IMAGE_ERROR_READ):
-                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('uploadimg_url_error_read') , LS::Make(ModuleLang::class)->Get('error'));
-                return;
-            case ($sFile == ModuleImage::UPLOAD_IMAGE_ERROR_SIZE):
-                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('uploadimg_url_error_size') , LS::Make(ModuleLang::class)->Get('error'));
-                return;
-            case ($sFile == ModuleImage::UPLOAD_IMAGE_ERROR_TYPE):
-                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('uploadimg_url_error_type') , LS::Make(ModuleLang::class)->Get('error'));
-                return;
-            default:
-            case ($sFile == ModuleImage::UPLOAD_IMAGE_ERROR):
-                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('uploadimg_url_error') , LS::Make(ModuleLang::class)->Get('error'));
-                return;
+                case ($sFile == ModuleImage::UPLOAD_IMAGE_ERROR_READ):
+                    LS::Make(ModuleMessage::class)->AddErrorSingle(
+                        LS::Make(ModuleLang::class)->Get('uploadimg_url_error_read'),
+                        LS::Make(ModuleLang::class)->Get('error')
+                    );
+
+                    return;
+                case ($sFile == ModuleImage::UPLOAD_IMAGE_ERROR_SIZE):
+                    LS::Make(ModuleMessage::class)->AddErrorSingle(
+                        LS::Make(ModuleLang::class)->Get('uploadimg_url_error_size'),
+                        LS::Make(ModuleLang::class)->Get('error')
+                    );
+
+                    return;
+                case ($sFile == ModuleImage::UPLOAD_IMAGE_ERROR_TYPE):
+                    LS::Make(ModuleMessage::class)->AddErrorSingle(
+                        LS::Make(ModuleLang::class)->Get('uploadimg_url_error_type'),
+                        LS::Make(ModuleLang::class)->Get('error')
+                    );
+
+                    return;
+                default:
+                case ($sFile == ModuleImage::UPLOAD_IMAGE_ERROR):
+                    LS::Make(ModuleMessage::class)->AddErrorSingle(
+                        LS::Make(ModuleLang::class)->Get('uploadimg_url_error'),
+                        LS::Make(ModuleLang::class)->Get('error')
+                    );
+
+                    return;
             }
 
             if ($sFile) {
@@ -1468,34 +1909,51 @@ class ActionAjax extends Action
              */
             $sFile = LS::Make(ModuleTopic::class)->UploadTopicImagebase64($_REQUEST['img_base64'], $this->oUserCurrent);
             switch (true) {
-            case is_string($sFile):
-                break;
+                case is_string($sFile):
+                    break;
 
-            case ($sFile == ModuleImage::UPLOAD_IMAGE_ERROR_READ):
-                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('uploadimg_url_error_read') , LS::Make(ModuleLang::class)->Get('error'));
-                return;
-            case ($sFile == ModuleImage::UPLOAD_IMAGE_ERROR_SIZE):
-                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('uploadimg_url_error_size') , LS::Make(ModuleLang::class)->Get('error'));
-                return;
-            case ($sFile == ModuleImage::UPLOAD_IMAGE_ERROR_TYPE):
-                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('uploadimg_url_error_type') , LS::Make(ModuleLang::class)->Get('error'));
-                return;
-            default:
-            case ($sFile == ModuleImage::UPLOAD_IMAGE_ERROR):
-                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('uploadimg_url_error') , LS::Make(ModuleLang::class)->Get('error'));
-                return;
+                case ($sFile == ModuleImage::UPLOAD_IMAGE_ERROR_READ):
+                    LS::Make(ModuleMessage::class)->AddErrorSingle(
+                        LS::Make(ModuleLang::class)->Get('uploadimg_url_error_read'),
+                        LS::Make(ModuleLang::class)->Get('error')
+                    );
+
+                    return;
+                case ($sFile == ModuleImage::UPLOAD_IMAGE_ERROR_SIZE):
+                    LS::Make(ModuleMessage::class)->AddErrorSingle(
+                        LS::Make(ModuleLang::class)->Get('uploadimg_url_error_size'),
+                        LS::Make(ModuleLang::class)->Get('error')
+                    );
+
+                    return;
+                case ($sFile == ModuleImage::UPLOAD_IMAGE_ERROR_TYPE):
+                    LS::Make(ModuleMessage::class)->AddErrorSingle(
+                        LS::Make(ModuleLang::class)->Get('uploadimg_url_error_type'),
+                        LS::Make(ModuleLang::class)->Get('error')
+                    );
+
+                    return;
+                default:
+                case ($sFile == ModuleImage::UPLOAD_IMAGE_ERROR):
+                    LS::Make(ModuleMessage::class)->AddErrorSingle(
+                        LS::Make(ModuleLang::class)->Get('uploadimg_url_error'),
+                        LS::Make(ModuleLang::class)->Get('error')
+                    );
+
+                    return;
             }
 
             if ($sFile) {
                 $sText = LS::Make(ModuleImage::class)->BuildHTML($sFile, $_REQUEST);
             }
         } else {
-            function reArrayFiles(&$file_post) {
-                $file_ary = array();
+            function reArrayFiles(&$file_post)
+            {
+                $file_ary = [];
                 $file_count = count($file_post['name']);
                 $file_keys = array_keys($file_post);
-    
-                for ($i=0; $i<$file_count; $i++) {
+
+                for ($i = 0; $i < $file_count; $i++) {
                     foreach ($file_keys as $key) {
                         $file_ary[$i][$key] = $file_post[$key][$i];
                     }
@@ -1507,14 +1965,18 @@ class ActionAjax extends Action
             $sText = "";
             $aFiles = reArrayFiles($_FILES['img_file']);
 
-            foreach($aFiles as $k => $v) {
+            foreach ($aFiles as $k => $v) {
                 /**
                  * Был выбран файл с компьютера и он успешно зугрузился?
                  */
-                
+
                 if (is_uploaded_file($v['tmp_name'])) {
                     if (!$sFile = LS::Make(ModuleTopic::class)->UploadTopicImageFile($v, $this->oUserCurrent)) {
-                        LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('uploadimg_file_error') , LS::Make(ModuleLang::class)->Get('error'));
+                        LS::Make(ModuleMessage::class)->AddErrorSingle(
+                            LS::Make(ModuleLang::class)->Get('uploadimg_file_error'),
+                            LS::Make(ModuleLang::class)->Get('error')
+                        );
+
                         return;
                     }
 
@@ -1522,11 +1984,11 @@ class ActionAjax extends Action
                      * Если файл успешно загружен, формируем HTML вставки и возвращаем в ajax ответе
                      */
                     if ($sFile) {
-                    	if ($_REQUEST['just_url']) {
-                    		$sText.= $sFile;
-						} else {
-                        	$sText.= LS::Make(ModuleImage::class)->BuildHTML($sFile, $_REQUEST);
-                    	}
+                        if ($_REQUEST['just_url']) {
+                            $sText .= $sFile;
+                        } else {
+                            $sText .= LS::Make(ModuleImage::class)->BuildHTML($sFile, $_REQUEST);
+                        }
                     }
                 }
             } //foreach
@@ -1549,12 +2011,12 @@ class ActionAjax extends Action
             return;
         }
 
-        $aItems = array();
+        $aItems = [];
         /**
          * Формируем список тегов
          */
         $aTags = LS::Make(ModuleTopic::class)->GetTopicTagsByLike($sValue, 10);
-        foreach($aTags as $oTag) {
+        foreach ($aTags as $oTag) {
             $aItems[] = $oTag->getText();
         }
 
@@ -1578,12 +2040,12 @@ class ActionAjax extends Action
             return;
         }
 
-        $aItems = array();
+        $aItems = [];
         /**
          * Формируем список пользователей
          */
         $aUsers = $this->user->GetUsersByLoginLike($sValue, 10);
-        foreach($aUsers as $oUser) {
+        foreach ($aUsers as $oUser) {
             $aItems[] = $oUser->getLogin();
         }
 
@@ -1609,12 +2071,20 @@ class ActionAjax extends Action
         $idComment = getRequestStr('idComment', null, 'post');
         $sDeleteReason = getRequestStr('sDeleteReason', null, 'post');
         if (!($oComment = LS::Make(ModuleComment::class)->GetCommentById($idComment))) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
         if (!LS::Make(ModuleACL::class)->UserCanDeleteComment($this->oUserCurrent, $oComment, 1)) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('not_access'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
@@ -1625,92 +2095,114 @@ class ActionAjax extends Action
         $oComment->setDelete(($oComment->getDelete() + 1) % 2);
         $oComment->setDeleteReason($sDeleteReason);
         $oComment->setDeleteUserId($this->oUserCurrent->getId());
-        LS::Make(ModuleHook::class)->Run('comment_delete_before', array(
-            'oComment' => $oComment
-        ));
+        LS::Make(ModuleHook::class)->Run(
+            'comment_delete_before',
+            [
+                'oComment' => $oComment
+            ]
+        );
         if (!LS::Make(ModuleComment::class)->UpdateCommentStatus($oComment)) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
-        LS::Make(ModuleHook::class)->Run('comment_delete_after', array(
-            'oComment' => $oComment
-        ));
+        LS::Make(ModuleHook::class)->Run(
+            'comment_delete_after',
+            [
+                'oComment' => $oComment
+            ]
+        );
         /**
          * Формируем текст ответа
          */
         if ($bState = (bool)$oComment->getDelete()) {
             $sMsg = LS::Make(ModuleLang::class)->Get('comment_delete_ok');
             $sTextToggle = LS::Make(ModuleLang::class)->Get('comment_repair');
-			$sLogText = $this->oUserCurrent->getLogin()." удалил комментарий ".$oComment->getId();
-			LS::Make(ModuleLogger::class)->Notice($sLogText);
-        }
-        else {
+            $sLogText = $this->oUserCurrent->getLogin()." удалил комментарий ".$oComment->getId();
+            LS::Make(ModuleLogger::class)->Notice($sLogText);
+        } else {
             $sMsg = LS::Make(ModuleLang::class)->Get('comment_repair_ok');
             $sTextToggle = LS::Make(ModuleLang::class)->Get('comment_delete');
-			$sLogText = $this->oUserCurrent->getLogin()." восстановил комментарий ".$oComment->getId();
-			LS::Make(ModuleLogger::class)->Notice($sLogText);
+            $sLogText = $this->oUserCurrent->getLogin()." восстановил комментарий ".$oComment->getId();
+            LS::Make(ModuleLogger::class)->Notice($sLogText);
         }
 
-		/**
-		 * Отправка уведомления пользователям
-		 */
-		$notificationLink = LS::Make(ModuleTopic::class)->GetTopicById($oComment->getTargetId())->getUrl()."#comment".$oComment->getId();
-		if ((bool)$oComment->getDelete()) {
-			$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> удалил ваш <a href='".$notificationLink."'>комментарий</a>\nПричина: ".$oComment->getDeleteReason();
-			$notificationType = 7;
-		} else {
-			$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> восстановил ваш <a href='".$notificationLink."'>комментарий</a>";
-			$notificationType = 8;
-		}
-		$notificationText = "";
-		$notification = new EntityNotification(
-			array(
-				'user_id' => $oComment->getUserId(),
-				'text' => $notificationText,
-				'title' => $notificationTitle,
-				'link' => $notificationLink,
-				'rating' => 0,
-				'notification_type' => $notificationType,
-				'target_type' => 'comment',
-				'target_id' => $oComment->getId(),
-				'sender_user_id' => $this->oUserCurrent->getId(),
-				'group_target_type' => 'topic',
-				'group_target_id' => $oComment->getTargetId()
-			)
-		);
-		if($notificationCreated = LS::Make(ModuleNotification::class)->createNotification($notification)){
-			LS::Make(ModuleNower::class)->PostNotificationWithComment($notificationCreated, $oComment);
-		}
+        /**
+         * Отправка уведомления пользователям
+         */
+        $notificationLink =
+            LS::Make(ModuleTopic::class)->GetTopicById($oComment->getTargetId())->getUrl()."#comment".$oComment->getId(
+            );
+        if ((bool)$oComment->getDelete()) {
+            $notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin()
+                ."</a> удалил ваш <a href='".$notificationLink."'>комментарий</a>\nПричина: "
+                .$oComment->getDeleteReason();
+            $notificationType = 7;
+        } else {
+            $notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin()
+                ."</a> восстановил ваш <a href='".$notificationLink."'>комментарий</a>";
+            $notificationType = 8;
+        }
+        $notificationText = "";
+        $notification = new EntityNotification(
+            [
+                'user_id'           => $oComment->getUserId(),
+                'text'              => $notificationText,
+                'title'             => $notificationTitle,
+                'link'              => $notificationLink,
+                'rating'            => 0,
+                'notification_type' => $notificationType,
+                'target_type'       => 'comment',
+                'target_id'         => $oComment->getId(),
+                'sender_user_id'    => $this->oUserCurrent->getId(),
+                'group_target_type' => 'topic',
+                'group_target_id'   => $oComment->getTargetId()
+            ]
+        );
+        if ($notificationCreated = LS::Make(ModuleNotification::class)->createNotification($notification)) {
+            LS::Make(ModuleNower::class)->PostNotificationWithComment($notificationCreated, $oComment);
+        }
 
-		if ($lastdeleteUser && $this->oUserCurrent->getId() != $lastdeleteUser) {
-			$notificationLink = LS::Make(ModuleTopic::class)->GetTopicById($oComment->getTargetId())->getUrl()."#comment".$oComment->getId();
-			$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a> восстановил удаленный вами <a href='".$notificationLink."'>комментарий</a>";
-			$notificationText = "";
-			$notification = new EntityNotification(
-				array(
-					'user_id' => $lastdeleteUser,
-					'text' => $notificationText,
-					'title' => $notificationTitle,
-					'link' => $notificationLink,
-					'rating' => 0,
-					'notification_type' => 9,
-					'target_type' => 'comment',
-					'target_id' => $oComment->getId(),
-					'sender_user_id' => $this->oUserCurrent->getId(),
-					'group_target_type' => 'topic',
-					'group_target_id' => $oComment->getTargetId()
-				)
-			);
-			if($notificationCreated = LS::Make(ModuleNotification::class)->createNotification($notification)){
-				LS::Make(ModuleNower::class)->PostNotificationWithComment($notificationCreated, $oComment);
-			}
-		}
+        if ($lastdeleteUser && $this->oUserCurrent->getId() != $lastdeleteUser) {
+            $notificationLink =
+                LS::Make(ModuleTopic::class)->GetTopicById($oComment->getTargetId())->getUrl()."#comment"
+                .$oComment->getId();
+            $notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin()
+                ."</a> восстановил удаленный вами <a href='".$notificationLink."'>комментарий</a>";
+            $notificationText = "";
+            $notification = new EntityNotification(
+                [
+                    'user_id'           => $lastdeleteUser,
+                    'text'              => $notificationText,
+                    'title'             => $notificationTitle,
+                    'link'              => $notificationLink,
+                    'rating'            => 0,
+                    'notification_type' => 9,
+                    'target_type'       => 'comment',
+                    'target_id'         => $oComment->getId(),
+                    'sender_user_id'    => $this->oUserCurrent->getId(),
+                    'group_target_type' => 'topic',
+                    'group_target_id'   => $oComment->getTargetId()
+                ]
+            );
+            if ($notificationCreated = LS::Make(ModuleNotification::class)->createNotification($notification)) {
+                LS::Make(ModuleNower::class)->PostNotificationWithComment($notificationCreated, $oComment);
+            }
+        }
 
         /**
          * Обновление события в ленте активности
          */
-        LS::Make(ModuleStream::class)->write($oComment->getUserId() , 'add_comment', $oComment->getId() , !$oComment->getDelete());
+        LS::Make(ModuleStream::class)->write(
+            $oComment->getUserId(),
+            'add_comment',
+            $oComment->getId(),
+            !$oComment->getDelete()
+        );
         /**
          * Показываем сообщение и передаем переменные в ajax ответ
          */
@@ -1726,7 +2218,14 @@ class ActionAjax extends Action
         $a = $_POST["to"];
         $oUserCurrent = $this->user->_GetUserCurrent();
         $oBlog = LS::Make(ModuleBlog::class)->GetBlogById($_POST["blog"]);
-        LS::Make(ModuleTalk::class)->SendTalk("Просьба об инвайте", "Пользователь <a href='" . "/profile/" . $oUserCurrent->getLogin() . "/' class='user'>" . "<i class='icon-user'></i>" . $oUserCurrent->getLogin() . "</a> просит пригласить его в блог <a href='" . $oBlog->getUrlFull() . "'>" . $oBlog->getTitle() . "</a>.", $oUserCurrent->getId() , $a);
+        LS::Make(ModuleTalk::class)->SendTalk(
+            "Просьба об инвайте",
+            "Пользователь <a href='"."/profile/".$oUserCurrent->getLogin()."/' class='user'>"
+            ."<i class='icon-user'></i>".$oUserCurrent->getLogin()."</a> просит пригласить его в блог <a href='"
+            .$oBlog->getUrlFull()."'>".$oBlog->getTitle()."</a>.",
+            $oUserCurrent->getId(),
+            $a
+        );
     }
 
     protected
@@ -1736,7 +2235,11 @@ class ActionAjax extends Action
          * Пользователь авторизован?
          */
         if (!$this->oUserCurrent) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('need_authorization') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('need_authorization'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
@@ -1744,13 +2247,21 @@ class ActionAjax extends Action
          * Топик существует?
          */
         if (!($oTopic = LS::Make(ModuleTopic::class)->GetTopicById(getRequestStr('idTopic', null, 'post')))) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
         $isAllowLockControlTopic = LS::Make(ModuleACL::class)->IsAllowLockTopicControl($oTopic, $this->oUserCurrent);
         if (!$isAllowLockControlTopic) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('not_access'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
@@ -1759,11 +2270,17 @@ class ActionAjax extends Action
         $oTopic->setLockControl($bLockState);
         if ($bStateOld == $bLockState || LS::Make(ModuleTopic::class)->UpdateControlLock($oTopic)) {
             $sNotice = $bLockState ? 'topic_control_locked' : 'topic_control_unlocked';
-            LS::Make(ModuleMessage::class)->AddNoticeSingle(LS::Make(ModuleLang::class)->Get($sNotice) , LS::Make(ModuleLang::class)->Get('attention'));
+            LS::Make(ModuleMessage::class)->AddNoticeSingle(
+                LS::Make(ModuleLang::class)->Get($sNotice),
+                LS::Make(ModuleLang::class)->Get('attention')
+            );
             $this->viewer->AssignAjax('bState', $oTopic->isControlLocked());
-        }
-        else {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('error'));
+        } else {
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
     }
@@ -1773,7 +2290,7 @@ class ActionAjax extends Action
     {
         $targetId = (int)getRequestStr('targetId', null, 'post');
         $targetType = getRequestStr('targetType', null, 'post');
-        switch($targetType) {
+        switch ($targetType) {
             case 'comment':
                 $oTarget = LS::Make(ModuleComment::class)->GetCommentById($targetId);
                 $ne_enable_level = Config::Get('acl.vote_list.comment.ne_enable_level');
@@ -1803,7 +2320,11 @@ class ActionAjax extends Action
                 $date_sort = Config::Get('acl.vote_list.user.date_sort');
                 break;
             default:
-                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'),LS::Make(ModuleLang::class)->Get('error'));
+                LS::Make(ModuleMessage::class)->AddErrorSingle(
+                    LS::Make(ModuleLang::class)->Get('system_error'),
+                    LS::Make(ModuleLang::class)->Get('error')
+                );
+
                 return;
         }
 
@@ -1811,7 +2332,11 @@ class ActionAjax extends Action
          * Пользователь авторизован?
          */
         if (!$this->oUserCurrent && $ne_enable_level < 8) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('need_authorization') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('need_authorization'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
@@ -1819,33 +2344,54 @@ class ActionAjax extends Action
          * Объект существует?
          */
         if (!$oTarget) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
-        if (!LS::Make(ModuleACL::class)->CheckSimpleAccessLevel($ne_enable_level, $this->oUserCurrent, $oTarget, $targetType)) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access') , LS::Make(ModuleLang::class)->Get('error'));
+        if (!LS::Make(ModuleACL::class)->CheckSimpleAccessLevel(
+            $ne_enable_level,
+            $this->oUserCurrent,
+            $oTarget,
+            $targetType
+        )
+        ) {
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('not_access'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
         $aVotes = LS::Make(ModuleVote::class)->GetVoteById($targetId, $targetType);
-        $aResult = array();
-        foreach($aVotes as $oVote) {
+        $aResult = [];
+        foreach ($aVotes as $oVote) {
             $oUser = $this->user->GetUserById($oVote->getVoterId());
-            $bShowUser = $oUser && (strtotime($oVote->getDate()) > $oe_end || LS::Make(ModuleACL::class)->CheckSimpleAccessLevel($oe_enable_level, $this->oUserCurrent, $oTarget, $targetType));
-            $aResult[] = array(
-                'voterName' => $bShowUser ? $oUser->getLogin() : null,
+            $bShowUser = $oUser
+                && (strtotime($oVote->getDate()) > $oe_end
+                    || LS::Make(ModuleACL::class)->CheckSimpleAccessLevel(
+                        $oe_enable_level,
+                        $this->oUserCurrent,
+                        $oTarget,
+                        $targetType
+                    ));
+            $aResult[] = [
+                'voterName'   => $bShowUser ? $oUser->getLogin() : null,
                 'voterAvatar' => $bShowUser ? $oUser->getProfileAvatarPath() : null,
-                'value' => (float)$oVote->getDirection() ,
-                'date' => (string)$oVote->getDate() . '+03:00',
-            );
+                'value'       => (float)$oVote->getDirection(),
+                'date'        => (string)$oVote->getDate().'+03:00',
+            ];
         }
 
-        usort($aResult, $date_sort<0 ? '_gov_s_date_desc' : '_gov_s_date_asc');
+        usort($aResult, $date_sort < 0 ? '_gov_s_date_desc' : '_gov_s_date_asc');
         $this->viewer->AssignAjax('aVotes', $aResult);
     }
-    
-    
+
+
     /**
      * Allow|forbid ignore user
      */
@@ -1853,17 +2399,29 @@ class ActionAjax extends Action
     {
         // check auth
         if (!$this->oUserCurrent) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('need_authorization'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('need_authorization'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
         // allow only for administrator
         if (!$this->oUserCurrent->isAdministrator()) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('not_access'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
         // search for user
         if (!$oUser = $this->user->GetUserById(getRequest('idUser'))) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('user_not_found'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('user_not_found'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
@@ -1871,21 +2429,29 @@ class ActionAjax extends Action
         if (in_array($oUser->getId(), $aForbidIgnore)) {
             // remove user from forbid ignore list
             if ($this->user->AllowIgnoreUser($oUser->getId())) {
-                LS::Make(ModuleMessage::class)->AddNoticeSingle(LS::Make(ModuleLang::class)->Get('allow_ignore_user_ok'), LS::Make(ModuleLang::class)->Get('attention'));
+                LS::Make(ModuleMessage::class)->AddNoticeSingle(
+                    LS::Make(ModuleLang::class)->Get('allow_ignore_user_ok'),
+                    LS::Make(ModuleLang::class)->Get('attention')
+                );
                 $this->viewer->AssignAjax('sText', LS::Make(ModuleLang::class)->Get('forbid_ignore_user'));
             } else {
                 LS::Make(ModuleMessage::class)->AddErrorSingle(
-                    LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error')
+                    LS::Make(ModuleLang::class)->Get('system_error'),
+                    LS::Make(ModuleLang::class)->Get('error')
                 );
             }
         } else {
             // add user to forbid ignore list
             if ($this->user->ForbidIgnoreUser($oUser->getId())) {
-                LS::Make(ModuleMessage::class)->AddNoticeSingle(LS::Make(ModuleLang::class)->Get('forbid_ignore_user_ok'), LS::Make(ModuleLang::class)->Get('attention'));
+                LS::Make(ModuleMessage::class)->AddNoticeSingle(
+                    LS::Make(ModuleLang::class)->Get('forbid_ignore_user_ok'),
+                    LS::Make(ModuleLang::class)->Get('attention')
+                );
                 $this->viewer->AssignAjax('sText', LS::Make(ModuleLang::class)->Get('allow_ignore_user'));
             } else {
                 LS::Make(ModuleMessage::class)->AddErrorSingle(
-                    LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error')
+                    LS::Make(ModuleLang::class)->Get('system_error'),
+                    LS::Make(ModuleLang::class)->Get('error')
                 );
             }
         }
@@ -1898,19 +2464,31 @@ class ActionAjax extends Action
     {
         // check auth
         if (!$this->oUserCurrent) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('need_authorization'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('need_authorization'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
         // search for ignored user
         if (!$oUserIgnored = $this->user->GetUserById(getRequest('idUser'))) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('user_not_found'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('user_not_found'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
 
         // is user try to ignore self
         if ($oUserIgnored->getId() == $this->oUserCurrent->getId()) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('ignore_dissalow_own'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('ignore_dissalow_own'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
         $sType = getRequest('type');
@@ -1919,99 +2497,151 @@ class ActionAjax extends Action
             if ($this->user->IsUserIgnoredByUser($this->oUserCurrent->getId(), $oUserIgnored->getId(), $sType)) {
                 // remove user from ignore list
                 if ($this->user->UnIgnoreUserByUser($this->oUserCurrent->getId(), $oUserIgnored->getId(), $sType)) {
-                    LS::Make(ModuleMessage::class)->AddNoticeSingle(LS::Make(ModuleLang::class)->Get('disignore_user_ok_' . $sType), LS::Make(ModuleLang::class)->Get('attention'));
-                    $this->viewer->AssignAjax('sText', LS::Make(ModuleLang::class)->Get('ignore_user_' . $sType));
+                    LS::Make(ModuleMessage::class)->AddNoticeSingle(
+                        LS::Make(ModuleLang::class)->Get('disignore_user_ok_'.$sType),
+                        LS::Make(ModuleLang::class)->Get('attention')
+                    );
+                    $this->viewer->AssignAjax('sText', LS::Make(ModuleLang::class)->Get('ignore_user_'.$sType));
                 } else {
                     LS::Make(ModuleMessage::class)->AddErrorSingle(
-                        LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error')
+                        LS::Make(ModuleLang::class)->Get('system_error'),
+                        LS::Make(ModuleLang::class)->Get('error')
                     );
                 }
             } else {
                 $aForbidIgnore = $this->user->GetForbidIgnoredUsers();
                 //check ignored user in forbid ignored list
                 if (in_array($oUserIgnored->getId(), $aForbidIgnore)) {
-                    LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('ignore_dissalow_this'), LS::Make(ModuleLang::class)->Get('error'));
+                    LS::Make(ModuleMessage::class)->AddErrorSingle(
+                        LS::Make(ModuleLang::class)->Get('ignore_dissalow_this'),
+                        LS::Make(ModuleLang::class)->Get('error')
+                    );
+
                     return;
                 }
 
                 //add user to ignore list
                 if ($this->user->IgnoreUserByUser($this->oUserCurrent->getId(), $oUserIgnored->getId(), $sType)) {
-                    LS::Make(ModuleMessage::class)->AddNoticeSingle(LS::Make(ModuleLang::class)->Get('ignore_user_ok_' . $sType), LS::Make(ModuleLang::class)->Get('attention'));
-                    $this->viewer->AssignAjax('sText', LS::Make(ModuleLang::class)->Get('disignore_user_' . $sType));
+                    LS::Make(ModuleMessage::class)->AddNoticeSingle(
+                        LS::Make(ModuleLang::class)->Get('ignore_user_ok_'.$sType),
+                        LS::Make(ModuleLang::class)->Get('attention')
+                    );
+                    $this->viewer->AssignAjax('sText', LS::Make(ModuleLang::class)->Get('disignore_user_'.$sType));
                 } else {
                     LS::Make(ModuleMessage::class)->AddErrorSingle(
-                        LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error')
+                        LS::Make(ModuleLang::class)->Get('system_error'),
+                        LS::Make(ModuleLang::class)->Get('error')
                     );
                 }
             }
         } else {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
             return;
         }
     }
-    
+
     protected function EventGetHistory()
     {
         /**
-		 * Устанавливаем формат Ajax ответа
-		 */
+         * Устанавливаем формат Ajax ответа
+         */
         $this->viewer->SetResponseAjax('json');
-        
-        if (!$this->oUserCurrent)
-        {
+
+        if (!$this->oUserCurrent) {
             LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'));
-            return;
-        }
-        
-        $oComment=LS::Make(ModuleComment::class)->GetCommentById(getRequest('reply'));
-        
-        if (!$oComment)
-        {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'));
+
             return;
         }
 
-        if ($oComment->getTargetType() =='talk') {
+        $oComment = LS::Make(ModuleComment::class)->GetCommentById(getRequest('reply'));
+
+        if (!$oComment) {
+            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'));
+
+            return;
+        }
+
+        if ($oComment->getTargetType() == 'talk') {
             if (!($oTalk = LS::Make(ModuleTalk::class)->GetTalkById($oComment->getTargetId()))) {
                 echo "NO TARGET";
-                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
+                LS::Make(ModuleMessage::class)->AddErrorSingle(
+                    LS::Make(ModuleLang::class)->Get('system_error'),
+                    LS::Make(ModuleLang::class)->Get('error')
+                );
+
                 return;
             }
             /**
              * Пользователь есть в переписке?
              */
-            if (!($oTalkUser = LS::Make(ModuleTalk::class)->GetTalkUser($oTalk->getId(), $this->oUserCurrent->getId()))) {
-                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
+            if (!($oTalkUser =
+                LS::Make(ModuleTalk::class)->GetTalkUser($oTalk->getId(), $this->oUserCurrent->getId()))
+            ) {
+                LS::Make(ModuleMessage::class)->AddErrorSingle(
+                    LS::Make(ModuleLang::class)->Get('system_error'),
+                    LS::Make(ModuleLang::class)->Get('error')
+                );
+
                 return;
             }
             /**
              * Пользователь активен в переписке?
              */
             if ($oTalkUser->getUserActive() != ModuleTalk::TALK_USER_ACTIVE) {
-                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
+                LS::Make(ModuleMessage::class)->AddErrorSingle(
+                    LS::Make(ModuleLang::class)->Get('system_error'),
+                    LS::Make(ModuleLang::class)->Get('error')
+                );
+
                 return;
             }
         } else {
             if ($oComment->getTargetType() != 'topic' or !($oTopic = $oComment->getTarget())) {
-                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
+                LS::Make(ModuleMessage::class)->AddErrorSingle(
+                    LS::Make(ModuleLang::class)->Get('system_error'),
+                    LS::Make(ModuleLang::class)->Get('error')
+                );
+
                 return;
             }
-            if (!$oTopic->getPublish() and (!$this->oUserCurrent or ($this->oUserCurrent->getId() != $oTopic->getUserId() and !$this->oUserCurrent->isAdministrator()))) {
-                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'), LS::Make(ModuleLang::class)->Get('error'));
+            if (!$oTopic->getPublish() and (!$this->oUserCurrent or ($this->oUserCurrent->getId() != $oTopic->getUserId(
+                        ) and !$this->oUserCurrent->isAdministrator()))
+            ) {
+                LS::Make(ModuleMessage::class)->AddErrorSingle(
+                    LS::Make(ModuleLang::class)->Get('system_error'),
+                    LS::Make(ModuleLang::class)->Get('error')
+                );
+
                 return;
             }
             /**
              * Проверяет коммент на удаленность и отдает его только автору, и тем, у кого есть права на удаление.
              */
-            if ((!$this->oUserCurrent || ($oComment->getDelete() && !(LS::Make(ModuleACL::class)->UserCanDeleteComment($this->oUserCurrent, $oComment, 1) || $this->oUserCurrent->getId() == $oComment->getUserId())))) {
-                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'), LS::Make(ModuleLang::class)->Get('not_access'));
+            if ((!$this->oUserCurrent
+                || ($oComment->getDelete()
+                    && !(LS::Make(ModuleACL::class)->UserCanDeleteComment(
+                            $this->oUserCurrent,
+                            $oComment,
+                            1
+                        )
+                        || $this->oUserCurrent->getId() == $oComment->getUserId())))
+            ) {
+                LS::Make(ModuleMessage::class)->AddErrorSingle(
+                    LS::Make(ModuleLang::class)->Get('not_access'),
+                    LS::Make(ModuleLang::class)->Get('not_access')
+                );
                 Router::Action('error');
+
                 return;
             }
             /**
              * Проверяет коммент на доступность из закрытых блогов.
              */
-            if (in_array($oTopic->getBlog()->getType(), array('close', 'invite'))
+            if (in_array($oTopic->getBlog()->getType(), ['close', 'invite'])
                 and (!$this->oUserCurrent
                     || !in_array(
                         $oTopic->getBlog()->getId(),
@@ -2019,21 +2649,25 @@ class ActionAjax extends Action
                     )
                 )
             ) {
-                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('blog_close_show'), LS::Make(ModuleLang::class)->Get('not_access'));
+                LS::Make(ModuleMessage::class)->AddErrorSingle(
+                    LS::Make(ModuleLang::class)->Get('blog_close_show'),
+                    LS::Make(ModuleLang::class)->Get('not_access')
+                );
                 Router::Action('error');
+
                 return;
             }
         }
-        
-        $aData=LS::Make(ModuleEditComment::class)->GetDataItemsByCommentId($oComment->getId());
+
+        $aData = LS::Make(ModuleEditComment::class)->GetDataItemsByCommentId($oComment->getId());
 
         foreach ($aData as $oData) {
-			$oUser = $this->user->GetUserById($oData->getUserId());
-			$oData->setText(LS::Make(ModuleText::class)->Parser($oData->getCommentTextSource()));
-			$oData->setUserLogin($oUser->getLogin());
-		}
-        
-        $oViewerLocal=$this->viewer->GetLocalViewer();
+            $oUser = $this->user->GetUserById($oData->getUserId());
+            $oData->setText(LS::Make(ModuleText::class)->Parser($oData->getCommentTextSource()));
+            $oData->setUserLogin($oUser->getLogin());
+        }
+
+        $oViewerLocal = $this->viewer->GetLocalViewer();
         $oViewerLocal->Assign('aHistory', $aData);
         $this->viewer->AssignAjax('sContent', $oViewerLocal->Fetch('history.tpl'));
     }
@@ -2041,285 +2675,367 @@ class ActionAjax extends Action
     protected function EventGetSource()
     {
         /**
-		 * Устанавливаем формат Ajax ответа
-		 */
+         * Устанавливаем формат Ajax ответа
+         */
         $this->viewer->SetResponseAjax('json');
-        
-        if (!$this->oUserCurrent)
-        {
+
+        if (!$this->oUserCurrent) {
             LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'));
+
             return;
         }
-        
-        $oComment=LS::Make(ModuleComment::class)->GetCommentById(getRequest('idComment'));
-        
-        if (!$oComment)
-        {
+
+        $oComment = LS::Make(ModuleComment::class)->GetCommentById(getRequest('idComment'));
+
+        if (!$oComment) {
             LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'));
+
             return;
         }
-        
-        $sCheckResult=LS::Make(ModuleACL::class)->UserCanEditComment($this->oUserCurrent, $oComment, PHP_INT_MAX);
-        if ($sCheckResult !== true)
-        {
+
+        $sCheckResult = LS::Make(ModuleACL::class)->UserCanEditComment($this->oUserCurrent, $oComment, PHP_INT_MAX);
+        if ($sCheckResult !== true) {
             LS::Make(ModuleMessage::class)->AddErrorSingle($sCheckResult);
+
             return;
         }
-        
-        $oEditData=LS::Make(ModuleEditComment::class)->GetLastEditData($oComment->getId());
-        
-        if ($oEditData)
-            $sCommentSource=$oEditData->getCommentTextSource();
-        else 
-            if (!Config::Get('view.tinymce'))
-                $sCommentSource=str_replace(array("<br>", "<br/>"), array(""), $oComment->getText());
-            else
-                $sCommentSource=$oComment->getText();
-        
+
+        $oEditData = LS::Make(ModuleEditComment::class)->GetLastEditData($oComment->getId());
+
+        if ($oEditData) {
+            $sCommentSource = $oEditData->getCommentTextSource();
+        } elseif (!Config::Get('view.tinymce')) {
+            $sCommentSource = str_replace(["<br>", "<br/>"], [""], $oComment->getText());
+        } else {
+            $sCommentSource = $oComment->getText();
+        }
+
         $this->viewer->AssignAjax('sCommentSource', $sCommentSource);
         $this->viewer->AssignAjax('bHasHistory', !is_null($oEditData));
     }
 
     protected function EventEdit()
     {
-        $ip=$_SERVER['REMOTE_ADDR'];
+        $ip = $_SERVER['REMOTE_ADDR'];
         /**
-		 * Устанавливаем формат Ajax ответа
-		 */
+         * Устанавливаем формат Ajax ответа
+         */
         $this->viewer->SetResponseAjax('json');
-        
-        if (!$this->oUserCurrent)
-        {
+
+        if (!$this->oUserCurrent) {
             LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'));
+
             return;
         }
-        
-        $oComment=LS::Make(ModuleComment::class)->GetCommentById(getRequest('reply'));
-        
-        if (!$oComment)
-        {
+
+        $oComment = LS::Make(ModuleComment::class)->GetCommentById(getRequest('reply'));
+
+        if (!$oComment) {
             LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'));
+
             return;
         }
-        
-        $sCheckResult=LS::Make(ModuleACL::class)->UserCanEditComment($this->oUserCurrent, $oComment, PHP_INT_MAX);
-        if ($sCheckResult !== true)
-        {
+
+        $sCheckResult = LS::Make(ModuleACL::class)->UserCanEditComment($this->oUserCurrent, $oComment, PHP_INT_MAX);
+        if ($sCheckResult !== true) {
             LS::Make(ModuleMessage::class)->AddErrorSingle($sCheckResult);
+
             return;
         }
 
-        $bMark = getRequestStr('form_comment_mark')=="on";
-        if ($bMark)
-            $sText = LS::Make(ModuleText::class)->Parser(LS::Make(ModuleText::class)->Mark(getRequestStr('comment_text')));
-        else
+        $bMark = getRequestStr('form_comment_mark') == "on";
+        if ($bMark) {
+            $sText =
+                LS::Make(ModuleText::class)->Parser(LS::Make(ModuleText::class)->Mark(getRequestStr('comment_text')));
+        } else {
             $sText = LS::Make(ModuleText::class)->Parser(getRequestStr('comment_text'));
+        }
 
-        $sText = preg_replace_callback('/@(.*?)\((.*?)\)/',
+        $sText = preg_replace_callback(
+            '/@(.*?)\((.*?)\)/',
             function ($matches) use ($oComment) {
                 $sLogin = $matches[1];
                 $sNick = $matches[2];
-                $r = "<a href=\"/profile/" . $sLogin . "/\" class=\"ls-user\">&#64;" . $sNick . "</a>";
+                $r = "<a href=\"/profile/".$sLogin."/\" class=\"ls-user\">&#64;".$sNick."</a>";
                 if ($oTargetUser = $this->user->getUserByLogin($sLogin)) {
-                    LS::Make(ModuleCast::class)->sendCastNotifyToUser("comment", $oComment, LS::Make(ModuleTopic::class)->GetTopicById($oComment->getTargetId()), $oTargetUser);
+                    LS::Make(ModuleCast::class)->sendCastNotifyToUser(
+                        "comment",
+                        $oComment,
+                        LS::Make(ModuleTopic::class)->GetTopicById($oComment->getTargetId()),
+                        $oTargetUser
+                    );
+
                     return $r;
                 }
+
                 return $matches[0];
-            }, $sText);
-        $sText = preg_replace_callback('/@([a-zA-Zа-яА-Я0-9-_]+)/',
+            },
+            $sText
+        );
+        $sText = preg_replace_callback(
+            '/@([a-zA-Zа-яА-Я0-9-_]+)/',
             function ($matches) use ($oComment) {
                 $sLogin = $matches[1];
-                $r = "<a href=\"/profile/" . $sLogin . "/\" class=\"ls-user\">&#64;" . $sLogin . "</a>";
+                $r = "<a href=\"/profile/".$sLogin."/\" class=\"ls-user\">&#64;".$sLogin."</a>";
                 if ($oTargetUser = $this->user->getUserByLogin($sLogin)) {
-                    LS::Make(ModuleCast::class)->sendCastNotifyToUser("comment", $oComment, LS::Make(ModuleTopic::class)->GetTopicById($oComment->getTargetId()), $oTargetUser);
+                    LS::Make(ModuleCast::class)->sendCastNotifyToUser(
+                        "comment",
+                        $oComment,
+                        LS::Make(ModuleTopic::class)->GetTopicById($oComment->getTargetId()),
+                        $oTargetUser
+                    );
+
                     return $r;
                 }
+
                 return $matches[0];
-            }, $sText);
-        
-        if (mb_strlen($sText, 'utf-8') > Config::Get('module.comment.max_length'))
-        {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('editcomment.err_max_comment_length', array('maxlength'=>Config::Get('max_comment_length'))));
+            },
+            $sText
+        );
+
+        if (mb_strlen($sText, 'utf-8') > Config::Get('module.comment.max_length')) {
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get(
+                    'editcomment.err_max_comment_length',
+                    ['maxlength' => Config::Get('max_comment_length')]
+                )
+            );
+
             return;
         }
-        
-        $sDE=date("Y-m-d H:i:s");
+
+        $sDE = date("Y-m-d H:i:s");
 
         $bEdited = false;
-        if ($oComment->getText() == $sText)
-        {
-            LS::Make(ModuleMessage::class)->AddNoticeSingle(LS::Make(ModuleLang::class)->Get('editcomment.notice_nothing_changed'));
-			$bEdited = false;
+        if ($oComment->getText() == $sText) {
+            LS::Make(ModuleMessage::class)->AddNoticeSingle(
+                LS::Make(ModuleLang::class)->Get('editcomment.notice_nothing_changed')
+            );
+            $bEdited = false;
             $this->viewer->AssignAjax('bEdited', $bEdited);
-        }
-        else
-        {
-            if (Config::Get('module.editcomment.change_online'))
+        } else {
+            if (Config::Get('module.editcomment.change_online')) {
                 $oComment->setDate($sDE);
+            }
             $oComment->setEditCount($oComment->getEditCount() + 1);
             $oComment->setEditDate($sDE);
-            $oViewerLocal=$this->viewer->GetLocalViewer();
+            $oViewerLocal = $this->viewer->GetLocalViewer();
             $oViewerLocal->Assign('oComment', $oComment);
             $oViewerLocal->Assign('oUserCurrent', $this->oUserCurrent);
-            
-            if (Config::Get('module.editcomment.add_edit_date'))
-                $oComment->setText($sText . $oViewerLocal->Fetch('inject_comment_edited.tpl'));
-            else
+
+            if (Config::Get('module.editcomment.add_edit_date')) {
+                $oComment->setText($sText.$oViewerLocal->Fetch('inject_comment_edited.tpl'));
+            } else {
                 $oComment->setText($sText);
-            $oComment->setText(LS::Make(ModuleText::class)->CommentParser($oComment,getRequestStr('form_comment_mark')=="on",true));
+            }
+            $oComment->setText(
+                LS::Make(ModuleText::class)->CommentParser($oComment, getRequestStr('form_comment_mark') == "on", true)
+            );
             $oComment->setTextHash(md5($oComment->getText()));
-            
-            if (LS::Make(ModuleComment::class)->UpdateComment($oComment))
-            {
-                if (Config::Get('module.editcomment.change_online'))
-                {
-                    $oCommentOnline=new EntityCommentOnline();
+
+            if (LS::Make(ModuleComment::class)->UpdateComment($oComment)) {
+                if (Config::Get('module.editcomment.change_online')) {
+                    $oCommentOnline = new EntityCommentOnline();
                     $oCommentOnline->setTargetId($oComment->getTargetId());
                     $oCommentOnline->setTargetType($oComment->getTargetType());
                     $oCommentOnline->setTargetParentId($oComment->getTargetParentId());
                     $oCommentOnline->setCommentId($oComment->getId());
-                    
+
                     LS::Make(ModuleComment::class)->AddCommentOnline($oCommentOnline);
                 }
-                
+
                 $this->oUserCurrent->setDateCommentLast($sDE);
                 $this->user->Update($this->oUserCurrent);
-                
-                $oData= new EntityEditCommentData();
+
+                $oData = new EntityEditCommentData();
                 $oData->setCommentTextSource(getRequest('comment_text'));
                 $oData->setCommentId($oComment->getId());
                 $oData->setUserId($this->oUserCurrent->getId());
                 $oData->setDateAdd($sDE);
-                
-                if (!$oData->save())
-                {
+
+                if (!$oData->save()) {
                     LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('error'));
+
                     return;
                 }
 
-				$bEdited = true;
+                $bEdited = true;
                 $this->viewer->AssignAjax('bEdited', $bEdited);
-                $this->viewer->AssignAjax('bCanEditMore', LS::Make(ModuleACL::class)->UserCanEditComment($this->oUserCurrent, $oComment, PHP_INT_MAX) === true);
+                $this->viewer->AssignAjax(
+                    'bCanEditMore',
+                    LS::Make(ModuleACL::class)->UserCanEditComment($this->oUserCurrent, $oComment, PHP_INT_MAX) === true
+                );
                 $this->viewer->AssignAjax('sCommentText', $oComment->getText());
-            }
-            else
+            } else {
                 LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('error'));
+            }
         }
-		if ($bEdited) {
-			if ($oComment->getTargetType() == 'topic') {
+        if ($bEdited) {
+            if ($oComment->getTargetType() == 'topic') {
 
-				/**
-				 * Отправка уведомления пользователям
-				 */
-				$notificationLink = LS::Make(ModuleTopic::class)->GetTopicById($oComment->getTargetId())->getUrl(). "#comment" . $oComment->getId();
-				$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a>" . " отредактировал ваш <a href='".$notificationLink."'>комментарий</a> в посте <a href='/blog/undefined/" . $oComment->getTargetId()."'>".$oComment->getTarget()->getTitle()."</a>";
-				$notificationText = "";
-				$notification = new EntityNotification(
-				    array(
-						'user_id' => $oComment->getUserId(),
-						'text' => $notificationText,
-						'title' => $notificationTitle,
-						'link' => $notificationLink,
-						'rating' => 0,
-						'notification_type' => 6,
-						'target_type' => 'comment',
-						'target_id' => $oComment->getId(),
-						'sender_user_id' => $this->oUserCurrent->getId(),
-						'group_target_type' => 'topic',
-						'group_target_id' => $oComment->getTargetId()
-					)
-				);
-				if($notificationCreated = LS::Make(ModuleNotification::class)->createNotification($notification)){
-					LS::Make(ModuleNower::class)->PostNotificationWithComment($notificationCreated, $oComment);
-				}
+                /**
+                 * Отправка уведомления пользователям
+                 */
+                $notificationLink =
+                    LS::Make(ModuleTopic::class)->GetTopicById($oComment->getTargetId())->getUrl()."#comment"
+                    .$oComment->getId();
+                $notificationTitle =
+                    "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin()."</a>"
+                    ." отредактировал ваш <a href='".$notificationLink
+                    ."'>комментарий</a> в посте <a href='/blog/undefined/".$oComment->getTargetId()."'>"
+                    .$oComment->getTarget()->getTitle()."</a>";
+                $notificationText = "";
+                $notification = new EntityNotification(
+                    [
+                        'user_id'           => $oComment->getUserId(),
+                        'text'              => $notificationText,
+                        'title'             => $notificationTitle,
+                        'link'              => $notificationLink,
+                        'rating'            => 0,
+                        'notification_type' => 6,
+                        'target_type'       => 'comment',
+                        'target_id'         => $oComment->getId(),
+                        'sender_user_id'    => $this->oUserCurrent->getId(),
+                        'group_target_type' => 'topic',
+                        'group_target_id'   => $oComment->getTargetId()
+                    ]
+                );
+                if ($notificationCreated = LS::Make(ModuleNotification::class)->createNotification($notification)) {
+                    LS::Make(ModuleNower::class)->PostNotificationWithComment($notificationCreated, $oComment);
+                }
 
-			} else if ($oComment->getTargetType() == 'talk') {
-				if (!($oTalk = LS::Make(ModuleTalk::class)->GetTalkById($oComment->getTargetId()))) {
-					LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('error'));
-					return;
-				}
-				/**
-				 * Отправка уведомления пользователям
-				 */
-				$notificationLink = "/talk/" . $oComment->getTargetId() . "#comment" . $oComment->getId();
-				$notificationTitle = "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin() . "</a>" . " отредактировал ваш <a href='".$notificationLink."'>комментарий</a> в личке " . $oTalk->getTitle();
-				$notificationText = "";
-				$notification = new EntityNotification(
-					array(
-						'user_id' => $oComment->getUserId(),
-						'text' => $notificationText,
-						'title' => $notificationTitle,
-						'link' => $notificationLink,
-						'rating' => 0,
-						'notification_type' => 6,
-						'target_type' => 'comment',
-						'target_id' => $oComment->getId(),
-						'sender_user_id' => $this->oUserCurrent->getId(),
-						'group_target_type' => 'talk',
-						'group_target_id' => $oComment->getTargetId()
-					)
-				);
-				if($notificationCreated = LS::Make(ModuleNotification::class)->createNotification($notification)){
-					LS::Make(ModuleNower::class)->PostNotificationWithComment($notificationCreated, $oComment);
-				}
-			}
+            } elseif ($oComment->getTargetType() == 'talk') {
+                if (!($oTalk = LS::Make(ModuleTalk::class)->GetTalkById($oComment->getTargetId()))) {
+                    LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('error'));
 
-			$sLogText = $this->oUserCurrent->getLogin() . " редактировал коммент " . $oComment->getId() . " " . $ip;
-			LS::Make(ModuleLogger::class)->Notice($sLogText);
-		}
-        $this->viewer->AssignAjax('bCanEditMore', LS::Make(ModuleACL::class)->UserCanEditComment($this->oUserCurrent, $oComment, PHP_INT_MAX) === true);
+                    return;
+                }
+                /**
+                 * Отправка уведомления пользователям
+                 */
+                $notificationLink = "/talk/".$oComment->getTargetId()."#comment".$oComment->getId();
+                $notificationTitle =
+                    "<a href='".$this->oUserCurrent->getUserWebPath()."'>".$this->oUserCurrent->getLogin()."</a>"
+                    ." отредактировал ваш <a href='".$notificationLink."'>комментарий</a> в личке ".$oTalk->getTitle();
+                $notificationText = "";
+                $notification = new EntityNotification(
+                    [
+                        'user_id'           => $oComment->getUserId(),
+                        'text'              => $notificationText,
+                        'title'             => $notificationTitle,
+                        'link'              => $notificationLink,
+                        'rating'            => 0,
+                        'notification_type' => 6,
+                        'target_type'       => 'comment',
+                        'target_id'         => $oComment->getId(),
+                        'sender_user_id'    => $this->oUserCurrent->getId(),
+                        'group_target_type' => 'talk',
+                        'group_target_id'   => $oComment->getTargetId()
+                    ]
+                );
+                if ($notificationCreated = LS::Make(ModuleNotification::class)->createNotification($notification)) {
+                    LS::Make(ModuleNower::class)->PostNotificationWithComment($notificationCreated, $oComment);
+                }
+            }
+
+            $sLogText = $this->oUserCurrent->getLogin()." редактировал коммент ".$oComment->getId()." ".$ip;
+            LS::Make(ModuleLogger::class)->Notice($sLogText);
+        }
+        $this->viewer->AssignAjax(
+            'bCanEditMore',
+            LS::Make(ModuleACL::class)->UserCanEditComment($this->oUserCurrent, $oComment, PHP_INT_MAX) === true
+        );
     }
 
-    protected function EventGetComment() {
-    	$idComment=getRequestStr('idComment', null, 'post');
-		if(!($oComment=LS::Make(ModuleComment::class)->GetCommentById($idComment))) {
-			LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('error'));
-			return;
-		}
-		if ($oComment->getTargetType()!='topic' or !($oTopic=$oComment->getTarget())) {
-			$this->Message_AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('error'));
-			return;
-		}
-		if (!$oTopic->getPublish() and (!$this->oUserCurrent or ($this->oUserCurrent->getId()!=$oTopic->getUserId() and !$this->oUserCurrent->isAdministrator()))) {
-			$this->Message_AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error') , LS::Make(ModuleLang::class)->Get('error'));
-			return;
-		}
-		/**
-         * Проверяет коммент на удаленность и отдает его только автору, и тем, у кого есть права на удаление.
-		*/
-        if ((!$this->oUserCurrent || ($oComment->getDelete() && !(LS::Make(ModuleACL::class)->UserCanDeleteComment($this->oUserCurrent, $oComment,1) || $this->oUserCurrent->getId()==$oComment->getUserId())))) {
-            $this->Message_AddErrorSingle(LS::Make(ModuleLang::class)->Get('not_access'),LS::Make(ModuleLang::class)->Get('not_access'));
-            Router::Action('error'); return;
+    protected function EventGetComment()
+    {
+        $idComment = getRequestStr('idComment', null, 'post');
+        if (!($oComment = LS::Make(ModuleComment::class)->GetCommentById($idComment))) {
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
+            return;
         }
-		if(in_array($oTopic->getBlog()->getType(), array('close', 'invite'))
-			and (!$this->oUserCurrent
-				|| !in_array(
-					$oTopic->getBlog()->getId(),
-					LS::Make(ModuleBlog::class)->GetAccessibleBlogsByUser($this->oUserCurrent)
-				)
-			)
-		) {
-			$this->Message_AddErrorSingle(LS::Make(ModuleLang::class)->Get('blog_close_show'),LS::Make(ModuleLang::class)->Get('not_access'));
-			Router::Action('error'); return;
-		}
-		$bIgnoreDelete=false;
-		if ($this->oUserCurrent) {
-    		if ($this->oUserCurrent->isAdministrator() || $this->oUserCurrent->isGlobalModerator()) {
-    			$bIgnoreDelete=true;
-    		}
-    	}
-		$aResult=LS::Make(ModuleComment::class)->ConvertCommentToArray($oComment, $oTopic->getDateRead(), $bIgnoreDelete);
-		$this->viewer->AssignAjax("aComment", $aResult);
-		$this->viewer->DisplayAjax();
-	}
+        if ($oComment->getTargetType() != 'topic' or !($oTopic = $oComment->getTarget())) {
+            $this->Message_AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
+            return;
+        }
+        if (!$oTopic->getPublish() and (!$this->oUserCurrent or ($this->oUserCurrent->getId() != $oTopic->getUserId()
+                    and !$this->oUserCurrent->isAdministrator()))
+        ) {
+            $this->Message_AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('system_error'),
+                LS::Make(ModuleLang::class)->Get('error')
+            );
+
+            return;
+        }
+        /**
+         * Проверяет коммент на удаленность и отдает его только автору, и тем, у кого есть права на удаление.
+         */
+        if ((!$this->oUserCurrent
+            || ($oComment->getDelete()
+                && !(LS::Make(ModuleACL::class)->UserCanDeleteComment(
+                        $this->oUserCurrent,
+                        $oComment,
+                        1
+                    )
+                    || $this->oUserCurrent->getId() == $oComment->getUserId())))
+        ) {
+            $this->Message_AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('not_access'),
+                LS::Make(ModuleLang::class)->Get('not_access')
+            );
+            Router::Action('error');
+
+            return;
+        }
+        if (in_array($oTopic->getBlog()->getType(), ['close', 'invite'])
+            and (!$this->oUserCurrent
+                || !in_array(
+                    $oTopic->getBlog()->getId(),
+                    LS::Make(ModuleBlog::class)->GetAccessibleBlogsByUser($this->oUserCurrent)
+                )
+            )
+        ) {
+            $this->Message_AddErrorSingle(
+                LS::Make(ModuleLang::class)->Get('blog_close_show'),
+                LS::Make(ModuleLang::class)->Get('not_access')
+            );
+            Router::Action('error');
+
+            return;
+        }
+        $bIgnoreDelete = false;
+        if ($this->oUserCurrent) {
+            if ($this->oUserCurrent->isAdministrator() || $this->oUserCurrent->isGlobalModerator()) {
+                $bIgnoreDelete = true;
+            }
+        }
+        $aResult =
+            LS::Make(ModuleComment::class)->ConvertCommentToArray($oComment, $oTopic->getDateRead(), $bIgnoreDelete);
+        $this->viewer->AssignAjax("aComment", $aResult);
+        $this->viewer->DisplayAjax();
+    }
 }
 
 function _gov_s_date_asc($a, $b)
 {
     $a_time = strtotime($a['date']);
     $b_time = strtotime($b['date']);
-    if ($a_time > $b_time) return 1;
-    if ($a_time < $b_time) return -1;
+    if ($a_time > $b_time) {
+        return 1;
+    }
+    if ($a_time < $b_time) {
+        return -1;
+    }
+
     return 0;
 }
 

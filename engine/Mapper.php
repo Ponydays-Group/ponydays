@@ -21,26 +21,29 @@ use DbSimple_Database;
 
 /**
  * Абстрактный класс мапера
- * Вся задача маппера сводится в выполнению запроса к базе данных (или либому другому источнику данных) и возвращения результата в модуль.
+ * Вся задача маппера сводится в выполнению запроса к базе данных (или либому другому источнику данных) и возвращения
+ * результата в модуль.
  *
  * @package engine
- * @since 1.0
+ * @since   1.0
  */
-abstract class Mapper extends LsObject {
-	/**
-	 * Объект подключения к базе данных
-	 *
-	 * @var DbSimple_Database
-	 */
-	protected $oDb;
+abstract class Mapper extends LsObject
+{
+    /**
+     * Объект подключения к базе данных
+     *
+     * @var DbSimple_Database
+     */
+    protected $oDb;
 
-	/**
-	 * Передаем коннект к БД
-	 *
-	 * @param DbSimple_Database $oDb
-	 */
-	public function __construct(DbSimple_Database $oDb) {
-		$this->oDb = $oDb;
-	}
+    /**
+     * Передаем коннект к БД
+     *
+     * @param DbSimple_Database $oDb
+     */
+    public function __construct(DbSimple_Database $oDb)
+    {
+        $this->oDb = $oDb;
+    }
 
 }

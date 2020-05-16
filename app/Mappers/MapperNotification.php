@@ -17,20 +17,23 @@ use Engine\Mapper;
  *
  * @package modules.notification
  */
+class MapperNotification extends Mapper
+{
 
-class MapperNotification extends Mapper {
+    /**
+     * Получение всех уведомлений пользователя с пагинацией
+     *
+     * @param $userId int ID пользователя
+     * @param $page   int номер страницы
+     * @param $count  int количество на странице
+     *
+     * @return array уведомления
+     * @throws \Exception
+     */
 
-	/**
-	 * Получение всех уведомлений пользователя с пагинацией
-	 * @param $userId int ID пользователя
-	 * @param $page int номер страницы
-	 * @param $count int количество на странице
-	 * @return array уведомления
-	 * @throws \Exception
-	 */
-
-	public function getNotifications($userId, $page, $count){
-		$sql = "SELECT
+    public function getNotifications($userId, $page, $count)
+    {
+        $sql = "SELECT
 				*
 				FROM
 				".Config::Get('db.table.notification')."
@@ -40,27 +43,31 @@ class MapperNotification extends Mapper {
 				LIMIT ?d 
 				OFFSET ?d
 		";
-		$aNotifications=array();
-		if ($aRows=$this->oDb->select($sql,$userId, $count, (($page-1)*$count))) {
-			foreach ($aRows as $aRow) {
-				$aNotifications[] = new EntityNotification($aRow);
-			}
-		}
-		return $aNotifications;
-	}
+        $aNotifications = [];
+        if ($aRows = $this->oDb->select($sql, $userId, $count, (($page - 1) * $count))) {
+            foreach ($aRows as $aRow) {
+                $aNotifications[] = new EntityNotification($aRow);
+            }
+        }
 
-	/**
-	 * Получение всех уведомлений пользователя с пагинацией
-	 * @param $userId int ID пользователя
-	 * @param $page int номер страницы
-	 * @param $count int количество на странице
-	 * @param $types array список требуемых типов уведомлений
-	 * @return array уведомления
-	 * @throws \Exception
-	 */
+        return $aNotifications;
+    }
 
-	public function getNotificationsFiltered($userId, $page, $count, $types){
-		$sql = "SELECT
+    /**
+     * Получение всех уведомлений пользователя с пагинацией
+     *
+     * @param $userId int ID пользователя
+     * @param $page   int номер страницы
+     * @param $count  int количество на странице
+     * @param $types  array список требуемых типов уведомлений
+     *
+     * @return array уведомления
+     * @throws \Exception
+     */
+
+    public function getNotificationsFiltered($userId, $page, $count, $types)
+    {
+        $sql = "SELECT
 				*
 				FROM
 				".Config::Get('db.table.notification')."
@@ -71,48 +78,54 @@ class MapperNotification extends Mapper {
 				LIMIT ?d 
 				OFFSET ?d
 		";
-		$aNotifications=array();
-		if ($aRows=$this->oDb->select($sql,$userId, $types, $count, (($page-1)*$count))) {
-			foreach ($aRows as $aRow) {
-				$aNotifications[] = new EntityNotification($aRow);
-			}
-		}
-		return $aNotifications;
-	}
+        $aNotifications = [];
+        if ($aRows = $this->oDb->select($sql, $userId, $types, $count, (($page - 1) * $count))) {
+            foreach ($aRows as $aRow) {
+                $aNotifications[] = new EntityNotification($aRow);
+            }
+        }
 
-	/**
-	 * Получение уведомления по id
-	 * @param $notificationId int ID уведомления
-	 * @return array уведомления
-	 * @throws \Exception
-	 */
+        return $aNotifications;
+    }
 
-	public function getNotificationById($notificationId){
-		$sql = "SELECT
+    /**
+     * Получение уведомления по id
+     *
+     * @param $notificationId int ID уведомления
+     *
+     * @return array уведомления
+     * @throws \Exception
+     */
+
+    public function getNotificationById($notificationId)
+    {
+        $sql = "SELECT
 				*
 				FROM
 				".Config::Get('db.table.notification')."
 				WHERE
 				notification_id = ?
 		";
-		$aNotifications=array();
-		if ($aRows=$this->oDb->select($sql, $notificationId)) {
-			foreach ($aRows as $aRow) {
-				$aNotifications[] = new EntityNotification($aRow);
-			}
-		}
-		return $aNotifications[0];
-	}
+        $aNotifications = [];
+        if ($aRows = $this->oDb->select($sql, $notificationId)) {
+            foreach ($aRows as $aRow) {
+                $aNotifications[] = new EntityNotification($aRow);
+            }
+        }
 
-	/**
-	 * Создание нового уведомления
-	 *
-	 * @param \App\Entities\EntityNotification $eNotification
-	 *
-	 * @return bool|int
-	 */
-	public function createNotification(EntityNotification $eNotification){
-		$sql = "INSERT INTO ".Config::Get('db.table.notification')."
+        return $aNotifications[0];
+    }
+
+    /**
+     * Создание нового уведомления
+     *
+     * @param \App\Entities\EntityNotification $eNotification
+     *
+     * @return bool|int
+     */
+    public function createNotification(EntityNotification $eNotification)
+    {
+        $sql = "INSERT INTO ".Config::Get('db.table.notification')."
 				(user_id,
 				sender_user_id,
 				date,
@@ -127,42 +140,63 @@ class MapperNotification extends Mapper {
 				group_target_id)
 				VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 		";
-		if ($iId=$this->oDb->query($sql,$eNotification->getUserId(), $eNotification->getSenderUserId(), $eNotification->getDate(), $eNotification->getText(),
-			$eNotification->getTitle(), $eNotification->getLink(), $eNotification->getRating(), $eNotification->getType(),
-			$eNotification->getTargetType(), $eNotification->getTargetId(), $eNotification->getGroupTargetType(), $eNotification->getGroupTargetId())) {
-        	return $iId;
-		}
-		return false;
-	}
+        if ($iId = $this->oDb->query(
+            $sql,
+            $eNotification->getUserId(),
+            $eNotification->getSenderUserId(),
+            $eNotification->getDate(),
+            $eNotification->getText(),
+            $eNotification->getTitle(),
+            $eNotification->getLink(),
+            $eNotification->getRating(),
+            $eNotification->getType(),
+            $eNotification->getTargetType(),
+            $eNotification->getTargetId(),
+            $eNotification->getGroupTargetType(),
+            $eNotification->getGroupTargetId()
+        )
+        ) {
+            return $iId;
+        }
 
-	/**
-	 * Удаление уведомления
-	 *
-	 * @param $notificationId
-	 * @return bool
-	 */
-	public function deleteNotification($notificationId) {
-		$sql = "DELETE FROM ".Config::Get('db.table.notification')." 
+        return false;
+    }
+
+    /**
+     * Удаление уведомления
+     *
+     * @param $notificationId
+     *
+     * @return bool
+     */
+    public function deleteNotification($notificationId)
+    {
+        $sql = "DELETE FROM ".Config::Get('db.table.notification')." 
 				WHERE notification_id = ?d";
-		if ($this->oDb->query($sql,$notificationId)) {
-			return true;
-		}
-		return false;
-	}
+        if ($this->oDb->query($sql, $notificationId)) {
+            return true;
+        }
 
-	/**
-	 * Удаление всех уведомлений пользователя
-	 * @param $userId
-	 * @return bool
-	 */
-	public function deleteAllNotifications($userId) {
-		$sql = "DELETE FROM ".Config::Get('db.table.notification')." 
+        return false;
+    }
+
+    /**
+     * Удаление всех уведомлений пользователя
+     *
+     * @param $userId
+     *
+     * @return bool
+     */
+    public function deleteAllNotifications($userId)
+    {
+        $sql = "DELETE FROM ".Config::Get('db.table.notification')." 
 				WHERE user_id = ?d";
-		if ($this->oDb->query($sql,$userId)) {
-			return true;
-		}
-		return false;
-	}
+        if ($this->oDb->query($sql, $userId)) {
+            return true;
+        }
 
-	//todo: удаление по массиву id, удаление по типу
+        return false;
+    }
+
+    //todo: удаление по массиву id, удаление по типу
 }

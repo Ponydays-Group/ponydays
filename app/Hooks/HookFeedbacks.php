@@ -9,100 +9,118 @@ use Engine\Hook;
 use Engine\LS;
 use Engine\Modules\ModuleViewer;
 
-class HookFeedbacks extends Hook {
+class HookFeedbacks extends Hook
+{
 
-	//***************************************************************************************
-	public function RegisterHook(){
-		$this->AddHook('comment_add_after', 			'CommentAddAfter');
+    //***************************************************************************************
+    public function RegisterHook()
+    {
+        $this->AddHook('comment_add_after', 'CommentAddAfter');
 
-		$this->AddHook('template_athead', 	'InsertUserbarItem'); 			// В строку шапки 
-		$this->AddHook('template_atmenu', 			'InsertNavbarItem'); 		// Меню пользователя
-		$this->AddHook('template_menu_stream_item', 		'InsertNavbarStream');  // Пункт в Stream
-	}
-	
-	//***************************************************************************************
-	// Добавление комментария
-	public function CommentAddAfter($aParams, $bTreeComment = false){
+        $this->AddHook('template_athead', 'InsertUserbarItem');            // В строку шапки
+        $this->AddHook('template_atmenu', 'InsertNavbarItem');        // Меню пользователя
+        $this->AddHook('template_menu_stream_item', 'InsertNavbarStream');  // Пункт в Stream
+    }
 
-		$oComment		= $aParams['oCommentNew'];
-		$oCommentParent	= $aParams['oCommentParent'];
-		$oTopic			= $aParams['oTopic'];
+    //***************************************************************************************
+    // Добавление комментария
+    public function CommentAddAfter($aParams, $bTreeComment = false)
+    {
 
-		$oAction = new EntityFeedbacksAction();
-		$oAction->setUserIdFrom($oComment->getUserId());
-		$oAction->setId(null);
-		$oAction->setAddDatetime(time());
-		$oAction->setActionObjectId($oComment->getId());
+        $oComment = $aParams['oCommentNew'];
+        $oCommentParent = $aParams['oCommentParent'];
+        $oTopic = $aParams['oTopic'];
 
-		// Ответ на комментарий
-		if(!empty($oCommentParent) and !$bTreeComment){
+        $oAction = new EntityFeedbacksAction();
+        $oAction->setUserIdFrom($oComment->getUserId());
+        $oAction->setId(null);
+        $oAction->setAddDatetime(time());
+        $oAction->setActionObjectId($oComment->getId());
 
-			// Сначала добавим действие "любой комментарий в топике автора"
-			$this->CommentAddAfter($aParams, true);
+        // Ответ на комментарий
+        if (!empty($oCommentParent) and !$bTreeComment) {
 
-			if($oCommentParent->getUserId() == $oComment->getUserId()) return false;
+            // Сначала добавим действие "любой комментарий в топике автора"
+            $this->CommentAddAfter($aParams, true);
 
-			$oAction->setUserIdTo($oCommentParent->getUserId());
-			$oAction->setDestinationObjectId($oCommentParent->getId());
-			$oAction->setActionType('CommentReply');
+            if ($oCommentParent->getUserId() == $oComment->getUserId()) {
+                return false;
+            }
 
-		}elseif(empty($oCommentParent) and !$bTreeComment){
-			// Ответ на топик или вопрос
+            $oAction->setUserIdTo($oCommentParent->getUserId());
+            $oAction->setDestinationObjectId($oCommentParent->getId());
+            $oAction->setActionType('CommentReply');
 
-			if($oTopic->getUserId() == $oComment->getUserId()) return false;
+        } elseif (empty($oCommentParent) and !$bTreeComment) {
+            // Ответ на топик или вопрос
 
-			$oAction->setActionType('TopicComment');
-			$oAction->setUserIdTo($oTopic->getUserId());
-			$oAction->setDestinationObjectId($oTopic->getId());
+            if ($oTopic->getUserId() == $oComment->getUserId()) {
+                return false;
+            }
 
-		}elseif($bTreeComment){
-			// Любой комментарий в топике автора
+            $oAction->setActionType('TopicComment');
+            $oAction->setUserIdTo($oTopic->getUserId());
+            $oAction->setDestinationObjectId($oTopic->getId());
 
-			if($oTopic->getUserId() == $oComment->getUserId()) return false;
+        } elseif ($bTreeComment) {
+            // Любой комментарий в топике автора
 
-			$oAction->setActionType('TopicCommentTree');
+            if ($oTopic->getUserId() == $oComment->getUserId()) {
+                return false;
+            }
 
-			$oAction->setUserIdTo($oTopic->getUserId());
-			$oAction->setDestinationObjectId($oTopic->getId());
-		}
+            $oAction->setActionType('TopicCommentTree');
 
-		LS::Make(ModuleFeedbacks::class)->SaveAction($oAction);
-		return true;
+            $oAction->setUserIdTo($oTopic->getUserId());
+            $oAction->setDestinationObjectId($oTopic->getId());
+        }
 
-	}
+        LS::Make(ModuleFeedbacks::class)->SaveAction($oAction);
 
-	//***************************************************************************************
-	public function InsertUserbarItem(){
-		if(LS::Make(ModuleUser::class)->GetUserCurrent()){
-			$iUnreadActionsCount	= LS::Make(ModuleFeedbacks::class)->GetCurrentUserUnreadItemsCount();
-			
-			if($iUnreadActionsCount > 0){
+        return true;
+
+    }
+
+    //***************************************************************************************
+    public function InsertUserbarItem()
+    {
+        if (LS::Make(ModuleUser::class)->GetUserCurrent()) {
+            $iUnreadActionsCount = LS::Make(ModuleFeedbacks::class)->GetCurrentUserUnreadItemsCount();
+
+            if ($iUnreadActionsCount > 0) {
                 /** @var \Engine\Modules\ModuleViewer $viewer */
                 $viewer = LS::Make(ModuleViewer::class);
                 $viewer->Assign('iUnreadActionsCount', $iUnreadActionsCount);
-				return $viewer->Fetch('userbar_item.tpl');
-			}
-		}
-		return '';
-	}
 
-	//***************************************************************************************
-	public function InsertNavbarItem(){
-		if(LS::Make(ModuleUser::class)->GetUserCurrent()){
-			$iUnreadActionsCount	= LS::Make(ModuleFeedbacks::class)->GetCurrentUserUnreadItemsCount();
+                return $viewer->Fetch('userbar_item.tpl');
+            }
+        }
+
+        return '';
+    }
+
+    //***************************************************************************************
+    public function InsertNavbarItem()
+    {
+        if (LS::Make(ModuleUser::class)->GetUserCurrent()) {
+            $iUnreadActionsCount = LS::Make(ModuleFeedbacks::class)->GetCurrentUserUnreadItemsCount();
             /** @var ModuleViewer $viewer */
             $viewer = LS::Make(ModuleViewer::class);
             $viewer->Assign('iUnreadActionsCount', $iUnreadActionsCount);
+
             return $viewer->Fetch('navbar_item.tpl');
-		}
-		return '';
-	}
-	
-	//***************************************************************************************
-	public function InsertNavbarStream(){
-		if(LS::Make(ModuleUser::class)->GetUserCurrent()){
-				return LS::Make(ModuleFeedbacks::class)->Fetch('navbar_stream.tpl');
-		}
-		return '';
-	}
+        }
+
+        return '';
+    }
+
+    //***************************************************************************************
+    public function InsertNavbarStream()
+    {
+        if (LS::Make(ModuleUser::class)->GetUserCurrent()) {
+            return LS::Make(ModuleFeedbacks::class)->Fetch('navbar_stream.tpl');
+        }
+
+        return '';
+    }
 }

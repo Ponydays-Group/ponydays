@@ -23,8 +23,9 @@ use Engine\Entity;
  * Объект сущности события в активности
  *
  * @package modules.stream
- * @since 1.0
+ * @since   1.0
  */
-class EntityStreamEvent extends Entity {
+class EntityStreamEvent extends Entity
+{
 
 }

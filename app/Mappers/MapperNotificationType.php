@@ -11,26 +11,30 @@ use Engine\Mapper;
  *
  * @package modules.notification
  */
-class MapperNotificationType extends Mapper {
+class MapperNotificationType extends Mapper
+{
 
-	/**
-	 * Получение всех типов уведомлений
-	 * @return array
-	 * @throws \Exception
-	 */
-	public function getNotificationTypes(){
-		$sql = "SELECT
+    /**
+     * Получение всех типов уведомлений
+     *
+     * @return array
+     * @throws \Exception
+     */
+    public function getNotificationTypes()
+    {
+        $sql = "SELECT
 				*
 				FROM
 				".Config::Get('db.table.notification_type')."
 		";
-		$aNotifications=array();
-		if ($aRows=$this->oDb->select($sql)) {
-			foreach ($aRows as $aRow) {
-				$aNotifications[] = new EntityNotificationType($aRow);
-			}
-		}
-		return $aNotifications;
-	}
+        $aNotifications = [];
+        if ($aRows = $this->oDb->select($sql)) {
+            foreach ($aRows as $aRow) {
+                $aNotifications[] = new EntityNotificationType($aRow);
+            }
+        }
+
+        return $aNotifications;
+    }
 
 }

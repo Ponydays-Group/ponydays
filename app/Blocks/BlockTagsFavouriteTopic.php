@@ -28,49 +28,51 @@ use Engine\Modules\ModuleViewer;
  * Обрабатывает блок облака тегов для избранного
  *
  * @package blocks
- * @since 1.0
+ * @since   1.0
  */
-class BlockTagsFavouriteTopic extends Block {
-	/**
-	 * Запуск обработки
-	 */
-	public function Exec() {
-		/**
-		 * Пользователь авторизован?
-		 */
-		if ($oUserCurrent = LS::Make(ModuleUser::class)->getUserCurrent()) {
-			if (!($oUser=$this->getParam('user'))) {
-				$oUser=$oUserCurrent;
-			}
+class BlockTagsFavouriteTopic extends Block
+{
+    /**
+     * Запуск обработки
+     */
+    public function Exec()
+    {
+        /**
+         * Пользователь авторизован?
+         */
+        if ($oUserCurrent = LS::Make(ModuleUser::class)->getUserCurrent()) {
+            if (!($oUser = $this->getParam('user'))) {
+                $oUser = $oUserCurrent;
+            }
             /** @var \Engine\Modules\ModuleViewer $viewer */
             $viewer = LS::Make(ModuleViewer::class);
             /** @var \App\Modules\ModuleFavourite $fav */
             $fav = LS::Make(ModuleFavourite::class);
-			/**
-			 * Получаем список тегов
-			 */
-			$aTags=$fav->GetGroupTags($oUser->getId(),'topic',null,70);
-			/**
-			 * Расчитываем логарифмическое облако тегов
-			 */
-			LS::Make(ModuleTools::class)->MakeCloud($aTags);
-			/**
-			 * Устанавливаем шаблон вывода
-			 */
-			$viewer->Assign("aFavouriteTopicTags",$aTags);
-			/**
-			 * Получаем список тегов пользователя
-			 */
-			$aTags=$fav->GetGroupTags($oUser->getId(),'topic',true,70);
-			/**
-			 * Расчитываем логарифмическое облако тегов
-			 */
-			LS::Make(ModuleTools::class)->MakeCloud($aTags);
-			/**
-			 * Устанавливаем шаблон вывода
-			 */
-			$viewer->Assign("aFavouriteTopicUserTags",$aTags);
-			$viewer->Assign("oFavouriteUser",$oUser);
-		}
-	}
+            /**
+             * Получаем список тегов
+             */
+            $aTags = $fav->GetGroupTags($oUser->getId(), 'topic', null, 70);
+            /**
+             * Расчитываем логарифмическое облако тегов
+             */
+            LS::Make(ModuleTools::class)->MakeCloud($aTags);
+            /**
+             * Устанавливаем шаблон вывода
+             */
+            $viewer->Assign("aFavouriteTopicTags", $aTags);
+            /**
+             * Получаем список тегов пользователя
+             */
+            $aTags = $fav->GetGroupTags($oUser->getId(), 'topic', true, 70);
+            /**
+             * Расчитываем логарифмическое облако тегов
+             */
+            LS::Make(ModuleTools::class)->MakeCloud($aTags);
+            /**
+             * Устанавливаем шаблон вывода
+             */
+            $viewer->Assign("aFavouriteTopicUserTags", $aTags);
+            $viewer->Assign("oFavouriteUser", $oUser);
+        }
+    }
 }

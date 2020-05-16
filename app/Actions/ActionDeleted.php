@@ -34,64 +34,64 @@ use Engine\Router;
  * Экшен обработки URL'ов вида /deleted/
  *
  * @package actions
- * @since 1.0
+ * @since   1.0
  */
 class ActionDeleted extends Action
 {
-	/**
-	 * Главное меню
-	 *
-	 * @var string
-	 */
-	protected $sMenuHeadItemSelect = 'deleted';
-	/**
-	 * Какое меню активно
-	 *
-	 * @var string
-	 */
-	protected $sMenuItemSelect = 'deleted';
-	/**
-	 * Какое подменю активно
-	 *
-	 * @var string
-	 */
-	protected $sMenuSubItemSelect = 'topics';
-	/**
-	 * УРЛ блога который подставляется в меню
-	 *
-	 * @var string
-	 */
-	protected $sMenuSubBlogUrl;
-	/**
-	 * Текущий пользователь
-	 *
-	 * @var \App\Entities\EntityUser|null
-	 */
-	protected $oUserCurrent = null;
-	/**
-	 * Число новых топиков в коллективных блогах
-	 *
-	 * @var int
-	 */
-	protected $iCountTopicsCollectiveNew = 0;
-	/**
-	 * Число новых топиков в персональных блогах
-	 *
-	 * @var int
-	 */
-	protected $iCountTopicsPersonalNew = 0;
-	/**
-	 * Число новых топиков в конкретном блоге
-	 *
-	 * @var int
-	 */
-	protected $iCountTopicsBlogNew = 0;
-	/**
-	 * Число новых топиков
-	 *
-	 * @var int
-	 */
-	protected $iCountTopicsNew = 0;
+    /**
+     * Главное меню
+     *
+     * @var string
+     */
+    protected $sMenuHeadItemSelect = 'deleted';
+    /**
+     * Какое меню активно
+     *
+     * @var string
+     */
+    protected $sMenuItemSelect = 'deleted';
+    /**
+     * Какое подменю активно
+     *
+     * @var string
+     */
+    protected $sMenuSubItemSelect = 'topics';
+    /**
+     * УРЛ блога который подставляется в меню
+     *
+     * @var string
+     */
+    protected $sMenuSubBlogUrl;
+    /**
+     * Текущий пользователь
+     *
+     * @var \App\Entities\EntityUser|null
+     */
+    protected $oUserCurrent = null;
+    /**
+     * Число новых топиков в коллективных блогах
+     *
+     * @var int
+     */
+    protected $iCountTopicsCollectiveNew = 0;
+    /**
+     * Число новых топиков в персональных блогах
+     *
+     * @var int
+     */
+    protected $iCountTopicsPersonalNew = 0;
+    /**
+     * Число новых топиков в конкретном блоге
+     *
+     * @var int
+     */
+    protected $iCountTopicsBlogNew = 0;
+    /**
+     * Число новых топиков
+     *
+     * @var int
+     */
+    protected $iCountTopicsNew = 0;
 
     /**
      * Инизиализация экшена
@@ -116,8 +116,8 @@ class ActionDeleted extends Action
      */
     protected function RegisterEvent()
     {
-		$this->AddEventPreg('/^topics$/i', '/^(page([1-9]\d{0,5}))?$/i', array('EventDeletedTopics', 'topics'));
-		$this->AddEventPreg('/^blogs$/i', '/^(page([1-9]\d{0,5}))?$/i', array('EventDeletedBlogs', 'blogs'));
+        $this->AddEventPreg('/^topics$/i', '/^(page([1-9]\d{0,5}))?$/i', ['EventDeletedTopics', 'topics']);
+        $this->AddEventPreg('/^blogs$/i', '/^(page([1-9]\d{0,5}))?$/i', ['EventDeletedBlogs', 'blogs']);
 
     }
 
@@ -127,139 +127,167 @@ class ActionDeleted extends Action
      **********************************************************************************
      */
 
-	/**
-	 * Показ всех удаленных топиков
-	 *
-	 */
-	protected function EventDeletedTopics()
-	{
-		$sPeriod = 'all';
-		$sShowType = 'topics';
-		/**
-		 * Меню
-		 */
-		$this->sMenuSubItemSelect =  $sShowType;
-		/**
-		 * Передан ли номер страницы
-		 */
-		$iPage = $this->GetParamEventMatch(0, 2) ? $this->GetParamEventMatch(0, 2) : 1;
-		if ($iPage == 1 and !getRequest('period')) {
-			LS::Make(ModuleViewer::class)->SetHtmlCanonical(Router::GetPath('deleted') . $sShowType . '/');
-		}
-		/**
-		 * Получаем список топиков
-		 */
-		$aResult = LS::Make(ModuleTopic::class)->GetDeletedTopicsCollective($iPage, Config::Get('module.topic.per_page'), $sShowType, $sPeriod == 'all' ? null : $sPeriod * 60 * 60 * 24);
-		$aTopics = $aResult['collection'];
-		$aTopicsC = [];
-		foreach ($aTopics as $oTopic ) {
-			/**
-			 * проверяем есть ли право на удаление топика
-			 */
-			if ($this->oUserCurrent && LS::Make(ModuleACL::class)->IsAllowDeleteTopic($oTopic,$this->oUserCurrent)) {
-				array_push($aTopicsC, $oTopic);
-			}
-		}
-		$aTopics = $aTopicsC;
-		/**
-		 * Вызов хуков
-		 */
-		LS::Make(ModuleHook::class)->Run('topics_list_show', array('aTopics' => $aTopics));
-		/**
-		 * Формируем постраничность
-		 */
-		$aPaging = LS::Make(ModuleViewer::class)->MakePaging($aResult['count'], $iPage, Config::Get('module.topic.per_page'), Config::Get('pagination.pages.count'), Router::GetPath('deleted') . $sShowType, in_array($sShowType, array('discussed', 'top')) ? array('period' => $sPeriod) : array());
-		/**
-		 * Вызов хуков
-		 */
-		LS::Make(ModuleHook::class)->Run('blog_show', array('sShowType' => $sShowType));
-		/**
-		 * Загружаем переменные в шаблон
-		 */
-		LS::Make(ModuleViewer::class)->Assign('aTopics', $aTopics);
-		LS::Make(ModuleViewer::class)->Assign('aPaging', $aPaging);
-		LS::Make(ModuleViewer::class)->Assign('bInTrash', true);
-		if (in_array($sShowType, array('discussed', 'top'))) {
-			LS::Make(ModuleViewer::class)->Assign('sPeriodSelectCurrent', $sPeriod);
-			LS::Make(ModuleViewer::class)->Assign('sPeriodSelectRoot', Router::GetPath('deleted') . $sShowType . '/');
-		}
-		/**
-		 * Устанавливаем шаблон вывода
-		 */
-		$this->SetTemplateAction('deleted_topics');
-	}
-	/**
-	 * Показ всех удаленных блогов
-	 *
-	 */
-	protected function EventDeletedBlogs()
-	{
-		$sShowType = 'blogs';
-		/**
-		 * Меню
-		 */
-		$this->sMenuSubItemSelect =  $sShowType;
-		/**
-		 * По какому полю сортировать
-		 */
-		$sOrder='blog_rating';
-		if (getRequest('order')) {
-			$sOrder=getRequestStr('order');
-		}
-		/**
-		 * В каком направлении сортировать
-		 */
-		$sOrderWay='desc';
-		if (getRequest('order_way')) {
-			$sOrderWay=getRequestStr('order_way');
-		}
-		/**
-		 * Фильтр поиска блогов
-		 */
-		$aFilter=array(
-			'exclude_type' => 'personal',
-			'deleted' => 1
-		);
-		/**
-		 * Передан ли номер страницы
-		 */
-		$iPage=	preg_match("/^\d+$/i",$this->GetEventMatch(2)) ? $this->GetEventMatch(2) : 1;
-		/**
-		 * Получаем список блогов
-		 */
-		$aResult=LS::Make(ModuleBlog::class)->GetBlogsByFilter($aFilter,array($sOrder=>$sOrderWay),$iPage,Config::Get('module.blog.per_page'));
-		$aBlogs=$aResult['collection'];
-		$aBlogsC = [];
-		foreach ($aBlogs as $aBlog ) {
-			/**
-			 * проверяем есть ли право на удаление топика
-			 */
-			if ($this->oUserCurrent && LS::Make(ModuleViewer::class)->IsAllowDeleteBlog($aBlog,$this->oUserCurrent)) {
-				array_push($aBlogsC, $aBlog);
-			}
-		}
-		$aBlogs = $aBlogsC;
-		/**
-		 * Формируем постраничность
-		 */
-		$aPaging=LS::Make(ModuleViewer::class)->MakePaging($aResult['count'],$iPage,Config::Get('module.blog.per_page'),Config::Get('pagination.pages.count'),Router::GetPath('blogs'),array('order'=>$sOrder,'order_way'=>$sOrderWay));
-		/**
-		 * Загружаем переменные в шаблон
-		 */
-		LS::Make(ModuleViewer::class)->Assign('aPaging',$aPaging);
-		LS::Make(ModuleViewer::class)->Assign("aBlogs",$aBlogs);
-		LS::Make(ModuleViewer::class)->Assign("sBlogOrder",htmlspecialchars($sOrder));
-		LS::Make(ModuleViewer::class)->Assign("sBlogOrderWay",htmlspecialchars($sOrderWay));
-		LS::Make(ModuleViewer::class)->Assign("sBlogOrderWayNext",htmlspecialchars($sOrderWay=='desc' ? 'asc' : 'desc'));
-		/**
-		 * Устанавливаем title страницы
-		 */
-		LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('blog_menu_all_list'));
-		/**
-		 * Устанавливаем шаблон вывода
-		 */
-		$this->SetTemplateAction('deleted_blogs');
-	}
+    /**
+     * Показ всех удаленных топиков
+     *
+     */
+    protected function EventDeletedTopics()
+    {
+        $sPeriod = 'all';
+        $sShowType = 'topics';
+        /**
+         * Меню
+         */
+        $this->sMenuSubItemSelect = $sShowType;
+        /**
+         * Передан ли номер страницы
+         */
+        $iPage = $this->GetParamEventMatch(0, 2) ? $this->GetParamEventMatch(0, 2) : 1;
+        if ($iPage == 1 and !getRequest('period')) {
+            LS::Make(ModuleViewer::class)->SetHtmlCanonical(Router::GetPath('deleted').$sShowType.'/');
+        }
+        /**
+         * Получаем список топиков
+         */
+        $aResult = LS::Make(ModuleTopic::class)->GetDeletedTopicsCollective(
+            $iPage,
+            Config::Get('module.topic.per_page'),
+            $sShowType,
+            $sPeriod == 'all' ? null : $sPeriod * 60 * 60 * 24
+        );
+        $aTopics = $aResult['collection'];
+        $aTopicsC = [];
+        foreach ($aTopics as $oTopic) {
+            /**
+             * проверяем есть ли право на удаление топика
+             */
+            if ($this->oUserCurrent && LS::Make(ModuleACL::class)->IsAllowDeleteTopic($oTopic, $this->oUserCurrent)) {
+                array_push($aTopicsC, $oTopic);
+            }
+        }
+        $aTopics = $aTopicsC;
+        /**
+         * Вызов хуков
+         */
+        LS::Make(ModuleHook::class)->Run('topics_list_show', ['aTopics' => $aTopics]);
+        /**
+         * Формируем постраничность
+         */
+        $aPaging = LS::Make(ModuleViewer::class)->MakePaging(
+            $aResult['count'],
+            $iPage,
+            Config::Get('module.topic.per_page'),
+            Config::Get('pagination.pages.count'),
+            Router::GetPath('deleted').$sShowType,
+            in_array($sShowType, ['discussed', 'top']) ? ['period' => $sPeriod] : []
+        );
+        /**
+         * Вызов хуков
+         */
+        LS::Make(ModuleHook::class)->Run('blog_show', ['sShowType' => $sShowType]);
+        /**
+         * Загружаем переменные в шаблон
+         */
+        LS::Make(ModuleViewer::class)->Assign('aTopics', $aTopics);
+        LS::Make(ModuleViewer::class)->Assign('aPaging', $aPaging);
+        LS::Make(ModuleViewer::class)->Assign('bInTrash', true);
+        if (in_array($sShowType, ['discussed', 'top'])) {
+            LS::Make(ModuleViewer::class)->Assign('sPeriodSelectCurrent', $sPeriod);
+            LS::Make(ModuleViewer::class)->Assign('sPeriodSelectRoot', Router::GetPath('deleted').$sShowType.'/');
+        }
+        /**
+         * Устанавливаем шаблон вывода
+         */
+        $this->SetTemplateAction('deleted_topics');
+    }
+
+    /**
+     * Показ всех удаленных блогов
+     *
+     */
+    protected function EventDeletedBlogs()
+    {
+        $sShowType = 'blogs';
+        /**
+         * Меню
+         */
+        $this->sMenuSubItemSelect = $sShowType;
+        /**
+         * По какому полю сортировать
+         */
+        $sOrder = 'blog_rating';
+        if (getRequest('order')) {
+            $sOrder = getRequestStr('order');
+        }
+        /**
+         * В каком направлении сортировать
+         */
+        $sOrderWay = 'desc';
+        if (getRequest('order_way')) {
+            $sOrderWay = getRequestStr('order_way');
+        }
+        /**
+         * Фильтр поиска блогов
+         */
+        $aFilter = [
+            'exclude_type' => 'personal',
+            'deleted'      => 1
+        ];
+        /**
+         * Передан ли номер страницы
+         */
+        $iPage = preg_match("/^\d+$/i", $this->GetEventMatch(2)) ? $this->GetEventMatch(2) : 1;
+        /**
+         * Получаем список блогов
+         */
+        $aResult = LS::Make(ModuleBlog::class)->GetBlogsByFilter(
+            $aFilter,
+            [$sOrder => $sOrderWay],
+            $iPage,
+            Config::Get('module.blog.per_page')
+        );
+        $aBlogs = $aResult['collection'];
+        $aBlogsC = [];
+        foreach ($aBlogs as $aBlog) {
+            /**
+             * проверяем есть ли право на удаление топика
+             */
+            if ($this->oUserCurrent && LS::Make(ModuleViewer::class)->IsAllowDeleteBlog($aBlog, $this->oUserCurrent)) {
+                array_push($aBlogsC, $aBlog);
+            }
+        }
+        $aBlogs = $aBlogsC;
+        /**
+         * Формируем постраничность
+         */
+        $aPaging = LS::Make(ModuleViewer::class)->MakePaging(
+            $aResult['count'],
+            $iPage,
+            Config::Get('module.blog.per_page'),
+            Config::Get('pagination.pages.count'),
+            Router::GetPath('blogs'),
+            ['order' => $sOrder, 'order_way' => $sOrderWay]
+        );
+        /**
+         * Загружаем переменные в шаблон
+         */
+        LS::Make(ModuleViewer::class)->Assign('aPaging', $aPaging);
+        LS::Make(ModuleViewer::class)->Assign("aBlogs", $aBlogs);
+        LS::Make(ModuleViewer::class)->Assign("sBlogOrder", htmlspecialchars($sOrder));
+        LS::Make(ModuleViewer::class)->Assign("sBlogOrderWay", htmlspecialchars($sOrderWay));
+        LS::Make(ModuleViewer::class)->Assign(
+            "sBlogOrderWayNext",
+            htmlspecialchars($sOrderWay == 'desc' ? 'asc' : 'desc')
+        );
+        /**
+         * Устанавливаем title страницы
+         */
+        LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('blog_menu_all_list'));
+        /**
+         * Устанавливаем шаблон вывода
+         */
+        $this->SetTemplateAction('deleted_blogs');
+    }
 
     /**
      * Выполняется при завершении работы экшена

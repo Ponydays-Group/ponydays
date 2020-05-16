@@ -26,7 +26,7 @@ use Engine\Modules\ModuleViewer;
  * Ответ отдает в JSON фомате
  *
  * @package actions
- * @since 1.0
+ * @since   1.0
  */
 class ActionVoice extends Action
 {
@@ -45,7 +45,8 @@ class ActionVoice extends Action
         $this->AddEvent('voice', 'EventVoice');
     }
 
-    function EventVoice() {
+    function EventVoice()
+    {
         LS::Make(ModuleViewer::class)->Assign('noSidebar', true);
     }
 }

@@ -22,52 +22,62 @@ namespace Engine;
  * Модули предназначены для объединения часто используемого функционала, т.е. некие аналоги внутренних библиотек.
  *
  * @package engine
- * @since 1.0
+ * @since   1.0
  */
-abstract class Module extends LsObject {
-	/**
-	 * Указывает на то, была ли проведенна инициализация модуля
-	 *
-	 * @var bool
-	 */
-	protected $bIsInit=false;
+abstract class Module extends LsObject
+{
+    /**
+     * Указывает на то, была ли проведенна инициализация модуля
+     *
+     * @var bool
+     */
+    protected $bIsInit = false;
 
-	/**
-	 * При создании модуля передаем объект ядра
-	 *
-	 */
-	final public function __construct() {}
-	/**
-	 * Блокируем копирование/клонирование объекта
-	 *
-	 */
-	protected function __clone() {
+    /**
+     * При создании модуля передаем объект ядра
+     *
+     */
+    final public function __construct() { }
 
-	}
-	/**
-	 * Абстрактный метод инициализации модуля, должен быть переопределен в модуле
-	 *
-	 */
-	abstract public function Init();
-	/**
-	 * Метод срабатывает при завершении работы ядра
-	 *
-	 */
-	public function Shutdown() {
+    /**
+     * Блокируем копирование/клонирование объекта
+     *
+     */
+    protected function __clone()
+    {
 
-	}
-	/**
-	 * Возвращает значение флага инициализации модуля
-	 *
-	 * @return bool
-	 */
-	public function isInit() {
-		return $this->bIsInit;
-	}
-	/**
-	 * Помечает модуль как инициализированный
-	 */
-	public function SetInit() {
-		$this->bIsInit=true;
-	}
+    }
+
+    /**
+     * Абстрактный метод инициализации модуля, должен быть переопределен в модуле
+     *
+     */
+    abstract public function Init();
+
+    /**
+     * Метод срабатывает при завершении работы ядра
+     *
+     */
+    public function Shutdown()
+    {
+
+    }
+
+    /**
+     * Возвращает значение флага инициализации модуля
+     *
+     * @return bool
+     */
+    public function isInit()
+    {
+        return $this->bIsInit;
+    }
+
+    /**
+     * Помечает модуль как инициализированный
+     */
+    public function SetInit()
+    {
+        $this->bIsInit = true;
+    }
 }

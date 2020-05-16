@@ -21,8 +21,9 @@ namespace App\Entities;
  * Объект сущности города
  *
  * @package modules.geo
- * @since 1.0
+ * @since   1.0
  */
-class EntityGeoCity extends EntityGeo {
+class EntityGeoCity extends EntityGeo
+{
 
 }

@@ -252,7 +252,7 @@ class ActionDeleted extends Action
             /**
              * проверяем есть ли право на удаление топика
              */
-            if ($this->oUserCurrent && LS::Make(ModuleViewer::class)->IsAllowDeleteBlog($aBlog, $this->oUserCurrent)) {
+            if ($this->oUserCurrent && LS::Make(ModuleACL::class)->IsAllowDeleteBlog($aBlog, $this->oUserCurrent)) {
                 array_push($aBlogsC, $aBlog);
             }
         }

@@ -2,11 +2,14 @@
 
 namespace App\Mappers;
 
+use App\Entities\EntityFeedbacksAction;
 use Engine\Config;
 use Engine\Mapper;
 
 class MapperFeedbacks extends Mapper
 {
+
+    private $entities = ["Action" => EntityFeedbacksAction::class];
 
     //**************************************************************************************************
     protected function TableName($sShortName)
@@ -49,7 +52,7 @@ class MapperFeedbacks extends Mapper
     protected function EntityByTableRow($sEntity, $aRow)
     {
         if ($aRow) {
-            $sEntityFull = "App\Modules\Feedbacks\Entity\ModuleFeedbacks_Entity".$sEntity;
+            $sEntityFull = $this->entities[$sEntity];
 
             return new $sEntityFull($aRow);
         } else {

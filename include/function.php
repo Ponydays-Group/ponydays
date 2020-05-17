@@ -450,3 +450,22 @@ function get_class_name(string $class)
 
     return array_pop($arr);
 }
+
+function _gov_s_date_asc($a, $b): bool
+{
+    $a_time = strtotime($a['date']);
+    $b_time = strtotime($b['date']);
+    if ($a_time > $b_time) {
+        return 1;
+    }
+    if ($a_time < $b_time) {
+        return -1;
+    }
+
+    return 0;
+}
+
+function _gov_s_date_desc($a, $b): bool
+{
+    return -_gov_s_date_asc($a, $b);
+}

@@ -187,7 +187,7 @@ class ActionRegistration extends Action
         LS::Make(ModuleViewer::class)->SetResponseAjax('json');
         if (Config::Get('reCaptcha.enabled')) {
             $recaptcha = new \ReCaptcha\ReCaptcha(Config::Get('reCaptcha.secret'));
-            $recaptcha->setChallengeTimeout(Config::Get('reCaptcha.expected_hostname'));
+            $recaptcha->setExpectedHostname(Config::Get('reCaptcha.expected_hostname'));
             $sCaptchaResponse = getRequest('g-recaptcha-response');
 
             $resp = $recaptcha->verify($sCaptchaResponse, $_SERVER['REMOTE_ADDR']);

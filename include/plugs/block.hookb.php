@@ -39,7 +39,7 @@ function smarty_block_hookb($aParams,$sContent,&$oSmarty,&$bRepeat) {
 		unset($aParams['run']);
 		$aParams['content']=$sContent;
 		$aResultHook=LS::Make(ModuleHook::class)->Run($sHookName,$aParams);
-		if (array_key_exists('template_result',$aResultHook)) {
+		if ($aResultHook && array_key_exists('template_result',$aResultHook)) {
 			echo join('',$aResultHook['template_result']);
 			return '';
 		}

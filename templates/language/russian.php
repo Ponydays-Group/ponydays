@@ -517,7 +517,7 @@ return array(
 	'registration_password_notice' => 'Должен содержать не менее 5 символов и не может совпадать с логином. Не используйте простые пароли, будьте разумны.',
 	'registration_password_retry' => 'Повторите пароль',
 	'registration_captcha' => 'Введите цифры и буквы',
-	'registration_captcha_error' => 'Неверный код',
+	'registration_captcha_error' => 'Капча не пройдена',
 	'registration_submit' => 'Зарегистрироваться',
 	'registration_ok' => 'Поздравляем! Регистрация прошла успешно',
 

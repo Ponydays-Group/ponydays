@@ -99,6 +99,7 @@
     "reCaptcha": {
         "enabled": false,
         "secret": "",
-        "key": ""
+        "key": "",
+        "expected_hostname": ""
     }
 }

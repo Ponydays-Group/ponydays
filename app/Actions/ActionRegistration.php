@@ -186,28 +186,13 @@ class ActionRegistration extends Action
          */
         LS::Make(ModuleViewer::class)->SetResponseAjax('json');
         if (Config::Get('reCaptcha.enabled')) {
+            $recaptcha = new \ReCaptcha\ReCaptcha(Config::Get('reCaptcha.secret'));
+            $recaptcha->setChallengeTimeout(Config::Get('reCaptcha.expected_hostname'));
             $sCaptchaResponse = getRequest('g-recaptcha-response');
 
-            $myCurl = curl_init();
-            curl_setopt_array(
-                $myCurl,
-                [
-                    CURLOPT_URL            => 'https://www.google.com/recaptcha/api/siteverify',
-                    CURLOPT_RETURNTRANSFER => true,
-                    CURLOPT_POST           => true,
-                    CURLOPT_POSTFIELDS     => http_build_query(
-                        [
-                            "secret"   => Config::Get('reCaptcha.secret'),
-                            "response" => $sCaptchaResponse
-                        ]
-                    )
-                ]
-            );
-            $captchaData = json_decode(curl_exec($myCurl));
-            curl_close($myCurl);
-
-            if (!$captchaData->success) {
-                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'));
+            $resp = $recaptcha->verify($sCaptchaResponse, $_SERVER['REMOTE_ADDR']);
+            if (!$resp->isSuccess()) {
+                LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('registration_captcha_error'));
 
                 return;
             }

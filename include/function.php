@@ -18,18 +18,6 @@
 use Engine\Entity;
 
 /**
- * Проверяет запрос послан как ajax или нет
- * Пришлось продублировать здесь, чтобы получить к ней доступ до подключения роутера
- *
- * @return bool
- */
-function isAjaxRequest()
-{
-    return isset($_SERVER['HTTP_X_REQUESTED_WITH'])
-        && $_SERVER['HTTP_X_REQUESTED_WITH'] === 'XMLHttpRequest';
-}
-
-/**
  * функция доступа к GET POST параметрам
  *
  * @param  string $sName

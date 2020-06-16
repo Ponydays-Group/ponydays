@@ -85,12 +85,6 @@ class Router extends LsObject
      */
     protected $oEngine = null;
     /**
-     * Покаывать или нет статистику выполнения
-     *
-     * @var bool
-     */
-    static protected $bShowStats = true;
-    /**
      * Объект роутинга
      *
      * @see getInstance
@@ -456,37 +450,6 @@ class Router extends LsObject
     static public function SetParam($iOffset, $value)
     {
         self::$aParams[$iOffset] = $value;
-    }
-
-    /**
-     * Показывать или нет статистику выполение скрипта
-     * Иногда бывает необходимо отключить показ, например, при выводе RSS ленты
-     *
-     * @param bool $bState
-     */
-    static public function SetIsShowStats($bState)
-    {
-        self::$bShowStats = $bState;
-    }
-
-    /**
-     * Возвращает статус показывать или нет статистику
-     *
-     * @return bool
-     */
-    static public function GetIsShowStats()
-    {
-        return self::$bShowStats;
-    }
-
-    /**
-     * Проверяет запрос послан как ajax или нет
-     *
-     * @return bool
-     */
-    static public function GetIsAjaxRequest()
-    {
-        return isAjaxRequest();
     }
 
     /**

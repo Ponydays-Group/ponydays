@@ -174,27 +174,6 @@ class ModuleDatabase extends Module
     }
 
     /**
-     * Возвращает статистику использования БД - время и количество запросов
-     *
-     * @return array
-     */
-    public function GetStats()
-    {
-        $aQueryStats = ['time' => 0, 'count' => 0];
-        foreach ($this->aInstance as $oDb) {
-            $aStats = $oDb->getStatistics();
-            $aQueryStats['time'] += $aStats['time'];
-            $aQueryStats['count'] += $aStats['count'];
-        }
-        $aQueryStats['time'] = round($aQueryStats['time'], 3);
-        if ($aQueryStats['count'] > 0) {
-            $aQueryStats['count']--; // не считаем тот самый костыльный запрос, который устанавливает настройки DB соединения
-        }
-
-        return $aQueryStats;
-    }
-
-    /**
      * Экспорт SQL дампа в БД
      *
      * @see ExportSQLQuery

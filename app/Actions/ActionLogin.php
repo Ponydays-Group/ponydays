@@ -49,10 +49,6 @@ class ActionLogin extends Action
          * Устанавливаем дефолтный евент
          */
         $this->SetDefaultEvent('index');
-        /**
-         * Отключаем отображение статистики выполнения
-         */
-        Router::SetIsShowStats(false);
     }
 
     /**

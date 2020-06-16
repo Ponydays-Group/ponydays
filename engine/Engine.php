@@ -252,25 +252,6 @@ class Engine extends LsObject
     }
 
     /**
-     * Возвращает статистику выполнения
-     *
-     * @return array
-     */
-    public function getStats()
-    {
-        /** @var ModuleDatabase $db */
-        $db = LS::Make(ModuleDatabase::class);
-        /** @var \Engine\Modules\ModuleCache $cache */
-        $cache = LS::Make(ModuleCache::class);
-
-        return [
-            'sql'    => $db->GetStats(),
-            'cache'  => $cache->GetStats(),
-            'engine' => ['time_load_module' => round($this->iTimeLoadModule, 3)]
-        ];
-    }
-
-    /**
      * Возвращает время старта выполнения движка в микросекундах
      *
      * @return int

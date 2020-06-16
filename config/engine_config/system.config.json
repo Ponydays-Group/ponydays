@@ -54,8 +54,7 @@
             "App\\Hooks\\HookFeedbacks",
             "App\\Hooks\\HookMain",
             "App\\Hooks\\HookPage",
-            "App\\Hooks\\HookQuotes",
-            "App\\Hooks\\HookStatisticsPerformance"
+            "App\\Hooks\\HookQuotes"
         ]
     },
     

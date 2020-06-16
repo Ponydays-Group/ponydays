@@ -53,10 +53,6 @@ class ActionError extends Action
          * Устанавливаем дефолтный евент
          */
         $this->SetDefaultEvent('index');
-        /**
-         * Запрешаем отображать статистику выполнения
-         */
-        Router::SetIsShowStats(false);
     }
 
     /**

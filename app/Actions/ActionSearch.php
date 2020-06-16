@@ -88,7 +88,6 @@ class ActionSearch extends Action
      */
     function EventOpenSearch()
     {
-        Router::SetIsShowStats(false);
         LS::Make(ModuleViewer::class)->Assign('sAdminMail', Config::Get('sys.mail.from_email'));
     }
 

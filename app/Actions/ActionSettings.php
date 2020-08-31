@@ -680,7 +680,7 @@ class ActionSettings extends Action
                             $this->oUserCurrent->setPassword(
                                 LS::Make(ModuleCrypto::class)->PasswordHash(getRequestStr('password'))
                             );
-                            LS::Make(ModuleUser::class)->_Authorization($this->oUserCurrent);
+                            LS::Make(ModuleUser::class)->Authorization($this->oUserCurrent);
                         } else {
                             $bError = true;
                             LS::Make(ModuleMessage::class)->AddError(

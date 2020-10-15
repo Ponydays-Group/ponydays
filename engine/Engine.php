@@ -137,6 +137,17 @@ class Engine extends LsObject
         $hook->Run('engine_init_complete');
     }
 
+    public function Start()
+    {
+        $router = \Engine\Routing\Router::getInstance();
+        $router->init();
+        $this->Init();
+
+        $router->route();
+
+        $this->Shutdown();
+    }
+
     /**
      * Завершение работы движка
      * Завершает все модули.

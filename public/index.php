@@ -30,13 +30,13 @@ chdir(dirname(__FILE__).'/..');
 // Получаем объект конфигурации
 require_once(__DIR__ . "/../config/loader.php");
 
+use Engine\Engine;
 use Engine\Config;
 use Engine\ProfilerSimple;
-use Engine\Router;
 
 $oProfiler=ProfilerSimple::getInstance(Config::Get('path.root.server').'/logs/'.Config::Get('sys.logs.profiler_file'),Config::Get('sys.logs.profiler'));
 $iTimeId=$oProfiler->Start('full_time');
-$oRouter=Router::getInstance();
-$oRouter->Exec();
+
+Engine::getInstance()->Start();
 
 $oProfiler->Stop($iTimeId);

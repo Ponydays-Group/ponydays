@@ -1,5 +1,6 @@
 {
   "require": {
+    "php": ">=7.1.0",
     "ext-msgpack": "^2",
     "ext-openssl": "*",
     "ext-mbstring": "*",
@@ -7,8 +8,10 @@
     "ext-curl": "*",
     "ext-gd": "*",
     "ext-mysqli": "*",
+
     "smarty/smarty": "3.1.35",
-    "google/recaptcha": "^1.2"
+    "google/recaptcha": "^1.2",
+    "nikic/fast-route": "^1.3"
   },
   "require-dev": {
     "phpunit/phpunit": "^8"

@@ -1,0 +1,70 @@
+# ActionAdmin
+GROUP '/admin' (
+	GET '' to 'admin#EventIndex';
+	GET '/restorecomment' to 'admin#EventRestoreComment';
+	GET '/userfields' to 'admin#EventUserfields';
+	GET '/recalcfavourite' to 'admin#EventRecalculateFavourite';
+	GET '/recalcvote' to 'admin#EventRecalculateVote';
+	GET '/recalctopic' to 'admin#EventRecalculateTopic';
+	GET '/config' to 'admin#EventAdminConfig';
+	GET '/save' to 'admin#EventAdminConfigSave';
+	GET '/user' to 'admin#EventSaveUser';
+);
+
+# ActionAjax
+GROUP '/ajax' (
+	GET '/vote/comment' to 'ajax#EventVoteComment';
+	GET '/vote/topic' to 'ajax#EventVoteTopic';
+	GET '/vote/user' to 'ajax#EventVoteUser';
+	GET '/vote/question' to 'ajax#EventVoteQuestion';
+
+	GET '/favourite/save-tags' to 'ajax#EventFavouriteSaveTags';
+	GET '/favourite/topic' to 'ajax#EventFavouriteTopic';
+	GET '/favourite/comment' to 'ajax#EventFavouriteComment';
+	GET '/favourite/talk' to 'ajax#EventFavouriteTalk';
+
+	GET '/stream/comment' to 'ajax#EventStreamComment';
+	GET '/stream/topic' to 'ajax#EventStreamTopic';
+
+	GET '/blogs/top' to 'ajax#EventBlogsTop';
+	GET '/blogs/self' to 'ajax#EventBlogsSelf';
+	GET '/blogs/join' to 'ajax#EventBlogsJoin';
+
+	GET '/preview/text' to 'ajax#EventPreviewText';
+	GET '/preview/topic' to 'ajax#EventPreviewTopic';
+
+	GET '/upload/image' to 'ajax#EventUploadImage';
+
+	GET '/autocompleter/tag' to 'ajax#EventAutocompleterTag';
+	GET '/autocompleter/user' to 'ajax#EventAutocompleterUser';
+
+	GET '/comment/delete' to 'ajax#EventCommentDelete';
+
+	GET '/geo/get/regions' to 'ajax#EventGeoGetRegions';
+	GET '/get/get/cities' to 'ajax#EventGeoGetCities';
+
+	GET '/infobox/info/blog' to 'ajax#EventInfoboxInfoBlog';
+	GET '/askinvite' to 'ajax#EventInviteUser';
+	GET '/topic-lock-control' to 'ajax#EventTopicLockControl';
+	GET '/get-object-votes' to 'ajax#EventGetObjectVotes';
+	GET '/ignore' to 'ajax#EventIgnoreUser';
+	GET '/forbid-ignore' to 'ajax#EventForbidIgnoreUser';
+
+	GET '/editcomment-gethistory' to 'ajax#EventGetHistory';
+	GET '/editcomment-getsource' to 'ajax#EventGetSource';
+	GET '/editcomment-edit' to 'ajax#EventEdit';
+
+	GET '/comment' to 'ajax#EventGetComment';
+
+	GET '/ban' to 'ajax#EventBan';
+);
+
+# ActionApi
+GROUP '/api' (
+	GET '/login' to 'api#EventAjaxLogin';
+);
+
+# ActionBlog
+GROUP '/blog' (
+	GET '/good/{page:(page([1-9]\d{0,5}))?}' to 'blog#EventTopics';
+);

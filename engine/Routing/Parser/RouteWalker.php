@@ -18,11 +18,13 @@ class RouteWalker
                 );
                 break;
             case RouteParser::STMT_ROUTE:
-                $methods = $stmt['methods'];
+                $methods = array_merge($stmt['methods'], ['OPTIONS']);
                 if (in_array('ANY', $methods)) {
-                    $methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'];
+                    $methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'];
                 }
-                $r->addRoute($methods, $stmt['uri'], $stmt['params']);
+                $params = $stmt['params'];
+                $params['options'] = $methods;
+                $r->addRoute($methods, $stmt['uri'], $params);
                 break;
 
             default: break;

@@ -64,9 +64,20 @@ class Router
         }
     }
 
-    private function handleNotFound() {}
+    private function handleNotFound() {
+        echo 'not found';
+    }
 
-    private function handleFound(string $handler, array $vars) {}
+    private function handleFound(array $handler, array $vars) {
+        if (RequestUtils::getHTTPMethod() == 'OPTIONS' && isset($handler['options'])) {
+            http_response_code(204);
+            header('Allow: ' . implode(', ', $handler['options']));
+            return;
+        }
+        echo var_export($handler, true) . '<br>***<br>' . var_export($vars, true);
+    }
 
-    private function handleMethodNotAllowed(array $allowedMethods) {}
+    private function handleMethodNotAllowed(array $allowedMethods) {
+        echo 'method not allowed: ' . var_export($allowedMethods, true);
+    }
 }

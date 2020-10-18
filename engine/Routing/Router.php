@@ -2,6 +2,10 @@
 
 namespace Engine\Routing;
 
+use Engine\Config;
+use Engine\Routing\Parser\RouteLexer;
+use Engine\Routing\Parser\RouteParser;
+use Engine\Routing\Parser\RouteWalker;
 use FastRoute;
 use FastRoute\RouteCollector;
 
@@ -20,9 +24,23 @@ class Router
 
     public function init()
     {
-        $this->dispatcher = FastRoute\simpleDispatcher(function (RouteCollector $r) {
+        $this->dispatcher = FastRoute\cachedDispatcher(function (RouteCollector $r) {
+            $lexer = new RouteLexer();
+            $parser = new RouteParser();
+            $walker = new RouteWalker();
 
-        });
+            foreach (Config::Get('router.registries') as $reg) {
+                try {
+                    $routeSource = file_get_contents($reg);
+                    $lexer->init($routeSource, $reg);
+                    $parser->init($lexer);
+                    $result = $parser->parse();
+                    $walker->walkList($result, $r);
+                } catch (\Throwable $t) {
+                    file_put_contents(Config::Get('router.logFile'), $t, FILE_APPEND);
+                }
+            }
+        }, ['cacheFile' => Config::Get('router.cacheFile')]);
     }
 
     public function route()

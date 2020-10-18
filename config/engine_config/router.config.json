@@ -43,6 +43,11 @@
         "config": {
             "action_default": "index",
             "action_not_found": "error"
-        }
+        },
+        "cacheFile": "./tmp/router_cache.php",
+        "logFile": "./tmp/router.log",
+        "registries": [
+            "./config/routes/main.routes"
+        ]
     }
 }

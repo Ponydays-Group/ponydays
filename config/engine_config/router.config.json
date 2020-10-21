@@ -41,8 +41,10 @@
             "api":              "App\\Actions\\ActionApi"
         },
         "config": {
-            "action_default": "index",
-            "action_not_found": "error"
+            "action_not_found": {
+                "params": { "to": "error#EventError" },
+                "vars": { "event": "404" }
+            }
         },
         "cacheFile": "./tmp/router_cache.php",
         "logFile": "./tmp/router.log",

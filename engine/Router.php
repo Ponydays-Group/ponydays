@@ -149,6 +149,7 @@ class Router extends LsObject
     public function Shutdown($bExit = true)
     {
         $this->AssignVars();
+        $this->oEngine = Engine::getInstance();
         $this->oEngine->Shutdown();
         LS::Make(ModuleViewer::class)->Display($this->oAction->GetTemplate());
         if ($bExit) {
@@ -313,6 +314,11 @@ class Router extends LsObject
                 $this->ExecAction();
             }
         }
+    }
+
+    public static function SetAction($action)
+    {
+        self::getInstance()->oAction = $action;
     }
 
     /**

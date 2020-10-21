@@ -145,7 +145,7 @@ class Engine extends LsObject
 
         $router->route();
 
-        $this->Shutdown();
+        Router::getInstance()->Shutdown(false);
     }
 
     /**

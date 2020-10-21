@@ -69,18 +69,19 @@ class ActionError extends Action
      * Вывод ошибки
      *
      */
-    protected function EventError()
+    public function EventError(array $vars)
     {
+        $event = $vars['event'] ?: '404';
         /**
          * Если евент равен одной из ошибок из $aHttpErrors, то шлем браузеру специфичный header
          * Например, для 404 в хидере будет послан браузеру заголовок HTTP/1.1 404 Not Found
          */
-        if (array_key_exists($this->sCurrentEvent, $this->aHttpErrors)) {
+        if (array_key_exists($event, $this->aHttpErrors)) {
             LS::Make(ModuleMessage::class)->AddErrorSingle(
-                LS::Make(ModuleLang::class)->Get('system_error_'.$this->sCurrentEvent),
-                $this->sCurrentEvent
+                LS::Make(ModuleLang::class)->Get('system_error_'.$event),
+                $event
             );
-            $aHttpError = $this->aHttpErrors[$this->sCurrentEvent];
+            $aHttpError = $this->aHttpErrors[$event];
             if (isset($aHttpError['header'])) {
                 $sProtocol = isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1';
                 header("{$sProtocol} {$aHttpError['header']}");

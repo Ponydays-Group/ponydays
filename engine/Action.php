@@ -353,7 +353,7 @@ abstract class Action extends LsObject
      */
     public function GetActionClass()
     {
-        return get_class_name(Router::GetActionClass());
+        return get_class_name(get_class($this));
     }
 
     /**
@@ -384,6 +384,11 @@ abstract class Action extends LsObject
     public function EventShutdown()
     {
 
+    }
+
+    public function Shutdown()
+    {
+        $this->EventShutdown();
     }
 
     /**

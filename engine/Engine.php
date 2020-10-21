@@ -292,38 +292,39 @@ class Engine extends LsObject
         return new $class($connect);
     }
 
-    public function make(string $class): Module
+    public function resolve(string $type, string $name = ''): array
     {
-        if (isset($this->aModules[$class])) {
-            return $this->aModules[$class];
+        if (isset($this->aModules[$type])) {
+            return [$this->aModules[$type], true];
         } else {
-            if (!class_exists($class)) {
-                throw new \RuntimeException(sprintf('Class "%s" not found!', $class));
+            if (! class_exists($type)) {
+                return [null, false];
             }
-            $module = new $class();
-            $this->aModules[$class] = $module;
+            $module = new $type();
+            $this->aModules[$type] = $module;
             $this->InitModule($module);
 
-            return $module;
+            return [$module, true];
         }
+    }
+
+    public function make(string $class): Module
+    {
+        [$module, $resolved] = $this->resolve($class);
+        if (! $resolved) {
+            throw new \RuntimeException(sprintf('Module "%s" not found!', $class));
+        }
+        return $module;
     }
 
     /**
      * @param callable $func
+     *
+     * @throws \ReflectionException
      */
     public function order(callable $func)
     {
-        try {
-            $refl = new ReflectionFunction($func);
-            $args = [];
-            foreach ($refl->getParameters() as $par) {
-                $class = $par->getClass();
-                $args[] = $this->make($class->getName());
-            }
-            $refl->invokeArgs($args);
-        } catch (\ReflectionException $e) {
-            throw new \RuntimeException('Invalid order call');
-        }
+        CallResolver::resolve($func)->with([$this, 'resolve'])->call();
     }
 }
 

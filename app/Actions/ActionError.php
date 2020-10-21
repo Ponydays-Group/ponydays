@@ -69,9 +69,9 @@ class ActionError extends Action
      * Вывод ошибки
      *
      */
-    public function EventError(array $vars)
+    public function EventError(string $event)
     {
-        $event = $vars['event'] ?: '404';
+        $event = $event ?: '404';
         /**
          * Если евент равен одной из ошибок из $aHttpErrors, то шлем браузеру специфичный header
          * Например, для 404 в хидере будет послан браузеру заголовок HTTP/1.1 404 Not Found

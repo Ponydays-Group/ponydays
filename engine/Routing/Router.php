@@ -2,6 +2,7 @@
 
 namespace Engine\Routing;
 
+use Engine\CallResolver;
 use Engine\Config;
 use Engine\Engine;
 use Engine\Routing\Parser\RouteLexer;
@@ -116,7 +117,15 @@ class Router
 
         \Engine\Router::SetAction($controller);
 
-        $call($vars);
+        CallResolver::resolve($call)->with(function (string $type, string $name) use ($vars) {
+            if (isset($vars[$name]) && gettype($vars[$name]) == $type) {
+                return [$vars[$name], true];
+            }
+            if ($name == '_vars' && $type == 'array') {
+                return $vars;
+            }
+            return [null, false];
+        })->with([Engine::getInstance(), 'resolve'])->call();
     }
 
     private function handleNotFound() {

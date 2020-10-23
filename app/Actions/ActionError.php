@@ -17,12 +17,11 @@
 
 namespace App\Actions;
 
-use Engine\Action;
 use Engine\LS;
 use Engine\Modules\ModuleLang;
 use Engine\Modules\ModuleMessage;
-use Engine\Modules\ModuleViewer;
-use Engine\Router;
+use Engine\Routing\Controller;
+use Engine\View\View;
 
 /**
  * Экшен обработки УРЛа вида /error/ т.е. ошибок
@@ -30,7 +29,7 @@ use Engine\Router;
  * @package actions
  * @since   1.0
  */
-class ActionError extends Action
+class ActionError extends Controller
 {
     /**
      * Список специфических HTTP ошибок для которых необходимо отдавать header
@@ -44,34 +43,12 @@ class ActionError extends Action
     ];
 
     /**
-     * Инициализация экшена
-     *
-     */
-    public function Init()
-    {
-        /**
-         * Устанавливаем дефолтный евент
-         */
-        $this->SetDefaultEvent('index');
-    }
-
-    /**
-     * Регистрируем евенты
-     *
-     */
-    protected function RegisterEvent()
-    {
-        $this->AddEvent('index', 'EventError');
-        $this->AddEventPreg('/^\d{3}$/i', 'EventError');
-    }
-
-    /**
      * Вывод ошибки
      *
+     * @param string $event
      */
-    public function EventError(string $event)
+    public function error(string $event = '404')
     {
-        $event = $event ?: '404';
         /**
          * Если евент равен одной из ошибок из $aHttpErrors, то шлем браузеру специфичный header
          * Например, для 404 в хидере будет послан браузеру заголовок HTTP/1.1 404 Not Found
@@ -87,10 +64,7 @@ class ActionError extends Action
                 header("{$sProtocol} {$aHttpError['header']}");
             }
         }
-        /**
-         * Устанавливаем title страницы
-         */
-        LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('error'));
-        $this->SetTemplateAction('index');
+
+        return View::by('error/index')->withHtmlTitle(LS::Make(ModuleLang::class)->Get('error'));
     }
 }

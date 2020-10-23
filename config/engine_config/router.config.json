@@ -42,7 +42,7 @@
         },
         "config": {
             "action_not_found": {
-                "params": { "to": "error#EventError" },
+                "params": { "to": "error#error" },
                 "vars": { "event": "404" }
             }
         },

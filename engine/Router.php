@@ -142,6 +142,16 @@ class Router extends LsObject
     }
 
     /**
+     * @var string
+     */
+    private $actionTemplate;
+
+    public static function setActionTemplate(string $template)
+    {
+        self::getInstance()->actionTemplate = $template;
+    }
+
+    /**
      * Завершение работы роутинга
      *
      * @param bool $bExit Принудительно завершить выполнение скрипта
@@ -151,7 +161,7 @@ class Router extends LsObject
         $this->AssignVars();
         $this->oEngine = Engine::getInstance();
         $this->oEngine->Shutdown();
-        LS::Make(ModuleViewer::class)->Display($this->oAction->GetTemplate());
+        LS::Make(ModuleViewer::class)->Display($this->oAction instanceof Action ? $this->oAction->GetTemplate() : $this->actionTemplate);
         if ($bExit) {
             exit();
         }

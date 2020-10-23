@@ -2,12 +2,14 @@
 
 namespace Engine\Routing;
 
+use Engine\Action;
 use Engine\CallResolver;
 use Engine\Config;
 use Engine\Engine;
 use Engine\Routing\Parser\RouteLexer;
 use Engine\Routing\Parser\RouteParser;
 use Engine\Routing\Parser\RouteWalker;
+use Engine\View\View;
 use FastRoute;
 use FastRoute\RouteCollector;
 use Throwable;
@@ -88,7 +90,11 @@ class Router
             return $this->controllers[$class];
         } else {
             $controller = new $class(Engine::getInstance(), $controllerName);
-            $controller->Init();
+            if ($controller instanceof Action) {
+                $controller->Init();
+            } else {
+                $controller->init();
+            }
             return $controller;
         }
     }
@@ -117,7 +123,7 @@ class Router
 
         \Engine\Router::SetAction($controller);
 
-        CallResolver::resolve($call)->with(function (string $type, string $name) use ($vars) {
+        $result = CallResolver::resolve($call)->with(function (string $type, string $name) use ($vars) {
             if (isset($vars[$name]) && gettype($vars[$name]) == $type) {
                 return [$vars[$name], true];
             }
@@ -126,6 +132,10 @@ class Router
             }
             return [null, false];
         })->with([Engine::getInstance(), 'resolve'])->call();
+
+        if ($result instanceof View) {
+            $result->render();
+        }
     }
 
     private function handleNotFound() {

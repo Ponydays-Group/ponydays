@@ -4,5 +4,7 @@ namespace Engine\Routing;
 
 class Controller
 {
-    public function init() {}
+    public function boot() {}
+
+    public function shutdown() {}
 }

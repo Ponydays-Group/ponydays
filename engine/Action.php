@@ -386,7 +386,7 @@ abstract class Action extends LsObject
 
     }
 
-    public function Shutdown()
+    public function shutdown()
     {
         $this->EventShutdown();
     }
@@ -396,6 +396,10 @@ abstract class Action extends LsObject
      *
      */
     abstract public function Init();
+
+    public function boot() {
+        $this->Init();
+    }
 
     /**
      * Абстрактный метод регистрации евентов.

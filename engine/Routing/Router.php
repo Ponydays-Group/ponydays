@@ -2,10 +2,11 @@
 
 namespace Engine\Routing;
 
-use Engine\Action;
 use Engine\CallResolver;
 use Engine\Config;
 use Engine\Engine;
+use Engine\Routing\Exception\Http\NotFoundHttpException;
+use Engine\Routing\Exception\RoutingException;
 use Engine\Routing\Parser\RouteLexer;
 use Engine\Routing\Parser\RouteParser;
 use Engine\Routing\Parser\RouteWalker;
@@ -72,8 +73,8 @@ class Router
                 break;
         }
 
-        foreach ($this->controllers as $controller) {
-            $controller->Shutdown();
+        foreach (array_reverse($this->controllers) as $controller) {
+            $controller->shutdown();
         }
     }
 
@@ -90,11 +91,7 @@ class Router
             return $this->controllers[$class];
         } else {
             $controller = new $class(Engine::getInstance(), $controllerName);
-            if ($controller instanceof Action) {
-                $controller->Init();
-            } else {
-                $controller->init();
-            }
+            $controller->boot();
             return $controller;
         }
     }
@@ -150,7 +147,12 @@ class Router
             return;
         }
         if (! isset($handler['params'])) return;
-        $this->runAction($handler['params'], $vars);
+
+        try {
+            $this->runAction($handler['params'], $vars);
+        } catch (NotFoundHttpException $e) {
+            $this->handleNotFound();
+        }
     }
 
     private function handleMethodNotAllowed(array $allowedMethods) {

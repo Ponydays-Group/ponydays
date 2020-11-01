@@ -369,10 +369,6 @@ class Router extends LsObject
             self::$aParams = $aParams;
         }
         self::getInstance()->doNext = true;
-
-        \Engine\Routing\Router::getInstance()->runAction([
-            'to' => self::$sAction . '#Event' . ucfirst(self::$sActionEvent)
-        ]);
     }
 
     /**

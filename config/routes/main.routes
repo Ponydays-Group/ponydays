@@ -74,3 +74,8 @@ GROUP '' (
     ANY '/' to 'index#EventIndex';
     ANY '/page{page:[1-9]\d*}' to 'index#EventIndex';
 );
+
+GROUP '/index' (
+    ANY '/newall/' to 'index#EventNewall';
+    ANY '/newall/page{page:[1-9]\d*}' to 'index#EventNewall';
+);

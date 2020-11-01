@@ -106,18 +106,11 @@ class Router
      *      'before' => 'middleware',
      * ]
      */
-    public function runAction(array $params, array $vars = [])
+    public function runAction(Action $action)
     {
-        if (! isset($params['to'])) return;
-        $to = $params['to'];
-
-        $split = explode('#', $to);
-        if (sizeof($split) != 2) {
-            throw new RoutingException("Wrong handler syntax: `$to`");
-        }
-
-        $controller = $this->provideController($split[0]);
-        $method = $split[1];
+        $controller = $this->provideController($action->getControllerName());
+        $method = $action->getMethodName();
+        $vars = $action->getArguments();
 
         \Engine\Router::SetAction($controller);
 
@@ -135,17 +128,19 @@ class Router
                 }
             )->with([Engine::getInstance(), 'resolve'])->hack()->call();
         } catch (\ReflectionException $e) {
-            throw new RoutingException("Could not call controller's method: `$to`", 0, $e);
+            throw new RoutingException("Could not run an action: $action", 0, $e);
         }
 
         if ($result instanceof View) {
             $result->render();
+        } else if ($result instanceof Action) {
+            $this->runAction($result);
         }
     }
 
     private function handleNotFound() {
         $action = Config::Get('router.config.action_not_found');
-        $this->runAction($action['params'], $action['vars']);
+        $this->runAction(Action::from($action['params'])->with($action['vars']));
     }
 
     private function handleFound(array $handler, array $vars) {
@@ -157,7 +152,7 @@ class Router
         if (! isset($handler['params'])) return;
 
         try {
-            $this->runAction($handler['params'], $vars);
+            $this->runAction(Action::from($handler['params'])->with($vars));
         } catch (NotFoundHttpException $e) {
             $this->handleNotFound();
         }

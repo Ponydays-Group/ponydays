@@ -342,15 +342,17 @@ class ActionIndex extends Action
      * @param \Engine\Modules\ModuleViewer $viewer
      * @param \App\Modules\ModuleUser      $user
      *
-     * @return void
+     * @param int                          $page
+     *
+     * @return \Engine\Routing\Action
      */
-    protected function EventIndex(ModuleViewer $viewer, ModuleUser $user)
+    protected function EventIndex(ModuleViewer $viewer, ModuleUser $user, int $page = 1): \Engine\Routing\Action
     {
         $viewer->Assign('sMenuHeadItemSelect', 'blog');
         if ($user->getUserCurrent()) {
-            Router::Action('feed');
+            return \Engine\Routing\Action::by('feed#EventIndex')->with(['page' => $page]);
         } else {
-            Router::Action('index', 'newall');
+            return \Engine\Routing\Action::by('index#EventNewall')->with(['page' => $page]);
         }
     }
 

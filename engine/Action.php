@@ -18,6 +18,7 @@
 namespace Engine;
 
 use Engine\Modules\ModuleHook;
+use Engine\Routing\Controller;
 
 /**
  * Абстрактный класс экшена.
@@ -28,7 +29,7 @@ use Engine\Modules\ModuleHook;
  * @package engine
  * @since   1.0
  */
-abstract class Action extends LsObject
+abstract class Action extends Controller
 {
     /**
      * Список зарегистрированных евентов

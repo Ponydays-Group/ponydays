@@ -23,6 +23,7 @@ use DbSimple_Mysql;
 use Engine\Modules\ModuleCache;
 use Engine\Modules\ModuleDatabase;
 use Engine\Modules\ModuleHook;
+use Engine\Resolving\FunctionCallResolver;
 use ReflectionFunction;
 
 set_include_path(get_include_path().PATH_SEPARATOR.dirname(__FILE__));
@@ -292,12 +293,14 @@ class Engine extends LsObject
         return new $class($connect);
     }
 
-    public function resolve(string $type, string $name = ''): array
+    public function resolve(array $types, string $name = ''): array
     {
+        if (count($types) > 1) return [null, false];
+        $type = current($types);
         if (isset($this->aModules[$type])) {
             return [$this->aModules[$type], true];
         } else {
-            if (! class_exists($type)) {
+            if (! (class_exists($type) && is_subclass_of($type, Module::class)) ) {
                 return [null, false];
             }
             $module = new $type();
@@ -310,7 +313,7 @@ class Engine extends LsObject
 
     public function make(string $class): Module
     {
-        [$module, $resolved] = $this->resolve($class);
+        [$module, $resolved] = $this->resolve([$class]);
         if (! $resolved) {
             throw new \RuntimeException(sprintf('Module "%s" not found!', $class));
         }
@@ -324,7 +327,7 @@ class Engine extends LsObject
      */
     public function order(callable $func)
     {
-        CallResolver::resolve($func)->with([$this, 'resolve'])->call();
+        FunctionCallResolver::resolve($func)->with([$this, 'resolve'])->call();
     }
 }
 

@@ -292,8 +292,10 @@ class ActionIndex extends Action
 
     /**
      * Вывод ВСЕХ новых топиков
+     *
+     * @param int $page
      */
-    protected function EventNewAll()
+    protected function EventNewAll(int $page = 1)
     {
         /** @var ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);
@@ -304,13 +306,9 @@ class ActionIndex extends Action
          */
         $this->sMenuSubItemSelect = 'newall';
         /**
-         * Передан ли номер страницы
-         */
-        $iPage = $this->GetParamEventMatch(0, 2) ? $this->GetParamEventMatch(0, 2) : 1;
-        /**
          * Получаем список топиков
          */
-        $aResult = LS::Make(ModuleTopic::class)->GetTopicsNewAll($iPage, Config::Get('module.topic.per_page'));
+        $aResult = LS::Make(ModuleTopic::class)->GetTopicsNewAll($page, Config::Get('module.topic.per_page'));
         $aTopics = $aResult['collection'];
         /**
          * Вызов хуков
@@ -321,7 +319,7 @@ class ActionIndex extends Action
          */
         $aPaging = $viewer->MakePaging(
             $aResult['count'],
-            $iPage,
+            $page,
             Config::Get('module.topic.per_page'),
             Config::Get('pagination.pages.count'),
             Router::GetPath('index').'newall'

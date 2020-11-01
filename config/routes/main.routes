@@ -66,5 +66,11 @@ GROUP '/api' (
 
 # ActionBlog
 GROUP '/blog' (
-	GET '/good/{page:(page([1-9]\d{0,5}))?}' to 'blog#EventTopics';
+
+);
+
+# ActionIndex
+GROUP '' (
+    ANY '/' to 'index#EventIndex';
+    ANY '/page{page:[1-9]\d*}' to 'index#EventIndex';
 );

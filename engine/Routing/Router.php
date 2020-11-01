@@ -2,9 +2,9 @@
 
 namespace Engine\Routing;
 
-use Engine\CallResolver;
 use Engine\Config;
 use Engine\Engine;
+use Engine\Resolving\MethodCallResolver;
 use Engine\Routing\Exception\Http\NotFoundHttpException;
 use Engine\Routing\Exception\RoutingException;
 use Engine\Routing\Parser\RouteLexer;
@@ -50,7 +50,10 @@ class Router
                     file_put_contents(Config::Get('router.logFile'), $t, FILE_APPEND);
                 }
             }
-        }, ['cacheFile' => Config::Get('router.cacheFile')]);
+        }, [
+            'cacheFile' => Config::Get('router.cacheFile'),
+            'cacheDisabled' => true
+        ]);
     }
 
     public function route()
@@ -116,19 +119,24 @@ class Router
         $controller = $this->provideController($split[0]);
         $method = $split[1];
 
-        $call = [$controller, $method];
-
         \Engine\Router::SetAction($controller);
 
-        $result = CallResolver::resolve($call)->with(function (string $type, string $name) use ($vars) {
-            if (isset($vars[$name]) && gettype($vars[$name]) == $type) {
-                return [$vars[$name], true];
-            }
-            if ($name == '_vars' && $type == 'array') {
-                return $vars;
-            }
-            return [null, false];
-        })->with([Engine::getInstance(), 'resolve'])->call();
+        try {
+            $result = MethodCallResolver::resolve_of($controller, $method)->with(
+                function (array $types, string $name) use ($vars) {
+                    if (isset($vars[$name]) && in_array(gettype($vars[$name]), $types)) {
+                        return [$vars[$name], true];
+                    }
+                    if ($name == '_vars' && in_array('array', $types)) {
+                        return $vars;
+                    }
+
+                    return [null, false];
+                }
+            )->with([Engine::getInstance(), 'resolve'])->hack()->call();
+        } catch (\ReflectionException $e) {
+            throw new RoutingException("Could not call controller's method: `$to`", 0, $e);
+        }
 
         if ($result instanceof View) {
             $result->render();

@@ -1,35 +1,23 @@
 <?php
 
-namespace Engine;
+namespace Engine\Resolving;
 
-class CallResolver
+use ReflectionException;
+use ReflectionFunctionAbstract;
+use ReflectionNamedType;
+
+abstract class CallResolver
 {
     /**
-     * @var \ReflectionFunction
+     * @var \ReflectionFunctionAbstract
      */
-    private $reflection;
-    /**
-     * @var array
-     */
-    private $args;
+    protected $reflection;
     /**
      * @var array
      */
     private $resolvers;
 
-    /**
-     * @param callable $func
-     *
-     * @return \Engine\CallResolver
-     * @throws \ReflectionException
-     */
-    public static function resolve(callable $func): CallResolver
-    {
-        $reflection = new \ReflectionFunction(\Closure::fromCallable($func));
-        return new CallResolver($reflection);
-    }
-
-    private function __construct(\ReflectionFunction $reflection)
+    protected function __construct(ReflectionFunctionAbstract $reflection)
     {
         $this->reflection = $reflection;
     }
@@ -39,6 +27,8 @@ class CallResolver
         $this->resolvers[] = $resolver;
         return $this;
     }
+
+    abstract protected function invoke($args);
 
     /**
      * @throws \ReflectionException
@@ -54,8 +44,17 @@ class CallResolver
             $hasDefault = $parameter->isDefaultValueAvailable();
             $type = $parameter->getType();
 
+            $typeNames = [];
+            if ($type instanceof ReflectionNamedType) {
+                $typeNames[] = $type->getName();
+            } /*else if ($type instanceof ReflectionUnionType) { //TODO: PHP8 feature
+                foreach ($type->getTypes() as $t) {
+                    $typeNames[] = $t->getName();
+                }
+            }*/
+
             foreach ($this->resolvers as $resolver) {
-                [$val, $resolved] = $resolver($type->getName(), $name);
+                [$val, $resolved] = $resolver($typeNames, $name);
                 if ($resolved) {
                     $resolvedArgs[$position] = $val;
                     continue 2;
@@ -65,10 +64,10 @@ class CallResolver
             if ($hasDefault) {
                 $resolvedArgs[$position] = $parameter->getDefaultValue();
             } else {
-                throw new \ReflectionException("Could not resolve parameter `$name`");
+                throw new ReflectionException("Could not resolve parameter `$name`");
             }
         }
 
-        return $this->reflection->invokeArgs($resolvedArgs);
+        return $this->invoke($resolvedArgs);
     }
 }

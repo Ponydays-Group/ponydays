@@ -22,7 +22,8 @@ class RouteWalker
                 if (in_array('ANY', $methods)) {
                     $methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'];
                 }
-                $params = $stmt['params'];
+                $params = [];
+                $params['params'] = $stmt['params'];
                 $params['options'] = $methods;
                 $r->addRoute($methods, $stmt['uri'], $params);
                 break;

@@ -46,8 +46,10 @@ class ActionError extends Controller
      * Вывод ошибки
      *
      * @param string $event
+     *
+     * @return \Engine\View\View
      */
-    public function error(string $event = '404')
+    public function error(string $event = '400'): View
     {
         /**
          * Если евент равен одной из ошибок из $aHttpErrors, то шлем браузеру специфичный header

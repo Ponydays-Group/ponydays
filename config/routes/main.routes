@@ -71,11 +71,11 @@ GROUP '/blog' (
 
 # ActionIndex
 GROUP '' (
-    ANY '/' to 'index#EventIndex';
-    ANY '/page{page:[1-9]\d*}' to 'index#EventIndex';
+    ANY '/' to 'index#index';
+    ANY '/page{page:[1-9]\d*}' to 'index#index';
 );
 
 GROUP '/index' (
-    ANY '/newall/' to 'index#EventNewall';
-    ANY '/newall/page{page:[1-9]\d*}' to 'index#EventNewall';
+    ANY '/newall/' to 'index#newall';
+    ANY '/newall/page{page:[1-9]\d*}' to 'index#newall';
 );

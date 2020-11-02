@@ -21,9 +21,10 @@ use App\Modules\ModuleTopic;
 use App\Modules\ModuleUser;
 use Engine\Config;
 use Engine\LS;
-use Engine\Modules\ModuleHook;
 use Engine\Modules\ModuleViewer;
 use Engine\Routing\Action;
+use Engine\Routing\Controller;
+use Engine\View\View;
 
 /**
  * Обработка главной страницы, т.е. УРЛа вида /index/
@@ -31,7 +32,7 @@ use Engine\Routing\Action;
  * @package actions
  * @since   1.0
  */
-class ActionIndex extends \Engine\Action
+class ActionIndex extends Controller
 {
     /**
      * Главное меню
@@ -74,7 +75,7 @@ class ActionIndex extends \Engine\Action
      * Инициализация
      *
      */
-    public function Init()
+    public function init()
     {
         /**
          * Подсчитываем новые топики
@@ -85,221 +86,16 @@ class ActionIndex extends \Engine\Action
     }
 
     /**
-     * Регистрация евентов
-     *
-     */
-    protected function RegisterEvent()
-    {
-        $this->AddEventPreg('/^(page([1-9]\d{0,5}))?$/i', 'EventIndex');
-        $this->AddEventPreg('/^newall$/i', '/^(page([1-9]\d{0,5}))?$/i', 'EventNewAll');
-    }
-
-
-    /**********************************************************************************
-     ************************ РЕАЛИЗАЦИЯ ЭКШЕНА ***************************************
-     **********************************************************************************
-     */
-
-    /**
-     * Вывод рейтинговых топиков
-     */
-    protected function EventTop()
-    {
-        $sPeriod = 1; // по дефолту 1 день
-        if (in_array(getRequestStr('period'), [1, 7, 30, 'all'])) {
-            $sPeriod = getRequestStr('period');
-        }
-        /**
-         * Меню
-         */
-        $this->sMenuSubItemSelect = 'top';
-
-        /** @var \Engine\Modules\ModuleViewer $viewer */
-        $viewer = LS::Make(ModuleViewer::class);
-        /**
-         * Передан ли номер страницы
-         */
-        $iPage = $this->GetParamEventMatch(0, 2) ? $this->GetParamEventMatch(0, 2) : 1;
-        if ($iPage == 1 and !getRequest('period')) {
-            $viewer->SetHtmlCanonical(\Engine\Router::GetPath('index').'top/');
-        }
-        /**
-         * Получаем список топиков
-         */
-        $aResult = LS::Make(ModuleTopic::class)->GetTopicsTop(
-            $iPage,
-            Config::Get('module.topic.per_page'),
-            $sPeriod == 'all' ? null : $sPeriod * 60 * 60 * 24
-        );
-        /**
-         * Если нет топиков за 1 день, то показываем за неделю (7)
-         */
-        if (!$aResult['count'] and $iPage == 1 and !getRequest('period')) {
-            $sPeriod = 7;
-            $aResult = LS::Make(ModuleTopic::class)->GetTopicsTop(
-                $iPage,
-                Config::Get('module.topic.per_page'),
-                $sPeriod == 'all' ? null : $sPeriod * 60 * 60 * 24
-            );
-        }
-        $aTopics = $aResult['collection'];
-        /**
-         * Вызов хуков
-         */
-        LS::Make(ModuleHook::class)->Run('topics_list_show', ['aTopics' => $aTopics]);
-        /**
-         * Формируем постраничность
-         */
-        $aPaging = $viewer->MakePaging(
-            $aResult['count'],
-            $iPage,
-            Config::Get('module.topic.per_page'),
-            Config::Get('pagination.pages.count'),
-            \Engine\Router::GetPath('index').'top',
-            ['period' => $sPeriod]
-        );
-        /**
-         * Загружаем переменные в шаблон
-         */
-        $viewer->Assign('aTopics', $aTopics);
-        $viewer->Assign('aPaging', $aPaging);
-        $viewer->Assign('sPeriodSelectCurrent', $sPeriod);
-        $viewer->Assign('sPeriodSelectRoot', \Engine\Router::GetPath('index').'top/');
-        /**
-         * Устанавливаем шаблон вывода
-         */
-        $this->SetTemplateAction('index');
-    }
-
-    /**
-     * Вывод обсуждаемых топиков
-     */
-    protected function EventDiscussed()
-    {
-        $sPeriod = 1; // по дефолту 1 день
-        if (in_array(getRequestStr('period'), [1, 7, 30, 'all'])) {
-            $sPeriod = getRequestStr('period');
-        }
-        /**
-         * Меню
-         */
-        $this->sMenuSubItemSelect = 'discussed';
-
-        /** @var ModuleViewer $viewer */
-        $viewer = LS::Make(ModuleViewer::class);
-        /**
-         * Передан ли номер страницы
-         */
-        $iPage = $this->GetParamEventMatch(0, 2) ? $this->GetParamEventMatch(0, 2) : 1;
-        if ($iPage == 1 and !getRequest('period')) {
-            $viewer->SetHtmlCanonical(\Engine\Router::GetPath('index').'discussed/');
-        }
-        /**
-         * Получаем список топиков
-         */
-        $aResult = LS::Make(ModuleTopic::class)->GetTopicsDiscussed(
-            $iPage,
-            Config::Get('module.topic.per_page'),
-            $sPeriod == 'all' ? null : $sPeriod * 60 * 60 * 24
-        );
-        /**
-         * Если нет топиков за 1 день, то показываем за неделю (7)
-         */
-        if (!$aResult['count'] and $iPage == 1 and !getRequest('period')) {
-            $sPeriod = 7;
-            $aResult = LS::Make(ModuleTopic::class)->GetTopicsDiscussed(
-                $iPage,
-                Config::Get('module.topic.per_page'),
-                $sPeriod == 'all' ? null : $sPeriod * 60 * 60 * 24
-            );
-        }
-        $aTopics = $aResult['collection'];
-        /**
-         * Вызов хуков
-         */
-        LS::Make(ModuleHook::class)->Run('topics_list_show', ['aTopics' => $aTopics]);
-        /**
-         * Формируем постраничность
-         */
-        $aPaging = $viewer->MakePaging(
-            $aResult['count'],
-            $iPage,
-            Config::Get('module.topic.per_page'),
-            Config::Get('pagination.pages.count'),
-            \Engine\Router::GetPath('index').'discussed',
-            ['period' => $sPeriod]
-        );
-        /**
-         * Загружаем переменные в шаблон
-         */
-        $viewer->Assign('aTopics', $aTopics);
-        $viewer->Assign('aPaging', $aPaging);
-        $viewer->Assign('sPeriodSelectCurrent', $sPeriod);
-        $viewer->Assign('sPeriodSelectRoot', \Engine\Router::GetPath('index').'discussed/');
-        /**
-         * Устанавливаем шаблон вывода
-         */
-        $this->SetTemplateAction('index');
-    }
-
-    /**
-     * Вывод новых топиков
-     */
-    protected function EventNew()
-    {
-        /** @var ModuleViewer $viewer */
-        $viewer = LS::Make(ModuleViewer::class);
-
-        $viewer->SetHtmlRssAlternate(\Engine\Router::GetPath('rss').'new/', Config::Get('view.name'));
-        /**
-         * Меню
-         */
-        $this->sMenuSubItemSelect = 'new';
-        /**
-         * Передан ли номер страницы
-         */
-        $iPage = $this->GetParamEventMatch(0, 2) ? $this->GetParamEventMatch(0, 2) : 1;
-        /**
-         * Получаем список топиков
-         */
-        $aResult = LS::Make(ModuleTopic::class)->GetTopicsNew($iPage, Config::Get('module.topic.per_page'));
-        $aTopics = $aResult['collection'];
-        /**
-         * Вызов хуков
-         */
-        LS::Make(ModuleHook::class)->Run('topics_list_show', ['aTopics' => $aTopics]);
-        /**
-         * Формируем постраничность
-         */
-        $aPaging = $viewer->MakePaging(
-            $aResult['count'],
-            $iPage,
-            Config::Get('module.topic.per_page'),
-            Config::Get('pagination.pages.count'),
-            \Engine\Router::GetPath('index').'new'
-        );
-        /**
-         * Загружаем переменные в шаблон
-         */
-        $viewer->Assign('aTopics', $aTopics);
-        $viewer->Assign('aPaging', $aPaging);
-        /**
-         * Устанавливаем шаблон вывода
-         */
-        $this->SetTemplateAction('index');
-    }
-
-    /**
      * Вывод ВСЕХ новых топиков
      *
-     * @param int $page
+     * @param \Engine\Modules\ModuleViewer $viewer
+     * @param \App\Modules\ModuleTopic     $topic
+     * @param int                          $page
+     *
+     * @return \Engine\View\View
      */
-    protected function EventNewAll(int $page = 1)
+    protected function newall(ModuleViewer $viewer, ModuleTopic $topic, int $page = 1)
     {
-        /** @var ModuleViewer $viewer */
-        $viewer = LS::Make(ModuleViewer::class);
-
-        $viewer->SetHtmlRssAlternate(\Engine\Router::GetPath('rss').'new/', Config::Get('view.name'));
         /**
          * Меню
          */
@@ -307,12 +103,9 @@ class ActionIndex extends \Engine\Action
         /**
          * Получаем список топиков
          */
-        $aResult = LS::Make(ModuleTopic::class)->GetTopicsNewAll($page, Config::Get('module.topic.per_page'));
+        $aResult = $topic->GetTopicsNewAll($page, Config::Get('module.topic.per_page'));
         $aTopics = $aResult['collection'];
-        /**
-         * Вызов хуков
-         */
-        LS::Make(ModuleHook::class)->Run('topics_list_show', ['aTopics' => $aTopics]);
+
         /**
          * Формируем постраничность
          */
@@ -321,18 +114,16 @@ class ActionIndex extends \Engine\Action
             $page,
             Config::Get('module.topic.per_page'),
             Config::Get('pagination.pages.count'),
-            \Engine\Router::GetPath('index').'newall'
+            '/index/newall'
         );
-        /**
-         * Загружаем переменные в шаблон
-         */
-        $viewer->Assign('aTopics', $aTopics);
-        $viewer->Assign('aPaging', $aPaging);
-        /**
-         * Устанавливаем шаблон вывода
-         */
-        $viewer->Assign('sMenuHeadItemSelect', 'newall');
-        $this->SetTemplateAction('index');
+
+        $viewer->SetHtmlRssAlternate('/rss/new/', Config::Get('view.name'));
+
+        return View::by('index/index')->with([
+            'aTopics' => $aTopics,
+            'aPaging' => $aPaging,
+            'sMenuHeadItemSelect' => 'newall'
+        ]);
     }
 
     /**
@@ -345,13 +136,13 @@ class ActionIndex extends \Engine\Action
      *
      * @return \Engine\Routing\Action
      */
-    protected function EventIndex(ModuleViewer $viewer, ModuleUser $user, int $page = 1): Action
+    protected function index(ModuleViewer $viewer, ModuleUser $user, int $page = 1): Action
     {
         $viewer->Assign('sMenuHeadItemSelect', 'blog');
         if ($user->getUserCurrent()) {
-            return Action::by('feed#EventIndex')->with(['page' => $page]);
+            return Action::by('feed#index')->with(['page' => $page]);
         } else {
-            return Action::by('index#EventNewall')->with(['page' => $page]);
+            return Action::by('index#newall')->with(['page' => $page]);
         }
     }
 
@@ -359,7 +150,7 @@ class ActionIndex extends \Engine\Action
      * При завершении экшена загружаем переменные в шаблон
      *
      */
-    public function EventShutdown()
+    public function shutdown()
     {
         /** @var ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);
@@ -371,4 +162,3 @@ class ActionIndex extends \Engine\Action
         $viewer->Assign('iCountTopicsPersonalNew', $this->iCountTopicsPersonalNew);
     }
 }
-

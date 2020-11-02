@@ -274,7 +274,7 @@ class Router extends LsObject
     {
         /** @var ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);
-        $viewer->Assign('sAction', $this->Standart(self::$sAction));
+        $viewer->Assign('sAction', self::$sAction);
         $viewer->Assign('sEvent', self::$sActionEvent);
         $viewer->Assign('aParams', self::$aParams);
         $viewer->Assign('PATH_WEB_CURRENT', self::$sPathWebCurrent);
@@ -403,7 +403,7 @@ class Router extends LsObject
      */
     static public function GetAction()
     {
-        return self::getInstance()->Standart(self::$sAction);
+        return self::$sAction;
     }
 
     /**

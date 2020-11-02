@@ -1,9 +1,5 @@
 {
     "router": {
-        "rewrite": [],
-        "uri": {
-            "~^(\\d+)\\.html~i": "blog/\\1.html"
-        },
         "page": {
             "error":            "App\\Actions\\ActionError",
             "registration":     "App\\Actions\\ActionRegistration",

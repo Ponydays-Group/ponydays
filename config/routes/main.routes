@@ -61,7 +61,7 @@ GROUP '/ajax' (
 
 # ActionApi
 GROUP '/api' (
-	GET '/login' to 'api#EventAjaxLogin';
+	GET '/login' to 'api#ajaxLogin';
 );
 
 # ActionBlog

@@ -28,6 +28,8 @@ use Engine\Routing\Controller;
  *
  * @package engine
  * @since   1.0
+ *
+ * @deprecated Use Routing\Controller
  */
 abstract class Action extends Controller
 {
@@ -98,6 +100,8 @@ abstract class Action extends Controller
      *
      * @param Engine $oEngine Объект ядра
      * @param string $sAction Название экшена
+     *
+     * @deprecated
      */
     public function __construct(Engine $oEngine, $sAction)
     {
@@ -118,6 +122,8 @@ abstract class Action extends Controller
      * @param callable $sEventFunction Какой метод ему соответствует
      *
      * @throws \Exception
+     *
+     * @deprecated
      */
     protected function AddEvent($sEventName, $sEventFunction)
     {
@@ -129,6 +135,8 @@ abstract class Action extends Controller
      * параметров
      *
      * @throws \Exception
+     *
+     * @deprecated
      */
     protected function AddEventPreg()
     {
@@ -164,6 +172,8 @@ abstract class Action extends Controller
      * Если текущий евент не определен то  запускается тот которые определен по умолчанию(default event)
      *
      * @return mixed
+     *
+     * @deprecated
      */
     public function ExecEvent()
     {
@@ -203,6 +213,7 @@ abstract class Action extends Controller
      * Устанавливает евент по умолчанию
      *
      * @param string $sEvent Имя евента
+     * @deprecated
      */
     public function SetDefaultEvent($sEvent)
     {
@@ -213,6 +224,7 @@ abstract class Action extends Controller
      * Получает евент по умолчанию
      *
      * @return string
+     * @deprecated
      */
     public function GetDefaultEvent()
     {
@@ -225,6 +237,7 @@ abstract class Action extends Controller
      * @param int|null $iItem Номер совпадения
      *
      * @return string|null
+     * @deprecated
      */
     protected function GetEventMatch($iItem = null)
     {
@@ -246,6 +259,7 @@ abstract class Action extends Controller
      * @param int|null $iItem     Номер совпадения, начинается с нуля
      *
      * @return string|null
+     * @deprecated
      */
     protected function GetParamEventMatch($iParamNum, $iItem = null)
     {
@@ -270,6 +284,7 @@ abstract class Action extends Controller
      * @param int $iOffset Номер параметра, начинается с нуля
      *
      * @return mixed
+     * @deprecated
      */
     public function GetParam($iOffset, $default = null)
     {
@@ -282,6 +297,7 @@ abstract class Action extends Controller
      * Получает список параметров из УРЛ
      *
      * @return array
+     * @deprecated
      */
     public function GetParams()
     {
@@ -295,6 +311,7 @@ abstract class Action extends Controller
      *
      * @param int    $iOffset Номер параметра, но по идеи может быть не только числом
      * @param string $value
+     * @deprecated
      */
     public function SetParam($iOffset, $value)
     {
@@ -306,6 +323,7 @@ abstract class Action extends Controller
      * Устанавливает какой шаблон выводить
      *
      * @param string $sTemplate Путь до шаблона относительно общего каталога шаблонов
+     * @deprecated
      */
     protected function SetTemplate($sTemplate)
     {
@@ -316,6 +334,7 @@ abstract class Action extends Controller
      * Устанавливает какой шаблон выводить
      *
      * @param string $sTemplate Путь до шаблона относительно каталога шаблонов экшена
+     * @deprecated
      */
     protected function SetTemplateAction($sTemplate)
     {
@@ -335,6 +354,7 @@ abstract class Action extends Controller
      * Если шаблон не определен то возвращаем дефолтный шаблон евента: action/{Action}.{event}.tpl
      *
      * @return string
+     * @deprecated
      */
     public function GetTemplate()
     {
@@ -351,6 +371,7 @@ abstract class Action extends Controller
      * @see Router::GetActionClass
      *
      * @return string
+     * @deprecated
      */
     public function GetActionClass()
     {
@@ -361,6 +382,7 @@ abstract class Action extends Controller
      * Возвращает имя евента
      *
      * @return null|string
+     * @deprecated
      */
     public function GetCurrentEventName()
     {
@@ -372,6 +394,7 @@ abstract class Action extends Controller
      * По дефолту происходит перекидывание на страницу ошибки, это можно переопределить в наследнике
      *
      * @see Router::Action
+     * @deprecated
      */
     protected function EventNotFound()
     {
@@ -381,6 +404,7 @@ abstract class Action extends Controller
     /**
      * Выполняется при завершение экшена, после вызова основного евента
      *
+     * @deprecated
      */
     public function EventShutdown()
     {
@@ -395,6 +419,7 @@ abstract class Action extends Controller
     /**
      * Абстрактный метод инициализации экшена
      *
+     * @deprecated
      */
     abstract public function Init();
 
@@ -406,6 +431,7 @@ abstract class Action extends Controller
      * Абстрактный метод регистрации евентов.
      * В нём необходимо вызывать метод AddEvent($sEventName,$sEventFunction)
      *
+     * @deprecated
      */
     abstract protected function RegisterEvent();
 

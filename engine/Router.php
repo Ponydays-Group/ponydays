@@ -26,6 +26,7 @@ use Engine\Modules\ModuleViewer;
  *
  * @package engine
  * @since   1.0
+ * @deprecated
  */
 class Router extends LsObject
 {
@@ -107,6 +108,7 @@ class Router extends LsObject
      * Делает возможным только один экземпляр этого класса
      *
      * @return Router
+     * @deprecated
      */
     static public function getInstance()
     {
@@ -129,7 +131,7 @@ class Router extends LsObject
 
     /**
      * Запускает весь процесс :)
-     *
+     * @deprecated
      */
     public function Exec()
     {
@@ -146,6 +148,10 @@ class Router extends LsObject
      */
     private $actionTemplate;
 
+    /**
+     * @param string $template
+     * @deprecated
+     */
     public static function setActionTemplate(string $template)
     {
         self::getInstance()->actionTemplate = $template;
@@ -155,6 +161,7 @@ class Router extends LsObject
      * Завершение работы роутинга
      *
      * @param bool $bExit Принудительно завершить выполнение скрипта
+     * @deprecated
      */
     public function Shutdown($bExit = true)
     {
@@ -277,6 +284,7 @@ class Router extends LsObject
      * Запускает на выполнение экшен
      * Может запускаться рекурсивно если в одном экшене стоит переадресация на
      * другой
+     * @deprecated
      */
     public function ExecAction()
     {
@@ -326,6 +334,10 @@ class Router extends LsObject
         }
     }
 
+    /**
+     * @param $action
+     * @deprecated
+     */
     public static function SetAction($action)
     {
         self::getInstance()->oAction = $action;
@@ -360,6 +372,7 @@ class Router extends LsObject
      * @param string $sAction Экшен
      * @param string $sEvent  Евент
      * @param array  $aParams Список параметров
+     * @deprecated
      */
     static public function Action($sAction, $sEvent = null, $aParams = null)
     {
@@ -375,6 +388,7 @@ class Router extends LsObject
      * Возвращает текущий ЧПУ url
      *
      * @return string
+     * @deprecated
      */
     static public function GetPathWebCurrent()
     {
@@ -385,6 +399,7 @@ class Router extends LsObject
      * Возвращает текущий экшен
      *
      * @return string
+     * @deprecated
      */
     static public function GetAction()
     {
@@ -395,6 +410,7 @@ class Router extends LsObject
      * Возвращает текущий евент
      *
      * @return string
+     * @deprecated
      */
     static public function GetActionEvent()
     {
@@ -405,6 +421,7 @@ class Router extends LsObject
      * Возвращает имя текущего евента
      *
      * @return string
+     * @deprecated
      */
     static public function GetActionEventName()
     {
@@ -415,6 +432,7 @@ class Router extends LsObject
      * Возвращает класс текущего экшена
      *
      * @return string
+     * @deprecated
      */
     static public function GetActionClass()
     {
@@ -425,6 +443,7 @@ class Router extends LsObject
      * Устанавливает новый текущий евент
      *
      * @param string $sEvent Евент
+     * @deprecated
      */
     static public function SetActionEvent($sEvent)
     {
@@ -435,6 +454,7 @@ class Router extends LsObject
      * Возвращает параметры(те которые передаются в URL)
      *
      * @return array
+     * @deprecated
      */
     static public function GetParams()
     {
@@ -449,6 +469,7 @@ class Router extends LsObject
      * @param mixed|null $def
      *
      * @return string
+     * @deprecated
      */
     static public function GetParam($iOffset, $def = null)
     {
@@ -462,6 +483,7 @@ class Router extends LsObject
      *
      * @param int   $iOffset Номер параметра, по идеи может быть не только числом
      * @param mixed $value
+     * @deprecated
      */
     static public function SetParam($iOffset, $value)
     {
@@ -483,6 +505,7 @@ class Router extends LsObject
      * @param  string $action Экшен
      *
      * @return string
+     * @deprecated
      */
     static public function GetPath($action)
     {
@@ -504,6 +527,7 @@ class Router extends LsObject
      * @param  string $sPage
      *
      * @return string
+     * @deprecated
      */
     public function Rewrite($sPage)
     {
@@ -523,6 +547,7 @@ class Router extends LsObject
      * @param  string $sPage
      *
      * @return string
+     * @deprecated
      */
     public function Standart($sPage)
     {
@@ -537,6 +562,7 @@ class Router extends LsObject
      * Выполняет редирект, предварительно завершая работу Engine
      *
      * @param string $sLocation URL для редиректа
+     * @deprecated
      */
     static public function Location($sLocation)
     {

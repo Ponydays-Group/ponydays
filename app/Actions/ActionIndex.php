@@ -19,12 +19,11 @@ namespace App\Actions;
 
 use App\Modules\ModuleTopic;
 use App\Modules\ModuleUser;
-use Engine\Action;
 use Engine\Config;
 use Engine\LS;
 use Engine\Modules\ModuleHook;
 use Engine\Modules\ModuleViewer;
-use Engine\Router;
+use Engine\Routing\Action;
 
 /**
  * Обработка главной страницы, т.е. УРЛа вида /index/
@@ -32,7 +31,7 @@ use Engine\Router;
  * @package actions
  * @since   1.0
  */
-class ActionIndex extends Action
+class ActionIndex extends \Engine\Action
 {
     /**
      * Главное меню
@@ -122,7 +121,7 @@ class ActionIndex extends Action
          */
         $iPage = $this->GetParamEventMatch(0, 2) ? $this->GetParamEventMatch(0, 2) : 1;
         if ($iPage == 1 and !getRequest('period')) {
-            $viewer->SetHtmlCanonical(Router::GetPath('index').'top/');
+            $viewer->SetHtmlCanonical(\Engine\Router::GetPath('index').'top/');
         }
         /**
          * Получаем список топиков
@@ -156,7 +155,7 @@ class ActionIndex extends Action
             $iPage,
             Config::Get('module.topic.per_page'),
             Config::Get('pagination.pages.count'),
-            Router::GetPath('index').'top',
+            \Engine\Router::GetPath('index').'top',
             ['period' => $sPeriod]
         );
         /**
@@ -165,7 +164,7 @@ class ActionIndex extends Action
         $viewer->Assign('aTopics', $aTopics);
         $viewer->Assign('aPaging', $aPaging);
         $viewer->Assign('sPeriodSelectCurrent', $sPeriod);
-        $viewer->Assign('sPeriodSelectRoot', Router::GetPath('index').'top/');
+        $viewer->Assign('sPeriodSelectRoot', \Engine\Router::GetPath('index').'top/');
         /**
          * Устанавливаем шаблон вывода
          */
@@ -193,7 +192,7 @@ class ActionIndex extends Action
          */
         $iPage = $this->GetParamEventMatch(0, 2) ? $this->GetParamEventMatch(0, 2) : 1;
         if ($iPage == 1 and !getRequest('period')) {
-            $viewer->SetHtmlCanonical(Router::GetPath('index').'discussed/');
+            $viewer->SetHtmlCanonical(\Engine\Router::GetPath('index').'discussed/');
         }
         /**
          * Получаем список топиков
@@ -227,7 +226,7 @@ class ActionIndex extends Action
             $iPage,
             Config::Get('module.topic.per_page'),
             Config::Get('pagination.pages.count'),
-            Router::GetPath('index').'discussed',
+            \Engine\Router::GetPath('index').'discussed',
             ['period' => $sPeriod]
         );
         /**
@@ -236,7 +235,7 @@ class ActionIndex extends Action
         $viewer->Assign('aTopics', $aTopics);
         $viewer->Assign('aPaging', $aPaging);
         $viewer->Assign('sPeriodSelectCurrent', $sPeriod);
-        $viewer->Assign('sPeriodSelectRoot', Router::GetPath('index').'discussed/');
+        $viewer->Assign('sPeriodSelectRoot', \Engine\Router::GetPath('index').'discussed/');
         /**
          * Устанавливаем шаблон вывода
          */
@@ -251,7 +250,7 @@ class ActionIndex extends Action
         /** @var ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);
 
-        $viewer->SetHtmlRssAlternate(Router::GetPath('rss').'new/', Config::Get('view.name'));
+        $viewer->SetHtmlRssAlternate(\Engine\Router::GetPath('rss').'new/', Config::Get('view.name'));
         /**
          * Меню
          */
@@ -277,7 +276,7 @@ class ActionIndex extends Action
             $iPage,
             Config::Get('module.topic.per_page'),
             Config::Get('pagination.pages.count'),
-            Router::GetPath('index').'new'
+            \Engine\Router::GetPath('index').'new'
         );
         /**
          * Загружаем переменные в шаблон
@@ -300,7 +299,7 @@ class ActionIndex extends Action
         /** @var ModuleViewer $viewer */
         $viewer = LS::Make(ModuleViewer::class);
 
-        $viewer->SetHtmlRssAlternate(Router::GetPath('rss').'new/', Config::Get('view.name'));
+        $viewer->SetHtmlRssAlternate(\Engine\Router::GetPath('rss').'new/', Config::Get('view.name'));
         /**
          * Меню
          */
@@ -322,7 +321,7 @@ class ActionIndex extends Action
             $page,
             Config::Get('module.topic.per_page'),
             Config::Get('pagination.pages.count'),
-            Router::GetPath('index').'newall'
+            \Engine\Router::GetPath('index').'newall'
         );
         /**
          * Загружаем переменные в шаблон
@@ -346,13 +345,13 @@ class ActionIndex extends Action
      *
      * @return \Engine\Routing\Action
      */
-    protected function EventIndex(ModuleViewer $viewer, ModuleUser $user, int $page = 1): \Engine\Routing\Action
+    protected function EventIndex(ModuleViewer $viewer, ModuleUser $user, int $page = 1): Action
     {
         $viewer->Assign('sMenuHeadItemSelect', 'blog');
         if ($user->getUserCurrent()) {
-            return \Engine\Routing\Action::by('feed#EventIndex')->with(['page' => $page]);
+            return Action::by('feed#EventIndex')->with(['page' => $page]);
         } else {
-            return \Engine\Routing\Action::by('index#EventNewall')->with(['page' => $page]);
+            return Action::by('index#EventNewall')->with(['page' => $page]);
         }
     }
 

@@ -4,9 +4,10 @@ namespace Engine\View;
 
 use Engine\LS;
 use Engine\Modules\ModuleViewer;
-use Engine\Router;
+use Engine\Routing\Result;
+use Engine\Routing\Router;
 
-class View
+class View extends Result
 {
     /**
      * @var string
@@ -28,14 +29,14 @@ class View
         return $this;
     }
 
-    public function render()
-    {
-        if ($this->title != null) LS::Make(ModuleViewer::class)->AddHtmlTitle($this->title);
-        Router::setActionTemplate("actions/$this->path.tpl");
-    }
-
     public static function by(string $templatePath): View
     {
         return new View($templatePath);
+    }
+
+    public function _handle(Router $router)
+    {
+        if ($this->title != null) LS::Make(ModuleViewer::class)->AddHtmlTitle($this->title);
+        \Engine\Router::setActionTemplate("actions/$this->path.tpl");
     }
 }

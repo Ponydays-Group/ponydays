@@ -131,10 +131,8 @@ class Router
             throw new RoutingException("Could not run an action: $action", 0, $e);
         }
 
-        if ($result instanceof View) {
-            $result->render();
-        } else if ($result instanceof Action) {
-            $this->runAction($result);
+        if ($result instanceof Result) {
+            $result->_handle($this);
         }
     }
 

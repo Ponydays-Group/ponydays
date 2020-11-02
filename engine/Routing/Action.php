@@ -2,7 +2,7 @@
 
 namespace Engine\Routing;
 
-class Action
+class Action extends Result
 {
     /**
      * @var string
@@ -74,5 +74,10 @@ class Action
         //TODO: middlewares
 
         return $action;
+    }
+
+    public function _handle(Router $router)
+    {
+        $router->runAction($this);
     }
 }

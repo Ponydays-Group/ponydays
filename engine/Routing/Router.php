@@ -5,6 +5,8 @@ namespace Engine\Routing;
 use Engine\Config;
 use Engine\Engine;
 use Engine\Resolving\MethodCallResolver;
+use Engine\Resolving\Type\Type;
+use Engine\Resolving\Type\TypeArray;
 use Engine\Routing\Exception\Http\NotFoundHttpException;
 use Engine\Routing\Exception\RoutingException;
 use Engine\Routing\Parser\RouteLexer;
@@ -116,11 +118,11 @@ class Router
 
         try {
             $result = MethodCallResolver::resolve_of($controller, $method)->with(
-                function (array $types, string $name) use ($vars) {
-                    if (isset($vars[$name]) && in_array(gettype($vars[$name]), $types)) {
+                function (Type $type, string $name) use ($vars) {
+                    if (isset($vars[$name]) && Type::of($vars[$name])->isPresentableAs($type)) {
                         return [$vars[$name], true];
                     }
-                    if ($name == '_vars' && in_array('array', $types)) {
+                    if ($name == '_vars' && $type instanceof TypeArray) {
                         return $vars;
                     }
 

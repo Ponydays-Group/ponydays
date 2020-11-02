@@ -24,7 +24,8 @@ use Engine\Modules\ModuleCache;
 use Engine\Modules\ModuleDatabase;
 use Engine\Modules\ModuleHook;
 use Engine\Resolving\FunctionCallResolver;
-use ReflectionFunction;
+use Engine\Resolving\Type\Type;
+use Engine\Resolving\Type\TypeObject;
 
 set_include_path(get_include_path().PATH_SEPARATOR.dirname(__FILE__));
 
@@ -293,29 +294,32 @@ class Engine extends LsObject
         return new $class($connect);
     }
 
-    public function resolve(array $types, string $name = ''): array
+    public function resolve(Type $type, string $name = ''): array
     {
-        if (count($types) > 1) return [null, false];
-        $type = current($types);
-        if (isset($this->aModules[$type])) {
-            return [$this->aModules[$type], true];
-        } else {
-            if (! (class_exists($type) && is_subclass_of($type, Module::class)) ) {
-                return [null, false];
-            }
-            $module = new $type();
-            $this->aModules[$type] = $module;
-            $this->InitModule($module);
+        if ($type instanceof TypeObject && $type->hasClass()) {
+            $class = $type->getClass();
+            if (isset($this->aModules[$class])) {
+                return [$this->aModules[$class], true];
+            } else {
+                if (! (class_exists($class) && is_subclass_of($class, Module::class)) ) {
+                    return [null, false];
+                }
+                $module = new $class();
+                $this->aModules[$class] = $module;
+                $this->InitModule($module);
 
-            return [$module, true];
+                return [$module, true];
+            }
+        } else {
+            return [null, false];
         }
     }
 
-    public function make(string $class): Module
+    public function make(string $classname): Module
     {
-        [$module, $resolved] = $this->resolve([$class]);
+        [$module, $resolved] = $this->resolve((new TypeObject())->withClass($classname));
         if (! $resolved) {
-            throw new \RuntimeException(sprintf('Module "%s" not found!', $class));
+            throw new \RuntimeException(sprintf('Module "%s" not found!', $classname));
         }
         return $module;
     }

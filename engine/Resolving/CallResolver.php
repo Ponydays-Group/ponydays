@@ -2,9 +2,9 @@
 
 namespace Engine\Resolving;
 
+use Engine\Resolving\Type\Type;
 use ReflectionException;
 use ReflectionFunctionAbstract;
-use ReflectionNamedType;
 
 abstract class CallResolver
 {
@@ -42,19 +42,11 @@ abstract class CallResolver
             $position = $parameter->getPosition();
 
             $hasDefault = $parameter->isDefaultValueAvailable();
-            $type = $parameter->getType();
 
-            $typeNames = [];
-            if ($type instanceof ReflectionNamedType) {
-                $typeNames[] = $type->getName();
-            } /*else if ($type instanceof ReflectionUnionType) { //TODO: PHP8 feature
-                foreach ($type->getTypes() as $t) {
-                    $typeNames[] = $t->getName();
-                }
-            }*/
+            $type = Type::fromReflection($parameter->getType());
 
             foreach ($this->resolvers as $resolver) {
-                [$val, $resolved] = $resolver($typeNames, $name);
+                [$val, $resolved] = $resolver($type, $name);
                 if ($resolved) {
                     $resolvedArgs[$position] = $val;
                     continue 2;

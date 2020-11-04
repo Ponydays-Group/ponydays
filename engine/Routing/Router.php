@@ -11,6 +11,8 @@ use Engine\Result\Action;
 use Engine\Result\Result;
 use Engine\Routing\Exception\Http\BadRequestHttpException;
 use Engine\Routing\Exception\Http\HttpException;
+use Engine\Routing\Exception\Http\MethodNotAllowedHttpException;
+use Engine\Routing\Exception\Http\NotFoundHttpException;
 use Engine\Routing\Exception\RoutingException;
 use Engine\Routing\Parser\RouteLexer;
 use Engine\Routing\Parser\RouteParser;
@@ -144,15 +146,18 @@ class Router
         }
     }
 
-    private function handleHttpError(int $state)
+    private function handleHttpError(HttpException $httpException)
     {
         $action = Config::Get('router.config.http_error_handler');
-        $this->runAction(Action::from($action['params'])->with(['event' => $state]));
+        $this->runAction(Action::from($action['params'])->with([
+            'event' => $httpException->getCode(),
+            'httpException' => $httpException
+        ]));
     }
 
     private function handleNotFound()
     {
-        $this->handleHttpError(404);
+        $this->handleHttpError(new NotFoundHttpException());
     }
 
     private function handleFound(array $handler, array $vars)
@@ -167,12 +172,12 @@ class Router
         try {
             $this->runAction(Action::from($handler['params'])->with($vars));
         } catch (HttpException $e) {
-            $this->handleHttpError($e->getCode());
+            $this->handleHttpError($e);
         }
     }
 
     private function handleMethodNotAllowed(array $allowedMethods)
     {
-        echo 'method not allowed: ' . var_export($allowedMethods, true);
+        $this->handleHttpError(new MethodNotAllowedHttpException($allowedMethods));
     }
 }

@@ -22,6 +22,7 @@ use Engine\Modules\ModuleMessage;
 use Engine\Result\View\HtmlView;
 use Engine\Result\View\View;
 use Engine\Routing\Controller;
+use Engine\Routing\Exception\Http\HttpException;
 
 /**
  * Экшен обработки УРЛа вида /error/ т.е. ошибок
@@ -48,14 +49,16 @@ class ActionError extends Controller
     /**
      * Вывод ошибки
      *
-     * @param string                        $event
+     * @param \Engine\Modules\ModuleMessage                     $msg
+     * @param \Engine\Modules\ModuleLang                        $lang
      *
-     * @param \Engine\Modules\ModuleMessage $msg
-     * @param \Engine\Modules\ModuleLang    $lang
+     * @param string                                            $event
+     *
+     * @param \Engine\Routing\Exception\Http\HttpException|null $httpException
      *
      * @return \Engine\Result\View\View
      */
-    public function error(ModuleMessage $msg, ModuleLang $lang, string $event = '400'): View
+    public function error(ModuleMessage $msg, ModuleLang $lang, string $event = '400', HttpException $httpException = null): View
     {
         /**
          * Если евент равен одной из ошибок из $aHttpErrors, то шлем браузеру специфичный header

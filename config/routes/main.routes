@@ -76,6 +76,18 @@ GROUP '/index' (
     ANY '/newall/[page{page:[1-9]\d*}]' to 'index#newall';
 );
 
+# ActionLogin
+GROUP '/login' (
+    ANY '/' to 'login#login';
+    ANY '/exit' to 'login#exit';
+    ANY '/reminder/{key}' to 'login#reminder';
+    ANY '/reactivation' to 'login#reactivation';
+
+    ANY '/ajax-login' to 'login#ajaxLogin';
+    ANY '/ajax-reminder' to 'login#ajaxReminder';
+    ANY '/ajax-reactivation' to 'login#ajaxReactivation';
+);
+
 # ActionQuotes
 GROUP '/quotes' (
     ANY '[/page{page:[1-9]\d*}]' to 'quotes#view';

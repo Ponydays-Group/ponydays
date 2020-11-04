@@ -21,15 +21,23 @@ use App\Entities\EntityUserReminder;
 use App\Modules\ModuleCrypto;
 use App\Modules\ModuleNotify;
 use App\Modules\ModuleUser;
-use Engine\Action;
 use Engine\Config;
 use Engine\LS;
+use Engine\Module;
 use Engine\Modules\ModuleLang;
 use Engine\Modules\ModuleMessage;
 use Engine\Modules\ModuleSecurity;
 use Engine\Modules\ModuleSession;
 use Engine\Modules\ModuleViewer;
+use Engine\Result\Redirect;
+use Engine\Result\Result;
+use Engine\Result\View\AjaxView;
+use Engine\Result\View\HtmlView;
+use Engine\Result\View\JsonView;
 use Engine\Router;
+use Engine\Routing\Controller;
+use Engine\Routing\Exception\Http\BadRequestHttpException;
+use Engine\Routing\Exception\Http\ForbiddenHttpException;
 
 /**
  * Обрабатывые авторизацию
@@ -37,100 +45,76 @@ use Engine\Router;
  * @package actions
  * @since   1.0
  */
-class ActionLogin extends Action
+class ActionLogin extends Controller
 {
-    /**
-     * Инициализация
-     *
-     */
-    public function Init()
-    {
-        /**
-         * Устанавливаем дефолтный евент
-         */
-        $this->SetDefaultEvent('index');
-    }
-
-    /**
-     * Регистрируем евенты
-     *
-     */
-    protected function RegisterEvent()
-    {
-        $this->AddEvent('index', 'EventLogin');
-        $this->AddEvent('exit', 'EventExit');
-        $this->AddEvent('reminder', 'EventReminder');
-        $this->AddEvent('reactivation', 'EventReactivation');
-
-        $this->AddEvent('ajax-login', 'EventAjaxLogin');
-        $this->AddEvent('ajax-reminder', 'EventAjaxReminder');
-        $this->AddEvent('ajax-reactivation', 'EventAjaxReactivation');
-    }
 
     /**
      * Ajax авторизация
+     *
+     * @param \Engine\Modules\ModuleMessage $message
+     * @param \Engine\Modules\ModuleLang    $lang
+     * @param \App\Modules\ModuleUser       $user
+     * @param \Engine\Modules\ModuleSession $session
+     * @param \App\Modules\ModuleCrypto     $crypto
+     *
+     * @return \Engine\Result\View\JsonView
      */
-    protected function EventAjaxLogin()
+    protected function ajaxLogin(ModuleMessage $message, ModuleLang $lang, ModuleUser $user, ModuleSession $session, ModuleCrypto $crypto): JsonView
     {
-        /**
-         * Устанвливаем формат Ajax ответа
-         */
-        LS::Make(ModuleViewer::class)->SetResponseAjax('json');
         /**
          * Логин и пароль являются строками?
          */
         if (!is_string(getRequest('login')) or !is_string(getRequest('password'))) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('system_error'));
+            $message->AddErrorSingle($lang->Get('system_error'));
 
-            return;
+            return AjaxView::empty();
         }
         /**
          * Проверяем есть ли такой юзер по логину
          */
-        if ((func_check(getRequest('login'), 'mail') and
-                $oUser = LS::Make(ModuleUser::class)->GetUserByMail(getRequest('login'))) or
-            $oUser = LS::Make(ModuleUser::class)->GetUserByLogin(getRequest('login'))
+        if ((func_check(getRequest('login'), 'mail')
+            and $oUser = $user->GetUserByMail(getRequest('login')))
+            or $oUser = $user->GetUserByLogin(getRequest('login'))
         ) {
             // проверка на бан
 
 //			if (LS::Make(ModuleUser::class)->isBanned($oUser->getId())) {
             if ($oUser->isBanned()) {
-                LS::Make(ModuleMessage::class)->AddNoticeSingle($oUser->getBanComment());
-                LS::Make(ModuleUser::class)->Logout();
-                LS::Make(ModuleSession::class)->DropSession();
-                Router::Action('error');
+                $message->AddNoticeSingle($oUser->getBanComment());
+                $user->Logout();
+                $session->DropSession();
 
-                return;
+                throw new ForbiddenHttpException();
             }
 
             /**
              * Проверяем пароль и обновляем хеш, если нужно
              */
             $user_password = $oUser->getPassword();
-            if (LS::Make(ModuleCrypto::class)->PasswordVerify(getRequest('password'), $user_password)) {
-                if (LS::Make(ModuleCrypto::class)->PasswordNeedsRehash($user_password)) {
-                    $oUser->setPassword(LS::Make(ModuleCrypto::class)->PasswordHash(getRequest('password')));
-                    LS::Make(ModuleUser::class)->Update($oUser);
+            if ($crypto->PasswordVerify(getRequest('password'), $user_password)) {
+                if ($crypto->PasswordNeedsRehash($user_password)) {
+                    $oUser->setPassword($crypto->PasswordHash(getRequest('password')));
+                    $user->Update($oUser);
                 }
 
                 /**
                  * Проверяем активен ли юзер
                  */
                 if (!$oUser->getActivate()) {
-                    LS::Make(ModuleMessage::class)->AddErrorSingle(
-                        LS::Make(ModuleLang::class)->Get(
+                    $message->AddErrorSingle(
+                        $lang->Get(
                             'user_not_activated',
                             ['reactivation_path' => Router::GetPath('login').'reactivation']
                         )
                     );
 
-                    return;
+                    return AjaxView::empty();
                 }
                 $bRemember = getRequest('remember', false) ? true : false;
                 /**
                  * Авторизуем
                  */
-                LS::Make(ModuleUser::class)->Authorization($oUser, $bRemember);
+                $user->Authorization($oUser, $bRemember);
                 /**
                  * Определяем редирект
                  */
@@ -138,101 +122,114 @@ class ActionLogin extends Action
                 if (getRequestStr('return-path')) {
                     $sUrl = getRequestStr('return-path');
                 }
-                LS::Make(ModuleViewer::class)->AssignAjax('sUrlRedirect', $sUrl ? $sUrl : Config::Get('path.root.web'));
-                LS::Make(ModuleViewer::class)->AssignAjax('sKey', LS::Make(ModuleUser::class)->GenerateUserKey($oUser));
 
-                return;
+                return AjaxView::from([
+                    'sUrlRedirect' => $sUrl ? $sUrl : Config::Get('path.root.web'),
+                    'sKey' => $user->GenerateUserKey($oUser)
+                ]);
             }
         }
-        LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('user_login_bad'));
+        $message->AddErrorSingle($lang->Get('user_login_bad'));
+
+        return AjaxView::empty();
     }
 
     /**
      * Повторный запрос активации
+     *
+     * @param \App\Modules\ModuleUser    $user
+     * @param \Engine\Modules\ModuleLang $lang
+     *
+     * @return \Engine\Result\Redirect|\Engine\Result\View\HtmlView
      */
-    protected function EventReactivation()
+    protected function reactivation(ModuleUser $user, ModuleLang $lang)
     {
-        if (LS::Make(ModuleUser::class)->GetUserCurrent()) {
-            Router::Location(Config::Get('path.root.web').'/');
+        if ($user->GetUserCurrent()) {
+            return Redirect::to(Config::Get('path.root.web').'/');
         }
 
-        LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('reactivation'));
+        return HtmlView::by('login/reactivation')->withHtmlTitle($lang->Get('reactivation'));
     }
 
     /**
      *  Ajax повторной активации
+     *
+     * @param \Engine\Modules\ModuleMessage $message
+     * @param \Engine\Modules\ModuleLang    $lang
+     * @param \App\Modules\ModuleUser       $user
+     * @param \App\Modules\ModuleNotify     $notify
+     *
+     * @return \Engine\Result\View\JsonView
      */
-    protected function EventAjaxReactivation()
+    protected function ajaxReactivation(ModuleMessage $message, ModuleLang $lang, ModuleUser $user, ModuleNotify $notify): JsonView
     {
-        LS::Make(ModuleViewer::class)->SetResponseAjax('json');
-
-        if ((func_check(getRequestStr('mail'), 'mail') and
-            $oUser = LS::Make(ModuleUser::class)->GetUserByMail(getRequestStr('mail')))
-        ) {
+        if ((func_check(getRequestStr('mail'), 'mail') and $oUser = $user->GetUserByMail(getRequestStr('mail')))) {
             if ($oUser->getActivate()) {
-                LS::Make(ModuleMessage::class)->AddErrorSingle(
-                    LS::Make(ModuleLang::class)->Get('registration_activate_error_reactivate')
-                );
+                $message->AddErrorSingle($lang->Get('registration_activate_error_reactivate'));
 
-                return;
+                return AjaxView::empty();
             } else {
                 $oUser->setActivateKey(md5(func_generator().time()));
-                if (LS::Make(ModuleUser::class)->Update($oUser)) {
-                    LS::Make(ModuleMessage::class)->AddNotice(
-                        LS::Make(ModuleLang::class)->Get('reactivation_send_link')
-                    );
-                    LS::Make(ModuleNotify::class)->SendReactivationCode($oUser);
+                if ($user->Update($oUser)) {
+                    $message->AddNotice($lang->Get('reactivation_send_link'));
+                    $notify->SendReactivationCode($oUser);
 
-                    return;
+                    return AjaxView::empty();
                 }
             }
         }
 
-        LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('password_reminder_bad_email'));
+        $message->AddErrorSingle($lang->Get('password_reminder_bad_email'));
+
+        return AjaxView::empty();
     }
 
     /**
      * Обрабатываем процесс залогинивания
      * По факту только отображение шаблона, дальше вступает в дело Ajax
      *
+     * @param \App\Modules\ModuleUser    $user
+     * @param \Engine\Modules\ModuleLang $lang
+     *
+     * @return \Engine\Result\Result
      */
-    protected function EventLogin()
+    protected function login(ModuleUser $user, ModuleLang $lang): Result
     {
         /**
          * Если уже авторизирован
          */
-        if (LS::Make(ModuleUser::class)->GetUserCurrent()) {
-            Router::Location(Config::Get('path.root.web').'/');
+        if ($user->GetUserCurrent()) {
+            return Redirect::to(Config::Get('path.root.web').'/');
         }
-        LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('login'));
+
+        return HtmlView::by('login/index')->withHtmlTitle($lang->Get('login'));
     }
 
     /**
      * Обрабатываем процесс разлогинивания
      *
+     * @param \Engine\Modules\ModuleSecurity $security
+     * @param \App\Modules\ModuleUser        $user
+     *
+     * @return \Engine\Result\View\HtmlView
      */
-    protected function EventExit()
+    protected function exit(ModuleSecurity $security, ModuleUser $user): HtmlView
     {
-        LS::Make(ModuleSecurity::class)->ValidateSendForm();
-        LS::Make(ModuleUser::class)->Logout();
-        LS::Make(ModuleViewer::class)->Assign('bRefreshToHome', true);
+        $security->ValidateSendForm();
+        $user->Logout();
+
+        return HtmlView::by('login/exit')->with(['bRefreshToHome' => true]);
     }
 
     /**
      * Ajax запрос на восстановление пароля
      */
-    protected function EventAjaxReminder()
+    protected function ajaxReminder(ModuleUser $user, ModuleMessage $message, ModuleLang $lang, ModuleNotify $notify): JsonView
     {
-        /**
-         * Устанвливаем формат Ajax ответа
-         */
-        LS::Make(ModuleViewer::class)->SetResponseAjax('json');
         /**
          * Пользователь с таким емайлом существует?
          */
-        if ((func_check(getRequestStr('mail'), 'mail') and
-            $oUser = LS::Make(ModuleUser::class)->GetUserByMail(getRequestStr('mail')))
-        ) {
+        if ((func_check(getRequestStr('mail'), 'mail') and $oUser = $user->GetUserByMail(getRequestStr('mail')))) {
             /**
              * Формируем и отправляем ссылку на смену пароля
              */
@@ -243,62 +240,58 @@ class ActionLogin extends Action
             $oReminder->setDateUsed(null);
             $oReminder->setIsUsed(0);
             $oReminder->setUserId($oUser->getId());
-            if (LS::Make(ModuleUser::class)->AddReminder($oReminder)) {
-                LS::Make(ModuleMessage::class)->AddNotice(
-                    LS::Make(ModuleLang::class)->Get('password_reminder_send_link')
-                );
-                LS::Make(ModuleNotify::class)->SendReminderCode($oUser, $oReminder);
+            if ($user->AddReminder($oReminder)) {
+                $message->AddNotice($lang->Get('password_reminder_send_link'));
+                $notify->SendReminderCode($oUser, $oReminder);
 
-                return;
+                return AjaxView::empty();
             }
         }
-        LS::Make(ModuleMessage::class)->AddError(
-            LS::Make(ModuleLang::class)->Get('password_reminder_bad_email'),
-            LS::Make(ModuleLang::class)->Get('error')
-        );
+        $message->AddError($lang->Get('password_reminder_bad_email'), $lang->Get('error'));
+
+        return AjaxView::empty();
     }
 
     /**
      * Обработка напоминания пароля, подтверждение смены пароля
      *
+     * @param \App\Modules\ModuleUser       $user
+     * @param \Engine\Modules\ModuleMessage $message
+     * @param \Engine\Modules\ModuleLang    $lang
+     * @param \App\Modules\ModuleNotify     $notify
+     * @param \App\Modules\ModuleCrypto     $crypto
+     * @param string                        $key
      */
-    protected function EventReminder()
+    protected function reminder(ModuleUser $user, ModuleMessage $message, ModuleLang $lang, ModuleNotify $notify, ModuleCrypto $crypto, string $key)
     {
-        /**
-         * Устанавливаем title страницы
-         */
-        LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('password_reminder'));
         /**
          * Проверка кода на восстановление пароля и генерация нового пароля
          */
-        if (func_check($this->GetParam(0), 'md5')) {
+        if (func_check($key, 'md5')) {
             /**
              * Проверка кода подтверждения
              */
-            if ($oReminder = LS::Make(ModuleUser::class)->GetReminderByCode($this->GetParam(0))) {
-                if (!$oReminder->getIsUsed() and strtotime($oReminder->getDateExpire()) > time() and
-                    $oUser = LS::Make(ModuleUser::class)->GetUserById($oReminder->getUserId())
-                ) {
-                    $sNewPassword = func_generator(7);
-                    $oUser->setPassword(LS::Make(ModuleCrypto::class)->PasswordHash($sNewPassword));
-                    if (LS::Make(ModuleUser::class)->Update($oUser)) {
+            if ($oReminder = $user->GetReminderByCode($key)) {
+                if (!$oReminder->getIsUsed() and strtotime($oReminder->getDateExpire()) > time() and $oUser = $user->GetUserById($oReminder->getUserId())) {
+                    $sNewPassword = func_generator(16);
+                    $oUser->setPassword($crypto->PasswordHash($sNewPassword));
+                    if ($user->Update($oUser)) {
                         $oReminder->setDateUsed(date("Y-m-d H:i:s"));
                         $oReminder->setIsUsed(1);
-                        LS::Make(ModuleUser::class)->UpdateReminder($oReminder);
-                        LS::Make(ModuleNotify::class)->SendReminderPassword($oUser, $sNewPassword);
-                        $this->SetTemplateAction('reminder_confirm');
+                        $user->UpdateReminder($oReminder);
+                        $notify->SendReminderPassword($oUser, $sNewPassword);
 
-                        return;
+                        return HtmlView::by('login/reminder_confirm')->withHtmlTitle($lang->Get('password_reminder'));
                     }
                 }
             }
-            LS::Make(ModuleMessage::class)->AddErrorSingle(
-                LS::Make(ModuleLang::class)->Get('password_reminder_bad_code'),
-                LS::Make(ModuleLang::class)->Get('error')
-            );
-            Router::Action('error');
 
-            return;
+            $message->AddErrorSingle(
+                $lang->Get('password_reminder_bad_code'),
+                $lang->Get('error')
+            );
         }
+
+        throw new BadRequestHttpException();
     }
 }

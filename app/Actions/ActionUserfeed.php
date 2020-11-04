@@ -22,13 +22,17 @@ use App\Modules\ModuleBlog;
 use App\Modules\ModuleTopic;
 use App\Modules\ModuleUser;
 use App\Modules\ModuleUserfeed;
-use Engine\Action;
 use Engine\Config;
 use Engine\LS;
 use Engine\Modules\ModuleHook;
 use Engine\Modules\ModuleLang;
 use Engine\Modules\ModuleMessage;
 use Engine\Modules\ModuleViewer;
+use Engine\Result\View\AjaxView;
+use Engine\Result\View\HtmlView;
+use Engine\Result\View\JsonView;
+use Engine\Routing\Controller;
+use Engine\Routing\Exception\Http\NotFoundHttpException;
 
 /**
  * Обрабатывает пользовательские ленты контента
@@ -36,7 +40,7 @@ use Engine\Modules\ModuleViewer;
  * @package actions
  * @since   1.0
  */
-class ActionUserfeed extends Action
+class ActionUserfeed extends Controller
 {
     /**
      * Текущий пользователь
@@ -49,132 +53,121 @@ class ActionUserfeed extends Action
      * Инициализация
      *
      */
-    public function Init()
+    public function boot()
     {
         /**
          * Доступ только у авторизованных пользователей
          */
         $this->oUserCurrent = LS::Make(ModuleUser::class)->getUserCurrent();
         if (!$this->oUserCurrent) {
-            parent::EventNotFound();
+            throw new NotFoundHttpException();
         }
-        $this->SetDefaultEvent('index');
 
         LS::Make(ModuleViewer::class)->Assign('sMenuItemSelect', 'feed');
     }
 
     /**
-     * Регистрация евентов
-     *
-     */
-    protected function RegisterEvent()
-    {
-        $this->AddEvent('index', 'EventIndex');
-        $this->AddEvent('subscribe', 'EventSubscribe');
-        $this->AddEvent('subscribeByLogin', 'EventSubscribeByLogin');
-        $this->AddEvent('subscribe_all', 'EventSubscribeAll');
-        $this->AddEvent('unsubscribe_all', 'EventUnsubscribeAll');
-        $this->AddEvent('unsubscribe', 'EventUnSubscribe');
-        $this->AddEvent('get_more', 'EventGetMore');
-    }
-
-    /**
      * Выводит ленту контента(топики) для пользователя
      *
+     * @param \App\Modules\ModuleUserfeed $feed
+     * @param \Engine\Modules\ModuleHook  $hook
+     *
+     * @return \Engine\Result\View\HtmlView
      */
-    protected function EventIndex()
+    protected function index(ModuleUserfeed $feed, ModuleHook $hook)
     {
         /**
          * Получаем топики
          */
-        $aTopics = LS::Make(ModuleUserfeed::class)->read($this->oUserCurrent->getId());
+        $aTopics = $feed->read($this->oUserCurrent->getId());
         /**
          * Вызов хуков
          */
-        LS::Make(ModuleHook::class)->Run('topics_list_show', ['aTopics' => $aTopics]);
+        $hook->Run('topics_list_show', ['aTopics' => $aTopics]);
 
-        /** @var \Engine\Modules\ModuleViewer $viewer */
-        $viewer = LS::Make(ModuleViewer::class);
+        $view = HtmlView::by('userfeed/list');
 
-        $viewer->Assign('aTopics', $aTopics);
+        $view->with(['aTopics' => $aTopics]);
         if (count($aTopics)) {
-            $viewer->Assign('iUserfeedLastId', end($aTopics)->getId());
+            $view->with(['iUserfeedLastId' => end($aTopics)->getId()]);
         }
         if (count($aTopics) < Config::Get('module.userfeed.count_default')) {
-            $viewer->Assign('bDisableGetMoreButton', true);
+            $view->with(['bDisableGetMoreButton' => true]);
         } else {
-            $viewer->Assign('bDisableGetMoreButton', false);
+            $view->with(['bDisableGetMoreButton' => false]);
         }
-        $this->SetTemplateAction('list');
+
+        return $view;
     }
 
     /**
      * Подгрузка ленты топиков (замена постраничности)
      *
+     * @param \App\Modules\ModuleUserfeed   $feed
+     * @param \Engine\Modules\ModuleViewer  $viewer
+     * @param \Engine\Modules\ModuleMessage $message
+     * @param \Engine\Modules\ModuleLang    $lang
+     * @param \Engine\Modules\ModuleHook    $hook
+     *
+     * @return \Engine\Result\View\JsonView
      */
-    protected function EventGetMore()
+    protected function getMore(ModuleUserfeed $feed, ModuleViewer $viewer, ModuleMessage $message, ModuleLang $lang, ModuleHook $hook): JsonView
     {
-        /** @var \Engine\Modules\ModuleViewer $viewer */
-        $viewer = LS::Make(ModuleViewer::class);
-
-        /**
-         * Устанавливаем формат Ajax ответа
-         */
-        $viewer->SetResponseAjax('json');
         /**
          * Проверяем последний просмотренный ID топика
          */
         $iFromId = getRequestStr('last_id');
         if (!$iFromId) {
-            LS::Make(ModuleMessage::class)->AddError(
-                LS::Make(ModuleLang::class)->Get('system_error'),
-                LS::Make(ModuleLang::class)->Get('error')
+            $message->AddError(
+                $lang->Get('system_error'),
+                $lang->Get('error')
             );
 
-            return;
+            return AjaxView::empty();
         }
         /**
          * Получаем топики
          */
-        $aTopics = LS::Make(ModuleUserfeed::class)->read($this->oUserCurrent->getId(), null, $iFromId);
+        $aTopics = $feed->read($this->oUserCurrent->getId(), null, $iFromId);
         /**
          * Вызов хуков
          */
-        LS::Make(ModuleHook::class)->Run('topics_list_show', ['aTopics' => $aTopics]);
+        $hook->Run('topics_list_show', ['aTopics' => $aTopics]);
         /**
          * Загружаем данные в ajax ответ
          */
-        $oViewer = $viewer->GetLocalViewer();
-        $oViewer->Assign('aTopics', $aTopics);
-        $viewer->AssignAjax('result', $oViewer->Fetch('topic_list.tpl'));
-        $viewer->AssignAjax('topics_count', count($aTopics));
+        $topicListView = HtmlView::global('topic_list')->with(['aTopics' => $aTopics]);
+
+        $view = AjaxView::from([
+            'result' => $topicListView->fetch(),
+            'topics_count' => count($aTopics)
+        ]);
 
         if (count($aTopics)) {
-            $viewer->AssignAjax('iUserfeedLastId', end($aTopics)->getId());
+            $view->with(['iUserfeedLastId' => end($aTopics)->getId()]);
         }
+
+        return $view;
     }
 
     /**
      * Подписка на контент блога или пользователя
      *
+     * @param \App\Modules\ModuleBlog       $blog
+     * @param \App\Modules\ModuleUser       $user
+     * @param \App\Modules\ModuleUserfeed   $feed
+     * @param \Engine\Modules\ModuleMessage $message
+     * @param \Engine\Modules\ModuleLang    $lang
+     *
+     * @return \Engine\Result\View\JsonView
      */
-    protected function EventSubscribe()
+    protected function subscribe(ModuleBlog $blog, ModuleUser $user, ModuleUserfeed $feed, ModuleMessage $message, ModuleLang $lang): JsonView
     {
-        /** @var ModuleViewer $viewer */
-        $viewer = LS::Make(ModuleViewer::class);
-
-        /**
-         * Устанавливаем формат Ajax ответа
-         */
-        $viewer->SetResponseAjax('json');
         /**
          * Проверяем наличие ID блога или пользователя
          */
         if (!getRequest('id')) {
-            LS::Make(ModuleMessage::class)->AddError(
-                LS::Make(ModuleLang::class)->Get('system_error'),
-                LS::Make(ModuleLang::class)->Get('error')
-            );
+            $message->AddError($lang->Get('system_error'), $lang->Get('error'));
         }
         $sType = getRequestStr('type');
         $iType = null;
@@ -184,93 +177,66 @@ class ActionUserfeed extends Action
         switch ($sType) {
             case 'blogs':
                 $iType = ModuleUserfeed::SUBSCRIBE_TYPE_BLOG;
-                /** @var ModuleBlog $blog */
-                $blog = LS::Make(ModuleBlog::class);
                 /**
                  * Проверяем существование блога
                  */
                 if (!$blog->GetBlogById(getRequestStr('id'))) {
-                    LS::Make(ModuleMessage::class)->AddError(
-                        LS::Make(ModuleLang::class)->Get('system_error'),
-                        LS::Make(ModuleLang::class)->Get('error')
-                    );
+                    $message->AddError($lang->Get('system_error'), $lang->Get('error'));
 
-                    return;
+                    return AjaxView::empty();
                 }
-                if (!in_array(
-                        $blog->GetBlogById(getRequestStr('id'))->getId(),
-                        LS::Make(ModuleBlog::class)->GetAccessibleBlogsByUser(
-                            LS::Make(ModuleUser::class)->GetUserCurrent()
-                        )
-                    ) and in_array(
-                        LS::Make(ModuleBlog::class)->GetBlogById(getRequestStr('id'))->getType(),
-                        ["close", "invite"]
-                    )
+                if (
+                    !in_array($blog->GetBlogById(getRequestStr('id'))->getId(), $blog->GetAccessibleBlogsByUser($user->GetUserCurrent()))
+                    and in_array($blog->GetBlogById(getRequestStr('id'))->getType(), ["close", "invite"])
                 ) {
-                    LS::Make(ModuleMessage::class)->AddNotice(
+                    $message->AddNotice(// TODO: Localization
                         "У вас нет разрешения подписываться на этот блог",
                         "Ошибка"
                     );
 
-                    return;
+                    return AjaxView::empty();
                 }
                 break;
             default:
-                LS::Make(ModuleMessage::class)->AddError(
-                    LS::Make(ModuleLang::class)->Get('system_error'),
-                    LS::Make(ModuleLang::class)->Get('error')
-                );
+                $message->AddError($lang->Get('system_error'), $lang->Get('error'));
 
-                return;
+                return AjaxView::empty();
         }
         /**
          * Подписываем
          */
-        LS::Make(ModuleUserfeed::class)->subscribeUser($this->oUserCurrent->getId(), $iType, getRequestStr('id'));
-        LS::Make(ModuleMessage::class)->AddNotice(
-            LS::Make(ModuleLang::class)->Get('userfeed_subscribes_updated'),
+        $feed->subscribeUser($this->oUserCurrent->getId(), $iType, getRequestStr('id'));
+        $message->AddNotice($lang->Get('userfeed_subscribes_updated'), // TODO: Localization
             "Внимание"
         );
+
+        return AjaxView::empty();
     }
 
     /**
      * Подписка на пользвователя по логину
      *
      */
-    protected function EventSubscribeByLogin()
+    protected function subscribeByLogin(ModuleUser $user, ModuleUserfeed $feed, ModuleMessage $message, ModuleLang $lang): JsonView
     {
-        /** @var \Engine\Modules\ModuleViewer $viewer */
-        $viewer = LS::Make(ModuleViewer::class);
-
-        /**
-         * Устанавливаем формат Ajax ответа
-         */
-        $viewer->SetResponseAjax('json');
         /**
          * Передан ли логин
          */
         if (!getRequest('login') or !is_string(getRequest('login'))) {
-            LS::Make(ModuleMessage::class)->AddError(
-                LS::Make(ModuleLang::class)->Get('system_error'),
-                LS::Make(ModuleLang::class)->Get('error')
-            );
+            $message->AddError($lang->Get('system_error'), $lang->Get('error'));
 
-            return;
+            return AjaxView::empty();
         }
         /**
          * Проверяем существование прользователя
          */
-        $oUser = LS::Make(ModuleUser::class)->getUserByLogin(getRequestStr('login'));
+        $oUser = $user->getUserByLogin(getRequestStr('login'));
         if (!$oUser) {
-            LS::Make(ModuleMessage::class)->AddError(
-                LS::Make(ModuleLang::class)->Get(
-                    'user_not_found',
-                    ['login' => htmlspecialchars(getRequestStr('login'))]
-                ),
-                LS::Make(ModuleLang::class)->Get('error')
+            $message->AddError(
+                $lang->Get('user_not_found', ['login' => htmlspecialchars(getRequestStr('login'))]), $lang->Get('error')
             );
 
-            return;
+            return AjaxView::empty();
         }
         /**
          * Не даем подписаться на самого себя
@@ -278,49 +244,38 @@ class ActionUserfeed extends Action
         /**
          * Подписываем
          */
-        LS::Make(ModuleUserfeed::class)->subscribeUser(
-            $this->oUserCurrent->getId(),
-            ModuleUserfeed::SUBSCRIBE_TYPE_USER,
-            $oUser->getId()
-        );
+        $feed->subscribeUser($this->oUserCurrent->getId(), ModuleUserfeed::SUBSCRIBE_TYPE_USER, $oUser->getId());
         /**
          * Загружаем данные ajax ответ
          */
-        $viewer->AssignAjax('uid', $oUser->getId());
-        $viewer->AssignAjax('user_login', $oUser->getLogin());
-        $viewer->AssignAjax('user_web_path', $oUser->getUserWebPath());
-        $viewer->AssignAjax('user_avatar_48', $oUser->getProfileAvatarPath(48));
-        $viewer->AssignAjax(
-            'lang_error_msg',
-            LS::Make(ModuleLang::class)->Get('userfeed_subscribes_already_subscribed')
-        );
-        $viewer->AssignAjax('lang_error_title', LS::Make(ModuleLang::class)->Get('error'));
-        LS::Make(ModuleMessage::class)->AddNotice(
-            LS::Make(ModuleLang::class)->Get('userfeed_subscribes_updated'),
-            LS::Make(ModuleLang::class)->Get('attention')
-        );
+        $view = AjaxView::from([
+            'uid' => $oUser->getId(),
+            'user_login' => $oUser->getLogin(),
+            'user_web_path' => $oUser->getUserWebPath(),
+            'user_avatar_48' => $oUser->getProfileAvatarPath(48),
+            'lang_error_msg' => $lang->Get('userfeed_subscribes_already_subscribed'),
+            'lang_error_title' => $lang->Get('error')
+        ]);
+        $message->AddNotice($lang->Get('userfeed_subscribes_updated'), $lang->Get('attention'));
+
+        return $view;
     }
 
     /**
      * Отписка от блога или пользователя
      *
+     * @param \App\Modules\ModuleUserfeed   $feed
+     * @param \Engine\Modules\ModuleMessage $message
+     * @param \Engine\Modules\ModuleLang    $lang
+     *
+     * @return \Engine\Result\View\JsonView
      */
-    protected function EventUnsubscribe()
+    protected function unsubscribe(ModuleUserfeed $feed, ModuleMessage $message, ModuleLang $lang): JsonView
     {
-        /** @var \Engine\Modules\ModuleViewer $viewer */
-        $viewer = LS::Make(ModuleViewer::class);
-
-        /**
-         * Устанавливаем формат Ajax ответа
-         */
-        $viewer->SetResponseAjax('json');
         if (!getRequest('id')) {
-            LS::Make(ModuleMessage::class)->AddError(
-                LS::Make(ModuleLang::class)->Get('system_error'),
-                LS::Make(ModuleLang::class)->Get('error')
-            );
+            $message->AddError($lang->Get('system_error'), $lang->Get('error'));
 
-            return;
+            return AjaxView::empty();
         }
         $sType = getRequestStr('type');
         $iType = null;
@@ -335,76 +290,85 @@ class ActionUserfeed extends Action
                 $iType = ModuleUserfeed::SUBSCRIBE_TYPE_USER;
                 break;
             default:
-                LS::Make(ModuleMessage::class)->AddError(
-                    LS::Make(ModuleLang::class)->Get('system_error'),
-                    LS::Make(ModuleLang::class)->Get('error')
-                );
+                $message->AddError($lang->Get('system_error'), $lang->Get('error'));
 
-                return;
+                return AjaxView::empty();
         }
         /**
          * Отписываем пользователя
          */
-        LS::Make(ModuleUserfeed::class)->unsubscribeUser($this->oUserCurrent->getId(), $iType, getRequestStr('id'));
-        LS::Make(ModuleMessage::class)->AddNotice(
-            LS::Make(ModuleLang::class)->Get('userfeed_subscribes_updated'),
-            LS::Make(ModuleLang::class)->Get('attention')
-        );
+        $feed->unsubscribeUser($this->oUserCurrent->getId(), $iType, getRequestStr('id'));
+        $message->AddNotice($lang->Get('userfeed_subscribes_updated'), $lang->Get('attention'));
+
+        return AjaxView::empty();
     }
 
     /**
      * При завершении экшена загружаем в шаблон необходимые переменные
      *
+     * @param \App\Modules\ModuleBlog       $blog
+     * @param \App\Modules\ModuleUserfeed   $feed
+     * @param \Engine\Modules\ModuleMessage $message
+     * @param \Engine\Modules\ModuleLang    $lang
+     *
+     * @return \Engine\Result\View\JsonView
      */
-    protected function EventSubscribeAll()
+    protected function subscribeAll(ModuleBlog $blog, ModuleUserfeed $feed, ModuleMessage $message, ModuleLang $lang): JsonView
     {
         /**
          * Устанавливаем формат Ajax ответа
          */
-        LS::Make(ModuleViewer::class)->SetResponseAjax('json');
 //		$aBlogs = LS::Make(ModuleBlog::class)->GetAccessibleBlogsByUser($this->oUserCurrent);
-        $aBlogs = LS::Make(ModuleBlog::class)->GetBlogs();
+        $aBlogs = $blog->GetBlogs();
 
         foreach ($aBlogs as $iBlogId) {
-            LS::Make(ModuleUserfeed::class)->subscribeUser(
+            $feed->subscribeUser(
                 $this->oUserCurrent->getId(),
                 ModuleUserfeed::SUBSCRIBE_TYPE_BLOG,
                 $iBlogId->getId()
             );
         }
-        LS::Make(ModuleMessage::class)->AddNotice(
-            LS::Make(ModuleLang::class)->Get('userfeed_subscribes_updated'),
+        $message->AddNotice($lang->Get('userfeed_subscribes_updated'), // TODO: Localization
             "Внимание"
         );
+
+        return AjaxView::empty();
     }
 
-    protected function EventUnsubscribeAll()
+    /**
+     * @param \App\Modules\ModuleBlog       $blog
+     * @param \App\Modules\ModuleUserfeed   $feed
+     * @param \Engine\Modules\ModuleMessage $message
+     * @param \Engine\Modules\ModuleLang    $lang
+     *
+     * @return \Engine\Result\View\JsonView
+     */
+    protected function unsubscribeAll(ModuleBlog $blog, ModuleUserfeed $feed, ModuleMessage $message, ModuleLang $lang): JsonView
     {
-        /**
-         * Устанавливаем формат Ajax ответа
-         */
-        LS::Make(ModuleViewer::class)->SetResponseAjax('json');
-        $aBlogs = LS::Make(ModuleBlog::class)->GetBlogs();
+        $aBlogs = $blog->GetBlogs();
         foreach ($aBlogs as $iBlogId) {
-            LS::Make(ModuleUserfeed::class)->unsubscribeUser(
+            $feed->unsubscribeUser(
                 $this->oUserCurrent->getId(),
                 ModuleUserfeed::SUBSCRIBE_TYPE_BLOG,
                 $iBlogId->getId()
             );
         }
-        LS::Make(ModuleMessage::class)->AddNotice(
-            LS::Make(ModuleLang::class)->Get('userfeed_subscribes_updated'),
+        $message->AddNotice($lang->Get('userfeed_subscribes_updated'), // TODO: Localization
             "Внимание"
         );
+
+        return AjaxView::empty();
     }
 
-    public function EventShutdown()
+    public function shutdown()
     {
+        /** @var ModuleTopic $topic */
+        $topic = LS::Make(ModuleTopic::class);
         /**
          * Подсчитываем новые топики
          */
-        $iCountTopicsCollectiveNew = LS::Make(ModuleTopic::class)->GetCountTopicsCollectiveNew();
-        $iCountTopicsPersonalNew = LS::Make(ModuleTopic::class)->GetCountTopicsPersonalNew();
+        $iCountTopicsCollectiveNew = $topic->GetCountTopicsCollectiveNew();
+        $iCountTopicsPersonalNew = $topic->GetCountTopicsPersonalNew();
         $iCountTopicsNew = $iCountTopicsCollectiveNew + $iCountTopicsPersonalNew;
         /**
          * Загружаем переменные в шаблон

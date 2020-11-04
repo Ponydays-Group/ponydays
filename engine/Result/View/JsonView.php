@@ -46,4 +46,9 @@ class JsonView extends View
             $viewer->AssignAjax($key, $val);
         }
     }
+
+    public function fetch(): string
+    {
+        return json_encode($this->vars);
+    }
 }

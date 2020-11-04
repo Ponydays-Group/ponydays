@@ -75,13 +75,15 @@ class ActionIndex extends Controller
      * Инициализация
      *
      */
-    public function init()
+    public function boot()
     {
+        /** @var ModuleTopic $topic */
+        $topic = LS::Make(ModuleTopic::class);
         /**
          * Подсчитываем новые топики
          */
-        $this->iCountTopicsCollectiveNew = LS::Make(ModuleTopic::class)->GetCountTopicsCollectiveNew();
-        $this->iCountTopicsPersonalNew = LS::Make(ModuleTopic::class)->GetCountTopicsPersonalNew();
+        $this->iCountTopicsCollectiveNew = $topic->GetCountTopicsCollectiveNew();
+        $this->iCountTopicsPersonalNew = $topic->GetCountTopicsPersonalNew();
         $this->iCountTopicsNew = $this->iCountTopicsCollectiveNew + $this->iCountTopicsPersonalNew;
     }
 

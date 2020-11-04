@@ -105,3 +105,14 @@ GROUP '/server' (
     ANY '/hastopicaccess' to 'server#hasTopicAccess';
     ANY '/hastalkaccess' to 'server#hasTalkAccess';
 );
+
+# ActionUserfeed
+GROUP '/feed' (
+    ANY '/' to 'feed#index';
+    ANY '/subscribe' to 'feed#subscribe';
+    ANY '/subscribeByLogin' to 'feed#subscribeByLogin';
+    ANY '/subscribe_all' to 'feed#subscribeAll';
+    ANY '/unsubscribe_all' to 'feed#unsubscribeAll';
+    ANY '/unsubscribe' to 'feed#unsubscribe';
+    ANY '/get_more' to 'feed#getMore';
+);

@@ -40,9 +40,14 @@ class HtmlView extends View
         return $this;
     }
 
-    public static function by(string $templatePath): HtmlView
+    public static function by(string $relTemplatePath): HtmlView
     {
-        return new HtmlView($templatePath);
+        return new HtmlView("actions/$relTemplatePath");
+    }
+
+    public static function global(string $globTemplatePath): HtmlView
+    {
+        return new HtmlView($globTemplatePath);
     }
 
     public function _handle(Router $router)
@@ -58,6 +63,19 @@ class HtmlView extends View
             $viewer->Assign($key, $value);
         }
 
-        \Engine\Router::setActionTemplate("actions/$this->path.tpl");
+        \Engine\Router::setActionTemplate("$this->path.tpl");
+    }
+
+    public function fetch(): string
+    {
+        /** @var ModuleViewer $viewer */
+        $viewer = LS::Make(ModuleViewer::class);
+
+        $local = $viewer->GetLocalViewer();
+        foreach ($this->vars as $key => $value) {
+            $local->Assign($key, $value);
+        }
+
+        return $local->Fetch("$this->path.tpl");
     }
 }

@@ -42,7 +42,7 @@ class ActionQuotes extends Controller
     /**
      * Инициализация
      */
-    public function init()
+    public function boot()
     {
         /**
          * @var ModuleUser $user

@@ -58,7 +58,7 @@ class TypeObject extends Type
     {
         if ($other instanceof TypeObject) {
             if ($this->hasClass()) {
-                return $other->hasClass() && is_a($other->getClass(), $this->getClass());
+                return $other->hasClass() && is_a($other->getClass(), $this->getClass(), true);
             } else {
                 return true;
             }

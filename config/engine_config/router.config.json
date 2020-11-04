@@ -37,9 +37,8 @@
             "api":              "App\\Actions\\ActionApi"
         },
         "config": {
-            "action_not_found": {
-                "params": { "to": "error#error" },
-                "vars": { "event": "404" }
+            "http_error_handler": {
+                "params": { "to": "error#error" }
             }
         },
         "cacheFile": "./tmp/router_cache.php",

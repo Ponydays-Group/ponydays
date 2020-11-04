@@ -1,6 +1,8 @@
 <?php
 
-namespace Engine\Routing;
+namespace Engine\Result;
+
+use Engine\Routing\Router;
 
 abstract class Result
 {

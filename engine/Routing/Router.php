@@ -7,14 +7,17 @@ use Engine\Engine;
 use Engine\Resolving\MethodCallResolver;
 use Engine\Resolving\Type\Type;
 use Engine\Resolving\Type\TypeArray;
-use Engine\Routing\Exception\Http\NotFoundHttpException;
+use Engine\Result\Action;
+use Engine\Result\Result;
+use Engine\Routing\Exception\Http\BadRequestHttpException;
+use Engine\Routing\Exception\Http\HttpException;
 use Engine\Routing\Exception\RoutingException;
 use Engine\Routing\Parser\RouteLexer;
 use Engine\Routing\Parser\RouteParser;
 use Engine\Routing\Parser\RouteWalker;
-use Engine\View\View;
 use FastRoute;
 use FastRoute\RouteCollector;
+use ReflectionException;
 use Throwable;
 
 class Router
@@ -119,7 +122,10 @@ class Router
         try {
             $result = MethodCallResolver::resolve_of($controller, $method)->with(
                 function (Type $type, string $name) use ($vars) {
-                    if (isset($vars[$name]) && Type::of($vars[$name])->isPresentableAs($type)) {
+                    if (isset($vars[$name])) {
+                        if (! Type::of($vars[$name])->isPresentableAs($type)) {
+                            throw new BadRequestHttpException();
+                        }
                         return [$vars[$name], true];
                     }
                     if ($name == '_vars' && $type instanceof TypeArray) {
@@ -129,7 +135,7 @@ class Router
                     return [null, false];
                 }
             )->with([Engine::getInstance(), 'resolve'])->hack()->call();
-        } catch (\ReflectionException $e) {
+        } catch (ReflectionException $e) {
             throw new RoutingException("Could not run an action: $action", 0, $e);
         }
 
@@ -138,12 +144,19 @@ class Router
         }
     }
 
-    private function handleNotFound() {
-        $action = Config::Get('router.config.action_not_found');
-        $this->runAction(Action::from($action['params'])->with($action['vars']));
+    private function handleHttpError(int $state)
+    {
+        $action = Config::Get('router.config.http_error_handler');
+        $this->runAction(Action::from($action['params'])->with(['event' => $state]));
     }
 
-    private function handleFound(array $handler, array $vars) {
+    private function handleNotFound()
+    {
+        $this->handleHttpError(404);
+    }
+
+    private function handleFound(array $handler, array $vars)
+    {
         if (RequestUtils::getHTTPMethod() == 'OPTIONS' && isset($handler['options'])) {
             http_response_code(204);
             header('Allow: ' . implode(', ', $handler['options']));
@@ -153,12 +166,13 @@ class Router
 
         try {
             $this->runAction(Action::from($handler['params'])->with($vars));
-        } catch (NotFoundHttpException $e) {
-            $this->handleNotFound();
+        } catch (HttpException $e) {
+            $this->handleHttpError($e->getCode());
         }
     }
 
-    private function handleMethodNotAllowed(array $allowedMethods) {
+    private function handleMethodNotAllowed(array $allowedMethods)
+    {
         echo 'method not allowed: ' . var_export($allowedMethods, true);
     }
 }

@@ -11,6 +11,7 @@ class TypeInteger extends Type
 
     protected function canAcceptType(Type $other): bool
     {
-        return $other->isScalar() || $other instanceof TypeString;
+        return $other->isScalar()
+            || ($other instanceof TypeString && ($other->value == null || strlen($other->value) < 16));
     }
 }

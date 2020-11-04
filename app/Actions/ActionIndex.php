@@ -22,9 +22,9 @@ use App\Modules\ModuleUser;
 use Engine\Config;
 use Engine\LS;
 use Engine\Modules\ModuleViewer;
-use Engine\Routing\Action;
+use Engine\Result\Action;
+use Engine\Result\View\HtmlView;
 use Engine\Routing\Controller;
-use Engine\View\View;
 
 /**
  * Обработка главной страницы, т.е. УРЛа вида /index/
@@ -92,7 +92,7 @@ class ActionIndex extends Controller
      * @param \App\Modules\ModuleTopic     $topic
      * @param int                          $page
      *
-     * @return \Engine\View\View
+     * @return \Engine\Result\View\View
      */
     protected function newall(ModuleViewer $viewer, ModuleTopic $topic, int $page = 1)
     {
@@ -119,7 +119,7 @@ class ActionIndex extends Controller
 
         $viewer->SetHtmlRssAlternate('/rss/new/', Config::Get('view.name'));
 
-        return View::by('index/index')->with([
+        return HtmlView::by('index/index')->with([
             'aTopics' => $aTopics,
             'aPaging' => $aPaging,
             'sMenuHeadItemSelect' => 'newall'
@@ -134,7 +134,7 @@ class ActionIndex extends Controller
      *
      * @param int                          $page
      *
-     * @return \Engine\Routing\Action
+     * @return \Engine\Result\Action
      */
     protected function index(ModuleViewer $viewer, ModuleUser $user, int $page = 1): Action
     {

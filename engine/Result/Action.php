@@ -1,6 +1,8 @@
 <?php
 
-namespace Engine\Routing;
+namespace Engine\Result;
+
+use Engine\Routing\Router;
 
 class Action extends Result
 {
@@ -52,7 +54,7 @@ class Action extends Result
     /**
      * @param string $actionPath 'controller#method'
      *
-     * @return \Engine\Routing\Action
+     * @return \Engine\Result\Action
      */
     public static function by(string $actionPath): Action
     {

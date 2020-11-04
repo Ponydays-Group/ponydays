@@ -11,6 +11,8 @@ class TypeString extends Type
 
     protected function canAcceptType(Type $other): bool
     {
-        return $other instanceof TypeString || $other->isScalar() || ($other instanceof TypeObject && method_exists($other->getClass(), '__toString'));
+        if ($other instanceof TypeString) return true;
+        if ($other->isScalar()) return ($val = $other->value) == null || settype($val, 'string');
+        return $other instanceof TypeObject && method_exists($other->getClass(), '__toString');
     }
 }

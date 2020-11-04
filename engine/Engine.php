@@ -17,7 +17,6 @@
 
 namespace Engine;
 
-use App\Entities\EntityUser;
 use App\Modules\ModuleUser;
 use DbSimple_Mysql;
 use Engine\Modules\ModuleCache;

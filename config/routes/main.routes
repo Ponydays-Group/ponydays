@@ -70,12 +70,18 @@ GROUP '/blog' (
 );
 
 # ActionIndex
-GROUP '' (
-    ANY '/' to 'index#index';
-    ANY '/page{page:[1-9]\d*}' to 'index#index';
-);
+ANY '/[page{page:[1-9]\d*}]' to 'index#index';
 
 GROUP '/index' (
-    ANY '/newall/' to 'index#newall';
-    ANY '/newall/page{page:[1-9]\d*}' to 'index#newall';
+    ANY '/newall/[page{page:[1-9]\d*}]' to 'index#newall';
+);
+
+# ActionQuotes
+GROUP '/quotes' (
+    ANY '[/page{page:[1-9]\d*}]' to 'quotes#view';
+
+    ANY '/deleted' to 'quotes#trash';
+    ANY '/edit' to 'quotes#edit';
+    ANY '/random' to 'quotes#random';
+    ANY '/{id:\d+}' to 'quotes#findQuote';
 );

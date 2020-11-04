@@ -19,8 +19,9 @@ namespace App\Actions;
 
 use Engine\Modules\ModuleLang;
 use Engine\Modules\ModuleMessage;
+use Engine\Result\View\HtmlView;
+use Engine\Result\View\View;
 use Engine\Routing\Controller;
-use Engine\View\View;
 
 /**
  * Экшен обработки УРЛа вида /error/ т.е. ошибок
@@ -32,13 +33,16 @@ class ActionError extends Controller
 {
     /**
      * Список специфических HTTP ошибок для которых необходимо отдавать header
-     *
+     * TODO: More http states
      * @var array
      */
     protected $aHttpErrors = [
-        '404' => [
-            'header' => '404 Not Found',
-        ],
+        // '400' => ['header' => '404 Bad Request'],
+        // '401' => ['header' => '401 Unauthorized'],
+        // '402' => ['header' => '402 Payment Required'],
+        // '403' => ['header' => '403 Forbidden'],
+        '404' => ['header' => '404 Not Found'],
+        // '405' => ['header' => '405 Method Not Allowed'],
     ];
 
     /**
@@ -49,7 +53,7 @@ class ActionError extends Controller
      * @param \Engine\Modules\ModuleMessage $msg
      * @param \Engine\Modules\ModuleLang    $lang
      *
-     * @return \Engine\View\View
+     * @return \Engine\Result\View\View
      */
     public function error(ModuleMessage $msg, ModuleLang $lang, string $event = '400'): View
     {
@@ -66,6 +70,6 @@ class ActionError extends Controller
             }
         }
 
-        return View::by('error/index')->withHtmlTitle($lang->Get('error'));
+        return HtmlView::by('error/index')->withHtmlTitle($lang->Get('error'));
     }
 }

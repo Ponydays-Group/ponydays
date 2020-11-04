@@ -5,13 +5,18 @@ namespace App\Actions;
 use App\Entities\EntityUser;
 use App\Modules\ModuleQuotes;
 use App\Modules\ModuleUser;
-use Engine\Action;
 use Engine\Config;
 use Engine\LS;
 use Engine\Modules\ModuleLang;
 use Engine\Modules\ModuleMessage;
 use Engine\Modules\ModuleViewer;
-use Engine\Router;
+use Engine\Result\Redirect;
+use Engine\Result\Result;
+use Engine\Result\View\AjaxView;
+use Engine\Result\View\HtmlView;
+use Engine\Result\View\View;
+use Engine\Routing\Controller;
+use Engine\Routing\Exception\Http\ForbiddenHttpException;
 
 /**
  * Class ActionQuotes
@@ -19,7 +24,7 @@ use Engine\Router;
  * /quotes/ etc
  * Silvman
  */
-class ActionQuotes extends Action
+class ActionQuotes extends Controller
 {
     /**
      * Текущий пользователь
@@ -37,62 +42,53 @@ class ActionQuotes extends Action
     /**
      * Инициализация
      */
-    public function Init()
+    public function init()
     {
-        $this->oUserCurrent = LS::Make(ModuleUser::class)->GetUserCurrent();
+        /**
+         * @var ModuleUser $user
+         */
+        $user = LS::Make(ModuleUser::class);
 
-        if (LS::Make(ModuleUser::class)->IsAuthorization() && $this->oUserCurrent) {
-            $this->SetDefaultEvent('view');
+        $this->oUserCurrent = $user->GetUserCurrent();
+
+        if ($user->IsAuthorization() && $this->oUserCurrent) {
             LS::Make(ModuleViewer::class)->Assign('sMenuHeadItemSelect', $this->sMenuHeadItemSelect);
         }
-    }
-
-
-    /**
-     * Регистрация евентов
-     */
-    protected function RegisterEvent()
-    {
-        $this->AddEventPreg('/^(page([1-9]\d{0,5}))?$/i', 'EventView');
-        $this->AddEvent('view', 'EventView');
-        $this->AddEvent('deleted', 'EventTrash');
-        $this->AddEvent('edit', 'EventEdit');
-        $this->AddEvent('random', 'EventRandom');
-        $this->AddEventPreg('/^([0-9]\d{0,5})?$/i', 'EventFindQuote');
-
     }
 
     /**
      * Эвент просмотра цитатника
      *
-     * @return bool
+     * @param \App\Modules\ModuleQuotes    $quotes
+     * @param \Engine\Modules\ModuleViewer $viewer
+     * @param \Engine\Modules\ModuleLang   $lang
+     * @param int                          $page
+     *
+     * @return \Engine\Result\View\View
      */
-    protected function EventView(): bool
+    protected function view(ModuleQuotes $quotes, ModuleViewer $viewer, ModuleLang $lang, int $page = 0): View
     {
-        $iCountQuotes = LS::Make(ModuleQuotes::class)->GetCount();
+        $iCountQuotes = $quotes->GetCount();
 
         // Передан ли номер страницы
         $iPage = 1;
         if ($iCountQuotes) {
-            $iPage = ctype_digit($this->GetEventMatch(2))
-                ? $this->GetEventMatch(2)
-                : ceil($iCountQuotes / Config::Get('module.quotes.per_page'));
+            $iPage = $page ?: ceil($iCountQuotes / Config::Get('module.quotes.per_page'));
         }
-        $aResult = LS::Make(ModuleQuotes::class)->GetQuotesForPage($iPage, Config::Get('module.quotes.per_page'));
+        $aResult = $quotes->GetQuotesForPage($iPage, Config::Get('module.quotes.per_page'));
 
         // Формируем постраничность
-        $aPaging = LS::Make(ModuleViewer::class)->MakePaging(
+        $aPaging = $viewer->MakePaging(
             $iCountQuotes,
             $iPage,
             Config::Get('module.quotes.per_page'),
             Config::Get('pagination.pages.count'),
-            Router::GetPath('quotes'),
+            '/quotes/',
             []
         );
 
         // Загружаем в шаблон языковые данные
-        LS::Make(ModuleLang::class)->AddLangJs(
-            [
+        $lang->AddLangJs([
                 'quotes_link',
                 'quotes_delete_confirm',
                 'quotes_add',
@@ -101,180 +97,126 @@ class ActionQuotes extends Action
                 'quotes_deleted',
                 'quotes_updated',
                 'quotes_added'
-            ]
-        );
+        ]);
 
-        // Выключаем сайдбар
-        LS::Make(ModuleViewer::class)->Assign('noSidebar', true);
-
-        // Передаем в шаблон цитатки
-        LS::Make(ModuleViewer::class)->Assign('aPaging', $aPaging);
-        LS::Make(ModuleViewer::class)->Assign('aQuotes', $aResult);
-        LS::Make(ModuleViewer::class)->Assign('bIsAdmin', $this->IsAdmin());
-        LS::Make(ModuleViewer::class)->Assign('iCountQuotes', $iCountQuotes);
-
-        LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('quotes_header'));
-        $this->SetTemplateAction('index');
-
-        return true;
+        return HtmlView::by('quotes/index')->with([
+            'noSidebar' => true, // Выключаем сайдбар
+            'aPaging' => $aPaging,
+            'aQuotes' => $aResult,
+            'bIsAdmin' => $this->IsAdmin(),
+            'iCountQuotes' => $iCountQuotes
+        ])->withHtmlTitle($lang->Get('quotes_header'));
     }
 
-    protected function EventRandom()
+    /**
+     * @param \Engine\Modules\ModuleViewer $viewer
+     * @param \App\Modules\ModuleQuotes    $quotes
+     */
+    protected function random(ModuleViewer $viewer, ModuleQuotes $quotes)
     {
-        LS::Make(ModuleViewer::class)->SetResponseAjax('json');
-        $aQuote = LS::Make(ModuleQuotes::class)->GetRandomQuote();
-        LS::Make(ModuleViewer::class)->AssignAjax("sQuote", $aQuote['data']);
-        LS::Make(ModuleViewer::class)->AssignAjax("iId", $aQuote['id']);
-
-        return true;
+        $viewer->SetResponseAjax('json');
+        $aQuote = $quotes->GetRandomQuote();
+        $viewer->AssignAjax("sQuote", $aQuote['data']);
+        $viewer->AssignAjax("iId", $aQuote['id']);
     }
 
     /**
      * Ивент редактора цитатника
+     *
+     * @param \Engine\Modules\ModuleViewer  $viewer
+     * @param \App\Modules\ModuleQuotes     $quotes
+     * @param \Engine\Modules\ModuleMessage $message
+     * @param \Engine\Modules\ModuleLang    $lang
+     *
+     * @return \Engine\Result\Result
      */
-    protected function EventEdit()
+    protected function edit(ModuleViewer $viewer, ModuleQuotes $quotes, ModuleMessage $message, ModuleLang $lang): Result
     {
         if (!$this->IsAdmin()) {
-            $this->SetTemplateAction('blank');
-            echo "Permission denied.";
-            Router::Action('error');
-
-            return;
+            throw new ForbiddenHttpException();
         }
 
         switch (getRequestStr('action')) {
             // Создаём цитату
             case 'add':
-                // Обрабатываем как ajax запрос (json)
-                LS::Make(ModuleViewer::class)->SetResponseAjax('json');
-
-                if ($iId = LS::Make(ModuleQuotes::class)->addQuote(getRequestStr('data'))) {
+                if ($iId = $quotes->addQuote(getRequestStr('data'))) {
                     // Подгрузка ID в AJAX-ответ
-                    LS::Make(ModuleViewer::class)->AssignAjax('id', $iId);
-                    LS::Make(ModuleMessage::class)->AddNotice(
-                        LS::Make(ModuleLang::class)->Get('quotes_added'),
-                        LS::Make(ModuleLang::class)->Get('attention')
-                    );
-
-                    return;
+                    $viewer->AssignAjax('id', $iId);
+                    $message->AddNotice($lang->Get('quotes_added'), $lang->Get('attention'));
+                } else {
+                    $message->AddError($lang->Get('quotes_error'), $lang->Get('error'));
                 }
 
-                LS::Make(ModuleMessage::class)->AddError(
-                    LS::Make(ModuleLang::class)->Get('quotes_error'),
-                    LS::Make(ModuleLang::class)->Get('error')
-                );
-
-                return;
+                return AjaxView::empty();
 
             // Удаление цитаты
             case 'delete':
-                LS::Make(ModuleViewer::class)->SetResponseAjax('json');
-
-                if (LS::Make(ModuleQuotes::class)->deleteQuote(getRequestStr('id'))) {
-                    LS::Make(ModuleMessage::class)->AddNotice(
-                        LS::Make(ModuleLang::class)->Get('quotes_deleted'),
-                        LS::Make(ModuleLang::class)->Get('attention')
-                    );
-
-                    return;
+                if ($quotes->deleteQuote(getRequestStr('id'))) {
+                    $message->AddNotice($lang->Get('quotes_deleted'), $lang->Get('attention'));
+                } else {
+                    $message->AddError($lang->Get('system_error'), $lang->Get('error'));
                 }
 
-                LS::Make(ModuleMessage::class)->AddError(
-                    LS::Make(ModuleLang::class)->Get('system_error'),
-                    LS::Make(ModuleLang::class)->Get('error')
-                );
-
-                return;
+                return AjaxView::empty();
 
             // Изменение цитаты
             case 'update':
-                LS::Make(ModuleViewer::class)->SetResponseAjax('json');
-
-                if (LS::Make(ModuleQuotes::class)->updateQuote(getRequestStr('id'), getRequestStr('data'))) {
-                    LS::Make(ModuleMessage::class)->AddNotice(
-                        LS::Make(ModuleLang::class)->Get('quotes_updated'),
-                        LS::Make(ModuleLang::class)->Get('attention')
-                    );
-
-                    return;
+                if ($quotes->updateQuote(getRequestStr('id'), getRequestStr('data'))) {
+                    $message->AddNotice($lang->Get('quotes_updated'), $lang->Get('attention'));
+                } else {
+                    $message->AddError($lang->Get('quotes_error'), $lang->Get('error'));
                 }
 
-                LS::Make(ModuleMessage::class)->AddError(
-                    LS::Make(ModuleLang::class)->Get('quotes_error'),
-                    LS::Make(ModuleLang::class)->Get('error')
-                );
-
-                return;
+                return AjaxView::empty();
 
             // восстановление удалённой цитаты
             case 'restore':
-                LS::Make(ModuleViewer::class)->SetResponseAjax('json');
-
-                if (LS::Make(ModuleQuotes::class)->restoreQuote(getRequestStr('id'))) {
-                    LS::Make(ModuleMessage::class)->AddNotice(
-                        LS::Make(ModuleLang::class)->Get('quotes_added'),
-                        LS::Make(ModuleLang::class)->Get('attention')
-                    );
-
-                    return;
+                if ($quotes->restoreQuote(getRequestStr('id'))) {
+                    $message->AddNotice($lang->Get('quotes_added'), $lang->Get('attention'));
+                } else {
+                    $message->AddError($lang->Get('system_error'), $lang->Get('error'));
                 }
 
-                LS::Make(ModuleMessage::class)->AddError(
-                    LS::Make(ModuleLang::class)->Get('system_error'),
-                    LS::Make(ModuleLang::class)->Get('error')
-                );
-
-                return;
-
+                return AjaxView::empty();
 
             // Дефолтная страница со списком цитат
             default:
                 // Загружаем в шаблон языковые данные
-                LS::Make(ModuleLang::class)->AddLangJs(
+                $lang->AddLangJs(
                     ['quotes_link', 'quotes_delete_confirm', 'quotes_add', 'quotes_update', 'quotes_delete']
                 );
 
-                // Выключаем сайдбар
-                LS::Make(ModuleViewer::class)->Assign('noSidebar', true);
-
-                // Передаем в шаблон цитатки
-                LS::Make(ModuleViewer::class)->Assign('aQuotes', LS::Make(ModuleQuotes::class)->getQuotes());
-                LS::Make(ModuleViewer::class)->Assign('bIsAdmin', $this->IsAdmin());
-                LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('quotes_header'));
-                $this->SetTemplateAction('index');
-
-                return;
+                return HtmlView::by('quotes/index')->with([
+                    'noSidebar' => true,
+                    'aQuotes' => $quotes->getQuotes(),
+                    'bIsAdmin' => $this->IsAdmin()
+                ])->withHtmlTitle($lang->Get('quotes_header'));
         }
     }
 
     /**
      * Эвент корзины
      *
+     * @param \App\Modules\ModuleQuotes  $quotes
+     * @param \Engine\Modules\ModuleLang $lang
+     *
      * @return bool|string
      */
-    protected function EventTrash()
+    protected function trash(ModuleQuotes $quotes, ModuleLang $lang)
     {
         if (!$this->IsAdmin()) {
-            $this->SetTemplateAction('blank');
-            Router::Action('error');
-
-            return;
+            throw new ForbiddenHttpException();
         }
 
-        $iCountQuotes = LS::Make(ModuleQuotes::class)->GetCount(true);
+        $iCountQuotes = $quotes->GetCount(true);
 
-        LS::Make(ModuleLang::class)->AddLangJs(['quotes_add', 'quotes_restore']);
+        $lang->AddLangJs(['quotes_add', 'quotes_restore']);
 
-        // Выключаем сайдбар
-        LS::Make(ModuleViewer::class)->Assign('noSidebar', true);
-
-        // Передаем в шаблон цитатки
-        LS::Make(ModuleViewer::class)->Assign('aQuotes', LS::Make(ModuleQuotes::class)->getDeletedQuotes());
-        LS::Make(ModuleViewer::class)->Assign('iCountQuotes', $iCountQuotes);
-        LS::Make(ModuleViewer::class)->AddHtmlTitle(LS::Make(ModuleLang::class)->Get('quotes_trash'));
-        $this->SetTemplateAction('trash');
-
-        return;
+        return HtmlView::by('quotes/trash')->with([
+            'noSidebar' => true,
+            'aQuotes' => $quotes->getDeletedQuotes(),
+            'iCountQuotes' => $iCountQuotes
+        ])->withHtmlTitle($lang->Get('quotes_trash'));
     }
 
     /**
@@ -298,23 +240,19 @@ class ActionQuotes extends Action
     /**
      * Эвент, определяющий страницу, на которой располагается цитата
      *
-     * @return bool
+     * @param \App\Modules\ModuleQuotes $quotes
+     * @param int                       $id
+     *
+     * @return \Engine\Result\Redirect
      */
-    protected function EventFindQuote(): bool
+    protected function findQuote(ModuleQuotes $quotes, int $id): Redirect
     {
-        $iQuote = (int)$this->GetEventMatch(1);
-        $iPage = LS::Make(ModuleQuotes::class)->getPageById($iQuote);
-        $this->SetTemplateAction('blank');
+        $iPage = $quotes->getPageById($id);
 
         if ($iPage) {
-            Router::Location(Router::GetPath("quotes")."page".$iPage."/#field_".$iQuote);
-
-            return true;
+            return Redirect::to("/quotes/page$iPage/#field_$id");
         } else {
-            Router::Location(Router::GetPath("quotes"));
-
-            return false;
+            return Redirect::to("/quotes/");
         }
     }
-
 }

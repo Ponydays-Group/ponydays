@@ -1,13 +1,12 @@
 <?php
 
-namespace Engine\View;
+namespace Engine\Result\View;
 
 use Engine\LS;
 use Engine\Modules\ModuleViewer;
-use Engine\Routing\Result;
 use Engine\Routing\Router;
 
-class View extends Result
+class HtmlView extends View
 {
     /**
      * @var string
@@ -27,21 +26,23 @@ class View extends Result
         $this->path = $path;
     }
 
-    public function with(array $vars): View
+    public function with(array $vars): HtmlView
     {
         $this->vars = array_merge($this->vars, $vars);
+
         return $this;
     }
 
-    public function withHtmlTitle(string $title): View
+    public function withHtmlTitle(string $title): HtmlView
     {
         $this->title = $title;
+
         return $this;
     }
 
-    public static function by(string $templatePath): View
+    public static function by(string $templatePath): HtmlView
     {
-        return new View($templatePath);
+        return new HtmlView($templatePath);
     }
 
     public function _handle(Router $router)

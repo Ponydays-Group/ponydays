@@ -23,7 +23,7 @@ use App\Modules\ModuleCrypto;
 use App\Modules\ModuleUser;
 use Engine\LS;
 use Engine\Modules\ModuleSecurity;
-use Engine\Modules\ModuleViewer;
+use Engine\Result\View\JsonView;
 use Engine\Routing\Controller;
 
 class ActionApi extends Controller
@@ -36,55 +36,38 @@ class ActionApi extends Controller
     protected $oUserCurrent = null;
 
     /**
-     * @param \Engine\Modules\ModuleViewer $viewer
-     * @param \App\Modules\ModuleUser      $user
-     * @param \App\Modules\ModuleAPI       $api
-     * @param \App\Modules\ModuleCrypto    $crypto
+     * @param \App\Modules\ModuleUser   $user
+     * @param \App\Modules\ModuleAPI    $api
+     * @param \App\Modules\ModuleCrypto $crypto
+     *
+     * @return \Engine\Result\View\JsonView
      */
-    protected function ajaxLogin(ModuleViewer $viewer, ModuleUser $user, ModuleAPI $api, ModuleCrypto $crypto)
+    protected function ajaxLogin(ModuleUser $user, ModuleAPI $api, ModuleCrypto $crypto): JsonView
     {
-
         //Проверяем тип запроса. Если не POST - возвращаем ошибку 400
-        $viewer->SetResponseAjax('json', true, false);
         if ($_SERVER['REQUEST_METHOD'] != "POST") {
-            $viewer->AssignAjax('message', 'Bad request');
-
-            return;
+            return JsonView::from(['message' => 'Bad request']);
         }
 
         if ((getRequest('login') and getRequest('password')) or getRequest('device_uid')) {
-
             //Если логин и пароль не заданы, то пробуем залогинить по device_uid
-
             if (!getRequest('login') and !getRequest('password') and getRequest('device_uid')) {
-                if ($oUser = $user->GetUserById(
-                    $api->getUserByKey(getRequest('device_uid'))
-                )
-                ) {
+                if ($oUser = $user->GetUserById($api->getUserByKey(getRequest('device_uid')))) {
                     if ($user->Authorization($oUser, true)) {
-                        $viewer->AssignAjax('notice', "Authenfication complete!");
+                        return JsonView::from(['notice' => 'Authenfication complete!']);
                     }
                 } else {
-                    $viewer->AssignAjax('message', 'Device UID incorrect');
-
-                    return;
+                    return JsonView::from(['message' => 'Device UID incorrect']);
                 }
-
-                return;
             }
 
             if (!is_string(getRequest('login')) or !is_string(getRequest('password'))) {
-                $viewer->AssignAjax('message', "Login or password isn't a string");
-
-                return;
+                return JsonView::from(['message' => "Login or password isn't a string"]);
             }
             /**
              * Проверяем есть ли такой юзер по логину
              */
-            if ((func_check(getRequest('login'), 'mail') and
-                    $oUser = $user->GetUserByMail(getRequest('login'))) or
-                $oUser = $user->GetUserByLogin(getRequest('login'))
-            ) {
+            if ((func_check(getRequest('login'), 'mail') and $oUser = $user->GetUserByMail(getRequest('login'))) or $oUser = $user->GetUserByLogin(getRequest('login'))) {
                 /**
                  * Сверяем хеши паролей и проверяем активен ли юзер
                  */
@@ -105,44 +88,33 @@ class ActionApi extends Controller
                      * Проверяем активен ли юзер
                      */
                     if (!$oUser->getActivate()) {
-                        $viewer->AssignAjax('message', "Login or password isn't a string");
-
-                        return;
+                        return JsonView::from(['message' => "Login or password isn't a string"]);
                     }
                     /**
                      * Авторизуем
                      */
                     if ($user->Authorization($oUser, true)) {
+                        $view = JsonView::empty();
                         if (getRequest('device_uid')) {
                             if ($sKey = $api->setKey($oUser->getId(), getRequest('device_uid'))) {
-                                $viewer->AssignAjax('newKey', $sKey);
+                                $view->with(['newKey' => $sKey]);
                             }
                         }
-                        $viewer->AssignAjax('notice', "Authenfication complete!");
-                        $viewer->AssignAjax(
-                            'ls_key',
-                            LS::Make(ModuleSecurity::class)->GenerateSessionKey()
-                        );
+                        return $view->with([
+                            'notice' => "Authenfication complete!",
+                            'ls_key' => LS::Make(ModuleSecurity::class)->GenerateSessionKey()
+                        ]);
                     } else {
-                        $viewer->AssignAjax('message', 'Authenfication faild');
-
-                        return;
+                        return JsonView::from(['message' => 'Authenfication faild']);
                     }
                 } else {
-                    $viewer->AssignAjax('message', 'Wrong password!');
-
-                    return;
+                    return JsonView::from(['message' => 'Wrong password!']);
                 }
-
             } else {
-                $viewer->AssignAjax('message', 'User not exists!');
-
-                return;
+                return JsonView::from(['message' => 'User not exists!']);
             }
         } else {
-            $viewer->AssignAjax('message', 'Bad request');
-
-            return;
+            return JsonView::from(['message' => 'Bad request']);
         }
     }
 }

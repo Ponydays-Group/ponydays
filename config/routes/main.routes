@@ -85,3 +85,11 @@ GROUP '/quotes' (
     ANY '/random' to 'quotes#random';
     ANY '/{id:\d+}' to 'quotes#findQuote';
 );
+
+# ActionServer
+GROUP '/server' (
+    ANY '/deploy' to 'server#deploy';
+    ANY '/getuserbykey' to 'server#getUserByKey';
+    ANY '/hastopicaccess' to 'server#hasTopicAccess';
+    ANY '/hastalkaccess' to 'server#hasTalkAccess';
+);

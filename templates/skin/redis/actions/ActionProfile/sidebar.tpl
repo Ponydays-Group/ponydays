@@ -90,7 +90,7 @@
                     var bIgnoreState = {$bIgnoredTalks};
                     {literal}
                     function forbidIgnoreUser(idUser, a) {
-                        ls.ajax.ajax(aRouter['ajax'] + 'forbid-ignore', {idUser: idUser}, function (result) {
+                        ls.ajax.ajax('/ajax/forbid-ignore', {idUser: idUser}, function (result) {
                             if (!result) {
                                 ls.msg.error('Error', 'Please try again later');
                             }
@@ -104,7 +104,7 @@
                     }
 
                     function ignoreUser(idUser, type, a) {
-                        ls.ajax.ajax(aRouter['ajax'] + 'ignore', {idUser: idUser, type: type}, function (result) {
+                        ls.ajax.ajax('/ajax/ignore', {idUser: idUser, type: type}, function (result) {
                             if (!result) {
                                 ls.msg.error('Error', 'Please try again later');
                             }
@@ -120,7 +120,7 @@
                     function ignoreTalkUser(loginUser, idUser, a) {
                         var error = false;
                         if (bIgnoreState) {
-                            ls.ajax.ajax(aRouter['talk'] + 'ajaxdeletefromblacklist/', {idTarget: idUser}, function (result) {
+                            ls.ajax.ajax('/talk/ajaxdeletefromblacklist/', {idTarget: idUser}, function (result) {
                                 if (!result) {
                                     ls.msg.error('Error', 'Please try again later');
                                     var error = true;
@@ -137,7 +137,7 @@
                                 }
                             });
                         } else {
-                            ls.ajax.ajax(aRouter['talk'] + 'ajaxaddtoblacklist/', {users: loginUser}, function (result) {
+                            ls.ajax.ajax('/talk/ajaxaddtoblacklist/', {users: loginUser}, function (result) {
                                 if (result.bStateError) {
                                     ls.msg.error(null, result.sMsg);
                                     error = true;

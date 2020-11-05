@@ -254,7 +254,7 @@ export default function init() {
             if(Blocks.switchTab("registration", "popup-login")) {
                 $("#window_login_form").jqmShow();
             } else {
-                window.location = aRouter.registration;
+                window.location = "/registration/";
             }
             return false;
         });
@@ -267,7 +267,7 @@ export default function init() {
             if(Blocks.switchTab("login", "popup-login")) {
                 $("#window_login_form").jqmShow();
             } else {
-                window.location = aRouter.login;
+                window.location = "/login/";
             }
             return false;
         });
@@ -286,16 +286,16 @@ export default function init() {
 
         // Поиск по тегам
         $(".js-tag-search-form").submit(function() {
-            window.location = aRouter["tag"] + encodeURIComponent($(this).find(".js-tag-search").val()) + "/";
+            window.location = "/tag/" + encodeURIComponent($(this).find(".js-tag-search").val()) + "/";
             return false;
         });
 
 
         // Автокомплит
-        Autocomplete.add($(".autocomplete-tags-sep"), aRouter["ajax"] + "autocompleter/tag/", true);
-        Autocomplete.add($(".autocomplete-tags"), aRouter["ajax"] + "autocompleter/tag/", false);
-        Autocomplete.add($(".autocomplete-users-sep"), aRouter["ajax"] + "autocompleter/user/", true);
-        Autocomplete.add($(".autocomplete-users"), aRouter["ajax"] + "autocompleter/user/", false);
+        Autocomplete.add($(".autocomplete-tags-sep"), "/ajax/autocompleter/tag/", true);
+        Autocomplete.add($(".autocomplete-tags"), "/ajax/autocompleter/tag/", false);
+        Autocomplete.add($(".autocomplete-users-sep"), "/ajax/autocompleter/user/", true);
+        Autocomplete.add($(".autocomplete-users"), "/ajax/autocompleter/user/", false);
 
 
         // Всплывающие сообщения

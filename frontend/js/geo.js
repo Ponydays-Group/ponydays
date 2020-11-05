@@ -36,7 +36,7 @@ export function loadRegions($country) {
         return;
     }
 
-    const url = aRouter["ajax"] + "geo/get/regions/";
+    const url = "/ajax/geo/get/regions/";
     const params = {country: $country.val()};
     Emitter.emit("geo_loadregions_before");
     Ajax.ajax(url, params, function(result) {
@@ -62,7 +62,7 @@ export function loadCities($region) {
         return;
     }
 
-    const url = aRouter["ajax"] + "geo/get/cities/";
+    const url = "/ajax/geo/get/cities/";
     const params = {region: $region.val()};
     Emitter.emit("geo_loadcities_before");
     Ajax.ajax(url, params, function(result) {

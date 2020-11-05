@@ -16,7 +16,7 @@ export function ajax(url, params, callback, more) {
     });
 
     if(url.indexOf("http://") != 0 && url.indexOf("https://") != 0 && url.indexOf("/") != 0) {
-        url = aRouter["ajax"] + url + "/";
+        url = "/ajax/" + url + "/";
     }
 
     let ajaxOptions = {
@@ -57,7 +57,7 @@ export async function asyncAjax(url, params, callback, more) {
     });
 
     if(url.indexOf("http://") != 0 && url.indexOf("https://") != 0 && url.indexOf("/") != 0) {
-        url = aRouter["ajax"] + url + "/";
+        url = "/ajax/" + url + "/";
     }
 
     let ajaxOptions = {
@@ -90,7 +90,7 @@ export function ajaxSubmit(url, form, callback, more) {
         form = $("#" + form);
     }
     if(url.indexOf("http://") != 0 && url.indexOf("https://") != 0 && url.indexOf("/") != 0) {
-        url = aRouter["ajax"] + url + "/";
+        url = "/ajax/" + url + "/";
     }
 
     let options = {
@@ -164,7 +164,7 @@ export function LoadMoreActions(LastActionId) {
 
     $("#LoadMoreButton").toggleClass("loading");
 
-    return this.ajax(aRouter["feedbacks"] + "LoadMoreActions", params, function(data) {
+    return this.ajax("/feedbacks/LoadMoreActions", params, function(data) {
         if(data.aResult.Errors.length > 0) {
             const $aErrors = data.aResult.Errors;
             for(let i = 0; i < $aErrors.length; i++) {
@@ -184,7 +184,7 @@ export function LoadMoreNotifications(Page) {
 
     $("#LoadMoreButton").toggleClass("loading");
 
-    return this.ajax(aRouter["notifications"] + "LoadMoreActions", params, function(data) {
+    return this.ajax("/notifications/LoadMoreActions", params, function(data) {
         if(data.aResult.Errors.length > 0) {
             const $aErrors = data.aResult.Errors;
             for(let i = 0; i < $aErrors.length; i++) {

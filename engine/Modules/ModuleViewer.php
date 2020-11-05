@@ -218,19 +218,6 @@ class ModuleViewer extends Module
          */
         $this->Assign("oConfig", Config::getInstance());
         /**
-         * Загружаем роутинг с учетом правил rewrite
-         */
-        $aRouter = [];
-        $aPages = Config::Get('router.page');
-
-        if (!$aPages or !is_array($aPages)) {
-            throw new \Exception('Router rules is underfined.');
-        }
-        foreach ($aPages as $sPage => $aAction) {
-            $aRouter[$sPage] = Router::GetPath($sPage);
-        }
-        $this->Assign("aRouter", $aRouter);
-        /**
          * Загружаем в шаблон блоки
          */
         $this->Assign("aBlocks", $this->aBlocks);

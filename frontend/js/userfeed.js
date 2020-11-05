@@ -6,7 +6,7 @@ import * as Ajax from "./ajax"
 export let isBusy = false;
 
 export function subscribe(sType, iId) {
-    const url = aRouter["feed"] + "subscribe/";
+    const url = "/feed/subscribe/";
     const params = {"type": sType, "id": iId};
 
     Emitter.emit("userfeed_subscribe_before");
@@ -19,7 +19,7 @@ export function subscribe(sType, iId) {
 }
 
 export function subscribeAll() {
-    const url = aRouter["feed"] + "subscribe_all/";
+    const url = "/feed/subscribe_all/";
     const params = {};
 
     Emitter.emit("userfeed_subscribeall_before");
@@ -33,7 +33,7 @@ export function subscribeAll() {
 }
 
 export function unsubscribe(sType, iId) {
-    const url = aRouter["feed"] + "unsubscribe/";
+    const url = "/feed/unsubscribe/";
     const params = {"type": sType, "id": iId};
 
     Emitter.emit("userfeed_unsubscribe_before");
@@ -46,7 +46,7 @@ export function unsubscribe(sType, iId) {
 }
 
 export function unsubscribeAll() {
-    const url = aRouter["feed"] + "unsubscribe_all/";
+    const url = "/feed/unsubscribe_all/";
     const params = {};
 
     Emitter.emit("userfeed_unsubscribeall_before");
@@ -63,7 +63,7 @@ export function appendUser() {
     const sLogin = $("#userfeed_users_complete").val();
     if(!sLogin) return;
 
-    const url = aRouter["feed"] + "subscribeByLogin/";
+    const url = "/feed/subscribeByLogin/";
     const params = {"login": sLogin};
 
     Emitter.emit("userfeed_appenduser_before");
@@ -98,7 +98,7 @@ export function getMore() {
     $("#userfeed_get_more").addClass("userfeed_loading");
     isBusy = true;
 
-    const url = aRouter["feed"] + "get_more/";
+    const url = "/feed/get_more/";
     const params = {"last_id": lastId};
 
     Emitter.emit("userfeed_getmore_before");

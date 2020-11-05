@@ -14,15 +14,15 @@ export const options = {
     active: "active",
     type: {
         topic: {
-            url: aRouter["ajax"] + "favourite/topic/",
+            url: "/ajax/favourite/topic/",
             targetName: "idTopic",
         },
         talk: {
-            url: aRouter["ajax"] + "favourite/talk/",
+            url: "/ajax/favourite/talk/",
             targetName: "idTalk",
         },
         comment: {
-            url: aRouter["ajax"] + "favourite/comment/",
+            url: "/ajax/favourite/comment/",
             targetName: "idComment",
         },
     },
@@ -93,7 +93,7 @@ export function hideEditTags() {
 }
 
 export function saveTags(form) {
-    const url = aRouter["ajax"] + "favourite/save-tags/";
+    const url = "/ajax/favourite/save-tags/";
     Emitter.emit("favourite_savetags_before");
     Ajax.ajaxSubmit(url, $(form), function(result) {
         if(result.bStateError) {

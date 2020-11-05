@@ -36,7 +36,7 @@ export function checkAll(cssclass, checkbox, invert) {
  */
 export function textPreview(textId, save, divPreview) {
     const text = (BLOG_USE_TINYMCE) ? tinyMCE.activeEditor.getContent() : $("#" + textId).val();
-    const ajaxUrl = aRouter["ajax"] + "preview/text/";
+    const ajaxUrl = "/ajax/preview/text/";
     const form_comment_mark = $("#form_comment_mark")[0];
     const ajaxOptions = {
         text: text,

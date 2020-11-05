@@ -20,9 +20,9 @@ export function addFriend(obj, idUser, sAction) {
 
     let url;
     if(sAction == "accept") {
-        url = aRouter.profile + "ajaxfriendaccept/";
+        url = "/profile/ajaxfriendaccept/";
     } else {
-        url = aRouter.profile + "ajaxfriendadd/";
+        url = "/profile/ajaxfriendadd/";
     }
 
     const params = {idUser: idUser, userText: sText};
@@ -52,7 +52,7 @@ export function addFriend(obj, idUser, sAction) {
  * Удаление из друзей
  */
 export function removeFriend(obj, idUser, sAction) {
-    const url = aRouter.profile + "ajaxfrienddelete/";
+    const url = "/profile/ajaxfrienddelete/";
     const params = {idUser: idUser, sAction: sAction};
 
     Emitter.emit("user_removefriend_before");
@@ -85,7 +85,7 @@ export function uploadAvatar(form, input) {
         input.appendTo(form);
     }
 
-    Ajax.ajaxSubmit(aRouter["settings"] + "profile/upload-avatar/", form, function(data) {
+    Ajax.ajaxSubmit("/settings/profile/upload-avatar/", form, function(data) {
         if(data.bStateError) {
             Msg.error(data.sMsgTitle, data.sMsg);
         } else {
@@ -124,7 +124,7 @@ export function resizeAvatar() {
     if(!this.jcropAvatar) {
         return false;
     }
-    const url = aRouter.settings + "profile/resize-avatar/";
+    const url = "/settings/profile/resize-avatar/";
     const params = {size: this.jcropAvatar.tellSelect()};
 
     Emitter.emit("user_resizeavatar_before");
@@ -147,7 +147,7 @@ export function resizeAvatar() {
  * Удаление аватарки
  */
 export function removeAvatar() {
-    const url = aRouter.settings + "profile/remove-avatar/";
+    const url = "/settings/profile/remove-avatar/";
     const params = {};
 
     Emitter.emit("user_removeavatar_before");
@@ -169,7 +169,7 @@ export function removeAvatar() {
  * Отмена ресайза аватарки, подчищаем временный данные
  */
 export function cancelAvatar() {
-    const url = aRouter.settings + "profile/cancel-avatar/";
+    const url = "/settings/profile/cancel-avatar/";
     const params = {};
 
     Emitter.emit("user_cancelavatar_before");
@@ -201,7 +201,7 @@ export function uploadFoto(form, input) {
     const foto_input_sel = $("#upload-foto-input");
     foto_input_sel[0].click();
     foto_input_sel.change(() => {
-        Ajax.ajaxSubmit(aRouter["settings"] + "profile/upload-foto/", form, function(data) {
+        Ajax.ajaxSubmit("/settings/profile/upload-foto/", form, function(data) {
             if(data.bStateError) {
                 Msg.error(data.sMsgTitle, data.sMsg);
             } else {
@@ -241,7 +241,7 @@ export function resizeFoto() {
     if(!this.jcropFoto) {
         return false;
     }
-    const url = aRouter.settings + "profile/resize-foto/";
+    const url = "/settings/profile/resize-foto/";
     const params = {size: this.jcropFoto.tellSelect()};
 
     Emitter.emit("user_resizefoto_before");
@@ -265,7 +265,7 @@ export function resizeFoto() {
  * Удаление фотки
  */
 export function removeFoto() {
-    const url = aRouter.settings + "profile/remove-foto/";
+    const url = "/settings/profile/remove-foto/";
     const params = {};
 
     Emitter.emit("user_removefoto_before");
@@ -288,7 +288,7 @@ export function removeFoto() {
  * Отмена ресайза фотки, подчищаем временный данные
  */
 export function cancelFoto() {
-    const url = aRouter.settings + "profile/cancel-foto/";
+    const url = "/settings/profile/cancel-foto/";
     const params = {};
 
     Emitter.emit("user_cancelfoto_before");
@@ -309,7 +309,7 @@ export function cancelFoto() {
  * @param aFields
  */
 export function validateRegistrationFields(aFields, sForm) {
-    const url = aRouter.registration + "ajax-validate-fields/";
+    const url = "/registration/ajax-validate-fields/";
     const params = {fields: aFields};
     if(typeof (sForm) == "string") {
         sForm = $("#" + sForm);
@@ -350,7 +350,7 @@ export function validateRegistrationField(sField, sValue, sForm, aParams) {
  * @param form
  */
 export function registration(form) {
-    const url = aRouter.registration + "ajax-registration/";
+    const url = "/registration/ajax-registration/";
 
     this.formLoader(form);
     Emitter.emit("user_registration_before");
@@ -387,7 +387,7 @@ export function registration(form) {
  * @param form
  */
 export function login(form) {
-    const url = aRouter.login + "ajax-login/";
+    const url = "/login/ajax-login/";
 
     this.formLoader(form);
     Emitter.emit("user_login_before");
@@ -438,7 +438,7 @@ export function formLoader(form, bHide) {
  * @param form
  */
 export function reminder(form) {
-    const url = aRouter.login + "ajax-reminder/";
+    const url = "/login/ajax-reminder/";
 
     this.formLoader(form);
     Emitter.emit("user_reminder_before");
@@ -469,7 +469,7 @@ export function reminder(form) {
  * @param form
  */
 export function reactivation(form) {
-    const url = aRouter.login + "ajax-reactivation/";
+    const url = "/login/ajax-reactivation/";
 
     Emitter.emit("user_reactivation_before");
     Ajax.ajaxSubmit(url, form, function(result) {
@@ -494,7 +494,7 @@ export function reactivation(form) {
  * Поиск пользователей
  */
 export function searchUsers(form) {
-    const url = aRouter["people"] + "ajax-search/";
+    const url = "/people/ajax-search/";
     const inputSearch = $("#" + form).find("input");
     inputSearch.addClass("loader");
 
@@ -513,7 +513,7 @@ export function searchUsers(form) {
 }
 
 export function searchBlogUsers(form) {
-    const url = aRouter["blog"] + "ajax-search/";
+    const url = "/blog/ajax-search/";
     const inputSearch = $("#" + form).find("input");
     inputSearch.addClass("loader");
 
@@ -537,7 +537,7 @@ export function searchBlogUsers(form) {
  */
 export function searchUsersByPrefix(sPrefix, obj) {
     obj = $(obj);
-    const url = aRouter["people"] + "ajax-search/";
+    const url = "/people/ajax-search/";
     const params = {user_login: sPrefix, isPrefix: 1};
     $("#search-user-login").addClass("loader");
 
@@ -560,7 +560,7 @@ export function searchUsersByPrefix(sPrefix, obj) {
 
 export function searchBlogUsersByPrefix(sPrefix, obj) {
     obj = $(obj);
-    const url = aRouter["blog"] + "ajax-search/";
+    const url = "/blog/ajax-search/";
     const params = {user_login: sPrefix, isPrefix: 1};
     $("#search-user-login").addClass("loader");
 

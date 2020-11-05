@@ -10,7 +10,7 @@ import * as Ajax from "./ajax"
 export function preview(form, preview) {
     form = $("#" + form);
     preview = $("#" + preview);
-    const url = aRouter["ajax"] + "preview/topic/";
+    const url = "/ajax/preview/topic/";
     Emitter.emit("topic_preview_before");
     Ajax.ajaxSubmit(url, form, function(result) {
         if(result.bStateError) {
@@ -57,7 +57,7 @@ export function lockControl(idTopic, obj) {
     params["idTopic"] = idTopic;
     params["bState"] = state ? "1" : "0";
 
-    const url = aRouter["ajax"] + "topic-lock-control";
+    const url = "/ajax/topic-lock-control";
     Emitter.emit("topic_lockcontrol_before");
     Ajax.ajax(url, params, this.onControlLocked.bind(obj));
     return true;

@@ -12,7 +12,7 @@ import * as Ajax from "./ajax"
  * Вступить или покинуть блог
  */
 export function toggleJoin(obj, idBlog) {
-    const url = aRouter["blog"] + "ajaxblogjoin/";
+    const url = "/blog/ajaxblogjoin/";
     const params = {idBlog: idBlog};
 
     Emitter.emit("blog_togglejoin_before");
@@ -41,7 +41,7 @@ export function toggleJoin(obj, idBlog) {
  * Восстановить блог
  */
 export function restoreBlog(obj, idBlog) {
-    const url = aRouter["blog"] + "restore/" + idBlog;
+    const url = "blog/restore/" + idBlog;
     const params = {idBlog: idBlog};
 
     Ajax.ajax(url, params, function(result) {
@@ -63,7 +63,7 @@ export function addInvite(idBlog) {
     if(!sUsers) return false;
     user_add_sel.val("");
 
-    const url = aRouter["blog"] + "ajaxaddbloginvite/";
+    const url = "/blog/ajaxaddbloginvite/";
     const params = {users: sUsers, idBlog: idBlog};
 
     Emitter.emit("blog_addinvite_before");
@@ -97,7 +97,7 @@ export function addInvite(idBlog) {
  * Повторно отправляет приглашение
  */
 export function repeatInvite(idUser, idBlog) {
-    const url = aRouter["blog"] + "ajaxrebloginvite/";
+    const url = "blog/ajaxrebloginvite/";
     const params = {idUser: idUser, idBlog: idBlog};
 
     Emitter.emit("blog_repeatinvite_before");
@@ -118,7 +118,7 @@ export function repeatInvite(idUser, idBlog) {
  * Удаляет приглашение в блог
  */
 export function removeInvite(idUser, idBlog) {
-    const url = aRouter["blog"] + "ajaxremovebloginvite/";
+    const url = "/blog/ajaxremovebloginvite/";
     const params = {idUser: idUser, idBlog: idBlog};
 
     Emitter.emit("blog_removeinvite_before");
@@ -141,7 +141,7 @@ export function removeInvite(idUser, idBlog) {
  * Отображение информации о блоге
  */
 export function loadInfo(idBlog) {
-    const url = aRouter["blog"] + "ajaxbloginfo/";
+    const url = "/blog/ajaxbloginfo/";
     const params = {idBlog: idBlog};
 
     Emitter.emit("blog_loadinfo_before");
@@ -169,7 +169,7 @@ export function loadInfoType(type) {
  * Поиск блогов
  */
 export function searchBlogs(form) {
-    const url = aRouter["blogs"] + "ajax-search/";
+    const url = "/blogs/ajax-search/";
     const inputSearch = $("#" + form).find("input");
     inputSearch.addClass("loader");
 

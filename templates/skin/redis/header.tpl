@@ -74,11 +74,6 @@
         {if $oConfig->GetValue('lang.current') == 'russian'}
         TINYMCE_LANG = 'ru';
         {/if}
-
-        var aRouter = new Array();
-        {foreach from=$aRouter key=sPage item=sPath}
-        aRouter['{$sPage}'] = '{$sPath}';
-        {/foreach}
     </script>
     {if $oConfig->getValue('frontend.webpack.main~sockets')}
     <script src="/static/relevant/{cfg name="frontend.webpack.main~sockets.js"}"></script>

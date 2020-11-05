@@ -121,7 +121,7 @@ export function showInfoBlog(oLink, iBlogId) {
     }
 
     this.showProcess(oLink);
-    const url = aRouter["ajax"] + "infobox/info/blog/";
+    const url = "/ajax/infobox/info/blog/";
     const params = {iBlogId: iBlogId};
     "*showInfoBlogBefore*";
     "*/showInfoBlogBefore*";

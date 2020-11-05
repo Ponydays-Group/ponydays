@@ -28,7 +28,7 @@ export function addToTalk(idTalk) {
     if(!sUsers) return false;
     $("#talk_speaker_add").val("");
 
-    const url = aRouter["talk"] + "ajaxaddtalkuser/";
+    const url = "/talk/ajaxaddtalkuser/";
     const params = {users: sUsers, idTalk: idTalk};
 
     Emitter.emit("talk_addtotalk_before");
@@ -70,7 +70,7 @@ export function removeFromTalk(link, idTalk) {
 
         const idTarget = link.attr("id").replace("speaker_restore_item_", "");
 
-        const url = aRouter["talk"] + "ajaxinvitetalkuserback/";
+        const url = "/talk/ajaxinvitetalkuserback/";
         const params = {idTarget: idTarget, idTalk: idTalk};
 
         $("#speaker_item_" + idTarget + "_area > #speaker_restore_item_" + idTarget).html("Приглашен");
@@ -94,7 +94,7 @@ export function removeFromTalk(link, idTalk) {
          */
         const idTarget = link.attr("id").replace("speaker_item_", "");
 
-        const url = aRouter["talk"] + "ajaxdeletetalkuser/";
+        const url = "/talk/ajaxdeletetalkuser/";
         const params = {idTarget: idTarget, idTalk: idTalk};
 
         $("#speaker_item_" + idTarget + "_area > #speaker_item_" + idTarget).attr("id", "speaker_restore_item_" + idTarget).html("Восстановить");
@@ -129,7 +129,7 @@ export function acceptInviteBackToTalk(link) {
 
     const idTarget = link.attr("id").replace("speaker_accept_restore_item_", "");
 
-    const url = aRouter["talk"] + "ajaxacceptinvitetalkuserback/";
+    const url = "/talk/ajaxacceptinvitetalkuserback/";
     const params = {idTarget: idTarget, idTalk: idTalk};
 
     Ajax.ajax(url, params, function(result) {
@@ -156,7 +156,7 @@ export function addToBlackList() {
     if(!sUsers) return false;
     $("#talk_blacklist_add").val("");
 
-    const url = aRouter["talk"] + "ajaxaddtoblacklist/";
+    const url = "/talk/ajaxaddtoblacklist/";
     const params = {users: sUsers};
 
     Emitter.emit("talk_addtoblacklist_before");
@@ -195,7 +195,7 @@ export function removeFromBlackList(link) {
     });
     const idTarget = link.attr("id").replace("blacklist_item_", "");
 
-    const url = aRouter["talk"] + "ajaxdeletefromblacklist/";
+    const url = "/talk/ajaxdeletefromblacklist/";
     const params = {idTarget: idTarget};
 
     Emitter.emit("talk_removefromblacklist_before");

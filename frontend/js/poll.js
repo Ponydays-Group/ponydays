@@ -12,7 +12,7 @@ import * as Ajax from "./ajax"
  * Голосование в опросе
  */
 export function vote(idTopic, idAnswer) {
-    const url = aRouter["ajax"] + "vote/question/";
+    const url = "/ajax/vote/question/";
     const params = {idTopic: idTopic, idAnswer: idAnswer};
     Emitter.emit("poll_vote_before");
     Ajax.ajax(url, params, function(result) {

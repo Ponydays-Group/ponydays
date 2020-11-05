@@ -20,15 +20,15 @@ import * as Vote from "./vote";
 export const options = {
     type: {
         topic: {
-            url_add: aRouter.blog + "ajaxaddcomment/",
-            url_response: aRouter.blog + "ajaxresponsecomment/",
+            url_add: "/blog/ajaxaddcomment/",
+            url_response: "/blog/ajaxresponsecomment/",
         },
         talk: {
-            url_add: aRouter.talk + "ajaxaddcomment/",
-            url_response: aRouter.talk + "ajaxresponsecomment/",
+            url_add: "/talk/ajaxaddcomment/",
+            url_response: "/talk/ajaxresponsecomment/",
         },
         comment: {
-            url: aRouter.ajax + "comment/",
+            url: "/ajax/comment/",
         },
     },
     classes: {
@@ -98,7 +98,7 @@ export function updateNesting() {
 export async function loadComments() {
     let url = "";
 
-    if((location.pathname).startsWith(aRouter["talk"])) {
+    if((location.pathname).startsWith("/talk/")) {
         url = location.href.replace("read", "readcomments");
     } else {
         url = window.location.pathname + "/comments";
@@ -420,7 +420,7 @@ export function toggle(obj, commentId) {
             return
     }
 
-    const url = aRouter["ajax"] + "comment/delete/";
+    const url = "/ajax/comment/delete/";
     const params = {
         idComment: commentId,
         sDeleteReason: deleteReason,
@@ -1037,7 +1037,7 @@ export function editComment(idComment) {
     if(!(iCurrentShowFormComment === idComment && reply.is(":visible"))) {
         const thisObj = this;
         $("#comment_content_id_" + idComment).addClass(options.classes.form_loader);
-        Ajax.ajax(aRouter.ajax + "editcomment-getsource/", {
+        Ajax.ajax("/ajax/editcomment-getsource/", {
             "idComment": idComment,
         }, function(result) {
             $("#comment_content_id_" + idComment).removeClass(options.classes.form_loader);
@@ -1108,7 +1108,7 @@ export function edit(formObject, targetId, targetType) {
     const lData = formObj.serializeJSON();
     const idComment = lData.reply;
 
-    Ajax.ajax(aRouter.ajax + "editcomment-edit/", lData, function(result) {
+    Ajax.ajax("/ajax/editcomment-edit/", lData, function(result) {
         $("#comment-button-submit").removeAttr("disabled");
         if(!result) {
             enableFormComment();
@@ -1155,7 +1155,7 @@ export function showHistory(cId) {
     lData.form_comment_text = "";
     lData.reply = cId || lData.reply;
     const idComment = cId || lData.reply;
-    Ajax.ajax(aRouter.ajax + "editcomment-gethistory/", lData, function(result) {
+    Ajax.ajax("/ajax/editcomment-gethistory/", lData, function(result) {
         $("#comment-button-submit-edit").removeAttr("disabled");
         if(!result) {
             enableFormComment();

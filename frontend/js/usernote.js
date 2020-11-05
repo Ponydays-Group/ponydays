@@ -29,7 +29,7 @@ export function hideForm() {
 }
 
 export function save(iUserId) {
-    const url = aRouter["profile"] + "ajax-note-save/";
+    const url = "/profile/ajax-note-save/";
     const params = {iUserId: iUserId, text: $("#usernote-form-text").val()};
     Emitter.emit("usernote_save_before");
     Ajax.ajax(url, params, function(result) {
@@ -51,7 +51,7 @@ export function showNote() {
 }
 
 export function remove(iUserId) {
-    const url = aRouter["profile"] + "ajax-note-remove/";
+    const url = "/profile/ajax-note-remove/";
     const params = {iUserId: iUserId};
     Emitter.emit("usernote_remove_before");
     Ajax.ajax(url, params, function(result) {

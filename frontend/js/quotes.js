@@ -40,7 +40,7 @@ export function applyForm() {
 
 export function addQuotes() {
     const data_quote = $("#quotes_form_data").val();
-    const url = aRouter["quotes"] + "edit";
+    const url = "/quotes/edit";
     const params = {"action": "add", "data": data_quote};
 
     Ajax.ajax(url, params, function(data) {
@@ -48,7 +48,7 @@ export function addQuotes() {
         counter.html(+counter.html() + 1);
 
         if(!data.bStateError) {
-            window.location.href = aRouter["quotes"] + "#field_" + data.id;
+            window.location.href = "/quotes#field_" + data.id;
 
             const trElement = $(
                 "<tr id=\"field_" + data.id + "\" class=\"quote_element\">" +
@@ -88,7 +88,7 @@ export function updateQuotes() {
     const data_quote = $("#quotes_form_data").val();
     const id = $("#quotes_form_id").val();
 
-    const url = aRouter["quotes"] + "edit";
+    const url = "/quotes/edit";
     const params = {"action": "update", "id": id, "data": data_quote};
 
     Ajax.ajax(url, params, function(data) {
@@ -107,7 +107,7 @@ export function deleteQuotes(id) {
         return;
     }
 
-    const url = aRouter["quotes"] + "edit";
+    const url = "/quotes/edit";
     const params = {"action": "delete", "id": id};
 
     Ajax.ajax(url, params, function(data) {
@@ -124,7 +124,7 @@ export function deleteQuotes(id) {
 }
 
 export function restoreQuotes(id) {
-    const url = aRouter["quotes"] + "edit";
+    const url = "/quotes/edit";
     const params = {"action": "restore", "id": id};
 
     Ajax.ajax(url, params, function(data) {

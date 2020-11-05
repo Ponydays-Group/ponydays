@@ -11,19 +11,19 @@ export const options = {
     loader: DIR_STATIC_SKIN + "/images/loader.gif",
     type: {
         stream_comment: {
-            url: aRouter["ajax"] + "stream/comment/",
+            url: "/ajax/stream/comment/"
         },
         stream_topic: {
-            url: aRouter["ajax"] + "stream/topic/",
+            url: "/ajax/stream/topic/"
         },
         blogs_top: {
-            url: aRouter["ajax"] + "blogs/top/",
+            url: "/ajax/blogs/top/"
         },
         blogs_join: {
-            url: aRouter["ajax"] + "blogs/join/",
+            url: "/ajax/blogs/join/"
         },
         blogs_self: {
-            url: aRouter["ajax"] + "blogs/self/",
+            url: "/ajax/blogs/self/"
         },
     },
 };

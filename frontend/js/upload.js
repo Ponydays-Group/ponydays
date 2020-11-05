@@ -259,7 +259,7 @@ function imageUploadStart(img_el) {
 
     const xhr = new XMLHttpRequest();
     img_el.xhr = xhr;
-    xhr.open('POST', aRouter["ajax"] + '/upload/image');
+    xhr.open('POST', '/ajax//upload/image');
     xhr.responseType = 'json';
 
     xhr.onloadstart = e => {
@@ -321,7 +321,7 @@ export function uploadBase64Image(b64) {
         formData.append('security_ls_key', LIVESTREET_SECURITY_KEY);
     
         const xhr = new XMLHttpRequest();
-        xhr.open('POST', aRouter["ajax"] + '/upload/image');
+        xhr.open('POST', '/ajax/upload/image');
         xhr.responseType = 'json';
     
         xhr.onload = e => {

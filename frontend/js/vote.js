@@ -31,19 +31,19 @@ export const options = {
 
     type: {
         comment: {
-            url: aRouter["ajax"] + "vote/comment/",
+            url: "/ajax/vote/comment/",
             targetName: "idComment",
         },
         topic: {
-            url: aRouter["ajax"] + "vote/topic/",
+            url: "/ajax/vote/topic/",
             targetName: "idTopic",
         },
         blog: {
-            url: aRouter["ajax"] + "vote/blog/",
+            url: "/ajax/vote/blog/",
             targetName: "idBlog",
         },
         user: {
-            url: aRouter["ajax"] + "vote/user/",
+            url: "/ajax/vote/user/",
             targetName: "idUser",
         },
     },
@@ -156,7 +156,7 @@ export function getVotes(targetId, targetType, el, toggleControl) {
     }
     params["targetId"] = targetId;
     params["targetType"] = targetType;
-    const url = aRouter["ajax"] + "get-object-votes";
+    const url = "/ajax/get-object-votes";
     Ajax.ajax(url, params, this.onGetVotes.bind({
         "orig": this,
         "control": el,

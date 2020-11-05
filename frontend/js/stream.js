@@ -8,7 +8,7 @@ export let isBusy = false;
 export let dateLast = null;
 
 export function subscribe(iTargetUserId) {
-    const url = aRouter["stream"] + "subscribe/";
+    const url = "/stream/subscribe/";
     const params = {"id": iTargetUserId};
 
     Emitter.emit("stream_subscribe_before");
@@ -23,7 +23,7 @@ export function subscribe(iTargetUserId) {
 }
 
 export function unsubscribe(iId) {
-    const url = aRouter["stream"] + "unsubscribe/";
+    const url = "/stream/unsubscribe/";
     const params = {"id": iId};
 
     Emitter.emit("stream_unsubscribe_before");
@@ -36,7 +36,7 @@ export function unsubscribe(iId) {
 }
 
 export function switchEventType(iType) {
-    const url = aRouter["stream"] + "switchEventType/";
+    const url = "/stream/switchEventType/";
     const params = {"type": iType};
 
     Emitter.emit("stream_switcheventtype_before");
@@ -52,7 +52,7 @@ export function appendUser() {
     const sLogin = $("#stream_users_complete").val();
     if(!sLogin) return;
 
-    const url = aRouter["stream"] + "subscribeByLogin/";
+    const url = "/stream/subscribeByLogin/";
     const params = {"login": sLogin};
 
     Emitter.emit("stream_appenduser_before");
@@ -88,7 +88,7 @@ export function getMore() {
     $("#stream_get_more").addClass("stream_loading");
     isBusy = true;
 
-    const url = aRouter["stream"] + "get_more/";
+    const url = "/stream/get_more/";
     const params = {"last_id": lastId, "date_last": this.dateLast};
 
     Emitter.emit("stream_getmore_before");
@@ -115,7 +115,7 @@ export function getMoreAll() {
     $("#stream_get_more").addClass("stream_loading");
     isBusy = true;
 
-    const url = aRouter["stream"] + "get_more_all/";
+    const url = "/stream/get_more_all/";
     const params = {"last_id": lastId, "date_last": this.dateLast};
 
     Emitter.emit("stream_getmoreall_before");
@@ -142,7 +142,7 @@ export function getMoreByUser(iUserId) {
     $("#stream_get_more").addClass("stream_loading");
     isBusy = true;
 
-    const url = aRouter["stream"] + "get_more_user/";
+    const url = "/stream/get_more_user/";
     const params = {"last_id": lastId, user_id: iUserId, "date_last": this.dateLast};
 
     Emitter.emit("stream_getmorebyuser_before");

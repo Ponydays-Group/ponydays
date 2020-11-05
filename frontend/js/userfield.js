@@ -45,7 +45,7 @@ export function addUserfield() {
     const pattern = $("#user_fields_form_pattern").val();
     const type = $("#user_fields_form_type").val();
 
-    const url = aRouter["admin"] + "userfields";
+    const url = "/admin/userfields";
     const params = {"action": "add", "name": name, "title": title, "pattern": pattern, "type": type};
 
     Emitter.emit("userfield_adduserfield_before");
@@ -75,7 +75,7 @@ export function updateUserfield() {
     const pattern = $("#user_fields_form_pattern").val();
     const type = $("#user_fields_form_type").val();
 
-    const url = aRouter["admin"] + "userfields";
+    const url = "/admin/userfields";
     const params = {"action": "update", "id": id, "name": name, "title": title, "pattern": pattern, "type": type};
 
     Emitter.emit("userfield_updateuserfield_before");
@@ -98,7 +98,7 @@ export function deleteUserfield(id) {
         return;
     }
 
-    const url = aRouter["admin"] + "userfields";
+    const url = "/admin/userfields";
     const params = {"action": "delete", "id": id};
 
     Emitter.emit("userfield_deleteuserfield_before");

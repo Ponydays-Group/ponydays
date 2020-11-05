@@ -17,7 +17,7 @@ export let iIdForReply = null;
  */
 export function add(sText, iPid) {
     $('.js-button-wall-submit').attr('disabled', true);
-    const url = aRouter['profile'] + this.options.login + '/wall/add/';
+    const url = '/profile/' + this.options.login + '/wall/add/';
     const params = {sText: sText, iPid: iPid};
 
     Emitter.emit('wall_add_before');
@@ -39,7 +39,7 @@ export function add(sText, iPid) {
 
 export function addReply(sText, iPid) {
     $('.js-button-wall-submit').attr('disabled', true);
-    const url = aRouter['profile'] + this.options.login + '/wall/add/';
+    const url = '/profile/' + this.options.login + '/wall/add/';
     const params = {sText: sText, iPid: iPid};
 
     Emitter.emit('wall_addreply_before');
@@ -59,7 +59,7 @@ export function addReply(sText, iPid) {
 }
 
 export function load(iIdLess, iIdMore, callback) {
-    const url = aRouter['profile'] + this.options.login + '/wall/load/';
+    const url = '/profile/' + this.options.login + '/wall/load/';
     const params = {iIdLess: iIdLess ? iIdLess : '', iIdMore: iIdMore ? iIdMore : ''};
     Emitter.emit('wall_load_before');
     Ajax.ajax(url, params, callback);
@@ -67,7 +67,7 @@ export function load(iIdLess, iIdMore, callback) {
 }
 
 export function loadReply(iIdLess, iIdMore, iPid, callback) {
-    const url = aRouter['profile'] + this.options.login + '/wall/load-reply/';
+    const url = '/profile/' + this.options.login + '/wall/load-reply/';
     const params = {iIdLess: iIdLess ? iIdLess : '', iIdMore: iIdMore ? iIdMore : '', iPid: iPid};
     Emitter.emit('wall_loadreply_before');
     Ajax.ajax(url, params, callback);
@@ -223,7 +223,7 @@ export function init(opt) {
 }
 
 export function remove(iId) {
-    const url = aRouter['profile'] + this.options.login + '/wall/remove/';
+    const url = '/profile/' + this.options.login + '/wall/remove/';
     const params = {iId: iId};
     Emitter.emit('wall_remove_before');
     Ajax.ajax(url, params, function (result) {

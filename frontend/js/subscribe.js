@@ -10,7 +10,7 @@ import * as Ajax from "./ajax"
  * Подписка/отписка
  */
 export function toggle(sTargetType, iTargetId, sMail, iValue) {
-    const url = aRouter["subscribe"] + "ajax-subscribe-toggle/";
+    const url = "/subscribe/ajax-subscribe-toggle/";
     const params = {target_type: sTargetType, target_id: iTargetId, mail: sMail, value: iValue};
     Emitter.emit("subscribe_toggle_before");
     Ajax.ajax(url, params, function(result) {

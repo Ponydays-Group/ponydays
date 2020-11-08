@@ -43,7 +43,7 @@ class BlockTagsCity extends Block
         /**
          * Формируем облако тегов
          */
-        LS::Make(ModuleTools::class)->MakeCloud($aCities);
+        ModuleTools::MakeCloud($aCities);
         /**
          * Выводим в шаблон
          */

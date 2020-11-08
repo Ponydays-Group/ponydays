@@ -228,7 +228,7 @@ class ModuleViewer extends Module
         $this->Assign("sHtmlKeywords", htmlspecialchars($this->sHtmlKeywords));
         $this->Assign("sHtmlDescription", htmlspecialchars($this->sHtmlDescription));
         $this->Assign("aHtmlRssAlternate", $this->aHtmlRssAlternate);
-        $this->Assign("sHtmlCanonical", LS::Make(ModuleTools::class)->Urlspecialchars($this->sHtmlCanonical));
+        $this->Assign("sHtmlCanonical", ModuleTools::Urlspecialchars($this->sHtmlCanonical));
     }
 
     /**
@@ -866,7 +866,7 @@ class ModuleViewer extends Module
             'iCurrentPage' => $iCurrentPage,
             'iNextPage'    => $iNextPage,
             'iPrevPage'    => $iPrevPage,
-            'sBaseUrl'     => rtrim(LS::Make(ModuleTools::class)->Urlspecialchars($sBaseUrl), '/'),
+            'sBaseUrl'     => rtrim(ModuleTools::Urlspecialchars($sBaseUrl), '/'),
             'sGetParams'   => $sGetParams,
         ];
         /**

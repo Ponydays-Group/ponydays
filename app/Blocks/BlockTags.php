@@ -48,7 +48,7 @@ class BlockTags extends Block
          * Расчитываем логарифмическое облако тегов
          */
         if ($aTags) {
-            LS::Make(ModuleTools::class)->MakeCloud($aTags);
+            ModuleTools::MakeCloud($aTags);
             /**
              * Устанавливаем шаблон вывода
              */
@@ -63,7 +63,7 @@ class BlockTags extends Block
              * Расчитываем логарифмическое облако тегов
              */
             if ($aTags) {
-                LS::Make(ModuleTools::class)->MakeCloud($aTags);
+                ModuleTools::MakeCloud($aTags);
                 /**
                  * Устанавливаем шаблон вывода
                  */

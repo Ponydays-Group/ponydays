@@ -43,7 +43,7 @@ class BlockTagsCountry extends Block
         /**
          * Формируем облако тегов
          */
-        LS::Make(ModuleTools::class)->MakeCloud($aCountries);
+        ModuleTools::MakeCloud($aCountries);
         /**
          * Выводим в шаблон
          */

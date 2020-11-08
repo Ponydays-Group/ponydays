@@ -46,7 +46,7 @@ class ModuleTools extends Module
      *
      * @return array
      */
-    public function MakeCloud($aCollection, $iMinSize = 1, $iMaxSize = 10)
+    public static function MakeCloud($aCollection, $iMinSize = 1, $iMaxSize = 10)
     {
         if (count($aCollection)) {
             $iSizeRange = $iMaxSize - $iMinSize;
@@ -84,7 +84,7 @@ class ModuleTools extends Module
      *
      * @return string
      */
-    public function Urlspecialchars($sText)
+    public static function Urlspecialchars($sText)
     {
         $aTable = get_html_translation_table();
         unset($aTable['&']);

@@ -55,7 +55,7 @@ class BlockTagsFavouriteTopic extends Block
             /**
              * Расчитываем логарифмическое облако тегов
              */
-            LS::Make(ModuleTools::class)->MakeCloud($aTags);
+            ModuleTools::MakeCloud($aTags);
             /**
              * Устанавливаем шаблон вывода
              */
@@ -67,7 +67,7 @@ class BlockTagsFavouriteTopic extends Block
             /**
              * Расчитываем логарифмическое облако тегов
              */
-            LS::Make(ModuleTools::class)->MakeCloud($aTags);
+            ModuleTools::MakeCloud($aTags);
             /**
              * Устанавливаем шаблон вывода
              */

@@ -123,7 +123,7 @@
 </nav>
 {* С наступающим, разработчики из будущего! Год уже новый стоит, просто уберите комменты. (с) Лу, 04.01.2020 *}
 
-{*<div id="padorupadoru">
+<div id="padorupadoru">
     <div class="counter">
         <span id="new-year-timer"></span>
         <span id="new-year-text">&nbsp;до нового года!</span>
@@ -144,4 +144,4 @@ function untilNewYear() {
 
 }
 const newYearIntervalID = setInterval(()=>untilNewYear(), 1000);
-</script>*}
+</script>

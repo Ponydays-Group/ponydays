@@ -36,7 +36,7 @@
                 {hook run='main_menu_item'}
             </ul>
             <ul class="nav navbar-nav navbar-right" id="navbar-right-big">
-			<li class="iconic running"><a href="/page/filter/current-flud"><img src="/templates/skin/redis/images/bunkeryasha.gif" /></a></li>
+			<li class="iconic running"><a href="/page/filter/current-flud"><img src="/templates/skin/redis/images/bunkeryasha-left.gif" /></a></li>
                 {if $oUserCurrent}
                     <li class="head_collapse" title="Свернуть/развернуть шапку">
                         <i class="material-icons">keyboard_arrow_up</i>
@@ -128,7 +128,7 @@
         <span id="new-year-timer"></span>
         <span id="new-year-text">&nbsp;до нового года!</span>
     </div>
-    <img src="https://i.imgur.com/AkVE54g.gif" />
+    <img src="/templates/skin/redis/images/bunkeryasha-right.gif"  alt=""/>
 </div>
 
 <script>
@@ -137,7 +137,7 @@ function untilNewYear() {
     if ((newYearDate - new Date()) > 0 ) {
         document.querySelector('#new-year-timer').innerText = window.formatTime(newYearDate - new Date()); 
     } else {
-        document.querySelector('#new-year-timer').innerText = ""
+        document.querySelector('#new-year-timer').innerText = "";
         document.querySelector('#new-year-text').innerText = "С Новым Годом! ^~^";
         clearInterval(newYearIntervalID);
     }

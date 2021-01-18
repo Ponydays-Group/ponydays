@@ -121,8 +121,8 @@
     </div><!-- /.navbar-collapse -->
     </div><!-- /.container-fluid -->
 </nav>
-{* С наступающим, разработчики из будущего! Год уже новый стоит, просто уберите комменты. (с) Лу, 04.01.2020 *}
 
+{*
 <div id="padorupadoru">
     <div class="counter">
         <span id="new-year-timer"></span>
@@ -133,7 +133,7 @@
 
 <script>
 function untilNewYear() {
-    let newYearDate = new Date('2021-01-01 00:00:00');
+    let newYearDate = new Date('2022-01-01 00:00:00');
     if ((newYearDate - new Date()) > 0 ) {
         document.querySelector('#new-year-timer').innerText = window.formatTime(newYearDate - new Date()); 
     } else {
@@ -145,3 +145,4 @@ function untilNewYear() {
 }
 const newYearIntervalID = setInterval(()=>untilNewYear(), 1000);
 </script>
+*}

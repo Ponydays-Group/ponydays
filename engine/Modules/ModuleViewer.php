@@ -225,10 +225,10 @@ class ModuleViewer extends Module
          * Загружаем HTML заголовки
          */
         $this->Assign("sHtmlTitle", htmlspecialchars($this->sHtmlTitle));
-        $this->Assign("sHtmlKeywords", htmlspecialchars($this->sHtmlKeywords));
-        $this->Assign("sHtmlDescription", htmlspecialchars($this->sHtmlDescription));
-        $this->Assign("aHtmlRssAlternate", $this->aHtmlRssAlternate);
-        $this->Assign("sHtmlCanonical", ModuleTools::Urlspecialchars($this->sHtmlCanonical));
+        //$this->Assign("sHtmlKeywords", htmlspecialchars($this->sHtmlKeywords));
+        //$this->Assign("sHtmlDescription", htmlspecialchars($this->sHtmlDescription));
+        //$this->Assign("aHtmlRssAlternate", $this->aHtmlRssAlternate);
+        //$this->Assign("sHtmlCanonical", ModuleTools::Urlspecialchars($this->sHtmlCanonical));
     }
 
     /**

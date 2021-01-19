@@ -17,12 +17,12 @@ class Redirect extends Result
         $this->uri = $uri;
     }
 
-    public static function to(string $uri): Redirect
+    public static function to(string $uri): self
     {
         return new Redirect($uri);
     }
 
-    public function _handle(Router $router)
+    public function render(Router $router)
     {
         Engine::getInstance()->Shutdown();
         func_header_location($this->uri);

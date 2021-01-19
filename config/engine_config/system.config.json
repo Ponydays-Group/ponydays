@@ -8,7 +8,6 @@
             "httponly": false
         },
         "session": {
-            "standart": true,
             "name": "PHPSESSID",
             "timeout": null,
             "host": "{sys.cookie.host}",

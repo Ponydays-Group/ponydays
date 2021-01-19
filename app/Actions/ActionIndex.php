@@ -24,6 +24,7 @@ use Engine\LS;
 use Engine\Modules\ModuleViewer;
 use Engine\Result\Action;
 use Engine\Result\View\HtmlView;
+use Engine\Result\View\Paging;
 use Engine\Routing\Controller;
 
 /**
@@ -96,7 +97,7 @@ class ActionIndex extends Controller
      *
      * @return \Engine\Result\View\View
      */
-    protected function newall(ModuleViewer $viewer, ModuleTopic $topic, int $page = 1)
+    protected function newall(ModuleTopic $topic, int $page = 1)
     {
         /**
          * Меню
@@ -111,7 +112,7 @@ class ActionIndex extends Controller
         /**
          * Формируем постраничность
          */
-        $aPaging = $viewer->MakePaging(
+        $paging = Paging::make(
             $aResult['count'],
             $page,
             Config::Get('module.topic.per_page'),
@@ -119,13 +120,14 @@ class ActionIndex extends Controller
             '/index/newall'
         );
 
-        $viewer->SetHtmlRssAlternate('/rss/new/', Config::Get('view.name'));
-
-        return HtmlView::by('index/index')->with([
+        $view = HtmlView::by('index/index')->with([
             'aTopics' => $aTopics,
-            'aPaging' => $aPaging,
+            'aPaging' => $paging->toArray(),
             'sMenuHeadItemSelect' => 'newall'
-        ]);
+        ])->paging($paging);
+        $view->meta()->setHtmlRssAlternate('/rss/new/', Config::Get('view.name'));
+
+        return $view;
     }
 
     /**

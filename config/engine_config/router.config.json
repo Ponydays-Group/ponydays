@@ -22,7 +22,15 @@
             "blogs":            "App\\Actions\\ActionBlogs",
             "search":           "App\\Actions\\ActionSearch",
             "admin":            "App\\Actions\\ActionAdmin",
-            "ajax":             "App\\Actions\\ActionAjax",
+            "ajax": {
+                "vote":         "App\\Actions\\Ajax\\ActionAjaxVote",
+                "favourite":    "App\\Actions\\Ajax\\ActionAjaxVote",
+                "stream":       "App\\Actions\\Ajax\\ActionAjaxVote",
+                "blogs":        "App\\Actions\\Ajax\\ActionAjaxVote",
+                "preview":      "App\\Actions\\Ajax\\ActionAjaxVote",
+                "upload":       "App\\Actions\\Ajax\\ActionAjaxVote",
+                "autocompleter":"App\\Actions\\Ajax\\ActionAjaxVote"
+            },
             "feed":             "App\\Actions\\ActionUserfeed",
             "stream":           "App\\Actions\\ActionStream",
             "photoset":         "App\\Actions\\ActionPhotoset",
@@ -38,13 +46,15 @@
         },
         "config": {
             "http_error_handler": {
-                "params": { "to": "error#error" }
+                "params": { "to": "error#error" },
+                "vars": []
             }
         },
         "cacheFile": "./tmp/router_cache.php",
         "logFile": "./tmp/router.log",
         "registries": [
-            "./config/routes/main.routes"
+            "./config/routes/main.routes",
+            "./config/routes/ajax.routes"
         ]
     }
 }

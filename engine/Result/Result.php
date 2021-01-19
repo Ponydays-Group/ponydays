@@ -6,5 +6,5 @@ use Engine\Routing\Router;
 
 abstract class Result
 {
-    abstract public function _handle(Router $router);
+    abstract public function render(Router $router);
 }

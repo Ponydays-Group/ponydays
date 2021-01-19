@@ -49,23 +49,21 @@ class ActionError extends Controller
     /**
      * Вывод ошибки
      *
-     * @param \Engine\Modules\ModuleMessage                     $msg
      * @param \Engine\Modules\ModuleLang                        $lang
-     *
      * @param string                                            $event
-     *
      * @param \Engine\Routing\Exception\Http\HttpException|null $httpException
      *
      * @return \Engine\Result\View\View
      */
-    public function error(ModuleMessage $msg, ModuleLang $lang, string $event = '400', HttpException $httpException = null): View
+    public function error(ModuleLang $lang, string $event = '400', HttpException $httpException = null): View
     {
+        $view = HtmlView::by('error/index')->withHtmlTitle($lang->Get('error'));
         /**
          * Если евент равен одной из ошибок из $aHttpErrors, то шлем браузеру специфичный header
          * Например, для 404 в хидере будет послан браузеру заголовок HTTP/1.1 404 Not Found
          */
         if (array_key_exists($event, $this->aHttpErrors)) {
-            $msg->AddErrorSingle($lang->Get('system_error_'.$event), $event);
+            $view->msgError($lang->Get('system_error_'.$event), $event);
             $aHttpError = $this->aHttpErrors[$event];
             if (isset($aHttpError['header'])) {
                 $sProtocol = isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.1';
@@ -73,6 +71,6 @@ class ActionError extends Controller
             }
         }
 
-        return HtmlView::by('error/index')->withHtmlTitle($lang->Get('error'));
+        return $view;
     }
 }

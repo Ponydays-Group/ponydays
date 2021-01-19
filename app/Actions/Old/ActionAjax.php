@@ -139,8 +139,7 @@ class ActionAjax extends Action
      **********************************************************************************
      */
 
-    protected
-    function EventBan()
+    protected function EventBan()
     {
         if (!$this->oUserCurrent
             || !($this->oUserCurrent->isAdministrator()
@@ -226,8 +225,7 @@ class ActionAjax extends Action
     /**
      * Вывод информации о блоге
      */
-    protected
-    function EventInfoboxInfoBlog()
+    protected function EventInfoboxInfoBlog()
     {
         /**
          * Если блог существует и он не персональный
@@ -276,8 +274,7 @@ class ActionAjax extends Action
     /**
      * Получение списка регионов по стране
      */
-    protected
-    function EventGeoGetRegions()
+    protected function EventGeoGetRegions()
     {
         $iCountryId = getRequestStr('country');
         $iLimit = 200;
@@ -324,8 +321,7 @@ class ActionAjax extends Action
     /**
      * Получение списка городов по региону
      */
-    protected
-    function EventGeoGetCities()
+    protected function EventGeoGetCities()
     {
         $iRegionId = getRequestStr('region');
         $iLimit = 500;
@@ -369,172 +365,12 @@ class ActionAjax extends Action
         $this->viewer->AssignAjax('aCities', $aCities);
     }
 
-    /**
-     * Голосование за комментарий
-     *
-     */
-    protected
-    function EventVoteComment()
-    {
-        /**
-         * Пользователь авторизован?
-         */
-        if (!$this->oUserCurrent) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(
-                LS::Make(ModuleLang::class)->Get('need_authorization'),
-                LS::Make(ModuleLang::class)->Get('error')
-            );
-
-            return;
-        }
-
-        /**
-         * Комментарий существует?
-         */
-        if (!($oComment = LS::Make(ModuleComment::class)->GetCommentById(getRequestStr('idComment', null, 'post')))) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(
-                LS::Make(ModuleLang::class)->Get('comment_vote_error_noexists'),
-                LS::Make(ModuleLang::class)->Get('error')
-            );
-
-            return;
-        }
-
-        /**
-         * Голосует автор комментария?
-         */
-        if ($oComment->getUserId() == $this->oUserCurrent->getId()) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(
-                LS::Make(ModuleLang::class)->Get('comment_vote_error_self'),
-                LS::Make(ModuleLang::class)->Get('attention')
-            );
-
-            return;
-        }
-
-        /**
-         * Время голосования истекло?
-         */
-        if (Config::Get('acl.vote.comment.limit_time') != 0
-            && strtotime($oComment->getDate()) <= time() - Config::Get(
-                'acl.vote.comment.limit_time'
-            )
-        ) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(
-                LS::Make(ModuleLang::class)->Get('comment_vote_error_time'),
-                LS::Make(ModuleLang::class)->Get('attention')
-            );
-
-            return;
-        }
-
-        /**
-         * Пользователь имеет право голоса?
-         */
-        if (!LS::Make(ModuleACL::class)->CanVoteComment($this->oUserCurrent, $oComment)) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(
-                LS::Make(ModuleLang::class)->Get('comment_vote_error'),
-                LS::Make(ModuleLang::class)->Get('attention')
-            );
-
-            return;
-        }
-
-        /**
-         * Как именно голосует пользователь
-         */
-        $iValue = getRequestStr('value', null, 'post');
-        if (!in_array(
-            $iValue,
-            [
-                '1',
-                '-1'
-            ]
-        )
-        ) {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(
-                LS::Make(ModuleLang::class)->Get('comment_vote_error_value'),
-                LS::Make(ModuleLang::class)->Get('attention')
-            );
-
-            return;
-        }
-
-        /**
-         * Голосуем
-         */
-        $iValueOld = $iValue;
-        $iVoteType = 0; //0 - при добавлении нового голоса, 1 - при его изменении, 2 - при отмене
-        $iCountVote = 1;
-        if ($oTopicCommentVote =
-            LS::Make(ModuleVote::class)->GetVote($oComment->getId(), 'comment', $this->oUserCurrent->getId())
-        ) {
-            if ($iValue == $oTopicCommentVote->getDirection()) {
-                $iValue -= 2 * $iValue;
-                $iValueOld = 0;
-                $iVoteType = 2;
-                $iCountVote = -1;
-            } elseif ($oTopicCommentVote->getDirection() != 0) {
-                $iValue += $iValue;
-                $iVoteType = 1;
-                $iCountVote = 0;
-            }
-            LS::Make(ModuleVote::class)->DeleteVote($oComment->getId(), 'comment', $this->oUserCurrent->getId());
-        }
-
-        $oTopicCommentVote = new EntityVote();
-        $oTopicCommentVote->setTargetId($oComment->getId());
-        $oTopicCommentVote->setTargetType('comment');
-        $oTopicCommentVote->setVoterId($this->oUserCurrent->getId());
-        $oTopicCommentVote->setDirection($iValueOld);
-        $oTopicCommentVote->setDate(date("Y-m-d H:i:s"));
-        $iVal = (float)LS::Make(ModuleRating::class)->VoteComment(
-            $this->oUserCurrent,
-            $oComment,
-            $iValue,
-            $iValueOld,
-            $iCountVote,
-            $iVoteType
-        );
-        $oTopicCommentVote->setValue($iVal);
-
-        if (LS::Make(ModuleVote::class)->AddVote($oTopicCommentVote) and LS::Make(ModuleComment::class)->UpdateComment(
-                $oComment
-            )
-        ) {
-            if ($iValueOld == 0) {
-                LS::Make(ModuleVote::class)->DeleteVote($oComment->getId(), 'comment', $this->oUserCurrent->getId());
-                LS::Make(ModuleMessage::class)->AddNoticeSingle(
-                    LS::Make(ModuleLang::class)->Get('comment_vote_deleted'),
-                    LS::Make(ModuleLang::class)->Get('attention')
-                );
-            } else {
-                LS::Make(ModuleMessage::class)->AddNoticeSingle(
-                    LS::Make(ModuleLang::class)->Get('comment_vote_ok'),
-                    LS::Make(ModuleLang::class)->Get('attention')
-                );
-            }
-            $this->viewer->AssignAjax('iRating', $oComment->getRating());
-            $this->viewer->AssignAjax('iCountVote', $oComment->getCountVote());
-            /**
-             * Добавляем событие в ленту
-             */
-        } else {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(
-                LS::Make(ModuleLang::class)->Get('comment_vote_error'),
-                LS::Make(ModuleLang::class)->Get('error')
-            );
-
-            return;
-        }
-    }
 
     /**
      * Голосование за топик
      *
      */
-    protected
-    function EventVoteTopic()
+    protected function EventVoteTopic()
     {
         /**
          * Пользователь авторизован?
@@ -702,8 +538,7 @@ class ActionAjax extends Action
      * Голосование за блог
      *
      */
-    protected
-    function EventVoteBlog()
+    protected function EventVoteBlog()
     {
         /**
          * Пользователь авторизован?
@@ -834,8 +669,7 @@ class ActionAjax extends Action
      * Голосование за пользователя
      *
      */
-    protected
-    function EventVoteUser()
+    protected function EventVoteUser()
     {
         /**
          * Пользователь авторизован?
@@ -966,8 +800,7 @@ class ActionAjax extends Action
      * Голосование за вариант ответа в опросе
      *
      */
-    protected
-    function EventVoteQuestion()
+    protected function EventVoteQuestion()
     {
         /**
          * Пользователь авторизован?
@@ -1075,8 +908,7 @@ class ActionAjax extends Action
      * Сохраняет теги для избранного
      *
      */
-    protected
-    function EventFavouriteSaveTags()
+    protected function EventFavouriteSaveTags()
     {
         /**
          * Пользователь авторизован?
@@ -1142,8 +974,7 @@ class ActionAjax extends Action
      * Обработка избранного - топик
      *
      */
-    protected
-    function EventFavouriteTopic()
+    protected function EventFavouriteTopic()
     {
         /**
          * Пользователь авторизован?

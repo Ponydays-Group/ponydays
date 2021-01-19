@@ -1,0 +1,48 @@
+# ActionAjax
+GROUP '/ajax' (
+    GROUP '/vote' (
+        ANY '/comment' to 'ajax/vote#EventVoteComment';
+        ANY '/topic' to 'ajax/vote#EventVoteTopic';
+        ANY '/user' to 'ajax/vote#EventVoteUser';
+        ANY '/question' to 'ajax/vote#EventVoteQuestion';
+    );
+	ANY '/favourite/save-tags' to 'ajax#EventFavouriteSaveTags';
+	ANY '/favourite/topic' to 'ajax#EventFavouriteTopic';
+	ANY '/favourite/comment' to 'ajax#EventFavouriteComment';
+	ANY '/favourite/talk' to 'ajax#EventFavouriteTalk';
+
+	ANY '/stream/comment' to 'ajax#EventStreamComment';
+	ANY '/stream/topic' to 'ajax#EventStreamTopic';
+
+	ANY '/blogs/top' to 'ajax#EventBlogsTop';
+	ANY '/blogs/self' to 'ajax#EventBlogsSelf';
+	ANY '/blogs/join' to 'ajax#EventBlogsJoin';
+
+	ANY '/preview/text' to 'ajax#EventPreviewText';
+	ANY '/preview/topic' to 'ajax#EventPreviewTopic';
+
+	ANY '/upload/image' to 'ajax#EventUploadImage';
+
+	ANY '/autocompleter/tag' to 'ajax#EventAutocompleterTag';
+	ANY '/autocompleter/user' to 'ajax#EventAutocompleterUser';
+
+	ANY '/comment/delete' to 'ajax#EventCommentDelete';
+
+	ANY '/geo/get/regions' to 'ajax#EventGeoGetRegions';
+	ANY '/get/get/cities' to 'ajax#EventGeoGetCities';
+
+	ANY '/infobox/info/blog' to 'ajax#EventInfoboxInfoBlog';
+	ANY '/askinvite' to 'ajax#EventInviteUser';
+	ANY '/topic-lock-control' to 'ajax#EventTopicLockControl';
+	ANY '/get-object-votes' to 'ajax#EventGetObjectVotes';
+	ANY '/ignore' to 'ajax#EventIgnoreUser';
+	ANY '/forbid-ignore' to 'ajax#EventForbidIgnoreUser';
+
+	ANY '/editcomment-gethistory' to 'ajax#EventGetHistory';
+	ANY '/editcomment-getsource' to 'ajax#EventGetSource';
+	ANY '/editcomment-edit' to 'ajax#EventEdit';
+
+	ANY '/comment' to 'ajax#EventGetComment';
+
+	ANY '/ban' to 'ajax#EventBan';
+);

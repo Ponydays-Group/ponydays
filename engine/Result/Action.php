@@ -2,10 +2,12 @@
 
 namespace Engine\Result;
 
+use Engine\Result\Traits\WithVariables;
 use Engine\Routing\Router;
 
 class Action extends Result
 {
+    use WithVariables;
     /**
      * @var string
      */
@@ -14,21 +16,11 @@ class Action extends Result
      * @var string
      */
     private $methodName;
-    /**
-     * @var array
-     */
-    private $args;
 
     public function __construct(string $controllerName, string $methodName)
     {
         $this->controllerName = $controllerName;
         $this->methodName = $methodName;
-    }
-
-    public function with(array $args): Action
-    {
-        $this->args = $args;
-        return $this;
     }
 
     public function getControllerName(): string
@@ -41,11 +33,6 @@ class Action extends Result
         return $this->methodName;
     }
 
-    public function getArguments(): array
-    {
-        return $this->args;
-    }
-
     public function __toString(): string
     {
         return "$this->controllerName#$this->methodName";
@@ -56,7 +43,7 @@ class Action extends Result
      *
      * @return \Engine\Result\Action
      */
-    public static function by(string $actionPath): Action
+    public static function by(string $actionPath): self
     {
         $split = explode('#', $actionPath);
         if (count($split) != 2) {
@@ -66,7 +53,7 @@ class Action extends Result
         return new Action($split[0], $split[1]);
     }
 
-    public static function from(array $params): Action
+    public static function from(array $params): self
     {
         if (! isset($params['to'])) throw new \InvalidArgumentException("Missed `to` parameter in action configuration");
         $to = $params['to'];
@@ -78,8 +65,13 @@ class Action extends Result
         return $action;
     }
 
-    public function _handle(Router $router)
+    public function render(Router $router)
     {
         $router->runAction($this);
+    }
+
+    public function copy(): self
+    {
+        return (new Action($this->controllerName, $this->methodName))->with($this->getVariables());
     }
 }

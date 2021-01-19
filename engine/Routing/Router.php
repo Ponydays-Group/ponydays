@@ -38,9 +38,14 @@ class Router
      * @var array
      */
     private $controllers = [];
+    /**
+     * @var Action
+     */
+    private $httpErrorHandler;
 
     public function init()
     {
+        $this->setHttpErrorHandler(null);
         $this->dispatcher = FastRoute\cachedDispatcher(function (RouteCollector $r) {
             $lexer = new RouteLexer();
             $parser = new RouteParser();
@@ -61,6 +66,15 @@ class Router
             'cacheFile' => Config::Get('router.cacheFile'),
             'cacheDisabled' => true
         ]);
+    }
+    
+    public function setHttpErrorHandler(?Action $handler)
+    {
+        if ($handler == null) {
+            $config = Config::Get('router.config.http_error_handler');
+            $handler = Action::from($config['params'])->with($config['vars']);
+        }
+        $this->httpErrorHandler = $handler;
     }
 
     public function route()
@@ -90,6 +104,7 @@ class Router
 
     private function provideController(string $controllerName)
     {
+        $controllerName = str_replace('/', '.', $controllerName);
         $class = Config::Get("router.page.$controllerName");
         if ($class == null) $class = $controllerName;
 
@@ -117,7 +132,7 @@ class Router
     {
         $controller = $this->provideController($action->getControllerName());
         $method = $action->getMethodName();
-        $vars = $action->getArguments();
+        $vars = $action->getVariables();
 
         \Engine\Router::SetAction($controller);
 
@@ -142,14 +157,13 @@ class Router
         }
 
         if ($result instanceof Result) {
-            $result->_handle($this);
+            $result->render($this);
         }
     }
 
     private function handleHttpError(HttpException $httpException)
     {
-        $action = Config::Get('router.config.http_error_handler');
-        $this->runAction(Action::from($action['params'])->with([
+        $this->runAction($this->httpErrorHandler->copy()->with([
             'event' => $httpException->getCode(),
             'httpException' => $httpException
         ]));
@@ -173,6 +187,8 @@ class Router
             $this->runAction(Action::from($handler['params'])->with($vars));
         } catch (HttpException $e) {
             $this->handleHttpError($e);
+        } catch (RoutingException $e) {
+            $this->handleNotFound();
         }
     }
 

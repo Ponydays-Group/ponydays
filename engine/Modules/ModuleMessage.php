@@ -93,9 +93,9 @@ class ModuleMessage extends Module
         $session->Set('message_error_session', $this->GetErrorSession());
 
         /** @var \Engine\Modules\ModuleViewer $viewer */
-        $viewer = LS::Make(ModuleViewer::class);
+        /*$viewer = LS::Make(ModuleViewer::class);
         $viewer->Assign('aMsgError', $this->GetError());
-        $viewer->Assign('aMsgNotice', $this->GetNotice());
+        $viewer->Assign('aMsgNotice', $this->GetNotice());*/
     }
 
     /**

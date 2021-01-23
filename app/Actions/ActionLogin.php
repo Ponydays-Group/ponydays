@@ -279,7 +279,8 @@ class ActionLogin extends Action
                 if (!$oReminder->getIsUsed() and strtotime($oReminder->getDateExpire()) > time() and
                     $oUser = LS::Make(ModuleUser::class)->GetUserById($oReminder->getUserId())
                 ) {
-                    $sNewPassword = func_generator(7);
+                    $bytes = openssl_random_pseudo_bytes(18);
+                    $sNewPassword = substr(preg_replace("/[^a-zA-Z0-9]/", "", base64_encode($bytes)), 0, 16);
                     $oUser->setPassword(LS::Make(ModuleCrypto::class)->PasswordHash($sNewPassword));
                     if (LS::Make(ModuleUser::class)->Update($oUser)) {
                         $oReminder->setDateUsed(date("Y-m-d H:i:s"));

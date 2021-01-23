@@ -43,7 +43,7 @@ class EntityUser extends Entity
         ['login', 'login_exists', 'on' => ['registration']],
         ['mail', 'email', 'allowEmpty' => false, 'on' => ['registration', '']],
         ['mail', 'mail_exists', 'on' => ['registration']],
-        ['password', 'string', 'allowEmpty' => false, 'min' => 5, 'on' => ['registration']],
+        ['password', 'string', 'allowEmpty' => false, 'min' => 8, 'on' => ['registration']],
         ['password_confirm', 'compare', 'compareField' => 'password', 'on' => ['registration']],
     ];
 

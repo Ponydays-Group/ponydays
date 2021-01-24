@@ -4,20 +4,21 @@ namespace Engine\Result\View;
 
 use Engine\LS;
 use Engine\Modules\ModuleViewer;
+use Engine\Result\Traits\IWithVariables;
 use Engine\Result\Traits\Messages;
-use Engine\Result\Traits\WithVariables;
+use Engine\Result\Traits\WithVariablesArray;
 use Engine\Routing\Router;
 
-class HtmlView extends View
+class HtmlView extends View implements IWithVariables
 {
-    use WithVariables;
+    use WithVariablesArray;
     use Messages;
     /**
      * @var string
      */
     private $path;
     /**
-     * @var string
+     * @var string|array
      */
     private $title = null;
     /**
@@ -35,7 +36,7 @@ class HtmlView extends View
         $this->meta = new HtmlMeta();
     }
 
-    public function withHtmlTitle(string $title): self
+    public function withHtmlTitle($title): self
     {
         $this->title = $title;
 
@@ -87,7 +88,15 @@ class HtmlView extends View
 
     protected function setup(ModuleViewer $viewer)
     {
-        if ($this->title != null) $viewer->AddHtmlTitle($this->title);
+        if ($this->title != null) {
+            if (is_string($this->title)) {
+                $viewer->AddHtmlTitle($this->title);
+            } else if (is_array($this->title)) {
+                foreach ($this->title as $title) {
+                    $viewer->AddHtmlTitle($title);
+                }
+            }
+        }
         foreach ($this->getVariables() as $key => $value) {
             $viewer->Assign($key, $value);
         }

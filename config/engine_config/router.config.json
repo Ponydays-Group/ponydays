@@ -41,7 +41,6 @@
             "quotes":           "App\\Actions\\ActionQuotes",
             "server":           "App\\Actions\\ActionServer",
             "info":             "App\\Actions\\ActionInfo",
-            "voice":            "App\\Actions\\ActionVoice",
             "api":              "App\\Actions\\ActionApi"
         },
         "config": {

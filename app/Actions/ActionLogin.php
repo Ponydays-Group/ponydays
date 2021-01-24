@@ -59,7 +59,7 @@ class ActionLogin extends Controller
      *
      * @return \Engine\Result\View\JsonView
      */
-    protected function ajaxLogin(ModuleMessage $message, ModuleLang $lang, ModuleUser $user, ModuleSession $session, ModuleCrypto $crypto): JsonView
+    protected function eventAjaxLogin(ModuleMessage $message, ModuleLang $lang, ModuleUser $user, ModuleSession $session, ModuleCrypto $crypto): JsonView
     {
         /**
          * Логин и пароль являются строками?
@@ -142,7 +142,7 @@ class ActionLogin extends Controller
      *
      * @return \Engine\Result\Redirect|\Engine\Result\View\HtmlView
      */
-    protected function reactivation(ModuleUser $user, ModuleLang $lang)
+    protected function eventReactivation(ModuleUser $user, ModuleLang $lang)
     {
         if ($user->GetUserCurrent()) {
             return Redirect::to(Config::Get('path.root.web').'/');
@@ -161,7 +161,7 @@ class ActionLogin extends Controller
      *
      * @return \Engine\Result\View\JsonView
      */
-    protected function ajaxReactivation(ModuleMessage $message, ModuleLang $lang, ModuleUser $user, ModuleNotify $notify): JsonView
+    protected function eventAjaxReactivation(ModuleMessage $message, ModuleLang $lang, ModuleUser $user, ModuleNotify $notify): JsonView
     {
         if ((func_check(getRequestStr('mail'), 'mail') and $oUser = $user->GetUserByMail(getRequestStr('mail')))) {
             if ($oUser->getActivate()) {
@@ -193,7 +193,7 @@ class ActionLogin extends Controller
      *
      * @return \Engine\Result\Result
      */
-    protected function login(ModuleUser $user, ModuleLang $lang): Result
+    protected function eventLogin(ModuleUser $user, ModuleLang $lang): Result
     {
         /**
          * Если уже авторизирован
@@ -213,7 +213,7 @@ class ActionLogin extends Controller
      *
      * @return \Engine\Result\View\HtmlView
      */
-    protected function exit(ModuleSecurity $security, ModuleUser $user): HtmlView
+    protected function eventExit(ModuleSecurity $security, ModuleUser $user): HtmlView
     {
         $security->ValidateSendForm();
         $user->Logout();
@@ -224,7 +224,7 @@ class ActionLogin extends Controller
     /**
      * Ajax запрос на восстановление пароля
      */
-    protected function ajaxReminder(ModuleUser $user, ModuleMessage $message, ModuleLang $lang, ModuleNotify $notify): JsonView
+    protected function eventAjaxReminder(ModuleUser $user, ModuleMessage $message, ModuleLang $lang, ModuleNotify $notify): JsonView
     {
         /**
          * Пользователь с таким емайлом существует?
@@ -262,7 +262,7 @@ class ActionLogin extends Controller
      * @param \App\Modules\ModuleCrypto     $crypto
      * @param string                        $key
      */
-    protected function reminder(ModuleUser $user, ModuleMessage $message, ModuleLang $lang, ModuleNotify $notify, ModuleCrypto $crypto, string $key)
+    protected function eventReminder(ModuleUser $user, ModuleMessage $message, ModuleLang $lang, ModuleNotify $notify, ModuleCrypto $crypto, string $key)
     {
         /**
          * Проверка кода на восстановление пароля и генерация нового пароля

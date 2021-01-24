@@ -55,7 +55,7 @@ class ActionError extends Controller
      *
      * @return \Engine\Result\View\View
      */
-    public function error(ModuleLang $lang, string $event = '400', HttpException $httpException = null): View
+    public function eventError(ModuleLang $lang, string $event = '400', HttpException $httpException = null): View
     {
         $view = HtmlView::by('error/index')->withHtmlTitle($lang->Get('error'));
         /**

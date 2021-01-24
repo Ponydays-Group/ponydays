@@ -16,6 +16,8 @@ use Engine\Result\View\AjaxView;
 use Engine\Result\View\HtmlView;
 use Engine\Result\View\View;
 use Engine\Routing\Controller;
+use Engine\Routing\Controller\DefaultVariablesProvider;
+use Engine\Routing\Controller\IResultPostprocessor;
 use Engine\Routing\Exception\Http\ForbiddenHttpException;
 
 /**
@@ -24,20 +26,22 @@ use Engine\Routing\Exception\Http\ForbiddenHttpException;
  * /quotes/ etc
  * Silvman
  */
-class ActionQuotes extends Controller
+class ActionQuotes extends Controller implements IResultPostprocessor
 {
+    use DefaultVariablesProvider;
     /**
      * Текущий пользователь
      *
      * @var EntityUser|null
      */
     protected $oUserCurrent = null;
-    /**
-     * Главное меню
-     *
-     * @var string
-     */
-    protected $sMenuHeadItemSelect = 'quotes';
+
+    protected $templateDefaults = [
+        /**
+         * Главное меню
+         */
+        'sMenuHeadItemSelect' => 'quotes'
+    ];
 
     /**
      * Инициализация
@@ -50,10 +54,6 @@ class ActionQuotes extends Controller
         $user = LS::Make(ModuleUser::class);
 
         $this->oUserCurrent = $user->GetUserCurrent();
-
-        if ($user->IsAuthorization() && $this->oUserCurrent) {
-            LS::Make(ModuleViewer::class)->Assign('sMenuHeadItemSelect', $this->sMenuHeadItemSelect);
-        }
     }
 
     /**
@@ -66,7 +66,7 @@ class ActionQuotes extends Controller
      *
      * @return \Engine\Result\View\View
      */
-    protected function view(ModuleQuotes $quotes, ModuleViewer $viewer, ModuleLang $lang, int $page = 0): View
+    protected function eventView(ModuleQuotes $quotes, ModuleViewer $viewer, ModuleLang $lang, int $page = 0): View
     {
         $iCountQuotes = $quotes->GetCount();
 
@@ -112,7 +112,7 @@ class ActionQuotes extends Controller
      * @param \Engine\Modules\ModuleViewer $viewer
      * @param \App\Modules\ModuleQuotes    $quotes
      */
-    protected function random(ModuleViewer $viewer, ModuleQuotes $quotes)
+    protected function eventRandom(ModuleViewer $viewer, ModuleQuotes $quotes)
     {
         $viewer->SetResponseAjax('json');
         $aQuote = $quotes->GetRandomQuote();
@@ -130,7 +130,7 @@ class ActionQuotes extends Controller
      *
      * @return \Engine\Result\Result
      */
-    protected function edit(ModuleViewer $viewer, ModuleQuotes $quotes, ModuleMessage $message, ModuleLang $lang): Result
+    protected function eventEdit(ModuleViewer $viewer, ModuleQuotes $quotes, ModuleMessage $message, ModuleLang $lang): Result
     {
         if (!$this->IsAdmin()) {
             throw new ForbiddenHttpException();
@@ -202,7 +202,7 @@ class ActionQuotes extends Controller
      *
      * @return bool|string
      */
-    protected function trash(ModuleQuotes $quotes, ModuleLang $lang)
+    protected function eventTrash(ModuleQuotes $quotes, ModuleLang $lang)
     {
         if (!$this->IsAdmin()) {
             throw new ForbiddenHttpException();
@@ -245,7 +245,7 @@ class ActionQuotes extends Controller
      *
      * @return \Engine\Result\Redirect
      */
-    protected function findQuote(ModuleQuotes $quotes, int $id): Redirect
+    protected function eventFindQuote(ModuleQuotes $quotes, int $id): Redirect
     {
         $iPage = $quotes->getPageById($id);
 

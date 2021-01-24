@@ -4,14 +4,13 @@ namespace Engine\Result\View;
 
 use Engine\LS;
 use Engine\Modules\ModuleViewer;
-use Engine\Result\Traits\JsonFromEmpty;
-use Engine\Result\Traits\WithVariables;
+use Engine\Result\Traits\IWithVariables;
+use Engine\Result\Traits\WithVariablesArray;
 use Engine\Routing\Router;
 
-class JsonView extends View
+class JsonView extends View implements IWithVariables
 {
-    use WithVariables;
-    use JsonFromEmpty;
+    use WithVariablesArray;
 
     public function __construct(array $vars = [])
     {
@@ -33,5 +32,15 @@ class JsonView extends View
     public function fetch(): string
     {
         return json_encode($this->getVariables());
+    }
+
+    public static function from(array $vars): self
+    {
+        return new self($vars);
+    }
+
+    public static function empty(): self
+    {
+        return new self();
     }
 }

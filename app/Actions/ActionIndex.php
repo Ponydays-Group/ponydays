@@ -35,42 +35,32 @@ use Engine\Routing\Controller;
  */
 class ActionIndex extends Controller
 {
-    /**
-     * Главное меню
-     *
-     * @var string
-     */
-    protected $sMenuHeadItemSelect = 'blog';
-    /**
-     * Меню
-     *
-     * @var string
-     */
-    protected $sMenuItemSelect = 'index';
-    /**
-     * Субменю
-     *
-     * @var string
-     */
-    protected $sMenuSubItemSelect = 'good';
-    /**
-     * Число новых топиков
-     *
-     * @var int
-     */
-    protected $iCountTopicsNew = 0;
-    /**
-     * Число новых топиков в коллективных блогах
-     *
-     * @var int
-     */
-    protected $iCountTopicsCollectiveNew = 0;
-    /**
-     * Число новых топиков в персональных блогах
-     *
-     * @var int
-     */
-    protected $iCountTopicsPersonalNew = 0;
+    protected $defaults = [
+        /**
+         * Главное меню
+         */
+        'sMenuHeadItemSelect' => 'blog',
+        /**
+         * Меню
+         */
+        'sMenuItemSelect' => 'index',
+        /**
+         * Субменю
+         */
+        'sMenuSubItemSelect' => 'good',
+        /**
+         * Число новых топиков
+         */
+        'iCountTopicsNew' => 0,
+        /**
+         * Число новых топиков в коллективных блогах
+         */
+        'iCountTopicsCollectiveNew' => 0,
+        /**
+         * Число новых топиков в персональных блогах
+         */
+        'iCountTopicsPersonalNew' => 0
+    ];
 
     /**
      * Инициализация
@@ -83,26 +73,25 @@ class ActionIndex extends Controller
         /**
          * Подсчитываем новые топики
          */
-        $this->iCountTopicsCollectiveNew = $topic->GetCountTopicsCollectiveNew();
-        $this->iCountTopicsPersonalNew = $topic->GetCountTopicsPersonalNew();
-        $this->iCountTopicsNew = $this->iCountTopicsCollectiveNew + $this->iCountTopicsPersonalNew;
+        $this->defaults['iCountTopicsCollectiveNew'] = $topic->GetCountTopicsCollectiveNew();
+        $this->defaults['iCountTopicsPersonalNew'] = $topic->GetCountTopicsPersonalNew();
+        $this->defaults['iCountTopicsNew'] = $this->defaults['iCountTopicsCollectiveNew'] + $this->defaults['iCountTopicsPersonalNew'];
     }
 
     /**
      * Вывод ВСЕХ новых топиков
      *
-     * @param \Engine\Modules\ModuleViewer $viewer
-     * @param \App\Modules\ModuleTopic     $topic
-     * @param int                          $page
+     * @param \App\Modules\ModuleTopic $topic
+     * @param int                      $page
      *
      * @return \Engine\Result\View\View
      */
-    protected function newall(ModuleTopic $topic, int $page = 1)
+    protected function eventNewall(ModuleTopic $topic, int $page = 1)
     {
         /**
          * Меню
          */
-        $this->sMenuSubItemSelect = 'newall';
+        $this->defaults['sMenuSubItemSelect'] = 'newall';
         /**
          * Получаем список топиков
          */
@@ -120,7 +109,7 @@ class ActionIndex extends Controller
             '/index/newall'
         );
 
-        $view = HtmlView::by('index/index')->with([
+        $view = HtmlView::by('index/index')->with($this->defaults)->with([
             'aTopics' => $aTopics,
             'aPaging' => $paging->toArray(),
             'sMenuHeadItemSelect' => 'newall'
@@ -140,29 +129,13 @@ class ActionIndex extends Controller
      *
      * @return \Engine\Result\Action
      */
-    protected function index(ModuleViewer $viewer, ModuleUser $user, int $page = 1): Action
+    protected function eventIndex(ModuleViewer $viewer, ModuleUser $user, int $page = 1): Action
     {
         $viewer->Assign('sMenuHeadItemSelect', 'blog');
         if ($user->getUserCurrent()) {
-            return Action::by('feed#index')->with(['page' => $page]);
+            return Action::by('feed#index')->with($this->defaults)->with(['page' => $page]);
         } else {
-            return Action::by('index#newall')->with(['page' => $page]);
+            return Action::by('index#newall')->with($this->defaults)->with(['page' => $page]);
         }
-    }
-
-    /**
-     * При завершении экшена загружаем переменные в шаблон
-     *
-     */
-    public function shutdown()
-    {
-        /** @var ModuleViewer $viewer */
-        $viewer = LS::Make(ModuleViewer::class);
-
-        $viewer->Assign('sMenuItemSelect', $this->sMenuItemSelect);
-        $viewer->Assign('sMenuSubItemSelect', $this->sMenuSubItemSelect);
-        $viewer->Assign('iCountTopicsNew', $this->iCountTopicsNew);
-        $viewer->Assign('iCountTopicsCollectiveNew', $this->iCountTopicsCollectiveNew);
-        $viewer->Assign('iCountTopicsPersonalNew', $this->iCountTopicsPersonalNew);
     }
 }

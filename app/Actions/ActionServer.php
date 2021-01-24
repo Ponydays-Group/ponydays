@@ -26,7 +26,7 @@ class ActionServer extends Controller
      */
     protected $oUserCurrent = null;
 
-    protected function deploy(): JsonView
+    protected function eventDeploy(): JsonView
     {
         if (!hash_equals(getRequest('token'), Config::Get('deploy_token'))) {
             return JsonView::from([
@@ -55,7 +55,7 @@ class ActionServer extends Controller
         ]);
     }
 
-    protected function getUserByKey(ModuleUser $user): JsonView
+    protected function eventGetUserByKey(ModuleUser $user): JsonView
     {
         if (!hash_equals(getRequest('token'), Config::Get('deploy_token'))) {
             return JsonView::from([
@@ -79,7 +79,7 @@ class ActionServer extends Controller
         ]);
     }
 
-    protected function hasTopicAccess(ModuleUser $user, ModuleTopic $topic, ModuleBlog $blog): JsonView
+    protected function eventHasTopicAccess(ModuleUser $user, ModuleTopic $topic, ModuleBlog $blog): JsonView
     {
         if (!hash_equals(getRequest('token'), Config::Get('deploy_token'))) {
             return JsonView::from(['bAccess' => false]);
@@ -122,7 +122,7 @@ class ActionServer extends Controller
         return JsonView::from(['bAccess' => true]);
     }
 
-    function hasTalkAccess(ModuleTalk $talk): JsonView
+    function eventHasTalkAccess(ModuleTalk $talk): JsonView
     {
         if (!hash_equals(getRequest('token'), Config::Get('deploy_token'))) {
             return JsonView::from(['bAccess' => false]);

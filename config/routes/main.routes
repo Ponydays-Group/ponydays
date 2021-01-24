@@ -61,6 +61,11 @@ GROUP '/server' (
     ANY '/hastalkaccess' to 'server#hasTalkAccess';
 );
 
+# ActionTag
+GROUP '/tag' (
+    ANY '/{tag}[/page{page:[1-9]\d*}]' to 'tag#tags';
+);
+
 # ActionUserfeed
 GROUP '/feed' (
     ANY '/' to 'feed#index';

@@ -9,6 +9,7 @@ use Engine\Resolving\Type\Type;
 use Engine\Resolving\Type\TypeArray;
 use Engine\Result\Action;
 use Engine\Result\Result;
+use Engine\Routing\Controller\IResultPostprocessor;
 use Engine\Routing\Exception\Http\BadRequestHttpException;
 use Engine\Routing\Exception\Http\HttpException;
 use Engine\Routing\Exception\Http\MethodNotAllowedHttpException;
@@ -64,7 +65,7 @@ class Router
             }
         }, [
             'cacheFile' => Config::Get('router.cacheFile'),
-            'cacheDisabled' => true
+            'cacheDisabled' => true //TODO: Set to false
         ]);
     }
     
@@ -131,7 +132,7 @@ class Router
     public function runAction(Action $action)
     {
         $controller = $this->provideController($action->getControllerName());
-        $method = $action->getMethodName();
+        $method = $action->getRealMethodName();
         $vars = $action->getVariables();
 
         \Engine\Router::SetAction($controller);
@@ -157,6 +158,9 @@ class Router
         }
 
         if ($result instanceof Result) {
+            if ($controller instanceof IResultPostprocessor) {
+                $result = $controller->__handleResult($result);
+            }
             $result->render($this);
         }
     }

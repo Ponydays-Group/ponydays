@@ -32,6 +32,8 @@ use Engine\Result\View\AjaxView;
 use Engine\Result\View\HtmlView;
 use Engine\Result\View\JsonView;
 use Engine\Routing\Controller;
+use Engine\Routing\Controller\DefaultVariablesProvider;
+use Engine\Routing\Controller\IResultPostprocessor;
 use Engine\Routing\Exception\Http\NotFoundHttpException;
 
 /**
@@ -40,14 +42,22 @@ use Engine\Routing\Exception\Http\NotFoundHttpException;
  * @package actions
  * @since   1.0
  */
-class ActionUserfeed extends Controller
+class ActionUserfeed extends Controller implements IResultPostprocessor
 {
+    use DefaultVariablesProvider;
     /**
      * Текущий пользователь
      *
      * @var EntityUser|null
      */
     protected $oUserCurrent;
+
+    protected $templateDefaults = [
+        /**
+         * Главное меню
+         */
+        'sMenuItemSelect' => 'feed'
+    ];
 
     /**
      * Инициализация
@@ -62,8 +72,6 @@ class ActionUserfeed extends Controller
         if (!$this->oUserCurrent) {
             throw new NotFoundHttpException();
         }
-
-        LS::Make(ModuleViewer::class)->Assign('sMenuItemSelect', 'feed');
     }
 
     /**
@@ -74,7 +82,7 @@ class ActionUserfeed extends Controller
      *
      * @return \Engine\Result\View\HtmlView
      */
-    protected function index(ModuleUserfeed $feed, ModuleHook $hook)
+    protected function eventIndex(ModuleUserfeed $feed, ModuleHook $hook)
     {
         /**
          * Получаем топики
@@ -111,7 +119,7 @@ class ActionUserfeed extends Controller
      *
      * @return \Engine\Result\View\JsonView
      */
-    protected function getMore(ModuleUserfeed $feed, ModuleViewer $viewer, ModuleMessage $message, ModuleLang $lang, ModuleHook $hook): JsonView
+    protected function eventGetMore(ModuleUserfeed $feed, ModuleViewer $viewer, ModuleMessage $message, ModuleLang $lang, ModuleHook $hook): JsonView
     {
         /**
          * Проверяем последний просмотренный ID топика
@@ -161,7 +169,7 @@ class ActionUserfeed extends Controller
      *
      * @return \Engine\Result\View\JsonView
      */
-    protected function subscribe(ModuleBlog $blog, ModuleUser $user, ModuleUserfeed $feed, ModuleMessage $message, ModuleLang $lang): JsonView
+    protected function eventSubscribe(ModuleBlog $blog, ModuleUser $user, ModuleUserfeed $feed, ModuleMessage $message, ModuleLang $lang): JsonView
     {
         /**
          * Проверяем наличие ID блога или пользователя
@@ -217,7 +225,7 @@ class ActionUserfeed extends Controller
      * Подписка на пользвователя по логину
      *
      */
-    protected function subscribeByLogin(ModuleUser $user, ModuleUserfeed $feed, ModuleMessage $message, ModuleLang $lang): JsonView
+    protected function eventSubscribeByLogin(ModuleUser $user, ModuleUserfeed $feed, ModuleMessage $message, ModuleLang $lang): JsonView
     {
         /**
          * Передан ли логин
@@ -270,7 +278,7 @@ class ActionUserfeed extends Controller
      *
      * @return \Engine\Result\View\JsonView
      */
-    protected function unsubscribe(ModuleUserfeed $feed, ModuleMessage $message, ModuleLang $lang): JsonView
+    protected function eventUnsubscribe(ModuleUserfeed $feed, ModuleMessage $message, ModuleLang $lang): JsonView
     {
         if (!getRequest('id')) {
             $message->AddError($lang->Get('system_error'), $lang->Get('error'));
@@ -313,7 +321,7 @@ class ActionUserfeed extends Controller
      *
      * @return \Engine\Result\View\JsonView
      */
-    protected function subscribeAll(ModuleBlog $blog, ModuleUserfeed $feed, ModuleMessage $message, ModuleLang $lang): JsonView
+    protected function eventSubscribeAll(ModuleBlog $blog, ModuleUserfeed $feed, ModuleMessage $message, ModuleLang $lang): JsonView
     {
         /**
          * Устанавливаем формат Ajax ответа
@@ -343,7 +351,7 @@ class ActionUserfeed extends Controller
      *
      * @return \Engine\Result\View\JsonView
      */
-    protected function unsubscribeAll(ModuleBlog $blog, ModuleUserfeed $feed, ModuleMessage $message, ModuleLang $lang): JsonView
+    protected function eventUnsubscribeAll(ModuleBlog $blog, ModuleUserfeed $feed, ModuleMessage $message, ModuleLang $lang): JsonView
     {
         $aBlogs = $blog->GetBlogs();
         foreach ($aBlogs as $iBlogId) {

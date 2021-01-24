@@ -2,7 +2,7 @@
 
 namespace Engine\Result\Traits;
 
-trait WithVariables
+trait WithVariablesArray
 {
     /**
      * @var array
@@ -12,6 +12,13 @@ trait WithVariables
     public function with(array $vars): self
     {
         $this->vars = array_merge($this->vars, $vars);
+
+        return $this;
+    }
+
+    public function withDefault(array $vars): self
+    {
+        $this->vars = array_merge($vars, $this->vars);
 
         return $this;
     }

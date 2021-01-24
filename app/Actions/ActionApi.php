@@ -42,7 +42,7 @@ class ActionApi extends Controller
      *
      * @return \Engine\Result\View\JsonView
      */
-    protected function ajaxLogin(ModuleUser $user, ModuleAPI $api, ModuleCrypto $crypto): JsonView
+    protected function eventAjaxLogin(ModuleUser $user, ModuleAPI $api, ModuleCrypto $crypto): JsonView
     {
         //Проверяем тип запроса. Если не POST - возвращаем ошибку 400
         if ($_SERVER['REQUEST_METHOD'] != "POST") {

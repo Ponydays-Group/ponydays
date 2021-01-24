@@ -2,14 +2,12 @@
 
 namespace Engine\Result\View;
 
-use Engine\Result\Traits\JsonFromEmpty;
 use Engine\Result\Traits\Messages;
 use Engine\Routing\Router;
 
 class AjaxView extends JsonView
 {
     use Messages;
-    use JsonFromEmpty;
 
     public function render(Router $router)
     {
@@ -39,5 +37,15 @@ class AjaxView extends JsonView
         $vars['bStateError'] = $stateError;
 
         return json_encode($vars);
+    }
+
+    public static function from(array $vars): self
+    {
+        return new self($vars);
+    }
+
+    public static function empty(): self
+    {
+        return new self();
     }
 }

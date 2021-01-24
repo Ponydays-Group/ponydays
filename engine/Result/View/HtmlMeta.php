@@ -3,7 +3,6 @@
 namespace Engine\Result\View;
 
 use App\Modules\ModuleTools;
-use Engine\Result\Traits\WithVariables;
 
 class HtmlMeta
 {

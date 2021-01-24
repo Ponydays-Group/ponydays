@@ -2,12 +2,13 @@
 
 namespace Engine\Result;
 
-use Engine\Result\Traits\WithVariables;
+use Engine\Result\Traits\IWithVariables;
+use Engine\Result\Traits\WithVariablesArray;
 use Engine\Routing\Router;
 
-class Action extends Result
+class Action extends Result implements IWithVariables
 {
-    use WithVariables;
+    use WithVariablesArray;
     /**
      * @var string
      */
@@ -31,6 +32,11 @@ class Action extends Result
     public function getMethodName(): string
     {
         return $this->methodName;
+    }
+
+    public function getRealMethodName(): string
+    {
+        return 'event'.$this->getMethodName();
     }
 
     public function __toString(): string

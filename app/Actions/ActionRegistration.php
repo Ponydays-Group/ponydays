@@ -185,13 +185,19 @@ class ActionRegistration extends Action
          * Устанавливаем формат Ajax ответа
          */
         LS::Make(ModuleViewer::class)->SetResponseAjax('json');
-        if (Config::Get('reCaptcha.enabled')) {
-            $recaptcha = new \ReCaptcha\ReCaptcha(Config::Get('reCaptcha.secret'));
-            $recaptcha->setExpectedHostname(Config::Get('reCaptcha.expected_hostname'));
-            $sCaptchaResponse = getRequest('g-recaptcha-response');
+        if (Config::Get('captcha.enabled')) {
+            $curl = curl_init();
+            curl_setopt($curl, CURLOPT_URL, "https://hcaptcha.com/siteverify");
+            curl_setopt($curl, CURLOPT_POST, true);
+            curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query([
+                'secret' => Config::Get('captcha.secret'),
+                'response' => $_POST['h-captcha-response']
+                ]));
+            curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+            $resp = curl_exec($curl);
 
-            $resp = $recaptcha->verify($sCaptchaResponse, $_SERVER['REMOTE_ADDR']);
-            if (!$resp->isSuccess()) {
+            $respData = json_decode($resp);
+            if (!$respData->success) {
                 LS::Make(ModuleMessage::class)->AddErrorSingle(LS::Make(ModuleLang::class)->Get('registration_captcha_error'));
 
                 return;

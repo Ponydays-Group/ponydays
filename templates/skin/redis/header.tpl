@@ -94,8 +94,8 @@
         ls.registry.set('block_stream_show_tip',{json var=$oConfig->Get('block.stream.show_tip')});
     </script>
 
-    {if $oConfig->GetValue('reCaptcha.enabled')}
-    <script src='https://www.google.com/recaptcha/api.js'></script>
+    {if $oConfig->GetValue('captcha.enabled')}
+    <script src="https://hcaptcha.com/1/api.js" async defer></script>
     {/if}
 
     <link rel="stylesheet" href="/static/relevant/{$oConfig->GetValue("frontend.webpack.`$oConfig->GetValue('theme')`.css")}" type="text/css"/>

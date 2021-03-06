@@ -1,4 +1,6 @@
 {
+  "name": "ponydays/ponydays",
+  "description": "",
   "require": {
     "ext-msgpack": "^2",
     "ext-openssl": "*",

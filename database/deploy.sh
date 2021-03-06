@@ -110,7 +110,7 @@ rebuild_frontend() {
 
 update_composer() {
     log "Updating Composer..."
-    ./composer.phar --ansi -n i &> ./tmp/composer.deploy.out
+    ./composer.phar --ansi -n --no-dev -o i &> ./tmp/composer.deploy.out
     rc=$?
     if [[ ${rc} != 0 ]]
     then

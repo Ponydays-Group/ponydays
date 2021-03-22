@@ -29,13 +29,15 @@ GROUP '/ajax' (
     GROUP '/upload' (
 	    ANY '/image' to 'ajax/upload#uploadImage';
     );
-	ANY '/autocompleter/tag' to 'ajax#autocompleterTag';
-	ANY '/autocompleter/user' to 'ajax#autocompleterUser';
-
+    GROUP '/autocompleter' (
+        ANY '/tag' to 'ajax/autocompleter#autocompleterTag';
+        ANY '/user' to 'ajax/autocompleter#autocompleterUser';
+    );
+    GROUP '/geo' (
+        ANY '/get/regions' to 'ajax/geo#geoGetRegions';
+        ANY '/get/cities' to 'ajax/geo#geoGetCities';
+    );
 	ANY '/comment/delete' to 'ajax#commentDelete';
-
-	ANY '/geo/get/regions' to 'ajax#geoGetRegions';
-	ANY '/get/get/cities' to 'ajax#geoGetCities';
 
 	ANY '/infobox/info/blog' to 'ajax#infoboxInfoBlog';
 	ANY '/askinvite' to 'ajax#inviteUser';

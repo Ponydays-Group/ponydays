@@ -16,7 +16,7 @@ class ActionAjaxAutocompleter extends Controller
      *
      * @return \Engine\Result\View\AjaxView
      */
-    protected function EventAutocompleterTag(ModuleTopic $topic): AjaxView
+    protected function eventAutocompleterTag(ModuleTopic $topic): AjaxView
     {
         /**
          * Первые буквы тега переданы?
@@ -44,7 +44,7 @@ class ActionAjaxAutocompleter extends Controller
      *
      * @return \Engine\Result\View\AjaxView
      */
-    protected function EventAutocompleterUser(ModuleUser $user)
+    protected function eventAutocompleterUser(ModuleUser $user)
     {
         /**
          * Первые буквы логина переданы?

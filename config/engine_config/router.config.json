@@ -30,6 +30,7 @@
                 "preview":      "App\\Actions\\Ajax\\ActionAjaxPreview",
                 "upload":       "App\\Actions\\Ajax\\ActionAjaxUpload",
                 "geo":          "App\\Actions\\Ajax\\ActionAjaxGeo",
+                "ban":          "App\\Actions\\Ajax\\ActionAjaxBan",
                 "autocompleter":"App\\Actions\\Ajax\\ActionAjaxAutocompleter"
             },
             "feed":             "App\\Actions\\ActionUserfeed",

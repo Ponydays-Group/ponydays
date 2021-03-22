@@ -22,9 +22,10 @@ GROUP '/ajax' (
         ANY '/self' to 'ajax/blogs#blogsSelf';
         ANY '/join' to 'ajax/blogs#blogsJoin';
     );
-	ANY '/preview/text' to 'ajax#previewText';
-	ANY '/preview/topic' to 'ajax#previewTopic';
-
+    GROUP '/preview' (
+        ANY '/text' to 'ajax/preview#previewText';
+        ANY '/topic' to 'ajax/preview#previewTopic';
+    );
 	ANY '/upload/image' to 'ajax#uploadImage';
 
 	ANY '/autocompleter/tag' to 'ajax#autocompleterTag';

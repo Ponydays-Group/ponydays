@@ -7,11 +7,12 @@ GROUP '/ajax' (
         ANY '/blog' to 'ajax/vote#voteBlog';
         ANY '/question' to 'ajax/vote#voteQuestion';
     );
-	ANY '/favourite/save-tags' to 'ajax#favouriteSaveTags';
-	ANY '/favourite/topic' to 'ajax#favouriteTopic';
-	ANY '/favourite/comment' to 'ajax#favouriteComment';
-	ANY '/favourite/talk' to 'ajax#favouriteTalk';
-
+    GROUP '/favourite' (
+	    ANY '/save-tags' to 'ajax/favourite#favouriteSaveTags';
+	    ANY '/topic' to 'ajax/favourite#favouriteTopic';
+	    ANY '/comment' to 'ajax/favourite#favouriteComment';
+	    ANY '/talk' to 'ajax/favourite#favouriteTalk';
+    );
 	ANY '/stream/comment' to 'ajax#streamComment';
 	ANY '/stream/topic' to 'ajax#streamTopic';
 

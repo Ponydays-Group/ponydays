@@ -36,7 +36,7 @@ class Action extends Result implements IWithVariables
 
     public function getRealMethodName(): string
     {
-        return 'event'.$this->getMethodName();
+        return 'event'.ucfirst($this->getMethodName());
     }
 
     public function __toString(): string

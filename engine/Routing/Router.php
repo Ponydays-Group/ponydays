@@ -65,7 +65,7 @@ class Router
             }
         }, [
             'cacheFile' => Config::Get('router.cacheFile'),
-            'cacheDisabled' => true //TODO: Set to false
+            'cacheDisabled' => Config::Get('router.cacheDisabled')
         ]);
     }
     

@@ -1,48 +1,49 @@
 # ActionAjax
 GROUP '/ajax' (
     GROUP '/vote' (
-        ANY '/comment' to 'ajax/vote#EventVoteComment';
-        ANY '/topic' to 'ajax/vote#EventVoteTopic';
-        ANY '/user' to 'ajax/vote#EventVoteUser';
-        ANY '/question' to 'ajax/vote#EventVoteQuestion';
+        ANY '/comment' to 'ajax/vote#voteComment';
+        ANY '/topic' to 'ajax/vote#voteTopic';
+        ANY '/user' to 'ajax/vote#voteUser';
+        ANY '/blog' to 'ajax/vote#voteBlog';
+        ANY '/question' to 'ajax/vote#voteQuestion';
     );
-	ANY '/favourite/save-tags' to 'ajax#EventFavouriteSaveTags';
-	ANY '/favourite/topic' to 'ajax#EventFavouriteTopic';
-	ANY '/favourite/comment' to 'ajax#EventFavouriteComment';
-	ANY '/favourite/talk' to 'ajax#EventFavouriteTalk';
+	ANY '/favourite/save-tags' to 'ajax#favouriteSaveTags';
+	ANY '/favourite/topic' to 'ajax#favouriteTopic';
+	ANY '/favourite/comment' to 'ajax#favouriteComment';
+	ANY '/favourite/talk' to 'ajax#favouriteTalk';
 
-	ANY '/stream/comment' to 'ajax#EventStreamComment';
-	ANY '/stream/topic' to 'ajax#EventStreamTopic';
+	ANY '/stream/comment' to 'ajax#streamComment';
+	ANY '/stream/topic' to 'ajax#streamTopic';
 
-	ANY '/blogs/top' to 'ajax#EventBlogsTop';
-	ANY '/blogs/self' to 'ajax#EventBlogsSelf';
-	ANY '/blogs/join' to 'ajax#EventBlogsJoin';
+	ANY '/blogs/top' to 'ajax#blogsTop';
+	ANY '/blogs/self' to 'ajax#blogsSelf';
+	ANY '/blogs/join' to 'ajax#blogsJoin';
 
-	ANY '/preview/text' to 'ajax#EventPreviewText';
-	ANY '/preview/topic' to 'ajax#EventPreviewTopic';
+	ANY '/preview/text' to 'ajax#previewText';
+	ANY '/preview/topic' to 'ajax#previewTopic';
 
-	ANY '/upload/image' to 'ajax#EventUploadImage';
+	ANY '/upload/image' to 'ajax#uploadImage';
 
-	ANY '/autocompleter/tag' to 'ajax#EventAutocompleterTag';
-	ANY '/autocompleter/user' to 'ajax#EventAutocompleterUser';
+	ANY '/autocompleter/tag' to 'ajax#autocompleterTag';
+	ANY '/autocompleter/user' to 'ajax#autocompleterUser';
 
-	ANY '/comment/delete' to 'ajax#EventCommentDelete';
+	ANY '/comment/delete' to 'ajax#commentDelete';
 
-	ANY '/geo/get/regions' to 'ajax#EventGeoGetRegions';
-	ANY '/get/get/cities' to 'ajax#EventGeoGetCities';
+	ANY '/geo/get/regions' to 'ajax#geoGetRegions';
+	ANY '/get/get/cities' to 'ajax#geoGetCities';
 
-	ANY '/infobox/info/blog' to 'ajax#EventInfoboxInfoBlog';
-	ANY '/askinvite' to 'ajax#EventInviteUser';
-	ANY '/topic-lock-control' to 'ajax#EventTopicLockControl';
-	ANY '/get-object-votes' to 'ajax#EventGetObjectVotes';
-	ANY '/ignore' to 'ajax#EventIgnoreUser';
-	ANY '/forbid-ignore' to 'ajax#EventForbidIgnoreUser';
+	ANY '/infobox/info/blog' to 'ajax#infoboxInfoBlog';
+	ANY '/askinvite' to 'ajax#inviteUser';
+	ANY '/topic-lock-control' to 'ajax#topicLockControl';
+	ANY '/get-object-votes' to 'ajax#getObjectVotes';
+	ANY '/ignore' to 'ajax#ignoreUser';
+	ANY '/forbid-ignore' to 'ajax#forbidIgnoreUser';
 
-	ANY '/editcomment-gethistory' to 'ajax#EventGetHistory';
-	ANY '/editcomment-getsource' to 'ajax#EventGetSource';
-	ANY '/editcomment-edit' to 'ajax#EventEdit';
+	ANY '/editcomment-gethistory' to 'ajax#getHistory';
+	ANY '/editcomment-getsource' to 'ajax#getSource';
+	ANY '/editcomment-edit' to 'ajax#edit';
 
-	ANY '/comment' to 'ajax#EventGetComment';
+	ANY '/comment' to 'ajax#getComment';
 
-	ANY '/ban' to 'ajax#EventBan';
+	ANY '/ban' to 'ajax#ban';
 );

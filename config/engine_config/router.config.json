@@ -24,12 +24,12 @@
             "admin":            "App\\Actions\\ActionAdmin",
             "ajax": {
                 "vote":         "App\\Actions\\Ajax\\ActionAjaxVote",
-                "favourite":    "App\\Actions\\Ajax\\ActionAjaxVote",
-                "stream":       "App\\Actions\\Ajax\\ActionAjaxVote",
-                "blogs":        "App\\Actions\\Ajax\\ActionAjaxVote",
-                "preview":      "App\\Actions\\Ajax\\ActionAjaxVote",
-                "upload":       "App\\Actions\\Ajax\\ActionAjaxVote",
-                "autocompleter":"App\\Actions\\Ajax\\ActionAjaxVote"
+                "favourite":    "App\\Actions\\Ajax\\ActionAjaxFavourite",
+                "stream":       "App\\Actions\\Ajax\\ActionAjaxStream",
+                "blogs":        "App\\Actions\\Ajax\\ActionAjaxBlogs",
+                "preview":      "App\\Actions\\Ajax\\ActionAjaxPreview",
+                "upload":       "App\\Actions\\Ajax\\ActionAjaxUpload",
+                "autocompleter":"App\\Actions\\Ajax\\ActionAjaxAutocompleter"
             },
             "feed":             "App\\Actions\\ActionUserfeed",
             "stream":           "App\\Actions\\ActionStream",
@@ -50,6 +50,7 @@
             }
         },
         "cacheFile": "./tmp/router_cache.php",
+        "cacheDisabled": true,
         "logFile": "./tmp/router.log",
         "registries": [
             "./config/routes/main.routes",

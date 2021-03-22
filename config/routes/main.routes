@@ -1,14 +1,14 @@
 # ActionAdmin
 GROUP '/admin' (
-	ANY '' to 'admin#EventIndex';
-	ANY '/restorecomment' to 'admin#EventRestoreComment';
-	ANY '/userfields' to 'admin#EventUserfields';
-	ANY '/recalcfavourite' to 'admin#EventRecalculateFavourite';
-	ANY '/recalcvote' to 'admin#EventRecalculateVote';
-	ANY '/recalctopic' to 'admin#EventRecalculateTopic';
-	ANY '/config' to 'admin#EventAdminConfig';
-	ANY '/save' to 'admin#EventAdminConfigSave';
-	ANY '/user' to 'admin#EventSaveUser';
+	ANY '' to 'admin#index';
+	ANY '/restorecomment' to 'admin#restoreComment';
+	ANY '/userfields' to 'admin#userfields';
+	ANY '/recalcfavourite' to 'admin#recalculateFavourite';
+	ANY '/recalcvote' to 'admin#recalculateVote';
+	ANY '/recalctopic' to 'admin#recalculateTopic';
+	ANY '/config' to 'admin#adminConfig';
+	ANY '/save' to 'admin#adminConfigSave';
+	ANY '/user' to 'admin#saveUser';
 );
 
 # ActionApi
@@ -18,10 +18,10 @@ GROUP '/api' (
 
 # ActionBlog
 GROUP '/blog' (
-    ANY '/good[/page{page:[1-9]\d*}]' to 'blog#EventTopics';
-    ANY '/bad[/page{page:[1-9]\d*}]' to 'blog#EventTopics';
+    ANY '/good[/page{page:[1-9]\d*}]' to 'blog#topics';
+    ANY '/bad[/page{page:[1-9]\d*}]' to 'blog#topics';
 
-    ANY '/{blog}/{topic:\d+}' to 'blog#EventShowTopic';
+    ANY '/{blog}/{topic:\d+}' to 'blog#showTopic';
 );
 
 # ActionIndex

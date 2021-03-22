@@ -22,7 +22,7 @@ class ActionAjaxStream extends Controller
      *
      * @return \Engine\Result\View\AjaxView
      */
-    protected function EventStreamComment(ModuleComment $comment, ModuleLang $lang): AjaxView
+    protected function eventStreamComment(ModuleComment $comment, ModuleLang $lang): AjaxView
     {
         if ($aComments = $comment->GetCommentsOnline('topic', Config::Get('block.stream.row'))) {
             return AjaxView::from([
@@ -42,7 +42,7 @@ class ActionAjaxStream extends Controller
      *
      * @return \Engine\Result\View\AjaxView
      */
-    protected function EventStreamTopic(ModuleTopic $topic, ModuleLang $lang): AjaxView
+    protected function eventStreamTopic(ModuleTopic $topic, ModuleLang $lang): AjaxView
     {
         if ($oTopics = $topic->GetTopicsLast(Config::Get('block.stream.row'))) {
             return AjaxView::from([

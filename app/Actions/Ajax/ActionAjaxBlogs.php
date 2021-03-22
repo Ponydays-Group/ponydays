@@ -34,7 +34,7 @@ class ActionAjaxBlogs extends Controller
      *
      * @return \Engine\Result\View\AjaxView
      */
-    protected function EventBlogsTop(ModuleBlog $blog, ModuleLang $lang): AjaxView
+    protected function eventBlogsTop(ModuleBlog $blog, ModuleLang $lang): AjaxView
     {
         /**
          * Получаем список блогов и формируем ответ
@@ -59,7 +59,7 @@ class ActionAjaxBlogs extends Controller
      *
      * @return \Engine\Result\View\AjaxView
      */
-    protected function EventBlogsSelf(ModuleBlog $blog, ModuleLang $lang): AjaxView
+    protected function eventBlogsSelf(ModuleBlog $blog, ModuleLang $lang): AjaxView
     {
         /**
          * Пользователь авторизован?
@@ -89,7 +89,7 @@ class ActionAjaxBlogs extends Controller
      *
      * @return \Engine\Result\View\AjaxView
      */
-    protected function EventBlogsJoin(ModuleBlog $blog, ModuleLang $lang): AjaxView
+    protected function eventBlogsJoin(ModuleBlog $blog, ModuleLang $lang): AjaxView
     {
         /**
          * Пользователь авторизован?

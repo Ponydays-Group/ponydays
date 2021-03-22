@@ -38,7 +38,7 @@ class ActionAjaxPreview extends Controller
      * @return \Engine\Result\View\AjaxView
      * @throws \Exception
      */
-    protected function EventPreviewTopic(ModuleTopic $topic, ModuleViewer $viewer, ModuleText $text, ModuleLang $lang): AjaxView
+    protected function eventPreviewTopic(ModuleTopic $topic, ModuleViewer $viewer, ModuleText $text, ModuleLang $lang): AjaxView
     {
         /**
          * Пользователь авторизован?
@@ -105,7 +105,7 @@ class ActionAjaxPreview extends Controller
      *
      * @return \Engine\Result\View\AjaxView
      */
-    protected function EventPreviewText(ModuleUser $user, ModuleText $text): AjaxView
+    protected function eventPreviewText(ModuleUser $user, ModuleText $text): AjaxView
     {
         $sText = getRequestStr('text', null, 'post');
         $bSave = getRequest('save', null, 'post');

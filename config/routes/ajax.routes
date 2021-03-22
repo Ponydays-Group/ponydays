@@ -26,8 +26,9 @@ GROUP '/ajax' (
         ANY '/text' to 'ajax/preview#previewText';
         ANY '/topic' to 'ajax/preview#previewTopic';
     );
-	ANY '/upload/image' to 'ajax#uploadImage';
-
+    GROUP '/upload' (
+	    ANY '/image' to 'ajax/upload#uploadImage';
+    );
 	ANY '/autocompleter/tag' to 'ajax#autocompleterTag';
 	ANY '/autocompleter/user' to 'ajax#autocompleterUser';
 

@@ -375,51 +375,6 @@ class ActionAjax extends Action
 
 
 
-    /**
-     * Обработка получения последних комментов
-     * Используется в блоке "Прямой эфир"
-     *
-     */
-    protected
-    function EventStreamComment()
-    {
-        if ($aComments = LS::Make(ModuleComment::class)->GetCommentsOnline('topic', Config::Get('block.stream.row'))) {
-            $oViewer = $this->viewer->GetLocalViewer();
-            $oViewer->Assign('aComments', $aComments);
-            $sTextResult = $oViewer->Fetch("blocks/block.stream_comment.tpl");
-            $this->viewer->AssignAjax('sText', $sTextResult);
-        } else {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(
-                LS::Make(ModuleLang::class)->Get('block_stream_comments_no'),
-                LS::Make(ModuleLang::class)->Get('attention')
-            );
-
-            return;
-        }
-    }
-
-    /**
-     * Обработка получения последних топиков
-     * Используется в блоке "Прямой эфир"
-     *
-     */
-    protected
-    function EventStreamTopic()
-    {
-        if ($oTopics = LS::Make(ModuleTopic::class)->GetTopicsLast(Config::Get('block.stream.row'))) {
-            $oViewer = $this->viewer->GetLocalViewer();
-            $oViewer->Assign('oTopics', $oTopics);
-            $sTextResult = $oViewer->Fetch("blocks/block.stream_topic.tpl");
-            $this->viewer->AssignAjax('sText', $sTextResult);
-        } else {
-            LS::Make(ModuleMessage::class)->AddErrorSingle(
-                LS::Make(ModuleLang::class)->Get('block_stream_topics_no'),
-                LS::Make(ModuleLang::class)->Get('attention')
-            );
-
-            return;
-        }
-    }
 
     /**
      * Обработка получения TOP блогов

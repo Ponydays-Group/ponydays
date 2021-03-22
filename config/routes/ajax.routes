@@ -13,8 +13,10 @@ GROUP '/ajax' (
 	    ANY '/comment' to 'ajax/favourite#favouriteComment';
 	    ANY '/talk' to 'ajax/favourite#favouriteTalk';
     );
-	ANY '/stream/comment' to 'ajax#streamComment';
-	ANY '/stream/topic' to 'ajax#streamTopic';
+    GROUP '/stream' (
+	    ANY '/comment' to 'ajax/stream#streamComment';
+	    ANY '/topic' to 'ajax/stream#streamTopic';
+    );
 
 	ANY '/blogs/top' to 'ajax#blogsTop';
 	ANY '/blogs/self' to 'ajax#blogsSelf';

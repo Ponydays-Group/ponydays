@@ -4,9 +4,7 @@ namespace App\Actions\Ajax;
 
 use App\Modules\ModuleComment;
 use App\Modules\ModuleTopic;
-use App\Modules\ModuleUser;
 use Engine\Config;
-use Engine\LS;
 use Engine\Modules\ModuleLang;
 use Engine\Result\View\AjaxView;
 use Engine\Result\View\HtmlView;
@@ -14,18 +12,6 @@ use Engine\Routing\Controller;
 
 class ActionAjaxStream extends Controller
 {
-    /**
-     * @var \App\Entities\EntityUser
-     */
-    protected $currentUser = null;
-
-    public function boot()
-    {
-        /** @var ModuleUser $user */
-        $user = LS::Make(ModuleUser::class);
-        $this->currentUser = $user->GetUserCurrent();
-    }
-
     /**
      * Обработка получения последних комментов
      * Используется в блоке "Прямой эфир"

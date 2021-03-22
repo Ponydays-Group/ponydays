@@ -17,11 +17,11 @@ GROUP '/ajax' (
 	    ANY '/comment' to 'ajax/stream#streamComment';
 	    ANY '/topic' to 'ajax/stream#streamTopic';
     );
-
-	ANY '/blogs/top' to 'ajax#blogsTop';
-	ANY '/blogs/self' to 'ajax#blogsSelf';
-	ANY '/blogs/join' to 'ajax#blogsJoin';
-
+    GROUP '/blogs' (
+        ANY '/top' to 'ajax/blogs#blogsTop';
+        ANY '/self' to 'ajax/blogs#blogsSelf';
+        ANY '/join' to 'ajax/blogs#blogsJoin';
+    );
 	ANY '/preview/text' to 'ajax#previewText';
 	ANY '/preview/topic' to 'ajax#previewTopic';
 

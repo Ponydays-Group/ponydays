@@ -370,63 +370,6 @@ class ActionAjax extends Action
     /* * */
 
 
-    /**
-     * Автоподставновка тегов
-     *
-     */
-    protected
-    function EventAutocompleterTag()
-    {
-        /**
-         * Первые буквы тега переданы?
-         */
-        if (!($sValue = getRequest('value', null, 'post')) or !is_string($sValue)) {
-            return;
-        }
-
-        $aItems = [];
-        /**
-         * Формируем список тегов
-         */
-        $aTags = LS::Make(ModuleTopic::class)->GetTopicTagsByLike($sValue, 10);
-        foreach ($aTags as $oTag) {
-            $aItems[] = $oTag->getText();
-        }
-
-        /**
-         * Передаем результат в ajax ответ
-         */
-        $this->viewer->AssignAjax('aItems', $aItems);
-    }
-
-    /**
-     * Автоподставновка пользователей
-     *
-     */
-    protected
-    function EventAutocompleterUser()
-    {
-        /**
-         * Первые буквы логина переданы?
-         */
-        if (!($sValue = getRequest('value', null, 'post')) or !is_string($sValue)) {
-            return;
-        }
-
-        $aItems = [];
-        /**
-         * Формируем список пользователей
-         */
-        $aUsers = $this->user->GetUsersByLoginLike($sValue, 10);
-        foreach ($aUsers as $oUser) {
-            $aItems[] = $oUser->getLogin();
-        }
-
-        /**
-         * Передаем результат в ajax ответ
-         */
-        $this->viewer->AssignAjax('aItems', $aItems);
-    }
 
     /**
      * Удаление/восстановление комментария

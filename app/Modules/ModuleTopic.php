@@ -1799,10 +1799,12 @@ class ModuleTopic extends Module
      * @param string $sTag   Тэг
      * @param int    $iLimit Количество
      *
-     * @return bool
+     * @return array
      */
     public function GetTopicTagsByLike($sTag, $iLimit)
     {
+        // TODO: ???
+
         /** @var \Engine\Modules\ModuleCache $cache */
         $cache = LS::Make(ModuleCache::class);
         if (false === ($data = $cache->Get("tag_like_{$sTag}_{$iLimit}"))) {

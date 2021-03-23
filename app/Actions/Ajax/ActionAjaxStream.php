@@ -26,7 +26,7 @@ class ActionAjaxStream extends Controller
     {
         if ($aComments = $comment->GetCommentsOnline('topic', Config::Get('block.stream.row'))) {
             return AjaxView::from([
-                'sText' => HtmlView::global("blocks/block.stream_comment.tpl")->with(['aComments' => $aComments])->fetch()
+                'sText' => HtmlView::global("blocks/block.stream_comment")->with(['aComments' => $aComments])->fetch()
             ]);
         } else {
             return AjaxView::empty()->msgError($lang->Get('block_stream_comments_no'), $lang->Get('attention'), true);
@@ -46,7 +46,7 @@ class ActionAjaxStream extends Controller
     {
         if ($oTopics = $topic->GetTopicsLast(Config::Get('block.stream.row'))) {
             return AjaxView::from([
-                'sText' => HtmlView::global("blocks/block.stream_topic.tpl")->with(['oTopics' => $oTopics])->fetch()
+                'sText' => HtmlView::global("blocks/block.stream_topic")->with(['oTopics' => $oTopics])->fetch()
             ]);
         } else {
             return AjaxView::empty()->msgError($lang->Get('block_stream_topics_no'), $lang->Get('attention'), true);

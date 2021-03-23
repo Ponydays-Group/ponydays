@@ -22,29 +22,32 @@ use App\Modules\ModuleBlog;
 use App\Modules\ModuleComment;
 use App\Modules\ModuleTopic;
 use App\Modules\ModuleUser;
-use Engine\Action;
 use Engine\Config;
 use Engine\LS;
 use Engine\Modules\ModuleCache;
 use Engine\Modules\ModuleLang;
-use Engine\Modules\ModuleMessage;
 use Engine\Modules\ModuleSecurity;
-use Engine\Modules\ModuleViewer;
+use Engine\Result\Traits\Messages;
+use Engine\Result\View\AjaxView;
+use Engine\Result\View\HtmlView;
+use Engine\Result\View\View;
+use Engine\Routing\Controller;
+use Engine\Routing\Exception\Http\NotFoundHttpException;
 
 /**
  * Экшен обработки УРЛа вида /admin/
- *
+ * TODO: very very bad
  * @package actions
  * @since   1.0
  */
-class ActionAdmin extends Action
+class ActionAdmin extends Controller
 {
     /**
      * Текущий пользователь
      *
      * @var \App\Entities\EntityUser|null
      */
-    protected $oUserCurrent = null;
+    protected $currentUser = null;
     /**
      * Главное меню
      *
@@ -55,57 +58,24 @@ class ActionAdmin extends Action
     /**
      * Инициализация
      */
-    public function Init()
+    public function boot()
     {
         /**
          * Если нет прав доступа - перекидываем на 404 страницу
          */
         /** @var ModuleUser $user */
         $user = LS::Make(ModuleUser::class);
-        if (!$user->IsAuthorization() or !$oUserCurrent = $user->GetUserCurrent() or !$oUserCurrent->isAdministrator(
-            )
-        ) {
-            parent::EventNotFound();
+        if (!$user->IsAuthorization() or !$oUserCurrent = $user->GetUserCurrent() or !$oUserCurrent->isAdministrator()) {
+            throw new NotFoundHttpException();
         } else {
-            $this->SetDefaultEvent('index');
-
-            $this->oUserCurrent = $oUserCurrent;
+            $this->currentUser = $oUserCurrent;
         }
     }
 
-    /**
-     * Регистрация евентов
-     */
-    protected function RegisterEvent()
+    protected function eventSaveUser(ModuleUser $User): AjaxView
     {
-        $this->AddEvent('index', 'EventIndex');
-        $this->AddEvent('restorecomment', 'EventRestoreComment');
-        $this->AddEvent('userfields', 'EventUserfields');
-        $this->AddEvent('recalcfavourite', 'EventRecalculateFavourite');
-        $this->AddEvent('recalcvote', 'EventRecalculateVote');
-        $this->AddEvent('recalctopic', 'EventRecalculateTopic');
-        $this->AddEvent('config', 'EventAdminConfig');
-        $this->AddEvent('save', 'EventAdminConfigSave');
-        $this->AddEvent('user', 'EventSaveUser');
-    }
-
-
-    /**********************************************************************************
-     ************************ РЕАЛИЗАЦИЯ ЭКШЕНА ***************************************
-     **********************************************************************************
-     */
-
-    protected function EventUsers()
-    {
-    }
-
-    protected function EventSaveUser()
-    {
-        LS::Make(ModuleViewer::class)->SetResponseAjax('json');
-        /** @var ModuleUser $user */
-        $user = LS::Make(ModuleUser::class);
-        if (!$oUser = $user->GetUserById(getRequest('user_id'))) {
-            return;
+        if (!$oUser = $User->GetUserById(getRequest('user_id'))) {
+            return AjaxView::empty();
         }
         $sRank = getRequest('user_rank');
         $sMail = getRequest('user_mail');
@@ -120,15 +90,16 @@ class ActionAdmin extends Action
         if (getRequest('user_privileges_quotes') == 'on') {
             $iPrivs |= ModuleUser::USER_PRIV_QUOTES;
         }
-        $user->SetUserPrivileges($oUser->getId(), $iPrivs);
-        $user->Update($oUser);
+        $User->SetUserPrivileges($oUser->getId(), $iPrivs);
+        $User->Update($oUser);
+
+        return AjaxView::empty();
     }
 
-    protected function EventAdminConfigSave()
+    protected function eventAdminConfigSave(): AjaxView
     {
-        LS::Make(ModuleViewer::class)->SetResponseAjax('json');
         $values = getRequest('values');
-        //TODO
+        //TODO: too bad
         Config::LoadFromFile(dirname(__FILE__)."/../../config/local.config.json", true, 'adminsave');
         foreach ($values as $key => $val) {
             if ($val == "1") {
@@ -146,9 +117,11 @@ class ActionAdmin extends Action
                 JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE
             )
         );
+
+        return AjaxView::empty();
     }
 
-    protected function EventAdminConfig()
+    protected function eventAdminConfig()
     {
         $params = [
             "sep1"                   => ["type" => "separator", "description" => "Настройки сайта"],
@@ -222,194 +195,180 @@ class ActionAdmin extends Action
                 "description" => "Порог скрытия комментария",
             ],
         ];
-        LS::Make(ModuleViewer::class)->Assign("aConfig", $params);
+
+        return HtmlView::by('admin/config')->with(["aConfig" => $params, 'sMenuHeadItemSelect' => $this->sMenuHeadItemSelect]);
     }
 
     /**
      * Отображение главной страницы админки
      * Нет никакой логики, просто отображение дефолтного шаблона евента index.tpl
      */
-    protected function EventIndex()
+    protected function eventIndex(): HtmlView
     {
-
+        return HtmlView::by('admin/index')->with(['sMenuHeadItemSelect' => $this->sMenuHeadItemSelect]);
     }
 
     /**
      * Перестроение дерева комментариев, актуально при $config['module']['comment']['use_nested'] = true;
      *
+     * @param \App\Modules\ModuleComment     $Comment
+     * @param \Engine\Modules\ModuleSecurity $Security
+     * @param \Engine\Modules\ModuleCache    $Cache
+     * @param \Engine\Modules\ModuleLang     $Lang
+     *
+     * @return \Engine\Result\View\HtmlView
      */
-    protected function EventRestoreComment()
+    protected function eventRestoreComment(ModuleComment $Comment, ModuleSecurity $Security, ModuleCache $Cache, ModuleLang $Lang): HtmlView
     {
-        LS::Make(ModuleSecurity::class)->ValidateSendForm();
-        set_time_limit(0);
-        LS::Make(ModuleComment::class)->RestoreTree();
-        LS::Make(ModuleCache::class)->Clean();
+        $Security->ValidateSendForm();
+        set_time_limit(0); // TODO: very bad
+        $Comment->RestoreTree();
+        $Cache->Clean();
 
-        LS::Make(ModuleMessage::class)->AddNotice(
-            LS::Make(ModuleLang::class)->Get('admin_comment_restore_tree'),
-            LS::Make(ModuleLang::class)->Get('attention')
-        );
-        $this->SetTemplateAction('index');
+        return HtmlView::by('admin/index')->with(['sMenuHeadItemSelect' => $this->sMenuHeadItemSelect])->msgNotice($Lang->Get('admin_comment_restore_tree'), $Lang->Get('attention'));
     }
 
     /**
      * Пересчет счетчика избранных
      *
+     * @param \App\Modules\ModuleComment     $Comment
+     * @param \App\Modules\ModuleTopic       $Topic
+     * @param \Engine\Modules\ModuleSecurity $Security
+     * @param \Engine\Modules\ModuleCache    $Cache
+     * @param \Engine\Modules\ModuleLang     $Lang
+     *
+     * @return \Engine\Result\View\HtmlView
      */
-    protected function EventRecalculateFavourite()
+    protected function eventRecalculateFavourite(ModuleComment $Comment, ModuleTopic $Topic, ModuleSecurity $Security, ModuleCache $Cache, ModuleLang $Lang): HtmlView
     {
-        LS::Make(ModuleSecurity::class)->ValidateSendForm();
+        $Security->ValidateSendForm();
         set_time_limit(0);
-        LS::Make(ModuleComment::class)->RecalculateFavourite();
-        LS::Make(ModuleTopic::class)->RecalculateFavourite();
-        LS::Make(ModuleCache::class)->Clean();
+        $Comment->RecalculateFavourite();
+        $Topic->RecalculateFavourite();
+        $Cache->Clean();
 
-        LS::Make(ModuleMessage::class)->AddNotice(
-            LS::Make(ModuleLang::class)->Get('admin_favourites_recalculated'),
-            LS::Make(ModuleLang::class)->Get('attention')
-        );
-        $this->SetTemplateAction('index');
+        return HtmlView::by('admin/index')->with(['sMenuHeadItemSelect' => $this->sMenuHeadItemSelect])->msgNotice($Lang->Get('admin_favourites_recalculated'), $Lang->Get('attention'));
     }
 
     /**
      * Пересчет счетчика голосований
+     *
+     * @param \App\Modules\ModuleTopic $Topic
+     * @param \Engine\Modules\ModuleSecurity $Security
+     * @param \Engine\Modules\ModuleCache $Cache
+     * @param \Engine\Modules\ModuleLang $Lang
+     *
+     * @return \Engine\Result\View\HtmlView
      */
-    protected function EventRecalculateVote()
+    protected function eventRecalculateVote(ModuleTopic $Topic, ModuleSecurity $Security, ModuleCache $Cache, ModuleLang $Lang): HtmlView
     {
-        LS::Make(ModuleSecurity::class)->ValidateSendForm();
+        $Security->ValidateSendForm();
         set_time_limit(0);
-        LS::Make(ModuleTopic::class)->RecalculateVote();
-        LS::Make(ModuleCache::class)->Clean();
+        $Topic->RecalculateVote();
+        $Cache->Clean();
 
-        LS::Make(ModuleMessage::class)->AddNotice(
-            LS::Make(ModuleLang::class)->Get('admin_votes_recalculated'),
-            LS::Make(ModuleLang::class)->Get('attention')
-        );
-        $this->SetTemplateAction('index');
+        return HtmlView::by('admin/index')->with(['sMenuHeadItemSelect' => $this->sMenuHeadItemSelect])->msgNotice($Lang->Get('admin_votes_recalculated'), $Lang->Get('attention'));
     }
 
     /**
      * Пересчет количества топиков в блогах
+     *
+     * @param \App\Modules\ModuleBlog        $Blog
+     * @param \Engine\Modules\ModuleSecurity $Security
+     * @param \Engine\Modules\ModuleCache    $Cache
+     * @param \Engine\Modules\ModuleLang     $Lang
+     *
+     * @return \Engine\Result\View\HtmlView
      */
-    protected function EventRecalculateTopic()
+    protected function eventRecalculateTopic(ModuleBlog $Blog, ModuleSecurity $Security, ModuleCache $Cache, ModuleLang $Lang): HtmlView
     {
-        LS::Make(ModuleSecurity::class)->ValidateSendForm();
+        $Security->ValidateSendForm();
         set_time_limit(0);
-        LS::Make(ModuleBlog::class)->RecalculateCountTopic();
-        LS::Make(ModuleCache::class)->Clean();
+        $Blog->RecalculateCountTopic();
+        $Cache->Clean();
 
-        LS::Make(ModuleMessage::class)->AddNotice(
-            LS::Make(ModuleLang::class)->Get('admin_topics_recalculated'),
-            LS::Make(ModuleLang::class)->Get('attention')
-        );
-        $this->SetTemplateAction('index');
+        return HtmlView::by('admin/index')->msgNotice($Lang->Get('admin_topics_recalculated'), $Lang->Get('attention'));
     }
 
     /**
      * Управление полями пользователя
      *
+     * @param \App\Modules\ModuleUser    $User
+     * @param \Engine\Modules\ModuleLang $Lang
+     *
+     * @return \Engine\Result\View\View
      */
-    protected function EventUserFields()
+    protected function eventUserFields(ModuleUser $User, ModuleLang $Lang): View
     {
-        /** @var ModuleViewer $viewer */
-        $viewer = LS::Make(ModuleViewer::class);
-        /** @var ModuleUser $user */
-        $user = LS::Make(ModuleUser::class);
-        /** @var ModuleMessage $message */
-        $message = LS::Make(ModuleMessage::class);
-        /** @var \Engine\Modules\ModuleLang $lang */
-        $lang = LS::Make(ModuleLang::class);
         switch (getRequestStr('action')) {
             /**
              * Создание нового поля
              */
             case 'add':
-                /**
-                 * Обрабатываем как ajax запрос (json)
-                 */
-                $viewer->SetResponseAjax('json');
-                if (!$this->checkUserField()) {
-                    return;
+                $view = AjaxView::empty();
+                if (!$this->checkUserField($view)) {
+                    return $view;
                 }
                 $oField = new EntityUserField();
                 $oField->setName(getRequestStr('name'));
                 $oField->setTitle(getRequestStr('title'));
                 $oField->setPattern(getRequestStr('pattern'));
-                if (in_array(getRequestStr('type'), $user->GetUserFieldTypes())) {
+                if (in_array(getRequestStr('type'), $User->GetUserFieldTypes())) {
                     $oField->setType(getRequestStr('type'));
                 } else {
                     $oField->setType('');
                 }
 
-                $iId = $user->addUserField($oField);
+                $iId = $User->addUserField($oField);
                 if (!$iId) {
-                    $message->AddError($lang->Get('system_error'), $lang->Get('error'));
-
-                    return;
+                    return $view->msgError($Lang->Get('system_error'), $Lang->Get('error'));
                 }
-                /**
-                 * Прогружаем переменные в ajax ответ
-                 */
-                $viewer->AssignAjax('id', $iId);
-                $viewer->AssignAjax('lang_delete', $lang->Get('user_field_delete'));
-                $viewer->AssignAjax('lang_edit', $lang->Get('user_field_update'));
-                $message->AddNotice($lang->Get('user_field_added'), $lang->Get('attention'));
-                break;
+
+                return $view->with([
+                    'id' => $iId,
+                    'lang_delete' => $Lang->Get('user_field_delete'),
+                    'lang_edit' => $Lang->Get('user_field_update')
+                ])->msgNotice($Lang->Get('user_field_added'), $Lang->Get('attention'));
             /**
              * Удаление поля
              */
             case 'delete':
-                /**
-                 * Обрабатываем как ajax запрос (json)
-                 */
-                $viewer->SetResponseAjax('json');
                 if (!getRequestStr('id')) {
-                    $message->AddError($lang->Get('system_error'), $lang->Get('error'));
-
-                    return;
+                    return AjaxView::empty()->msgError($Lang->Get('system_error'), $Lang->Get('error'));
                 }
-                $user->deleteUserField(getRequestStr('id'));
-                $message->AddNotice($lang->Get('user_field_deleted'), $lang->Get('attention'));
-                break;
+                $User->deleteUserField(getRequestStr('id'));
+
+                return AjaxView::empty()->msgNotice($Lang->Get('user_field_deleted'), $Lang->Get('attention'));
             /**
              * Изменение поля
              */
             case 'update':
-                /**
-                 * Обрабатываем как ajax запрос (json)
-                 */
-                $viewer->SetResponseAjax('json');
+                $view = AjaxView::empty();
                 if (!getRequestStr('id')) {
-                    $message->AddError($lang->Get('system_error'), $lang->Get('error'));
-
-                    return;
+                    return $view->msgError($Lang->Get('system_error'), $Lang->Get('error'));
                 }
-                if (!$user->userFieldExistsById(getRequestStr('id'))) {
-                    $message->AddError($lang->Get('system_error'), $lang->Get('error'));
-
-                    return;
+                if (!$User->userFieldExistsById(getRequestStr('id'))) {
+                    return $view->msgError($Lang->Get('system_error'), $Lang->Get('error'));
                 }
-                if (!$this->checkUserField()) {
-                    return;
+                if (!$this->checkUserField($view)) {
+                    return $view;
                 }
                 $oField = new EntityUserField;
                 $oField->setId(getRequestStr('id'));
                 $oField->setName(getRequestStr('name'));
                 $oField->setTitle(getRequestStr('title'));
                 $oField->setPattern(getRequestStr('pattern'));
-                if (in_array(getRequestStr('type'), $user->GetUserFieldTypes())) {
+                if (in_array(getRequestStr('type'), $User->GetUserFieldTypes())) {
                     $oField->setType(getRequestStr('type'));
                 } else {
                     $oField->setType('');
                 }
 
-                if ($user->updateUserField($oField)) {
-                    $message->AddError($lang->Get('system_error'), $lang->Get('error'));
-
-                    return;
+                if ($User->updateUserField($oField)) {
+                    return $view->msgError($Lang->Get('system_error'), $Lang->Get('error'));
                 }
-                $message->AddNotice($lang->Get('user_field_updated'), $lang->Get('attention'));
-                break;
+
+                return $view->msgNotice($Lang->Get('user_field_updated'), $Lang->Get('attention'));
             /**
              * Показываем страницу со списком полей
              */
@@ -417,58 +376,50 @@ class ActionAdmin extends Action
                 /**
                  * Загружаем в шаблон JS текстовки
                  */
-                $lang->AddLangJs(['user_field_delete_confirm']);
+                $Lang->AddLangJs(['user_field_delete_confirm']);
                 /**
                  * Получаем список всех полей
                  */
-                $viewer->Assign('aUserFields', $user->getUserFields());
-                $viewer->Assign('aUserFieldTypes', $user->GetUserFieldTypes());
-                $this->SetTemplateAction('user_fields');
+                return HtmlView::by('admin/user_fields')->with([
+                    'aUserFields' => $User->getUserFields(),
+                    'aUserFieldTypes' => $User->GetUserFieldTypes()
+                ]);
         }
     }
 
     /**
      * Проверка поля пользователя на корректность из реквеста
      *
+     * @param \Engine\Result\Traits\Messages $messages
+     *
      * @return bool
      */
-    public function checkUserField()
+    public function checkUserField(Messages $messages): bool
     {
-        /** @var ModuleMessage $message */
-        $message = LS::Make(ModuleMessage::class);
-        /** @var \Engine\Modules\ModuleLang $lang */
-        $lang = LS::Make(ModuleLang::class);
+        /** @var ModuleUser $User */
+        $User = LS::Make(ModuleUser::class);
+        /** @var \Engine\Modules\ModuleLang $Lang */
+        $Lang = LS::Make(ModuleLang::class);
+
         if (!getRequestStr('title')) {
-            $message->AddError($lang->Get('user_field_error_add_no_title'), $lang->Get('error'));
+            $messages->msgError($Lang->Get('user_field_error_add_no_title'), $Lang->Get('error'));
 
             return false;
         }
         if (!getRequestStr('name')) {
-            $message->AddError($lang->Get('user_field_error_add_no_name'), $lang->Get('error'));
+            $messages->msgError($Lang->Get('user_field_error_add_no_name'), $Lang->Get('error'));
 
             return false;
         }
         /**
          * Не допускаем дубликатов по имени
          */
-        if (LS::Make(ModuleUser::class)->userFieldExistsByName(getRequestStr('name'), getRequestStr('id'))) {
-            $message->AddError($lang->Get('user_field_error_name_exists'), $lang->Get('error'));
+        if ($User->userFieldExistsByName(getRequestStr('name'), getRequestStr('id'))) {
+            $messages->msgError($Lang->Get('user_field_error_name_exists'), $Lang->Get('error'));
 
             return false;
         }
 
         return true;
-    }
-
-    /**
-     * Выполняется при завершении работы экшена
-     *
-     */
-    public function EventShutdown()
-    {
-        /**
-         * Загружаем в шаблон необходимые переменные
-         */
-        LS::Make(ModuleViewer::class)->Assign('sMenuHeadItemSelect', $this->sMenuHeadItemSelect);
     }
 }

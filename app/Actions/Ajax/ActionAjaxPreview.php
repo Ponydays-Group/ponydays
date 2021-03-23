@@ -88,9 +88,9 @@ class ActionAjaxPreview extends Controller
         /**
          * Рендерим шаблон для предпросмотра топика
          */
-        $sTemplate = "topic_preview_{$oTopic->getType() }.tpl";
+        $sTemplate = "topic_preview_{$oTopic->getType()}";
         if (!$viewer->TemplateExists($sTemplate)) {
-            $sTemplate = 'topic_preview_topic.tpl';
+            $sTemplate = 'topic_preview_topic';
         }
         $sTextResult = HtmlView::global($sTemplate)->with(['oTopic' => $oTopic])->fetch();
 

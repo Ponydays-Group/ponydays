@@ -258,7 +258,7 @@ class ActionAjaxComment extends Controller
             $oData->setUserLogin($oUser->getLogin());
         }
 
-        return AjaxView::from(['sContent' => HtmlView::global('history.tpl')->with(['aHistory', $aData])->fetch()]);
+        return AjaxView::from(['sContent' => HtmlView::global('history')->with(['aHistory', $aData])->fetch()]);
     }
 
     protected function eventGetSource(ModuleACL $acl, ModuleComment $comment, ModuleEditComment $editComment, ModuleLang $lang): AjaxView
@@ -370,7 +370,7 @@ class ActionAjaxComment extends Controller
             $oComment->setEditDate($sDE);
 
             if (Config::Get('module.editcomment.add_edit_date')) {
-                $local = HtmlView::global('inject_comment_edited.tpl')->with([
+                $local = HtmlView::global('inject_comment_edited')->with([
                     'oComment' => $oComment,
                     'oUserCurrent' => $this->currentUser
                 ]);

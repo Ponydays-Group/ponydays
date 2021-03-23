@@ -52,7 +52,7 @@ class ActionAjax extends Controller
         /**
          * Получаем локальный вьюер для рендеринга шаблона
          */
-        $renderer = HtmlView::global('infobox.info.blog.tpl')->with(['oBlog' => $oBlog]);
+        $renderer = HtmlView::global('infobox.info.blog')->with(['oBlog' => $oBlog]);
         if ($oBlog->getType() != 'close' or $oBlog->getUserIsJoin()) {
             /**
              * Получаем последний топик

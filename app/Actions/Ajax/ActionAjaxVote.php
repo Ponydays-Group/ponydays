@@ -511,7 +511,7 @@ class ActionAjaxVote extends Controller
         $oTopicQuestionVote->setVoterId($this->currentUser->getId());
         $oTopicQuestionVote->setAnswer($idAnswer);
         if ($topic->AddTopicQuestionVote($oTopicQuestionVote) and $topic->updateTopic($oTopic)) {
-            $local = HtmlView::global("question_result.tpl")->with(['oTopic' => $oTopic]);
+            $local = HtmlView::global("question_result")->with(['oTopic' => $oTopic]);
 
             return AjaxView::from(['sText' => $local->fetch()])->msgNotice($lang->Get('topic_question_vote_ok'), $lang->Get('attention'));
         } else {

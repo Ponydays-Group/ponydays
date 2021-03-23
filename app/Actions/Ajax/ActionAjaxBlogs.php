@@ -43,7 +43,7 @@ class ActionAjaxBlogs extends Controller
             $aBlogs = $aResult['collection'];
 
             return AjaxView::from([
-                'sText' => HtmlView::global("blocks/block.blogs_top.tpl")->with(['aBlogs' => $aBlogs])->fetch()
+                'sText' => HtmlView::global("blocks/block.blogs_top")->with(['aBlogs' => $aBlogs])->fetch()
             ]);
         } else {
             return AjaxView::empty()->msgError($lang->Get('system_error'), $lang->Get('error'), true);
@@ -73,7 +73,7 @@ class ActionAjaxBlogs extends Controller
          */
         if ($aBlogs = $blog->GetBlogsRatingSelf($this->currentUser->getId(), Config::Get('block.blogs.row'))) {
             return AjaxView::from([
-                'sText' => HtmlView::global("blocks/block.blogs_top.tpl")->with(['aBlogs' => $aBlogs])->fetch()
+                'sText' => HtmlView::global("blocks/block.blogs_top")->with(['aBlogs' => $aBlogs])->fetch()
             ]);
         } else {
             return AjaxView::empty()->msgError($lang->Get('block_blogs_self_error'), $lang->Get('attention'), true);
@@ -103,7 +103,7 @@ class ActionAjaxBlogs extends Controller
          */
         if ($aBlogs = $blog->GetBlogsRatingJoin($this->currentUser->getId(), Config::Get('block.blogs.row'))) {
             return AjaxView::from([
-                'sText' => HtmlView::global("blocks/block.blogs_top.tpl")->with(['aBlogs' => $aBlogs])->fetch()
+                'sText' => HtmlView::global("blocks/block.blogs_top")->with(['aBlogs' => $aBlogs])->fetch()
             ]);
         } else {
             return AjaxView::empty()->msgError($lang->Get('block_blogs_join_error'), $lang->Get('attention'), true);

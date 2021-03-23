@@ -518,4 +518,78 @@ class ActionAjaxVote extends Controller
             return AjaxView::empty()->msgError($lang->Get('system_error'), $lang->Get('error'), true);
         }
     }
+
+    // TODO: incomprehensible configuration identifiers: what are these 'ne'/'oe'?
+    protected function eventGetObjectVotes(ModuleACL $acl, ModuleUser $user, ModuleComment $comment, ModuleTopic $topic, ModuleBlog $blog, ModuleVote $vote, ModuleLang $lang): AjaxView
+    {
+        $targetId = (int)getRequestStr('targetId', null, 'post');
+        $targetType = getRequestStr('targetType', null, 'post');
+        switch ($targetType) {
+            case 'comment':
+                $oTarget = $comment->GetCommentById($targetId);
+                $ne_enable_level = Config::Get('acl.vote_list.comment.ne_enable_level');
+                $oe_enable_level = Config::Get('acl.vote_list.comment.oe_enable_level');
+                $oe_end = Config::Get('acl.vote_list.comment.oe_end');
+                $date_sort = Config::Get('acl.vote_list.comment.date_sort');
+                break;
+            case 'topic':
+                $oTarget = $topic->GetTopicById($targetId);
+                $ne_enable_level = Config::Get('acl.vote_list.topic.ne_enable_level');
+                $oe_enable_level = Config::Get('acl.vote_list.topic.oe_enable_level');
+                $oe_end = Config::Get('acl.vote_list.topic.oe_end');
+                $date_sort = Config::Get('acl.vote_list.topic.date_sort');
+                break;
+            case 'blog':
+                $oTarget = $blog->GetBlogById($targetId);
+                $ne_enable_level = Config::Get('acl.vote_list.blog.ne_enable_level');
+                $oe_enable_level = Config::Get('acl.vote_list.blog.oe_enable_level');
+                $oe_end = Config::Get('acl.vote_list.blog.oe_end');
+                $date_sort = Config::Get('acl.vote_list.blog.date_sort');
+                break;
+            case 'user':
+                $oTarget = $user->GetUserById($targetId);
+                $ne_enable_level = Config::Get('acl.vote_list.user.ne_enable_level');
+                $oe_enable_level = Config::Get('acl.vote_list.user.oe_enable_level');
+                $oe_end = Config::Get('acl.vote_list.user.oe_end');
+                $date_sort = Config::Get('acl.vote_list.user.date_sort');
+                break;
+            default:
+                return AjaxView::empty()->msgError($lang->Get('system_error'), $lang->Get('error'), true);
+        }
+
+        /**
+         * Пользователь авторизован?
+         */
+        if (!$this->currentUser && $ne_enable_level < 8) {
+            return AjaxView::empty()->msgError($lang->Get('need_authorization'), $lang->Get('error'), true);
+        }
+
+        /**
+         * Объект существует?
+         */
+        if (!$oTarget) {
+            return AjaxView::empty()->msgError($lang->Get('system_error'), $lang->Get('error'), true);
+        }
+
+        if (!$acl->CheckSimpleAccessLevel($ne_enable_level, $this->currentUser, $oTarget, $targetType)) {
+            return AjaxView::empty()->msgError($lang->Get('not_access'), $lang->Get('error'), true);
+        }
+
+        $aVotes = $vote->GetVoteById($targetId, $targetType);
+        $aResult = [];
+        foreach ($aVotes as $oVote) {
+            $oUser = $user->GetUserById($oVote->getVoterId());
+            $bShowUser = $oUser && (strtotime($oVote->getDate()) > $oe_end || $acl->CheckSimpleAccessLevel($oe_enable_level, $this->currentUser, $oTarget, $targetType));
+            $aResult[] = [
+                'voterName'   => $bShowUser ? $oUser->getLogin() : null,
+                'voterAvatar' => $bShowUser ? $oUser->getProfileAvatarPath() : null,
+                'value'       => (float)$oVote->getDirection(),
+                'date'        => (string)$oVote->getDate().'+03:00',
+            ];
+        }
+
+        usort($aResult, $date_sort < 0 ? '_gov_s_date_desc' : '_gov_s_date_asc');
+
+        return AjaxView::from(['aVotes' => $aResult]);
+    }
 }

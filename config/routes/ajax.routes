@@ -37,20 +37,20 @@ GROUP '/ajax' (
         ANY '/get/regions' to 'ajax/geo#geoGetRegions';
         ANY '/get/cities' to 'ajax/geo#geoGetCities';
     );
-	ANY '/comment/delete' to 'ajax#commentDelete';
+
+	ANY '/comment/delete' to 'ajax/comment#commentDelete';
+	ANY '/editcomment-gethistory' to 'ajax/comment#getHistory';
+	ANY '/editcomment-getsource' to 'ajax/comment#getSource';
+	ANY '/editcomment-edit' to 'ajax/comment#edit';
+	ANY '/comment' to 'ajax/comment#getComment';
 
 	ANY '/infobox/info/blog' to 'ajax#infoboxInfoBlog';
 	ANY '/askinvite' to 'ajax#inviteUser';
 	ANY '/topic-lock-control' to 'ajax#topicLockControl';
 	ANY '/get-object-votes' to 'ajax#getObjectVotes';
-	ANY '/ignore' to 'ajax#ignoreUser';
-	ANY '/forbid-ignore' to 'ajax#forbidIgnoreUser';
 
-	ANY '/editcomment-gethistory' to 'ajax#getHistory';
-	ANY '/editcomment-getsource' to 'ajax#getSource';
-	ANY '/editcomment-edit' to 'ajax#edit';
+	ANY '/ignore' to 'ajax/ignore#ignoreUser';
+	ANY '/forbid-ignore' to 'ajax/ignore#forbidIgnoreUser';
 
-	ANY '/comment' to 'ajax#getComment';
-
-	ANY '/ban' to 'ajax#ban';
+	ANY '/ban' to 'ajax/ban#ban';
 );

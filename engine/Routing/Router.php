@@ -108,6 +108,7 @@ class Router
         $controllerName = str_replace('/', '.', $controllerName);
         $class = Config::Get("router.page.$controllerName");
         if ($class == null) $class = $controllerName;
+        else if (is_array($class)) $class = $class[''];
 
         if (! class_exists($class)) {
             throw new RoutingException("Could not find a controller: `$controllerName`");
@@ -116,6 +117,7 @@ class Router
         if (isset($this->controllers[$class])) {
             return $this->controllers[$class];
         } else {
+            /** @var \Engine\Routing\Controller $controller */
             $controller = new $class(Engine::getInstance(), $controllerName);
             $controller->boot();
             return $controller;

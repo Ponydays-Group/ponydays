@@ -8,7 +8,7 @@
         ls.comments.options.history_button_code = '';
     {/if}
     {if $oConfig->Get('module.editcomment.show_cancel_button')}
-        ls.comments.options.cancel_button_code = '<button type="button" class="button" name="submit_cancel" id="comment-button-cancel" onclick=fls.comments.cancelEditComment(); return false;">{$aLang.editcomment.cancel_button_title}</button>';
+        ls.comments.options.cancel_button_code = '<button type="button" class="button" name="submit_cancel" id="comment-button-cancel" onclick=ls.comments.cancelEditComment(); return false;">{$aLang.editcomment.cancel_button_title}</button>';
         {else}
         ls.comments.options.cancel_button_code = '';
     {/if}

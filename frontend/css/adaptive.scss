@@ -55,50 +55,6 @@
   }
 }
 
-@media screen and (max-height: 530px) {
-  #padorupadoru {
-    width: 100%;
-  }
-  #container {
-    padding-right: 40px;
-  }
-  #rightbar {
-    padding-top: 0px;
-    //width: 100%;
-    top: 0px;
-    width: 40px;
-    //top: calc(100% - 40px);
-    //flex-direction: row;
-
-    #rightbar_menu_top, #rightbar_menu_bottom {
-      //display: flex;
-
-      .rightbar-item a {
-        width: 40px;
-        height: 40px;
-
-        i {
-          font-size: 0.8em;
-        }
-
-        .new-comments {
-          top: 20px;
-          left: 23px;
-        }
-      }
-
-      .delim-top {
-        padding-top: 20px;
-        //padding-left: 20px;
-      }
-
-      .user_item {
-        display: none;
-      }
-    }
-  }
-}
-
 @media screen and (max-width: 530px) {
   #padorupadoru {
     width: 100%;

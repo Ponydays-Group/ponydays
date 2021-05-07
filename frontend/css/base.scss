@@ -8,7 +8,7 @@ body {
   line-height: 18px;
   color: $text-color;
   background: $background-image;
-  background-blend-mode: screen;
+  background-blend-mode: normal;
   //padding-top: 200px;
   padding-top: 0px;
   transition: top .2s, padding-top .2s, padding .2s;

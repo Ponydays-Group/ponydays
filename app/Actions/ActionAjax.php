@@ -2959,7 +2959,7 @@ class ActionAjax extends Action
             return;
         }
         if ($oComment->getTargetType() != 'topic' or !($oTopic = $oComment->getTarget())) {
-            $this->Message_AddErrorSingle(
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
                 LS::Make(ModuleLang::class)->Get('system_error'),
                 LS::Make(ModuleLang::class)->Get('error')
             );
@@ -2969,7 +2969,7 @@ class ActionAjax extends Action
         if (!$oTopic->getPublish() and (!$this->oUserCurrent or ($this->oUserCurrent->getId() != $oTopic->getUserId()
                     and !$this->oUserCurrent->isAdministrator()))
         ) {
-            $this->Message_AddErrorSingle(
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
                 LS::Make(ModuleLang::class)->Get('system_error'),
                 LS::Make(ModuleLang::class)->Get('error')
             );
@@ -2988,7 +2988,7 @@ class ActionAjax extends Action
                     )
                     || $this->oUserCurrent->getId() == $oComment->getUserId())))
         ) {
-            $this->Message_AddErrorSingle(
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
                 LS::Make(ModuleLang::class)->Get('not_access'),
                 LS::Make(ModuleLang::class)->Get('not_access')
             );
@@ -3004,7 +3004,7 @@ class ActionAjax extends Action
                 )
             )
         ) {
-            $this->Message_AddErrorSingle(
+            LS::Make(ModuleMessage::class)->AddErrorSingle(
                 LS::Make(ModuleLang::class)->Get('blog_close_show'),
                 LS::Make(ModuleLang::class)->Get('not_access')
             );

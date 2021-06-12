@@ -80,7 +80,7 @@ start_deploy() {
 update_npm() {
     log "Updating NPM.."
     pushd ./frontend/
-    npm ci &> ../tmp/npm.deploy.out
+    yarn &> ../tmp/npm.deploy.out
     rc=$?
     if [[ ${rc} != 0 ]]
     then
@@ -96,7 +96,7 @@ rebuild_frontend() {
     log "Rebuilding frontend..."
     pushd ./frontend/
     PATH="$PATH:$PWD/node_modules/.bin"
-    NODE_ENV=production webpack --config webpack.config.js --mode=production &> ../tmp/webpack.deploy.out
+    yarn webpack:production &> ../tmp/webpack.deploy.out
     rc=$?
     if [[ ${rc} != 0 ]]
     then

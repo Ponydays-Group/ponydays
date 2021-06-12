@@ -2292,34 +2292,31 @@ class ModuleTopic extends Module
         $image = LS::Make(ModuleImage::class);
         $sDirUpload = $image->GetIdDir($oUser->getId());
         $aParams = $image->BuildParams('topic');
-        $dir = Config::Get('static_server').'/';
+        $dir = Config::Get('static_server');
+        if (!str_ends_with($dir, "/")) $dir .= "/";
         $hash = hash_file("sha1", $sFileTmp);
-        $type = substr($aFile['type'], strrpos($aFile['type'], "/") + 1);
-        $fullname = $hash.".".$type;
-        if (!file_exists($dir.$fullname)) {
-            if ($sFileImage = $image->Resize(
-                $sFileTmp,
-                $sDirUpload,
-                $hash,
-                Config::Get('view.img_max_width'),
-                Config::Get('view.img_max_height'),
-                Config::Get('view.img_resize_width'),
-                null,
-                true,
-                $aParams
-            )
-            ) {
-                @unlink($sFileTmp);
 
-                return $image->GetWebPath($sFileImage);
-            }
-        } else {
+        if ($sFileImage = $image->Resize(
+            $sFileTmp,
+            $sDirUpload,
+            $hash,
+            Config::Get('view.img_max_width'),
+            Config::Get('view.img_max_height'),
+            Config::Get('view.img_resize_width'),
+            null,
+            true,
+            $aParams
+        )) {
             @unlink($sFileTmp);
 
-            return Config::Get('static_web')."/img/".$fullname;
-        }
-        @unlink($sFileTmp);
+            $s3 = LS::Make(ModuleS3::class);
+            $s3->UploadImage(str_replace($dir, "", $sFileImage), $sFileImage);
 
+            @unlink($sFileImage);
+            return $image->GetWebPath($sFileImage);
+        }
+
+        @unlink($sFileTmp);
         return false;
     }
 
@@ -2421,34 +2418,32 @@ class ModuleTopic extends Module
         /**
          * Передаем изображение на обработку
          */
-        $dir = Config::Get('static_server').'/img/';
+        $dir = Config::Get('static_server');
         $hash = hash_file("sha1", $sFileTmp);
         $type = substr($sUrl, strrpos($sUrl, '.') + 1);
         if ($qmark = strrpos($type, '?')) {
             $type = substr($type, 0, $qmark);
         }
-        $fullname = $hash.".".$type;
-        if (!file_exists($dir.$fullname)) {
-            if ($sFileImg = $image->Resize(
-                $sFileTmp,
-                $sDirSave,
-                $hash,
-                Config::Get('view.img_max_width'),
-                Config::Get('view.img_max_height'),
-                Config::Get('view.img_resize_width'),
-                null,
-                true,
-                $aParams
-            )
-            ) {
-                @unlink($sFileTmp);
 
-                return $image->GetWebPath($sFileImg);
-            }
-        } else {
+        if ($sFileImg = $image->Resize(
+            $sFileTmp,
+            $sDirSave,
+            $hash,
+            Config::Get('view.img_max_width'),
+            Config::Get('view.img_max_height'),
+            Config::Get('view.img_resize_width'),
+            null,
+            true,
+            $aParams
+        )
+        ) {
             @unlink($sFileTmp);
 
-            return Config::Get('static_web')."/img/".$fullname;
+            $s3 = LS::Make(ModuleS3::class);
+            $s3->UploadImage(str_replace($dir, "", $sFileImg), $sFileImg);
+
+            @unlink($sFileImg);
+            return $image->GetWebPath($sFileImg);
         }
 
         @unlink($sFileTmp);

@@ -22,6 +22,9 @@ define('LS_VERSION', '1.0.3');
 
 require 'vendor/autoload.php';
 
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->safeLoad();
+
 use Engine\Config;
 
 function walk_directory(string $dir_name, callable $func)

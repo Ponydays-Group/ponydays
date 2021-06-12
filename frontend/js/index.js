@@ -3,6 +3,7 @@ import "regenerator-runtime/runtime";
 import "./jquery";
 import "./jquery/jquery.markitup"
 import "./jquery/jquery.file"
+import "./jquery/jquery.form"
 import "../css/bootstrap/assets/javascripts/bootstrap.min"
 import hljs from "highlightjs"
 

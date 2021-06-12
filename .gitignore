@@ -18,3 +18,5 @@ img/*
 composer.phar
 vendor/
 .phpunit.*
+docker_data/*
+.env

@@ -2419,6 +2419,7 @@ class ModuleTopic extends Module
          * Передаем изображение на обработку
          */
         $dir = Config::Get('static_server');
+        if (!str_ends_with($dir, "/")) $dir .= "/";
         $hash = hash_file("sha1", $sFileTmp);
         $type = substr($sUrl, strrpos($sUrl, '.') + 1);
         if ($qmark = strrpos($type, '?')) {
@@ -2448,7 +2449,7 @@ class ModuleTopic extends Module
 
         @unlink($sFileTmp);
 
-        return ModuleImage::UPLOAD_IMAGE_ERROR;
+        return ModuleImage::UPLOAD_IMAGE_ERROR_SIZE;
     }
 
     /**
@@ -2486,30 +2487,29 @@ class ModuleTopic extends Module
         /**
          * Передаем изображение на обработку
          */
-        $dir = Config::Get('plugin.staticdomain.static_server').'/';
+        $dir = Config::Get('static_server');
+        if (!str_ends_with($dir, "/")) $dir .= "/";
         $hash = hash_file("sha1", $sFileTmp);
         $fullname = $hash.".".$ext;
-        if (!file_exists($dir.$fullname)) {
-            if ($sFileImg = $image->Resize(
-                $sFileTmp,
-                $sDirSave,
-                $hash,
-                Config::Get('view.img_max_width'),
-                Config::Get('view.img_max_height'),
-                Config::Get('view.img_resize_width'),
-                null,
-                true,
-                $aParams
-            )
-            ) {
-                @unlink($sFileTmp);
-
-                return $image->GetWebPath($sFileImg);
-            }
-        } else {
+        if ($sFileImg = $image->Resize(
+            $sFileTmp,
+            $sDirSave,
+            $hash,
+            Config::Get('view.img_max_width'),
+            Config::Get('view.img_max_height'),
+            Config::Get('view.img_resize_width'),
+            null,
+            true,
+            $aParams
+        )
+        ) {
             @unlink($sFileTmp);
 
-            return Config::Get('plugin.staticdomain.static_web')."/img/".$fullname;
+            $s3 = LS::Make(ModuleS3::class);
+            $s3->UploadImage(str_replace($dir, "", $sFileImg), $sFileImg);
+
+            @unlink($sFileImg);
+            return $image->GetWebPath($sFileImg);
         }
 
         @unlink($sFileTmp);

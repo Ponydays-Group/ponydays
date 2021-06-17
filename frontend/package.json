@@ -24,7 +24,7 @@
     "dateformat": "^2.2.0",
     "eventemitter3": "^2.0.2",
     "highlightjs": "^9.16.2",
-    "jquery": "2.2.4",
+    "jquery": "3.5.0",
     "jquery-form": "^3.50.0",
     "jquery-ui": "^1.12.1",
     "jquery-ui-bundle": "^1.11.4",

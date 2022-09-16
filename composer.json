@@ -9,7 +9,7 @@
     "ext-curl": "*",
     "ext-gd": "*",
     "ext-mysqli": "*",
-    "smarty/smarty": "3.1.39",
+    "smarty/smarty": "3.1.47",
     "aws/aws-sdk-php": "^3.184",
     "vlucas/phpdotenv": "^5.3"
   },
